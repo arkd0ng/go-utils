@@ -18,10 +18,10 @@ Generate random strings with customizable length ranges and character sets.
 
 ### Available Methods / 사용 가능한 메서드
 
-- **`GenString.Alpha(min, max int)`** - Alphabetic characters only (a-z, A-Z) / 알파벳만 (a-z, A-Z)
-- **`GenString.AlphaNum(min, max int)`** - Alphanumeric characters (a-z, A-Z, 0-9) / 영숫자 (a-z, A-Z, 0-9)
-- **`GenString.AlphaNumSpecial(min, max int)`** - Alphanumeric + all special characters / 영숫자 + 모든 특수문자
-- **`GenString.AlphaNumSpecialLimited(min, max int)`** - Alphanumeric + limited special characters (!@#$%^&*-_) / 영숫자 + 제한된 특수문자
+- **`GenString.Letters(min, max int)`** - Alphabetic characters only (a-z, A-Z) / 알파벳만 (a-z, A-Z)
+- **`GenString.Alnum(min, max int)`** - Alphanumeric characters (a-z, A-Z, 0-9) / 영숫자 (a-z, A-Z, 0-9)
+- **`GenString.Complex(min, max int)`** - Alphanumeric + all special characters / 영숫자 + 모든 특수문자
+- **`GenString.Standard(min, max int)`** - Alphanumeric + limited special characters (!@#$%^&*-_) / 영숫자 + 제한된 특수문자
 - **`GenString.Custom(charset string, min, max int)`** - Custom character set / 사용자 정의 문자 집합
 
 ## Usage / 사용법
@@ -39,22 +39,22 @@ import (
 func main() {
     // Generate alphabetic string (32-128 characters)
     // 알파벳 문자열 생성 (32-128자)
-    str1 := random.GenString.Alpha(32, 128)
+    str1 := random.GenString.Letters(32, 128)
     fmt.Println(str1)
 
     // Generate alphanumeric string (32-128 characters)
     // 영숫자 문자열 생성 (32-128자)
-    str2 := random.GenString.AlphaNum(32, 128)
+    str2 := random.GenString.Alnum(32, 128)
     fmt.Println(str2)
 
     // Generate string with special characters (16-32 characters)
     // 특수 문자 포함 문자열 생성 (16-32자)
-    str3 := random.GenString.AlphaNumSpecial(16, 32)
+    str3 := random.GenString.Complex(16, 32)
     fmt.Println(str3)
 
     // Generate string with limited special characters (20-40 characters)
     // 제한된 특수 문자 포함 문자열 생성 (20-40자)
-    str4 := random.GenString.AlphaNumSpecialLimited(20, 40)
+    str4 := random.GenString.Standard(20, 40)
     fmt.Println(str4)
 
     // Generate string with custom character set (10-20 characters)
@@ -72,7 +72,7 @@ To generate a string with a fixed length, set `min` and `max` to the same value:
 
 ```go
 // Generate exactly 32 characters / 정확히 32자 생성
-password := random.GenString.AlphaNum(32, 32)
+password := random.GenString.Alnum(32, 32)
 ```
 
 ### Common Use Cases / 일반적인 사용 사례
@@ -81,13 +81,13 @@ password := random.GenString.AlphaNum(32, 32)
 import "github.com/arkd0ng/go-utils/random"
 
 // Generate a secure password / 안전한 비밀번호 생성
-password := random.GenString.AlphaNumSpecial(16, 24)
+password := random.GenString.Complex(16, 24)
 
 // Generate a random API key / 랜덤 API 키 생성
-apiKey := random.GenString.AlphaNum(40, 40)
+apiKey := random.GenString.Alnum(40, 40)
 
 // Generate a random username / 랜덤 사용자명 생성
-username := random.GenString.Alpha(8, 12)
+username := random.GenString.Letters(8, 12)
 
 // Generate a verification code with numbers only / 숫자로만 인증 코드 생성
 code := random.GenString.Custom("0123456789", 6, 6)
@@ -95,10 +95,10 @@ code := random.GenString.Custom("0123456789", 6, 6)
 
 ## Character Sets / 문자 집합
 
-- **Alpha**: `A-Z`, `a-z`
-- **AlphaNum**: `A-Z`, `a-z`, `0-9`
-- **AlphaNumSpecial**: `A-Z`, `a-z`, `0-9`, `!@#$%^&*()-_=+[]{}|;:,.<>?/`
-- **AlphaNumSpecialLimited**: `A-Z`, `a-z`, `0-9`, `!@#$%^&*-_`
+- **Letters**: `A-Z`, `a-z`
+- **Alnum**: `A-Z`, `a-z`, `0-9`
+- **Complex**: `A-Z`, `a-z`, `0-9`, `!@#$%^&*()-_=+[]{}|;:,.<>?/`
+- **Standard**: `A-Z`, `a-z`, `0-9`, `!@#$%^&*-_`
 
 ## Security / 보안
 

@@ -55,7 +55,7 @@ import "github.com/arkd0ng/go-utils/random"
 
 // Generate alphanumeric string (32-128 characters)
 // 영숫자 문자열 생성 (32-128자)
-str := random.GenString.AlphaNum(32, 128)
+str := random.GenString.Alnum(32, 128)
 ```
 
 **[→ View full documentation / 전체 문서 보기](./random/README.md)**
@@ -85,11 +85,11 @@ import (
 
 func main() {
     // Generate a secure password / 안전한 비밀번호 생성
-    password := random.GenString.AlphaNumSpecial(16, 24)
+    password := random.GenString.Complex(16, 24)
     fmt.Println("Password:", password)
 
     // Generate an API key / API 키 생성
-    apiKey := random.GenString.AlphaNum(40, 40)
+    apiKey := random.GenString.Alnum(40, 40)
     fmt.Println("API Key:", apiKey)
 }
 ```

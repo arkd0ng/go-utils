@@ -22,8 +22,8 @@ type stringGenerator struct{}
 // GenString은 랜덤 문자열 생성을 위한 전역 인스턴스입니다
 var GenString = stringGenerator{}
 
-// Alpha generates a random string containing only alphabetic characters (a-z, A-Z)
-// Alpha는 알파벳 문자(a-z, A-Z)만 포함하는 랜덤 문자열을 생성합니다
+// Letters generates a random string containing only alphabetic characters (a-z, A-Z)
+// Letters는 알파벳 문자(a-z, A-Z)만 포함하는 랜덤 문자열을 생성합니다
 //
 // Parameters / 매개변수:
 //   - min: minimum length of the generated string / 생성될 문자열의 최소 길이
@@ -31,12 +31,12 @@ var GenString = stringGenerator{}
 //
 // Returns / 반환값:
 //   - A random string with length between min and max (inclusive) / min과 max 사이 길이의 랜덤 문자열 (포함)
-func (stringGenerator) Alpha(min, max int) string {
+func (stringGenerator) Letters(min, max int) string {
 	return generateRandomString(charsetAlpha, min, max)
 }
 
-// AlphaNum generates a random string containing alphabetic and numeric characters (a-z, A-Z, 0-9)
-// AlphaNum은 알파벳과 숫자 문자(a-z, A-Z, 0-9)를 포함하는 랜덤 문자열을 생성합니다
+// Alnum generates a random string containing alphanumeric characters (a-z, A-Z, 0-9)
+// Alnum은 영숫자 문자(a-z, A-Z, 0-9)를 포함하는 랜덤 문자열을 생성합니다
 //
 // Parameters / 매개변수:
 //   - min: minimum length of the generated string / 생성될 문자열의 최소 길이
@@ -44,12 +44,12 @@ func (stringGenerator) Alpha(min, max int) string {
 //
 // Returns / 반환값:
 //   - A random string with length between min and max (inclusive) / min과 max 사이 길이의 랜덤 문자열 (포함)
-func (stringGenerator) AlphaNum(min, max int) string {
+func (stringGenerator) Alnum(min, max int) string {
 	return generateRandomString(charsetAlpha+charsetDigits, min, max)
 }
 
-// AlphaNumSpecial generates a random string containing alphabetic, numeric, and special characters
-// AlphaNumSpecial은 알파벳, 숫자, 특수 문자를 포함하는 랜덤 문자열을 생성합니다
+// Complex generates a random string containing alphanumeric and all special characters
+// Complex는 영숫자와 모든 특수 문자를 포함하는 랜덤 문자열을 생성합니다
 //
 // Special characters include: !@#$%^&*()-_=+[]{}|;:,.<>?/
 // 특수 문자 포함: !@#$%^&*()-_=+[]{}|;:,.<>?/
@@ -60,12 +60,12 @@ func (stringGenerator) AlphaNum(min, max int) string {
 //
 // Returns / 반환값:
 //   - A random string with length between min and max (inclusive) / min과 max 사이 길이의 랜덤 문자열 (포함)
-func (stringGenerator) AlphaNumSpecial(min, max int) string {
+func (stringGenerator) Complex(min, max int) string {
 	return generateRandomString(charsetAlpha+charsetDigits+charsetSpecial, min, max)
 }
 
-// AlphaNumSpecialLimited generates a random string with limited special characters
-// AlphaNumSpecialLimited는 제한된 특수 문자를 포함하는 랜덤 문자열을 생성합니다
+// Standard generates a random string with alphanumeric and safe special characters
+// Standard는 영숫자와 안전한 특수 문자를 포함하는 랜덤 문자열을 생성합니다
 //
 // Special characters include only: !@#$%^&*-_
 // 특수 문자는 다음만 포함: !@#$%^&*-_
@@ -76,7 +76,7 @@ func (stringGenerator) AlphaNumSpecial(min, max int) string {
 //
 // Returns / 반환값:
 //   - A random string with length between min and max (inclusive) / min과 max 사이 길이의 랜덤 문자열 (포함)
-func (stringGenerator) AlphaNumSpecialLimited(min, max int) string {
+func (stringGenerator) Standard(min, max int) string {
 	return generateRandomString(charsetAlpha+charsetDigits+charsetSpecialLimited, min, max)
 }
 
