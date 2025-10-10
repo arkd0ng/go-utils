@@ -23,7 +23,10 @@ func TestLetters(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenString.Letters(tt.min, tt.max)
+			result, err := GenString.Letters(tt.min, tt.max)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
 
 			// Check length / 길이 확인
 			if len(result) < tt.min || len(result) > tt.max {
@@ -56,7 +59,10 @@ func TestAlnum(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenString.Alnum(tt.min, tt.max)
+			result, err := GenString.Alnum(tt.min, tt.max)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
 
 			// Check length / 길이 확인
 			if len(result) < tt.min || len(result) > tt.max {
@@ -88,7 +94,10 @@ func TestComplex(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenString.Complex(tt.min, tt.max)
+			result, err := GenString.Complex(tt.min, tt.max)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
 
 			// Check length / 길이 확인
 			if len(result) < tt.min || len(result) > tt.max {
@@ -121,7 +130,10 @@ func TestStandard(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenString.Standard(tt.min, tt.max)
+			result, err := GenString.Standard(tt.min, tt.max)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
 
 			// Check length / 길이 확인
 			if len(result) < tt.min || len(result) > tt.max {
@@ -156,7 +168,10 @@ func TestCustom(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenString.Custom(tt.charset, tt.min, tt.max)
+			result, err := GenString.Custom(tt.charset, tt.min, tt.max)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
 
 			// Check length / 길이 확인
 			if len(result) < tt.min || len(result) > tt.max {
@@ -178,28 +193,31 @@ func TestCustom(t *testing.T) {
 // TestEdgeCases는 엣지 케이스를 테스트합니다
 func TestEdgeCases(t *testing.T) {
 	t.Run("Min greater than max", func(t *testing.T) {
-		result := GenString.Letters(10, 5)
-		if len(result) != 10 {
-			t.Errorf("When min > max, length should be min (10), got %d", len(result))
+		_, err := GenString.Letters(10, 5)
+		if err == nil {
+			t.Errorf("Expected error when min > max, got nil")
 		}
 	})
 
 	t.Run("Negative min", func(t *testing.T) {
-		result := GenString.Letters(-5, 10)
-		if len(result) < 0 || len(result) > 10 {
-			t.Errorf("With negative min, length should be between 0 and max")
+		_, err := GenString.Letters(-5, 10)
+		if err == nil {
+			t.Errorf("Expected error with negative min, got nil")
 		}
 	})
 
 	t.Run("Empty charset", func(t *testing.T) {
-		result := GenString.Custom("", 5, 10)
-		if result != "" {
-			t.Errorf("Empty charset should return empty string, got %s", result)
+		_, err := GenString.Custom("", 5, 10)
+		if err == nil {
+			t.Errorf("Expected error for empty charset, got nil")
 		}
 	})
 
 	t.Run("Zero length", func(t *testing.T) {
-		result := GenString.Letters(0, 0)
+		result, err := GenString.Letters(0, 0)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		if len(result) != 0 {
 			t.Errorf("Zero length should return empty string, got %s with length %d", result, len(result))
 		}
@@ -215,7 +233,10 @@ func TestRandomness(t *testing.T) {
 	iterations := 100
 
 	for i := 0; i < iterations; i++ {
-		result := GenString.Alnum(10, 20)
+		result, err := GenString.Alnum(10, 20)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		results[result] = true
 	}
 
@@ -236,7 +257,7 @@ func TestCollisionProbability(t *testing.T) {
 		length     int
 		iterations int
 		charset    string
-		method     func(int, int) string
+		method     func(...int) (string, error)
 	}{
 		{
 			name:       "10-char Alnum (10,000 iterations)",
@@ -276,7 +297,10 @@ func TestCollisionProbability(t *testing.T) {
 			// Generate strings and track collisions
 			// 문자열을 생성하고 충돌을 추적합니다
 			for i := 0; i < tt.iterations; i++ {
-				str := tt.method(tt.length, tt.length)
+				str, err := tt.method(tt.length, tt.length)
+				if err != nil {
+					t.Fatalf("unexpected error at iteration %d: %v", i, err)
+				}
 
 				if results[str] {
 					collisions++
@@ -337,7 +361,7 @@ func TestCollisionProbability(t *testing.T) {
 // BenchmarkLetters는 Letters 메서드의 성능을 벤치마크합니다
 func BenchmarkLetters(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		GenString.Letters(10, 20)
+		_, _ = GenString.Letters(10, 20)
 	}
 }
 
@@ -345,7 +369,7 @@ func BenchmarkLetters(b *testing.B) {
 // BenchmarkAlnum은 Alnum 메서드의 성능을 벤치마크합니다
 func BenchmarkAlnum(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		GenString.Alnum(32, 128)
+		_, _ = GenString.Alnum(32, 128)
 	}
 }
 
@@ -353,7 +377,7 @@ func BenchmarkAlnum(b *testing.B) {
 // BenchmarkComplex는 Complex 메서드의 성능을 벤치마크합니다
 func BenchmarkComplex(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		GenString.Complex(16, 24)
+		_, _ = GenString.Complex(16, 24)
 	}
 }
 
@@ -362,7 +386,7 @@ func BenchmarkComplex(b *testing.B) {
 func BenchmarkCustom(b *testing.B) {
 	charset := "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	for i := 0; i < b.N; i++ {
-		GenString.Custom(charset, 16, 32)
+		_, _ = GenString.Custom(charset, 16, 32)
 	}
 }
 
@@ -380,7 +404,10 @@ func TestDigits(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenString.Digits(tt.min, tt.max)
+			result, err := GenString.Digits(tt.min, tt.max)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
 
 			// Check length / 길이 확인
 			if len(result) < tt.min || len(result) > tt.max {
@@ -401,7 +428,10 @@ func TestDigits(t *testing.T) {
 // TestHex tests the Hex method
 // TestHex는 Hex 메서드를 테스트합니다
 func TestHex(t *testing.T) {
-	result := GenString.Hex(8, 16)
+	result, err := GenString.Hex(8, 16)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	// Check length / 길이 확인
 	if len(result) < 8 || len(result) > 16 {
@@ -420,7 +450,10 @@ func TestHex(t *testing.T) {
 // TestHexLower tests the HexLower method
 // TestHexLower는 HexLower 메서드를 테스트합니다
 func TestHexLower(t *testing.T) {
-	result := GenString.HexLower(8, 16)
+	result, err := GenString.HexLower(8, 16)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	// Check length / 길이 확인
 	if len(result) < 8 || len(result) > 16 {
@@ -439,7 +472,10 @@ func TestHexLower(t *testing.T) {
 // TestAlphaUpper tests the AlphaUpper method
 // TestAlphaUpper는 AlphaUpper 메서드를 테스트합니다
 func TestAlphaUpper(t *testing.T) {
-	result := GenString.AlphaUpper(8, 12)
+	result, err := GenString.AlphaUpper(8, 12)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	// Check length / 길이 확인
 	if len(result) < 8 || len(result) > 12 {
@@ -458,7 +494,10 @@ func TestAlphaUpper(t *testing.T) {
 // TestAlphaLower tests the AlphaLower method
 // TestAlphaLower는 AlphaLower 메서드를 테스트합니다
 func TestAlphaLower(t *testing.T) {
-	result := GenString.AlphaLower(8, 12)
+	result, err := GenString.AlphaLower(8, 12)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	// Check length / 길이 확인
 	if len(result) < 8 || len(result) > 12 {
@@ -477,7 +516,10 @@ func TestAlphaLower(t *testing.T) {
 // TestAlnumUpper tests the AlnumUpper method
 // TestAlnumUpper는 AlnumUpper 메서드를 테스트합니다
 func TestAlnumUpper(t *testing.T) {
-	result := GenString.AlnumUpper(16, 20)
+	result, err := GenString.AlnumUpper(16, 20)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	// Check length / 길이 확인
 	if len(result) < 16 || len(result) > 20 {
@@ -496,7 +538,10 @@ func TestAlnumUpper(t *testing.T) {
 // TestAlnumLower tests the AlnumLower method
 // TestAlnumLower는 AlnumLower 메서드를 테스트합니다
 func TestAlnumLower(t *testing.T) {
-	result := GenString.AlnumLower(16, 20)
+	result, err := GenString.AlnumLower(16, 20)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	// Check length / 길이 확인
 	if len(result) < 16 || len(result) > 20 {
@@ -515,7 +560,10 @@ func TestAlnumLower(t *testing.T) {
 // TestBase64 tests the Base64 method
 // TestBase64는 Base64 메서드를 테스트합니다
 func TestBase64(t *testing.T) {
-	result := GenString.Base64(16, 32)
+	result, err := GenString.Base64(16, 32)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	// Check length / 길이 확인
 	if len(result) < 16 || len(result) > 32 {
@@ -534,7 +582,10 @@ func TestBase64(t *testing.T) {
 // TestBase64URL tests the Base64URL method
 // TestBase64URL은 Base64URL 메서드를 테스트합니다
 func TestBase64URL(t *testing.T) {
-	result := GenString.Base64URL(16, 32)
+	result, err := GenString.Base64URL(16, 32)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	// Check length / 길이 확인
 	if len(result) < 16 || len(result) > 32 {
@@ -554,7 +605,7 @@ func TestBase64URL(t *testing.T) {
 // BenchmarkDigits는 Digits 메서드의 성능을 벤치마크합니다
 func BenchmarkDigits(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		GenString.Digits(6, 6)
+		_, _ = GenString.Digits(6, 6)
 	}
 }
 
@@ -562,7 +613,7 @@ func BenchmarkDigits(b *testing.B) {
 // BenchmarkHex는 Hex 메서드의 성능을 벤치마크합니다
 func BenchmarkHex(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		GenString.Hex(8, 16)
+		_, _ = GenString.Hex(8, 16)
 	}
 }
 
@@ -570,6 +621,6 @@ func BenchmarkHex(b *testing.B) {
 // BenchmarkBase64URL은 Base64URL 메서드의 성능을 벤치마크합니다
 func BenchmarkBase64URL(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		GenString.Base64URL(32, 32)
+		_, _ = GenString.Base64URL(32, 32)
 	}
 }

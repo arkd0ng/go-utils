@@ -18,34 +18,38 @@ Generate random strings with customizable length ranges and character sets.
 
 ### Available Methods / 사용 가능한 메서드
 
+All methods return `(string, error)` to handle potential errors during random string generation.
+
+모든 메서드는 랜덤 문자열 생성 중 발생할 수 있는 에러를 처리하기 위해 `(string, error)`를 반환합니다.
+
 #### Basic Methods / 기본 메서드
 
-- **`GenString.Letters(min, max int)`** - Alphabetic characters (a-z, A-Z) / 알파벳 (a-z, A-Z)
-- **`GenString.Alnum(min, max int)`** - Alphanumeric (a-z, A-Z, 0-9) / 영숫자 (a-z, A-Z, 0-9)
-- **`GenString.Digits(min, max int)`** - Numeric digits only (0-9) / 숫자만 (0-9)
-- **`GenString.Complex(min, max int)`** - Alphanumeric + all special characters / 영숫자 + 모든 특수문자
-- **`GenString.Standard(min, max int)`** - Alphanumeric + safe special characters (!@#$%^&*-_) / 영숫자 + 안전한 특수문자
+- **`GenString.Letters(length ...int) (string, error)`** - Alphabetic characters (a-z, A-Z) / 알파벳 (a-z, A-Z)
+- **`GenString.Alnum(length ...int) (string, error)`** - Alphanumeric (a-z, A-Z, 0-9) / 영숫자 (a-z, A-Z, 0-9)
+- **`GenString.Digits(length ...int) (string, error)`** - Numeric digits only (0-9) / 숫자만 (0-9)
+- **`GenString.Complex(length ...int) (string, error)`** - Alphanumeric + all special characters / 영숫자 + 모든 특수문자
+- **`GenString.Standard(length ...int) (string, error)`** - Alphanumeric + safe special characters (!@#$%^&*-_) / 영숫자 + 안전한 특수문자
 
 #### Case-Specific Methods / 대소문자 구분 메서드
 
-- **`GenString.AlphaUpper(min, max int)`** - Uppercase letters only (A-Z) / 대문자만 (A-Z)
-- **`GenString.AlphaLower(min, max int)`** - Lowercase letters only (a-z) / 소문자만 (a-z)
-- **`GenString.AlnumUpper(min, max int)`** - Uppercase + digits (A-Z, 0-9) / 대문자 + 숫자 (A-Z, 0-9)
-- **`GenString.AlnumLower(min, max int)`** - Lowercase + digits (a-z, 0-9) / 소문자 + 숫자 (a-z, 0-9)
+- **`GenString.AlphaUpper(length ...int) (string, error)`** - Uppercase letters only (A-Z) / 대문자만 (A-Z)
+- **`GenString.AlphaLower(length ...int) (string, error)`** - Lowercase letters only (a-z) / 소문자만 (a-z)
+- **`GenString.AlnumUpper(length ...int) (string, error)`** - Uppercase + digits (A-Z, 0-9) / 대문자 + 숫자 (A-Z, 0-9)
+- **`GenString.AlnumLower(length ...int) (string, error)`** - Lowercase + digits (a-z, 0-9) / 소문자 + 숫자 (a-z, 0-9)
 
 #### Hexadecimal Methods / 16진수 메서드
 
-- **`GenString.Hex(min, max int)`** - Uppercase hexadecimal (0-9, A-F) / 대문자 16진수 (0-9, A-F)
-- **`GenString.HexLower(min, max int)`** - Lowercase hexadecimal (0-9, a-f) / 소문자 16진수 (0-9, a-f)
+- **`GenString.Hex(length ...int) (string, error)`** - Uppercase hexadecimal (0-9, A-F) / 대문자 16진수 (0-9, A-F)
+- **`GenString.HexLower(length ...int) (string, error)`** - Lowercase hexadecimal (0-9, a-f) / 소문자 16진수 (0-9, a-f)
 
 #### Encoding Methods / 인코딩 메서드
 
-- **`GenString.Base64(min, max int)`** - Base64 character set (A-Z, a-z, 0-9, +, /) / Base64 문자 집합
-- **`GenString.Base64URL(min, max int)`** - URL-safe Base64 (A-Z, a-z, 0-9, -, _) / URL-safe Base64
+- **`GenString.Base64(length ...int) (string, error)`** - Base64 character set (A-Z, a-z, 0-9, +, /) / Base64 문자 집합
+- **`GenString.Base64URL(length ...int) (string, error)`** - URL-safe Base64 (A-Z, a-z, 0-9, -, _) / URL-safe Base64
 
 #### Custom Method / 사용자 정의 메서드
 
-- **`GenString.Custom(charset string, min, max int)`** - Custom character set / 사용자 정의 문자 집합
+- **`GenString.Custom(charset string, length ...int) (string, error)`** - Custom character set / 사용자 정의 문자 집합
 
 ## Usage / 사용법
 
@@ -56,76 +60,128 @@ package main
 
 import (
     "fmt"
+    "log"
     "github.com/arkd0ng/go-utils/random"
 )
 
 func main() {
     // Generate alphabetic string (32-128 characters)
     // 알파벳 문자열 생성 (32-128자)
-    str1 := random.GenString.Letters(32, 128)
+    str1, err := random.GenString.Letters(32, 128)
+    if err != nil {
+        log.Fatal(err)
+    }
     fmt.Println(str1)
 
     // Generate alphanumeric string (32-128 characters)
     // 영숫자 문자열 생성 (32-128자)
-    str2 := random.GenString.Alnum(32, 128)
+    str2, err := random.GenString.Alnum(32, 128)
+    if err != nil {
+        log.Fatal(err)
+    }
     fmt.Println(str2)
 
     // Generate string with special characters (16-32 characters)
     // 특수 문자 포함 문자열 생성 (16-32자)
-    str3 := random.GenString.Complex(16, 32)
+    str3, err := random.GenString.Complex(16, 32)
+    if err != nil {
+        log.Fatal(err)
+    }
     fmt.Println(str3)
 
     // Generate string with limited special characters (20-40 characters)
     // 제한된 특수 문자 포함 문자열 생성 (20-40자)
-    str4 := random.GenString.Standard(20, 40)
+    str4, err := random.GenString.Standard(20, 40)
+    if err != nil {
+        log.Fatal(err)
+    }
     fmt.Println(str4)
 
     // Generate string with custom character set (10-20 characters)
     // 사용자 정의 문자 집합으로 문자열 생성 (10-20자)
-    str5 := random.GenString.Custom("ABC123xyz", 10, 20)
+    str5, err := random.GenString.Custom("ABC123xyz", 10, 20)
+    if err != nil {
+        log.Fatal(err)
+    }
     fmt.Println(str5)
 }
 ```
 
 ### Fixed Length String / 고정 길이 문자열
 
-To generate a string with a fixed length, set `min` and `max` to the same value:
+To generate a string with a fixed length, provide a single argument:
 
-고정 길이 문자열을 생성하려면 `min`과 `max`를 같은 값으로 설정하세요:
+고정 길이 문자열을 생성하려면 하나의 인자를 제공하세요:
 
 ```go
 // Generate exactly 32 characters / 정확히 32자 생성
-password := random.GenString.Alnum(32, 32)
+password, err := random.GenString.Alnum(32)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Or use min and max with the same value / 또는 min과 max를 같은 값으로 사용
+password2, err := random.GenString.Alnum(32, 32)
+if err != nil {
+    log.Fatal(err)
+}
 ```
 
 ### Common Use Cases / 일반적인 사용 사례
 
 ```go
-import "github.com/arkd0ng/go-utils/random"
+import (
+    "log"
+    "github.com/arkd0ng/go-utils/random"
+)
 
 // Generate a secure password / 안전한 비밀번호 생성
-password := random.GenString.Complex(16, 24)
+password, err := random.GenString.Complex(16, 24)
+if err != nil {
+    log.Fatal(err)
+}
 
 // Generate a random API key / 랜덤 API 키 생성
-apiKey := random.GenString.Alnum(40, 40)
+apiKey, err := random.GenString.Alnum(40)
+if err != nil {
+    log.Fatal(err)
+}
 
 // Generate a random username / 랜덤 사용자명 생성
-username := random.GenString.AlphaLower(8, 12)
+username, err := random.GenString.AlphaLower(8, 12)
+if err != nil {
+    log.Fatal(err)
+}
 
 // Generate a PIN code / PIN 코드 생성
-pin := random.GenString.Digits(6, 6)
+pin, err := random.GenString.Digits(6)
+if err != nil {
+    log.Fatal(err)
+}
 
 // Generate a hex color code / 16진수 색상 코드 생성
-color := random.GenString.Hex(6, 6) // e.g., "A3F5C2"
+color, err := random.GenString.Hex(6) // e.g., "A3F5C2"
+if err != nil {
+    log.Fatal(err)
+}
 
 // Generate a license key / 라이선스 키 생성
-license := random.GenString.AlnumUpper(20, 20)
+license, err := random.GenString.AlnumUpper(20)
+if err != nil {
+    log.Fatal(err)
+}
 
 // Generate a URL-safe token / URL-safe 토큰 생성
-token := random.GenString.Base64URL(32, 32)
+token, err := random.GenString.Base64URL(32)
+if err != nil {
+    log.Fatal(err)
+}
 
 // Generate a custom verification code / 사용자 정의 인증 코드 생성
-code := random.GenString.Custom("0123456789", 6, 6)
+code, err := random.GenString.Custom("0123456789", 6)
+if err != nil {
+    log.Fatal(err)
+}
 ```
 
 ## Character Sets / 문자 집합
