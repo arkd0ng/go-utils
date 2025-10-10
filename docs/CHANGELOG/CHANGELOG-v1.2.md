@@ -4,6 +4,31 @@ All notable changes for documentation work (v1.2.x) are documented in this file.
 
 문서화 작업(v1.2.x)의 모든 주요 변경사항이 이 파일에 기록됩니다.
 
+## [v1.2.003] - 2025-10-10
+
+### Added / 추가
+- Created comprehensive Random package documentation / 종합 Random 패키지 문서 생성
+- Added `docs/random/USER_MANUAL.md` - Complete user manual with bilingual content (~600 lines) / 이중 언어 내용이 포함된 완전한 사용자 매뉴얼 추가 (~600줄)
+- Added `docs/random/DEVELOPER_GUIDE.md` - Complete developer guide with bilingual content (~700 lines) / 이중 언어 내용이 포함된 완전한 개발자 가이드 추가 (~700줄)
+
+### Changed / 변경
+- Updated version to v1.2.003 in `cfg/app.yaml` / `cfg/app.yaml`의 버전을 v1.2.003으로 업데이트
+
+### Documentation / 문서
+- User manual includes / 사용자 매뉴얼 포함 내용:
+  - Installation and quick start guide / 설치 및 빠른 시작 가이드
+  - Complete method reference for all 14 methods / 14개 메서드 전체 참조 문서
+  - Usage patterns and common use cases / 사용 패턴 및 일반적인 사용 사례
+  - Error handling guide and best practices / 오류 처리 가이드 및 모범 사례
+  - FAQ and troubleshooting section / FAQ 및 문제 해결 섹션
+- Developer guide includes / 개발자 가이드 포함 내용:
+  - Architecture overview with singleton pattern / 싱글톤 패턴을 사용한 아키텍처 개요
+  - Internal implementation details and flow / 내부 구현 세부 사항 및 흐름
+  - Step-by-step guide for adding new methods / 새 메서드 추가를 위한 단계별 가이드
+  - Testing guide and performance optimization / 테스트 가이드 및 성능 최적화
+  - Security considerations and contribution guidelines / 보안 고려사항 및 기여 가이드라인
+  - Code style guidelines / 코드 스타일 가이드라인
+
 ## [v1.2.002] - 2025-10-10
 
 ### Added / 추가
