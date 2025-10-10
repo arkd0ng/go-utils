@@ -1,0 +1,21 @@
+# Database Configuration
+# 데이터베이스 설정
+
+mysql:
+  # Connection settings / 연결 설정
+  host: localhost
+  port: 3306
+  user: root
+  password: "test1234"  # MySQL root password / MySQL root 패스워드
+  database: testdb
+
+  # Connection pool settings / 연결 풀 설정
+  max_open_conns: 25
+  max_idle_conns: 10
+  conn_max_lifetime: 300  # seconds / 초
+
+  # Additional parameters / 추가 파라미터
+  params:
+    parseTime: true
+    charset: utf8mb4
+    loc: Local

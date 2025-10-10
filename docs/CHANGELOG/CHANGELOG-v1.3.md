@@ -6,6 +6,75 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
+## [v1.3.004] - 2025-10-10
+
+### Added / 추가
+- **Configuration Management / 설정 관리**:
+  - Created `cfg/database.yaml` - Database configuration file with MySQL settings
+  - Supports host, port, user, password, database, connection pool settings
+  - 데이터베이스 설정 파일 생성 (MySQL 설정 포함)
+  - 호스트, 포트, 사용자, 패스워드, 데이터베이스, 연결 풀 설정 지원
+
+- **MySQL Examples / MySQL 예제**:
+  - Created `examples/mysql/main.go` - Comprehensive example demonstrating all package features
+  - Created `examples/mysql/README.md` - Example documentation
+  - 모든 패키지 기능을 시연하는 종합 예제 생성
+  - 예제 문서 생성
+
+- **Example Features / 예제 기능**:
+  - YAML configuration loading with `gopkg.in/yaml.v3` / YAML 설정 로딩
+  - Integrated logging package for structured logs / 구조화된 로그를 위한 로깅 패키지 통합
+  - Auto MySQL daemon management (start/stop) / MySQL 데몬 자동 관리 (시작/중지)
+  - 9 working examples: SelectAll, SelectOne, Insert, Update, Count, Exists, Transaction, Delete, Raw SQL
+  - 9개 작동 예제: SelectAll, SelectOne, Insert, Update, Count, Exists, Transaction, Delete, Raw SQL
+
+- **MySQL Setup / MySQL 설정**:
+  - Set MySQL root password to `test1234` / MySQL root 패스워드 설정
+  - Created `testdb` database with sample `users` table / 샘플 users 테이블이 있는 testdb 데이터베이스 생성
+  - Populated with 5 initial sample records / 5개 초기 샘플 레코드 삽입
+
+### Technical Details / 기술 세부사항
+
+**New Files / 새 파일**:
+```
+cfg/database.yaml         - Database configuration
+examples/mysql/main.go    (~470 lines) - Complete examples with logging
+examples/mysql/README.md  - Example documentation
+```
+
+**Configuration Structure / 설정 구조**:
+```yaml
+mysql:
+  host: localhost
+  port: 3306
+  user: root
+  password: "test1234"
+  database: testdb
+  max_open_conns: 25
+  max_idle_conns: 10
+  conn_max_lifetime: 300
+  params:
+    parseTime: true
+    charset: utf8mb4
+    loc: Local
+```
+
+**Example Highlights / 예제 주요 사항**:
+- Database configuration loaded from YAML file / YAML 파일에서 데이터베이스 설정 로드
+- Logging package integration for all operations / 모든 작업에 로깅 패키지 통합
+- Auto MySQL start/stop if not running / 실행 중이 아니면 MySQL 자동 시작/중지
+- All 9 examples executed successfully / 모든 9개 예제가 성공적으로 실행됨
+
+### Dependencies / 의존성
+- Added `gopkg.in/yaml.v3` for YAML configuration parsing / YAML 설정 파싱용
+
+### Notes / 참고사항
+- Examples demonstrate "30 lines → 2 lines" simplicity goal / 예제가 "30줄 → 2줄" 간결함 목표를 시연
+- All examples include bilingual output (English/Korean) / 모든 예제가 이중 언어 출력 포함 (영문/한글)
+- Examples tested on macOS with Homebrew MySQL 9.4.0 / macOS Homebrew MySQL 9.4.0에서 테스트됨
+
+---
+
 ## [v1.3.001] - 2025-10-10
 
 ### Added / 추가
