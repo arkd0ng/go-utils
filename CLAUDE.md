@@ -53,6 +53,21 @@ go-utils/
 - 인코딩: `Base64`, `Base64URL`
 - 사용자 정의: `Custom(charset string, length ...int)`
 
+### Logging 패키지 아키텍처
+
+`logging` 패키지는 구조화된 로깅과 파일 로테이션을 제공합니다:
+- `Logger` 구조체가 모든 로깅 메서드 제공 (thread-safe with sync.Mutex)
+- **Options Pattern**: 함수형 옵션으로 유연한 설정 (`WithFilePath`, `WithLevel` 등)
+- **File Rotation**: lumberjack.v2 라이브러리 통합 (자동 크기 기반 로테이션)
+- **Config Loading**: `cfg/app.yaml`에서 애플리케이션 정보 자동 로드
+- **Multiple Writers**: 파일과 stdout에 동시 출력 지원
+
+**주요 기능**:
+- 로그 레벨: `DEBUG`, `INFO`, `WARN`, `ERROR`, `FATAL`
+- 구조화 로깅: 키-값 쌍 지원 (`logger.Info("msg", "key", "value")`)
+- 배너 출력: 애플리케이션 시작 시 정보 표시
+- 색상 출력: stdout에 색상 적용 (파일에는 미적용)
+
 ## 버전 관리 및 CHANGELOG 규칙
 
 ### 버전 관리
@@ -68,6 +83,12 @@ go-utils/
 - **v1.0.x**: Random package 개발
 - **v1.1.x**: Logging package 개발
 - **v1.2.x**: 문서화 작업 (진행 중)
+
+### 외부 의존성
+
+프로젝트에서 사용하는 외부 라이브러리:
+- **gopkg.in/natefinch/lumberjack.v2**: 파일 로테이션 (logging 패키지)
+- **gopkg.in/yaml.v3**: YAML 설정 파일 파싱 (cfg/app.yaml)
 
 ### CHANGELOG 관리
 
@@ -300,9 +321,17 @@ go tool cover -html=coverage.out
 # random string 예제 실행
 go run examples/random_string/main.go
 
+# logging 예제 실행
+go run examples/logging/main.go
+
 # 예제 바이너리 빌드
 go build -o bin/random_example examples/random_string/main.go
+go build -o bin/logging_example examples/logging/main.go
 ```
+
+**예제 디렉토리 구조**:
+- `examples/random_string/main.go`: 모든 14개 random 메서드 시연
+- `examples/logging/main.go`: 로깅 기능 및 설정 시연
 
 ### 새로운 기능 추가
 
@@ -391,11 +420,14 @@ if err != nil {
 ## 버전 히스토리 컨텍스트
 
 - **v0.1.0**: 루트 레벨 `GenRandomString`으로 첫 릴리스
-- **v0.2.0** (현재): Breaking change - 서브패키지 구조로 리팩토링
+- **v0.2.0**: Breaking change - 서브패키지 구조로 리팩토링
   - `GenRandomString`에서 `random.GenString`으로 변경
   - 9개의 새로운 메서드 추가 (총 14개)
   - 가변 인자 및 에러 처리 추가
   - 이중 언어 문서 추가
+- **v1.0.x**: Random package 안정화 및 테스트 강화
+- **v1.1.x**: Logging package 추가 (파일 로테이션, 구조화 로깅)
+- **v1.2.x** (현재): 종합 문서화 작업 (USER_MANUAL, DEVELOPER_GUIDE)
 
 ## 향후 로드맵
 
