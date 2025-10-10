@@ -1,4 +1,4 @@
-package goutils
+package random
 
 import (
 	"strings"
@@ -21,7 +21,7 @@ func TestAlpha(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenRandomString.Alpha(tt.min, tt.max)
+			result := GenString.Alpha(tt.min, tt.max)
 
 			// Check length
 			if len(result) < tt.min || len(result) > tt.max {
@@ -52,7 +52,7 @@ func TestAlphaNum(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenRandomString.AlphaNum(tt.min, tt.max)
+			result := GenString.AlphaNum(tt.min, tt.max)
 
 			// Check length
 			if len(result) < tt.min || len(result) > tt.max {
@@ -82,7 +82,7 @@ func TestAlphaNumSpecial(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenRandomString.AlphaNumSpecial(tt.min, tt.max)
+			result := GenString.AlphaNumSpecial(tt.min, tt.max)
 
 			// Check length
 			if len(result) < tt.min || len(result) > tt.max {
@@ -113,7 +113,7 @@ func TestAlphaNumSpecialLimited(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenRandomString.AlphaNumSpecialLimited(tt.min, tt.max)
+			result := GenString.AlphaNumSpecialLimited(tt.min, tt.max)
 
 			// Check length
 			if len(result) < tt.min || len(result) > tt.max {
@@ -146,7 +146,7 @@ func TestCustom(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GenRandomString.Custom(tt.charset, tt.min, tt.max)
+			result := GenString.Custom(tt.charset, tt.min, tt.max)
 
 			// Check length
 			if len(result) < tt.min || len(result) > tt.max {
@@ -166,28 +166,28 @@ func TestCustom(t *testing.T) {
 // TestEdgeCases tests edge cases
 func TestEdgeCases(t *testing.T) {
 	t.Run("Min greater than max", func(t *testing.T) {
-		result := GenRandomString.Alpha(10, 5)
+		result := GenString.Alpha(10, 5)
 		if len(result) != 10 {
 			t.Errorf("When min > max, length should be min (10), got %d", len(result))
 		}
 	})
 
 	t.Run("Negative min", func(t *testing.T) {
-		result := GenRandomString.Alpha(-5, 10)
+		result := GenString.Alpha(-5, 10)
 		if len(result) < 0 || len(result) > 10 {
 			t.Errorf("With negative min, length should be between 0 and max")
 		}
 	})
 
 	t.Run("Empty charset", func(t *testing.T) {
-		result := GenRandomString.Custom("", 5, 10)
+		result := GenString.Custom("", 5, 10)
 		if result != "" {
 			t.Errorf("Empty charset should return empty string, got %s", result)
 		}
 	})
 
 	t.Run("Zero length", func(t *testing.T) {
-		result := GenRandomString.Alpha(0, 0)
+		result := GenString.Alpha(0, 0)
 		if len(result) != 0 {
 			t.Errorf("Zero length should return empty string, got %s with length %d", result, len(result))
 		}
@@ -201,7 +201,7 @@ func TestRandomness(t *testing.T) {
 	iterations := 100
 
 	for i := 0; i < iterations; i++ {
-		result := GenRandomString.AlphaNum(10, 20)
+		result := GenString.AlphaNum(10, 20)
 		results[result] = true
 	}
 
@@ -215,14 +215,14 @@ func TestRandomness(t *testing.T) {
 // BenchmarkAlpha benchmarks the Alpha method
 func BenchmarkAlpha(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		GenRandomString.Alpha(10, 20)
+		GenString.Alpha(10, 20)
 	}
 }
 
 // BenchmarkAlphaNum benchmarks the AlphaNum method
 func BenchmarkAlphaNum(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		GenRandomString.AlphaNum(32, 128)
+		GenString.AlphaNum(32, 128)
 	}
 }
 
@@ -230,6 +230,6 @@ func BenchmarkAlphaNum(b *testing.B) {
 func BenchmarkCustom(b *testing.B) {
 	charset := "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	for i := 0; i < b.N; i++ {
-		GenRandomString.Custom(charset, 16, 32)
+		GenString.Custom(charset, 16, 32)
 	}
 }

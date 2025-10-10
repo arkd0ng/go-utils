@@ -1,4 +1,4 @@
-package goutils
+package random
 
 import (
 	"crypto/rand"
@@ -7,23 +7,23 @@ import (
 
 // Character sets for random string generation
 const (
-	charsetAlpha            = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-	charsetDigits           = "0123456789"
-	charsetSpecial          = "!@#$%^&*()-_=+[]{}|;:,.<>?/"
-	charsetSpecialLimited   = "!@#$%^&*-_"
+	charsetAlpha          = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	charsetDigits         = "0123456789"
+	charsetSpecial        = "!@#$%^&*()-_=+[]{}|;:,.<>?/"
+	charsetSpecialLimited = "!@#$%^&*-_"
 )
 
-// randomStringGenerator provides methods for generating random strings
-type randomStringGenerator struct{}
+// stringGenerator provides methods for generating random strings
+type stringGenerator struct{}
 
-// GenRandomString is a global instance for generating random strings
-var GenRandomString = randomStringGenerator{}
+// GenString is a global instance for generating random strings
+var GenString = stringGenerator{}
 
 // Alpha generates a random string containing only alphabetic characters (a-z, A-Z)
 // min: minimum length of the generated string
 // max: maximum length of the generated string
 // Returns a random string with length between min and max (inclusive)
-func (randomStringGenerator) Alpha(min, max int) string {
+func (stringGenerator) Alpha(min, max int) string {
 	return generateRandomString(charsetAlpha, min, max)
 }
 
@@ -31,7 +31,7 @@ func (randomStringGenerator) Alpha(min, max int) string {
 // min: minimum length of the generated string
 // max: maximum length of the generated string
 // Returns a random string with length between min and max (inclusive)
-func (randomStringGenerator) AlphaNum(min, max int) string {
+func (stringGenerator) AlphaNum(min, max int) string {
 	return generateRandomString(charsetAlpha+charsetDigits, min, max)
 }
 
@@ -40,7 +40,7 @@ func (randomStringGenerator) AlphaNum(min, max int) string {
 // min: minimum length of the generated string
 // max: maximum length of the generated string
 // Returns a random string with length between min and max (inclusive)
-func (randomStringGenerator) AlphaNumSpecial(min, max int) string {
+func (stringGenerator) AlphaNumSpecial(min, max int) string {
 	return generateRandomString(charsetAlpha+charsetDigits+charsetSpecial, min, max)
 }
 
@@ -49,7 +49,7 @@ func (randomStringGenerator) AlphaNumSpecial(min, max int) string {
 // min: minimum length of the generated string
 // max: maximum length of the generated string
 // Returns a random string with length between min and max (inclusive)
-func (randomStringGenerator) AlphaNumSpecialLimited(min, max int) string {
+func (stringGenerator) AlphaNumSpecialLimited(min, max int) string {
 	return generateRandomString(charsetAlpha+charsetDigits+charsetSpecialLimited, min, max)
 }
 
@@ -58,7 +58,7 @@ func (randomStringGenerator) AlphaNumSpecialLimited(min, max int) string {
 // min: minimum length of the generated string
 // max: maximum length of the generated string
 // Returns a random string with length between min and max (inclusive)
-func (randomStringGenerator) Custom(charset string, min, max int) string {
+func (stringGenerator) Custom(charset string, min, max int) string {
 	return generateRandomString(charset, min, max)
 }
 
