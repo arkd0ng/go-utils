@@ -40,7 +40,7 @@ func defaultConfig() *config {
 		level:        INFO,
 		prefix:       "",
 		enableColor:  true,
-		enableStdout: true,
+		enableStdout: false, // Disabled by default, file only / 기본적으로 비활성화, 파일만 출력
 		enableFile:   true,
 		timeFormat:   "2006-01-02 15:04:05",
 		autoBanner:   true,        // Auto banner enabled by default / 기본적으로 자동 배너 활성화

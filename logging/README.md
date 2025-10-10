@@ -35,6 +35,8 @@ import "github.com/arkd0ng/go-utils/logging"
 
 func main() {
     // Create default logger / 기본 로거 생성
+    // By default, logs to file only (./logs/app.log)
+    // 기본적으로 파일에만 로그 (./logs/app.log)
     logger := logging.Default()
     defer logger.Close()
 
@@ -332,7 +334,7 @@ logger.SeparatorLine("=", 50)
 | `WithLevel(level)` | Minimum log level / 최소 로그 레벨 | `INFO` |
 | `WithPrefix(string)` | Log prefix / 로그 프리픽스 | `""` |
 | `WithColor(bool)` | Enable colored output / 색상 출력 활성화 | `true` |
-| `WithStdout(bool)` | Enable stdout output / 표준 출력 활성화 | `true` |
+| `WithStdout(bool)` | Enable stdout output / 표준 출력 활성화 | `false` |
 | `WithFile(bool)` | Enable file output / 파일 출력 활성화 | `true` |
 | `WithStdoutOnly()` | Stdout only (no file) / 표준 출력만 (파일 없음) | - |
 | `WithFileOnly()` | File only (no stdout) / 파일만 (표준 출력 없음) | - |
@@ -349,9 +351,35 @@ logger.SeparatorLine("=", 50)
 
 ## Advanced Usage / 고급 사용법
 
-### File-Only Logging / 파일 전용 로깅
+### Console and File Output / 콘솔과 파일 모두 출력
+
+기본적으로 파일에만 출력됩니다. 콘솔에도 출력하려면 `WithStdout(true)`를 추가하세요.
+
+By default, logs go to file only. To enable console output, add `WithStdout(true)`.
 
 ```go
+logger, _ := logging.New(
+    logging.WithFilePath("./logs/app.log"),
+    logging.WithStdout(true), // Enable console output / 콘솔 출력 활성화
+)
+
+// 또는 / Or
+logger, _ := logging.New(
+    logging.WithFilePath("./logs/app.log"),
+    logging.WithStdout(true),
+    logging.WithFile(true), // Both enabled / 둘 다 활성화
+)
+```
+
+### File-Only Logging / 파일 전용 로깅 (기본값 / Default)
+
+```go
+// Default behavior - file only / 기본 동작 - 파일만
+logger, _ := logging.New(
+    logging.WithFilePath("./logs/production.log"),
+)
+
+// Or explicitly / 또는 명시적으로
 logger, _ := logging.New(
     logging.WithFilePath("./logs/production.log"),
     logging.WithFileOnly(), // No console output / 콘솔 출력 없음
