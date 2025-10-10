@@ -18,7 +18,30 @@ This file contains a high-level overview of major and minor versions. For detail
 
 ---
 
-## [v1.2.x] - Documentation Work / 문서화 작업 (진행 중 / In Progress)
+## [v1.3.x] - Database Utilities / 데이터베이스 유틸리티 (진행 중 / In Progress)
+
+**Focus / 초점**: Extreme simplicity MySQL/MariaDB package with zero-downtime credential rotation / 무중단 자격 증명 순환을 갖춘 극도로 간단한 MySQL/MariaDB 패키지
+
+**Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.3.md](docs/CHANGELOG/CHANGELOG-v1.3.md)
+
+### Highlights / 주요 사항
+- **Design documents for database/mysql package** / database/mysql 패키지 설계 문서
+- **Extreme simplicity**: 30 lines → 2 lines of code / 극도의 간결함: 30줄 → 2줄 코드
+- **Auto everything**: Connection management, retry, cleanup / 모든 것 자동: 연결 관리, 재시도, 정리
+- **Three-layer API**: Simple, Query Builder, Raw SQL / 3계층 API: 간단, 쿼리 빌더, Raw SQL
+- **Zero-downtime credential rotation**: Multiple connection pools with rolling rotation / 무중단 자격 증명 순환: 순환 교체 방식의 다중 연결 풀
+- **User-provided credential refresh function**: Compatible with Vault, AWS Secrets Manager, etc. / 사용자 제공 자격 증명 갱신 함수: Vault, AWS Secrets Manager 등과 호환
+
+**Key Design Principles / 주요 설계 원칙**:
+- Zero Mental Overhead: Connect once, forget about DB state / 한 번 연결하면 DB 상태를 잊어버려도 됨
+- SQL-Like API: Close to actual SQL syntax / SQL 문법에 가까운 API
+- "If not 10x simpler, don't build it" / "10배 간단하지 않으면 만들지 마세요"
+
+**Latest Version / 최신 버전**: v1.3.001 (2025-10-10) - Design documents only / 설계 문서만
+
+---
+
+## [v1.2.x] - Documentation Work / 문서화 작업
 
 **Focus / 초점**: Comprehensive documentation, CHANGELOG system, and project management / 종합 문서화, CHANGELOG 시스템, 프로젝트 관리
 
@@ -30,7 +53,7 @@ This file contains a high-level overview of major and minor versions. For detail
 - Documented Git workflow and commit conventions / Git 워크플로우 및 커밋 규칙 문서화
 - Improved project documentation structure / 프로젝트 문서 구조 개선
 
-**Latest Version / 최신 버전**: v1.2.002 (2025-10-10)
+**Latest Version / 최신 버전**: v1.2.004 (2025-10-10)
 
 ---
 
