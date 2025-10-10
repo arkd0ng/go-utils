@@ -273,6 +273,7 @@ func TestLevelString(t *testing.T) {
 func TestBanner(t *testing.T) {
 	logger, err := New(
 		WithFilePath("./test_logs/banner.log"),
+		WithAutoBanner(false), // Disable auto banner for this test / 이 테스트에서는 자동 배너 비활성화
 	)
 	if err != nil {
 		t.Fatalf("Failed to create logger: %v", err)
@@ -290,6 +291,87 @@ func TestBanner(t *testing.T) {
 	// Verify log file exists / 로그 파일이 존재하는지 확인
 	if _, err := os.Stat("./test_logs/banner.log"); os.IsNotExist(err) {
 		t.Error("Log file should exist")
+	}
+}
+
+// TestAutoBanner tests automatic banner printing on logger creation
+// TestAutoBanner는 로거 생성 시 자동 배너 출력을 테스트합니다
+func TestAutoBanner(t *testing.T) {
+	tests := []struct {
+		name           string
+		opts           []Option
+		shouldHaveBanner bool
+	}{
+		{
+			name: "Auto banner enabled (default)",
+			opts: []Option{
+				WithFilePath("./test_logs/auto_banner_default.log"),
+			},
+			shouldHaveBanner: true,
+		},
+		{
+			name: "Auto banner disabled",
+			opts: []Option{
+				WithFilePath("./test_logs/auto_banner_disabled.log"),
+				WithAutoBanner(false),
+			},
+			shouldHaveBanner: false,
+		},
+		{
+			name: "Custom app name and version",
+			opts: []Option{
+				WithFilePath("./test_logs/auto_banner_custom.log"),
+				WithAppName("TestApp"),
+				WithAppVersion("v2.0.0"),
+			},
+			shouldHaveBanner: true,
+		},
+		{
+			name: "WithBanner convenience function",
+			opts: []Option{
+				WithFilePath("./test_logs/auto_banner_convenience.log"),
+				WithBanner("MyApp", "v3.0.0"),
+			},
+			shouldHaveBanner: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			logger, err := New(tt.opts...)
+			if err != nil {
+				t.Fatalf("Failed to create logger: %v", err)
+			}
+			defer logger.Close()
+			defer cleanupTestLogs()
+
+			// Write a test log to ensure file is created / 파일 생성을 위해 테스트 로그 작성
+			logger.Info("Test log message")
+
+			// Read log file / 로그 파일 읽기
+			content, err := os.ReadFile(logger.config.filename)
+			if err != nil {
+				t.Fatalf("Failed to read log file: %v", err)
+			}
+
+			logStr := string(content)
+			hasBanner := strings.Contains(logStr, "╔") || strings.Contains(logStr, "═")
+
+			if tt.shouldHaveBanner && !hasBanner {
+				t.Error("Log file should contain auto banner")
+			}
+			if !tt.shouldHaveBanner && hasBanner {
+				t.Error("Log file should not contain auto banner")
+			}
+
+			// Verify custom app name/version if specified
+			// 지정된 경우 커스텀 앱 이름/버전 확인
+			if logger.config.appName != "" && tt.shouldHaveBanner {
+				if !strings.Contains(logStr, logger.config.appName) {
+					t.Errorf("Log file should contain app name: %s", logger.config.appName)
+				}
+			}
+		})
 	}
 }
 

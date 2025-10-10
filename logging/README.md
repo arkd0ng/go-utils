@@ -18,6 +18,7 @@ go get github.com/arkd0ng/go-utils/logging
 - **Structured Logging** - Key-value pairs for searchable logs / 검색 가능한 키-값 쌍 로깅
 - **Colored Output** - Color-coded console output / 색상으로 구분된 콘솔 출력
 - **Multiple Loggers** - Create separate loggers for different purposes / 용도별 독립 로거 생성
+- **Automatic Banner** - Prints banner on logger creation by default / 로거 생성 시 자동 배너 출력
 - **Banner Support** - ASCII art banners for application startup / 애플리케이션 시작 배너 지원
 - **Thread-Safe** - Safe for concurrent use / 동시성 안전
 
@@ -131,6 +132,38 @@ logger.Warn("Warning message")
 logger.Error("Error message")
 ```
 
+### Automatic Banner / 자동 배너
+
+By default, a banner is automatically printed when a logger is created.
+
+기본적으로 로거 생성 시 자동으로 배너가 출력됩니다.
+
+```go
+// Default auto banner (prints "Application v1.0.0")
+// 기본 자동 배너 ("Application v1.0.0" 출력)
+logger := logging.Default()
+// Banner is automatically printed / 배너가 자동으로 출력됨
+
+// Custom app name and version / 커스텀 앱 이름과 버전
+logger, _ := logging.New(
+    logging.WithAppName("MyApp"),
+    logging.WithAppVersion("v2.0.0"),
+)
+// Prints "MyApp v2.0.0" banner automatically / "MyApp v2.0.0" 배너가 자동으로 출력됨
+
+// Convenience function / 편의 함수
+logger, _ := logging.New(
+    logging.WithBanner("ProductionAPI", "v3.2.1"),
+)
+// Prints "ProductionAPI v3.2.1" banner automatically
+
+// Disable auto banner / 자동 배너 비활성화
+logger, _ := logging.New(
+    logging.WithAutoBanner(false),
+)
+// No automatic banner / 자동 배너 없음
+```
+
 ### Banner Styles / 배너 스타일
 
 ```go
@@ -196,6 +229,15 @@ logger.SeparatorLine("=", 50)
 | `WithStdoutOnly()` | Stdout only (no file) / 표준 출력만 (파일 없음) | - |
 | `WithFileOnly()` | File only (no stdout) / 파일만 (표준 출력 없음) | - |
 | `WithTimeFormat(format)` | Time format / 시간 형식 | `2006-01-02 15:04:05` |
+
+### Banner Options / 배너 옵션
+
+| Option / 옵션 | Description / 설명 | Default / 기본값 |
+|--------------|-------------------|-----------------|
+| `WithAutoBanner(bool)` | Auto-print banner on creation / 생성 시 자동 배너 출력 | `true` |
+| `WithAppName(string)` | Application name for banner / 배너 애플리케이션 이름 | `"Application"` |
+| `WithAppVersion(string)` | Application version for banner / 배너 애플리케이션 버전 | `"v1.0.0"` |
+| `WithBanner(name, version)` | Convenience: set name, version & enable auto banner / 편의 함수 | - |
 
 ## Advanced Usage / 고급 사용법
 

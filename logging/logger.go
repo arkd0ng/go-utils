@@ -67,6 +67,11 @@ func New(opts ...Option) (*Logger, error) {
 		}
 	}
 
+	// Print auto banner if enabled / 자동 배너가 활성화된 경우 배너 출력
+	if cfg.autoBanner {
+		logger.Banner(cfg.appName, cfg.appVersion)
+	}
+
 	return logger, nil
 }
 

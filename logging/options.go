@@ -21,6 +21,11 @@ type config struct {
 	enableStdout bool   // Enable stdout output / 표준 출력 활성화
 	enableFile   bool   // Enable file output / 파일 출력 활성화
 	timeFormat   string // Time format for log entries / 로그 항목의 시간 형식
+
+	// Banner settings / 배너 설정
+	autoBanner bool   // Automatically print banner on logger creation / 로거 생성 시 자동으로 배너 출력
+	appName    string // Application name for banner / 배너에 표시할 애플리케이션 이름
+	appVersion string // Application version for banner / 배너에 표시할 애플리케이션 버전
 }
 
 // defaultConfig returns the default configuration
@@ -38,6 +43,9 @@ func defaultConfig() *config {
 		enableStdout: true,
 		enableFile:   true,
 		timeFormat:   "2006-01-02 15:04:05",
+		autoBanner:   true,        // Auto banner enabled by default / 기본적으로 자동 배너 활성화
+		appName:      "Application", // Default app name / 기본 애플리케이션 이름
+		appVersion:   "v1.0.0",      // Default version / 기본 버전
 	}
 }
 
@@ -241,6 +249,73 @@ func WithStdoutOnly() Option {
 func WithTimeFormat(format string) Option {
 	return func(c *config) error {
 		c.timeFormat = format
+		return nil
+	}
+}
+
+// WithAutoBanner enables or disables automatic banner printing on logger creation
+// WithAutoBanner는 로거 생성 시 자동 배너 출력을 활성화하거나 비활성화합니다
+//
+// Parameters / 매개변수:
+//   - enable: true to enable auto banner / 자동 배너를 활성화하려면 true
+//
+// Example / 예제:
+//
+//	logger, _ := logging.New(logging.WithAutoBanner(false)) // Disable auto banner / 자동 배너 비활성화
+func WithAutoBanner(enable bool) Option {
+	return func(c *config) error {
+		c.autoBanner = enable
+		return nil
+	}
+}
+
+// WithAppName sets the application name for the banner
+// WithAppName은 배너에 표시할 애플리케이션 이름을 설정합니다
+//
+// Parameters / 매개변수:
+//   - name: application name / 애플리케이션 이름
+//
+// Example / 예제:
+//
+//	logger, _ := logging.New(logging.WithAppName("MyApp"))
+func WithAppName(name string) Option {
+	return func(c *config) error {
+		c.appName = name
+		return nil
+	}
+}
+
+// WithAppVersion sets the application version for the banner
+// WithAppVersion은 배너에 표시할 애플리케이션 버전을 설정합니다
+//
+// Parameters / 매개변수:
+//   - version: application version / 애플리케이션 버전
+//
+// Example / 예제:
+//
+//	logger, _ := logging.New(logging.WithAppVersion("v2.0.0"))
+func WithAppVersion(version string) Option {
+	return func(c *config) error {
+		c.appVersion = version
+		return nil
+	}
+}
+
+// WithBanner is a convenience function to set app name, version, and enable auto banner
+// WithBanner는 앱 이름, 버전을 설정하고 자동 배너를 활성화하는 편의 함수입니다
+//
+// Parameters / 매개변수:
+//   - name: application name / 애플리케이션 이름
+//   - version: application version / 애플리케이션 버전
+//
+// Example / 예제:
+//
+//	logger, _ := logging.New(logging.WithBanner("MyApp", "v2.0.0"))
+func WithBanner(name, version string) Option {
+	return func(c *config) error {
+		c.autoBanner = true
+		c.appName = name
+		c.appVersion = version
 		return nil
 	}
 }

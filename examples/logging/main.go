@@ -27,8 +27,12 @@ func main() {
 	// Example 5: Structured logging
 	structuredLoggingExample()
 
-	// Example 6: Banner examples (배너 예제)
-	// Example 6: Banner examples
+	// Example 6: Auto banner examples (자동 배너 예제)
+	// Example 6: Auto banner examples
+	autoBannerExample()
+
+	// Example 7: Manual banner examples (수동 배너 예제)
+	// Example 7: Manual banner examples
 	bannerExample()
 }
 
@@ -182,6 +186,77 @@ func structuredLoggingExample() {
 	)
 
 	logger.SeparatorLine("=", 50)
+}
+
+// autoBannerExample demonstrates automatic banner functionality
+// autoBannerExample은 자동 배너 기능을 보여줍니다
+func autoBannerExample() {
+	// Example 6-1: Auto banner with default settings (기본 설정으로 자동 배너)
+	// By default, a banner is automatically printed when logger is created
+	// 기본적으로 로거 생성 시 자동으로 배너가 출력됩니다
+	logger1, _ := logging.New(
+		logging.WithFilePath("./logs/auto_banner_default.log"),
+	)
+	defer logger1.Close()
+
+	logger1.Info("Logger created with auto banner (default app name and version)")
+	logger1.Info("Banner: 'Application v1.0.0' was printed automatically")
+	logger1.SeparatorLine("-", 50)
+
+	// Example 6-2: Auto banner with custom app name and version (커스텀 앱 이름/버전)
+	// You can customize the app name and version for the auto banner
+	// 자동 배너의 앱 이름과 버전을 커스터마이즈할 수 있습니다
+	logger2, _ := logging.New(
+		logging.WithFilePath("./logs/auto_banner_custom.log"),
+		logging.WithAppName("MyApp"),
+		logging.WithAppVersion("v2.0.0"),
+	)
+	defer logger2.Close()
+
+	logger2.Info("Logger created with custom app name and version")
+	logger2.Info("Banner: 'MyApp v2.0.0' was printed automatically")
+	logger2.SeparatorLine("-", 50)
+
+	// Example 6-3: Convenience function WithBanner (편의 함수)
+	// Use WithBanner() to set both name and version at once
+	// WithBanner()를 사용하여 이름과 버전을 한 번에 설정할 수 있습니다
+	logger3, _ := logging.New(
+		logging.WithFilePath("./logs/auto_banner_convenience.log"),
+		logging.WithBanner("ProductionAPI", "v3.2.1"),
+	)
+	defer logger3.Close()
+
+	logger3.Info("Logger created with WithBanner convenience function")
+	logger3.Info("Banner: 'ProductionAPI v3.2.1' was printed automatically")
+	logger3.SeparatorLine("-", 50)
+
+	// Example 6-4: Disable auto banner (자동 배너 비활성화)
+	// If you don't want auto banner, disable it explicitly
+	// 자동 배너를 원하지 않으면 명시적으로 비활성화할 수 있습니다
+	logger4, _ := logging.New(
+		logging.WithFilePath("./logs/auto_banner_disabled.log"),
+		logging.WithAutoBanner(false),
+	)
+	defer logger4.Close()
+
+	logger4.Info("Logger created with auto banner disabled")
+	logger4.Info("No automatic banner was printed")
+	logger4.SeparatorLine("-", 50)
+
+	// Example 6-5: Disable auto banner but use manual banner (수동 배너 사용)
+	// You can disable auto banner and call Banner() manually when needed
+	// 자동 배너를 비활성화하고 필요할 때 수동으로 배너를 호출할 수 있습니다
+	logger5, _ := logging.New(
+		logging.WithFilePath("./logs/manual_banner_only.log"),
+		logging.WithAutoBanner(false),
+	)
+	defer logger5.Close()
+
+	logger5.Info("Starting application...")
+	logger5.Banner("Manual Banner Example", "v1.5.0")
+	logger5.Info("Manual banner called when needed")
+
+	logger5.SeparatorLine("=", 50)
 }
 
 // bannerExample demonstrates various banner styles
