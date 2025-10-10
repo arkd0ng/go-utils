@@ -69,7 +69,23 @@ func New(opts ...Option) (*Logger, error) {
 
 	// Print auto banner if enabled / 자동 배너가 활성화된 경우 배너 출력
 	if cfg.autoBanner {
-		logger.Banner(cfg.appName, cfg.appVersion)
+		bannerName := cfg.appName
+
+		// If appName is default "Application", extract from filename
+		// appName이 기본값 "Application"이면 파일명에서 추출
+		if bannerName == "Application" && cfg.filename != "" {
+			// Extract filename without path and extension
+			// 경로와 확장자를 제외한 파일명 추출
+			base := filepath.Base(cfg.filename) // "database.log"
+			ext := filepath.Ext(base)           // ".log"
+			if ext != "" {
+				bannerName = base[:len(base)-len(ext)] // "database"
+			} else {
+				bannerName = base
+			}
+		}
+
+		logger.Banner(bannerName, cfg.appVersion)
 	}
 
 	return logger, nil

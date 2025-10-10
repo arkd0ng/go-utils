@@ -21,6 +21,7 @@ go get github.com/arkd0ng/go-utils/logging
 - **Colored Output** - Color-coded console output / 색상으로 구분된 콘솔 출력
 - **Multiple Loggers** - Create separate loggers for different purposes / 용도별 독립 로거 생성
 - **Automatic Banner** - Prints banner on logger creation by default / 로거 생성 시 자동 배너 출력
+- **Smart Banner** - Auto-extracts app name from log filename / 로그 파일명에서 앱 이름 자동 추출
 - **Banner Support** - ASCII art banners for application startup / 애플리케이션 시작 배너 지원
 - **Thread-Safe** - Safe for concurrent use / 동시성 안전
 
@@ -248,25 +249,58 @@ By default, a banner is automatically printed when a logger is created.
 
 기본적으로 로거 생성 시 자동으로 배너가 출력됩니다.
 
-```go
-// Default auto banner (prints "Application v1.0.0")
-// 기본 자동 배너 ("Application v1.0.0" 출력)
-logger := logging.Default()
-// Banner is automatically printed / 배너가 자동으로 출력됨
+#### Smart App Name Detection / 스마트 앱 이름 감지
 
-// Custom app name and version / 커스텀 앱 이름과 버전
+**자동으로 로그 파일명에서 앱 이름을 추출합니다!**
+
+When you don't specify an app name, it's automatically extracted from the log filename.
+
+앱 이름을 지정하지 않으면 로그 파일명에서 자동으로 추출됩니다.
+
+```go
+// Auto-extract from filename / 파일명에서 자동 추출
 logger, _ := logging.New(
-    logging.WithAppName("MyApp"),
+    logging.WithFilePath("./logs/database.log"),
+)
+// Prints banner: "database v1.0.0" ✨
+// 배너 출력: "database v1.0.0" ✨
+
+logger, _ := logging.New(
+    logging.WithFilePath("./logs/api-server.log"),
+)
+// Prints banner: "api-server v1.0.0" ✨
+// 배너 출력: "api-server v1.0.0" ✨
+
+// Default logger uses "app" from "./logs/app.log"
+// Default 로거는 "./logs/app.log"에서 "app" 사용
+logger := logging.Default()
+// Prints banner: "app v1.0.0"
+// 배너 출력: "app v1.0.0"
+```
+
+#### Custom App Name / 커스텀 앱 이름
+
+```go
+// Override with custom name / 커스텀 이름으로 재정의
+logger, _ := logging.New(
+    logging.WithFilePath("./logs/database.log"),
+    logging.WithAppName("MyDatabaseService"), // Override auto-detection
     logging.WithAppVersion("v2.0.0"),
 )
-// Prints "MyApp v2.0.0" banner automatically / "MyApp v2.0.0" 배너가 자동으로 출력됨
+// Prints banner: "MyDatabaseService v2.0.0"
+// 배너 출력: "MyDatabaseService v2.0.0"
 
 // Convenience function / 편의 함수
 logger, _ := logging.New(
     logging.WithBanner("ProductionAPI", "v3.2.1"),
 )
-// Prints "ProductionAPI v3.2.1" banner automatically
+// Prints banner: "ProductionAPI v3.2.1"
+// 배너 출력: "ProductionAPI v3.2.1"
+```
 
+#### Disable Auto Banner / 자동 배너 비활성화
+
+```go
 // Disable auto banner / 자동 배너 비활성화
 logger, _ := logging.New(
     logging.WithAutoBanner(false),

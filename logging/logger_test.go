@@ -334,6 +334,21 @@ func TestAutoBanner(t *testing.T) {
 			},
 			shouldHaveBanner: true,
 		},
+		{
+			name: "Auto extract app name from filename",
+			opts: []Option{
+				WithFilePath("./test_logs/database.log"),
+				// appName not specified, should extract "database" from filename
+			},
+			shouldHaveBanner: true,
+		},
+		{
+			name: "Auto extract from complex path",
+			opts: []Option{
+				WithFilePath("./test_logs/api-server.log"),
+			},
+			shouldHaveBanner: true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -364,9 +379,19 @@ func TestAutoBanner(t *testing.T) {
 				t.Error("Log file should not contain auto banner")
 			}
 
-			// Verify custom app name/version if specified
-			// 지정된 경우 커스텀 앱 이름/버전 확인
-			if logger.config.appName != "" && tt.shouldHaveBanner {
+			// Verify auto-extracted filename in banner
+			// 배너에 자동 추출된 파일명 확인
+			if tt.name == "Auto extract app name from filename" {
+				if !strings.Contains(logStr, "database") {
+					t.Error("Log file should contain auto-extracted app name 'database'")
+				}
+			} else if tt.name == "Auto extract from complex path" {
+				if !strings.Contains(logStr, "api-server") {
+					t.Error("Log file should contain auto-extracted app name 'api-server'")
+				}
+			} else if logger.config.appName != "" && logger.config.appName != "Application" && tt.shouldHaveBanner {
+				// Only verify config appName if it's not the default "Application"
+				// 기본값 "Application"이 아닌 경우에만 config appName 확인
 				if !strings.Contains(logStr, logger.config.appName) {
 					t.Errorf("Log file should contain app name: %s", logger.config.appName)
 				}
