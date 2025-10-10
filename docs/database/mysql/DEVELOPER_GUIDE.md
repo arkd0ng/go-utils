@@ -344,7 +344,10 @@ New(options...)
 ### Query Execution Flow / 쿼리 실행 흐름
 
 ```go
-SelectAll(ctx, table, condition, args...)
+SelectAll(table, condition, args...)  // Non-context version
+    │
+    ▼
+SelectAllContext(context.Background(), table, condition, args...)
     │
     ▼
 [Check if client closed]
@@ -839,12 +842,39 @@ func (c *Client) Insert(ctx context.Context, table string, ...) {
 
 ### Adding a New Simple API Method / 새로운 Simple API 메서드 추가
 
+**Important: Dual API Pattern / 중요: 이중 API 패턴**
+
+All Simple API methods follow a dual API pattern for better developer experience:
+- **Non-Context Version**: Convenience method without context parameter (uses `context.Background()`)
+- **Context Version** (suffix `*Context`): Explicit context parameter for timeout/cancellation control
+
+모든 Simple API 메서드는 더 나은 개발자 경험을 위해 이중 API 패턴을 따릅니다:
+- **Non-Context 버전**: context 매개변수 없는 편의 메서드 (`context.Background()` 사용)
+- **Context 버전** (접미사 `*Context`): 타임아웃/취소 제어를 위한 명시적 context 매개변수
+
+**Example / 예제**:
+```go
+// Non-context version (recommended for most cases) / Non-context 버전 (대부분의 경우 권장)
+func (c *Client) SelectAll(table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+    return c.SelectAllContext(context.Background(), table, conditionAndArgs...)
+}
+
+// Context version / Context 버전
+func (c *Client) SelectAllContext(ctx context.Context, table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+    // ... implementation
+}
+```
+
 **Step 1**: Define method in `simple.go` / `simple.go`에 메서드 정의
 
 ```go
-// SelectDistinct selects distinct rows
-// SelectDistinct는 중복 없는 행을 선택합니다
-func (c *Client) SelectDistinct(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+// Non-context version (convenience wrapper) / Non-context 버전 (편의 래퍼)
+func (c *Client) SelectDistinct(table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+    return c.SelectDistinctContext(context.Background(), table, columns, conditionAndArgs...)
+}
+
+// Context version (full implementation) / Context 버전 (전체 구현)
+func (c *Client) SelectDistinctContext(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
     c.mu.RLock()
     if c.closed {
         c.mu.RUnlock()
@@ -898,8 +928,13 @@ func (c *Client) SelectDistinct(ctx context.Context, table string, columns []str
 **Step 2**: Add transaction support in `transaction.go` / `transaction.go`에 트랜잭션 지원 추가
 
 ```go
-// SelectDistinct for transactions / 트랜잭션용 SelectDistinct
-func (tx *Tx) SelectDistinct(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+// Non-context version / Non-context 버전
+func (tx *Tx) SelectDistinct(table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+    return tx.SelectDistinctContext(context.Background(), table, columns, conditionAndArgs...)
+}
+
+// Context version / Context 버전
+func (tx *Tx) SelectDistinctContext(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
     // Similar implementation using tx.tx instead of db
     // tx.tx를 사용하여 유사한 구현
 }
@@ -914,7 +949,7 @@ func TestSelectDistinct(t *testing.T) {
     defer db.Close()
 
     // Test cases / 테스트 케이스
-    results, err := db.SelectDistinct(ctx, "users", []string{"city"})
+    results, err := db.SelectDistinct("users", []string{"city"})
     if err != nil {
         t.Fatalf("SelectDistinct failed: %v", err)
     }
@@ -1090,7 +1125,7 @@ func TestSelectAll(t *testing.T) {
 
     // Test 1: Select all rows / 모든 행 선택
     t.Run("SelectAll", func(t *testing.T) {
-        users, err := db.SelectAll(ctx, "test_users")
+        users, err := db.SelectAll("test_users")
         if err != nil {
             t.Fatalf("SelectAll failed: %v", err)
         }
@@ -1106,7 +1141,7 @@ func TestSelectAll(t *testing.T) {
 
     // Test 2: Select with condition / 조건으로 선택
     t.Run("SelectAllWithCondition", func(t *testing.T) {
-        users, err := db.SelectAll(ctx, "test_users", "age > ?", 25)
+        users, err := db.SelectAll("test_users", "age > ?", 25)
         if err != nil {
             t.Fatalf("SelectAll failed: %v", err)
         }
@@ -1118,7 +1153,7 @@ func TestSelectAll(t *testing.T) {
 
     // Test 3: Empty result / 빈 결과
     t.Run("SelectAllEmpty", func(t *testing.T) {
-        users, err := db.SelectAll(ctx, "test_users", "age > ?", 100)
+        users, err := db.SelectAll("test_users", "age > ?", 100)
         if err != nil {
             t.Fatalf("SelectAll failed: %v", err)
         }
@@ -1142,7 +1177,7 @@ func TestTransaction(t *testing.T) {
     // Test commit / 커밋 테스트
     t.Run("Commit", func(t *testing.T) {
         err := db.Transaction(ctx, func(tx *mysql.Tx) error {
-            tx.Insert(ctx, "test_users", map[string]interface{}{
+            tx.Insert("test_users", map[string]interface{}{
                 "name": "Alice", "email": "alice@example.com", "age": 25,
             })
             return nil // Commit / 커밋
@@ -1153,7 +1188,7 @@ func TestTransaction(t *testing.T) {
         }
 
         // Verify data was committed / 데이터가 커밋되었는지 확인
-        users, _ := db.SelectAll(ctx, "test_users", "name = ?", "Alice")
+        users, _ := db.SelectAll("test_users", "name = ?", "Alice")
         if len(users) != 1 {
             t.Error("Transaction did not commit")
         }
@@ -1162,7 +1197,7 @@ func TestTransaction(t *testing.T) {
     // Test rollback / 롤백 테스트
     t.Run("Rollback", func(t *testing.T) {
         err := db.Transaction(ctx, func(tx *mysql.Tx) error {
-            tx.Insert(ctx, "test_users", map[string]interface{}{
+            tx.Insert("test_users", map[string]interface{}{
                 "name": "Bob", "email": "bob@example.com", "age": 28,
             })
             return errors.New("rollback") // Rollback / 롤백
@@ -1173,7 +1208,7 @@ func TestTransaction(t *testing.T) {
         }
 
         // Verify data was rolled back / 데이터가 롤백되었는지 확인
-        users, _ := db.SelectAll(ctx, "test_users", "name = ?", "Bob")
+        users, _ := db.SelectAll("test_users", "name = ?", "Bob")
         if len(users) != 0 {
             t.Error("Transaction did not rollback")
         }
@@ -1193,7 +1228,7 @@ func BenchmarkSelectAll(b *testing.B) {
     b.ResetTimer()
 
     for i := 0; i < b.N; i++ {
-        db.SelectAll(ctx, "test_users")
+        db.SelectAll("test_users")
     }
 }
 
@@ -1206,7 +1241,7 @@ func BenchmarkInsert(b *testing.B) {
     b.ResetTimer()
 
     for i := 0; i < b.N; i++ {
-        db.Insert(ctx, "test_users", map[string]interface{}{
+        db.Insert("test_users", map[string]interface{}{
             "name":  fmt.Sprintf("User%d", i),
             "email": fmt.Sprintf("user%d@example.com", i),
             "age":   25,
@@ -1261,7 +1296,7 @@ CREATE INDEX idx_users_age_city ON users(age, city);
 
 ```go
 // ❌ Bad - select all columns / 나쁜 예 - 모든 컬럼 선택
-users, _ := db.SelectAll(ctx, "users")
+users, _ := db.SelectAll("users")
 
 // ✅ Good - select specific columns / 좋은 예 - 특정 컬럼 선택
 users, _ := db.SelectWhere(ctx, "users", "",
@@ -1272,7 +1307,7 @@ users, _ := db.SelectWhere(ctx, "users", "",
 
 ```go
 // ❌ Bad - load all data / 나쁜 예 - 모든 데이터 로드
-users, _ := db.SelectAll(ctx, "users")
+users, _ := db.SelectAll("users")
 
 // ✅ Good - paginate / 좋은 예 - 페이징
 users, _ := db.SelectWhere(ctx, "users", "",
@@ -1296,7 +1331,7 @@ db, _ := mysql.New(
 // ✅ Good - batch in transaction / 좋은 예 - 트랜잭션에서 배치
 db.Transaction(ctx, func(tx *mysql.Tx) error {
     for _, item := range items {
-        tx.Insert(ctx, "items", item)
+        tx.Insert("items", item)
     }
     return nil
 })
@@ -1452,7 +1487,7 @@ package mysql
 //
 // Example / 예제:
 //
-//   users, err := db.SelectAll(ctx, "users", "age > ?", 18)
+//   users, err := db.SelectAll("users", "age > ?", 18)
 //
 func (c *Client) SelectAll(...)
 ```

@@ -6,7 +6,53 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
-## [v1.3.008] - 2025-10-10
+## [v1.3.008] - 2025-10-10 (Documentation Update)
+
+### Changed / 변경
+- **Complete documentation update for non-context API** / Non-context API에 대한 전체 문서 업데이트:
+  - Updated `docs/database/mysql/USER_MANUAL.md` with non-context API examples / 모든 예제를 non-context API로 업데이트
+  - Updated `docs/database/mysql/DEVELOPER_GUIDE.md` with dual API pattern guidance / 이중 API 패턴 가이드로 업데이트
+  - All Simple API examples now use non-context versions by default / 모든 Simple API 예제가 기본적으로 non-context 버전 사용
+  - Added explanatory sections about dual API pattern (non-context vs *Context) / 이중 API 패턴 설명 섹션 추가
+
+### Updated Sections / 업데이트된 섹션
+
+**USER_MANUAL.md**:
+- Added "API Versions" section explaining dual API pattern / 이중 API 패턴을 설명하는 "API Versions" 섹션 추가
+- Updated all method signatures: SelectAll, SelectOne, SelectColumn, SelectColumns, Insert, Update, Delete, Count, Exists
+- Converted all examples from `db.Method(ctx, ...)` to `db.Method(...)`
+- Updated Quick Start, Usage Patterns, Common Use Cases, and Best Practices sections / 빠른 시작, 사용 패턴, 일반 사용 사례, 모범 사례 섹션 업데이트
+- ~80 example code blocks updated across the entire manual / 매뉴얼 전체에 걸쳐 약 80개의 예제 코드 블록 업데이트
+
+**DEVELOPER_GUIDE.md**:
+- Added "Dual API Pattern" section in "Adding New Features" / "새 기능 추가"에 "이중 API 패턴" 섹션 추가
+- Updated all example implementations to show both non-context and *Context versions / 모든 예제 구현을 non-context 및 *Context 버전으로 업데이트
+- Updated query execution flow diagram / 쿼리 실행 흐름 다이어그램 업데이트
+- ~20 example code blocks updated / 약 20개의 예제 코드 블록 업데이트
+
+### Pattern / 패턴
+
+All documentation now follows this pattern:
+```go
+// Non-context (recommended for most cases)
+users, _ := db.SelectAll("users")
+
+// Context version (for timeout/cancellation control)
+users, _ := db.SelectAllContext(ctx, "users")
+```
+
+모든 문서는 이제 이 패턴을 따릅니다:
+- Non-context 버전: 대부분의 경우 권장
+- Context 버전: 타임아웃/취소 제어가 필요한 경우
+
+### Verification / 확인
+- ✅ All old API patterns (`db.Method(ctx, ...)`) removed from documentation
+- ✅ Build successful: `go build ./database/mysql` and `go build ./examples/mysql`
+- ✅ Documentation consistency verified across USER_MANUAL and DEVELOPER_GUIDE
+
+---
+
+## [v1.3.008] - 2025-10-10 (Code Implementation)
 
 ### Added / 추가
 - **Non-Context API Methods** - Simplified API without context parameter / Context 매개변수 없는 간소화된 API:

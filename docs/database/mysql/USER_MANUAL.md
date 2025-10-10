@@ -112,7 +112,7 @@ func main() {
     ctx := context.Background()
 
     // Select all users / 모든 사용자 선택
-    users, err := db.SelectAll(ctx, "users")
+    users, err := db.SelectAll("users")
     if err != nil {
         log.Fatal(err)
     }
@@ -125,7 +125,7 @@ func main() {
 
 ```go
 // Insert / 삽입
-result, err := db.Insert(ctx, "users", map[string]any{
+result, err := db.Insert("users", map[string]any{
     "name":  "John Doe",
     "email": "john@example.com",
     "age":   30,
@@ -133,12 +133,12 @@ result, err := db.Insert(ctx, "users", map[string]any{
 id, _ := result.LastInsertId()
 
 // Update / 업데이트
-db.Update(ctx, "users",
+db.Update("users",
     map[string]any{"age": 31},
     "id = ?", id)
 
 // Delete / 삭제
-db.Delete(ctx, "users", "id = ?", id)
+db.Delete("users", "id = ?", id)
 ```
 
 ### Example 3: Query with Options / 옵션을 사용한 쿼리
@@ -155,8 +155,8 @@ users, _ := db.SelectWhere(ctx, "users", "age > ?", 25,
 
 ```go
 err := db.Transaction(ctx, func(tx *mysql.Tx) error {
-    tx.Insert(ctx, "users", map[string]any{"name": "Alice"})
-    tx.Insert(ctx, "users", map[string]any{"name": "Bob"})
+    tx.Insert("users", map[string]any{"name": "Alice"})
+    tx.Insert("users", map[string]any{"name": "Bob"})
     return nil // Auto commit / 자동 커밋
 })
 ```
@@ -246,6 +246,26 @@ The simplest API for common CRUD operations.
 
 일반적인 CRUD 작업을 위한 가장 간단한 API입니다.
 
+**API Versions / API 버전**:
+
+All Simple API methods have two versions:
+- **Non-Context Version**: Uses `context.Background()` internally for simplicity
+- **Context Version** (suffix `*Context`): Accepts explicit context for timeout/cancellation control
+
+모든 Simple API 메서드는 두 가지 버전이 있습니다:
+- **Non-Context 버전**: 간편함을 위해 내부적으로 `context.Background()` 사용
+- **Context 버전** (접미사 `*Context`): 타임아웃/취소 제어를 위한 명시적 컨텍스트 수용
+
+```go
+// Non-context (recommended for most cases) / Non-context (대부분의 경우 권장)
+users, _ := db.SelectAll("users")
+
+// Context version (for timeout control) / Context 버전 (타임아웃 제어용)
+ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+defer cancel()
+users, _ := db.SelectAllContext(ctx, "users")
+```
+
 #### SelectAll
 
 Select all rows from a table with optional WHERE condition.
@@ -253,17 +273,21 @@ Select all rows from a table with optional WHERE condition.
 선택적 WHERE 조건으로 테이블의 모든 행을 선택합니다.
 
 ```go
-func (c *Client) SelectAll(ctx context.Context, table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error)
+func (c *Client) SelectAll(table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error)
+func (c *Client) SelectAllContext(ctx context.Context, table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error)
 ```
 
 **Examples / 예제**:
 ```go
 // Select all / 전체 선택
-users, _ := db.SelectAll(ctx, "users")
+users, _ := db.SelectAll("users")
 
 // With condition / 조건 포함
-users, _ := db.SelectAll(ctx, "users", "age > ?", 18)
-users, _ := db.SelectAll(ctx, "users", "age > ? AND city = ?", 18, "Seoul")
+users, _ := db.SelectAll("users", "age > ?", 18)
+users, _ := db.SelectAll("users", "age > ? AND city = ?", 18, "Seoul")
+
+// With context / Context 사용
+users, _ := db.SelectAllContext(ctx, "users", "age > ?", 18)
 ```
 
 #### SelectOne
@@ -273,13 +297,17 @@ Select a single row from a table.
 테이블에서 단일 행을 선택합니다.
 
 ```go
-func (c *Client) SelectOne(ctx context.Context, table string, conditionAndArgs ...interface{}) (map[string]interface{}, error)
+func (c *Client) SelectOne(table string, conditionAndArgs ...interface{}) (map[string]interface{}, error)
+func (c *Client) SelectOneContext(ctx context.Context, table string, conditionAndArgs ...interface{}) (map[string]interface{}, error)
 ```
 
 **Examples / 예제**:
 ```go
-user, _ := db.SelectOne(ctx, "users", "id = ?", 123)
-user, _ := db.SelectOne(ctx, "users", "email = ?", "john@example.com")
+user, _ := db.SelectOne("users", "id = ?", 123)
+user, _ := db.SelectOne("users", "email = ?", "john@example.com")
+
+// With context / Context 사용
+user, _ := db.SelectOneContext(ctx, "users", "id = ?", 123)
 ```
 
 #### SelectColumn
@@ -289,16 +317,17 @@ Select all rows with a single column from a table.
 테이블에서 단일 컬럼으로 모든 행을 선택합니다.
 
 ```go
-func (c *Client) SelectColumn(ctx context.Context, table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error)
+func (c *Client) SelectColumn(table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error)
+func (c *Client) SelectColumnContext(ctx context.Context, table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error)
 ```
 
 **Examples / 예제**:
 ```go
 // SELECT email FROM users
-emails, _ := db.SelectColumn(ctx, "users", "email")
+emails, _ := db.SelectColumn("users", "email")
 
 // SELECT name FROM users WHERE age > 25
-names, _ := db.SelectColumn(ctx, "users", "name", "age > ?", 25)
+names, _ := db.SelectColumn("users", "name", "age > ?", 25)
 
 // Process results / 결과 처리
 for _, row := range emails {
@@ -313,16 +342,17 @@ Select all rows with multiple columns from a table.
 테이블에서 여러 컬럼으로 모든 행을 선택합니다.
 
 ```go
-func (c *Client) SelectColumns(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error)
+func (c *Client) SelectColumns(table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error)
+func (c *Client) SelectColumnsContext(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error)
 ```
 
 **Examples / 예제**:
 ```go
 // SELECT name, email FROM users
-users, _ := db.SelectColumns(ctx, "users", []string{"name", "email"})
+users, _ := db.SelectColumns("users", []string{"name", "email"})
 
 // SELECT name, age, city FROM users WHERE age > 25
-users, _ := db.SelectColumns(ctx, "users", []string{"name", "age", "city"}, "age > ?", 25)
+users, _ := db.SelectColumns("users", []string{"name", "age", "city"}, "age > ?", 25)
 
 // Process results / 결과 처리
 for _, user := range users {
@@ -337,12 +367,13 @@ Insert a new row into a table.
 테이블에 새 행을 삽입합니다.
 
 ```go
-func (c *Client) Insert(ctx context.Context, table string, data map[string]interface{}) (sql.Result, error)
+func (c *Client) Insert(table string, data map[string]interface{}) (sql.Result, error)
+func (c *Client) InsertContext(ctx context.Context, table string, data map[string]interface{}) (sql.Result, error)
 ```
 
 **Examples / 예제**:
 ```go
-result, _ := db.Insert(ctx, "users", map[string]any{
+result, _ := db.Insert("users", map[string]any{
     "name":  "John Doe",
     "email": "john@example.com",
     "age":   30,
@@ -360,18 +391,19 @@ Update rows in a table.
 테이블의 행을 업데이트합니다.
 
 ```go
-func (c *Client) Update(ctx context.Context, table string, data map[string]interface{}, conditionAndArgs ...interface{}) (sql.Result, error)
+func (c *Client) Update(table string, data map[string]interface{}, conditionAndArgs ...interface{}) (sql.Result, error)
+func (c *Client) UpdateContext(ctx context.Context, table string, data map[string]interface{}, conditionAndArgs ...interface{}) (sql.Result, error)
 ```
 
 **Examples / 예제**:
 ```go
 // Update specific row / 특정 행 업데이트
-result, _ := db.Update(ctx, "users",
+result, _ := db.Update("users",
     map[string]any{"age": 31, "city": "Busan"},
     "id = ?", 123)
 
 // Update all rows / 모든 행 업데이트 (조심!)
-result, _ := db.Update(ctx, "users",
+result, _ := db.Update("users",
     map[string]any{"status": "active"})
 
 rows, _ := result.RowsAffected()
@@ -385,16 +417,17 @@ Delete rows from a table.
 테이블에서 행을 삭제합니다.
 
 ```go
-func (c *Client) Delete(ctx context.Context, table string, conditionAndArgs ...interface{}) (sql.Result, error)
+func (c *Client) Delete(table string, conditionAndArgs ...interface{}) (sql.Result, error)
+func (c *Client) DeleteContext(ctx context.Context, table string, conditionAndArgs ...interface{}) (sql.Result, error)
 ```
 
 **Examples / 예제**:
 ```go
 // Delete specific row / 특정 행 삭제
-result, _ := db.Delete(ctx, "users", "id = ?", 123)
+result, _ := db.Delete("users", "id = ?", 123)
 
 // Delete multiple rows / 여러 행 삭제
-result, _ := db.Delete(ctx, "users", "age < ? AND status = ?", 18, "inactive")
+result, _ := db.Delete("users", "age < ? AND status = ?", 18, "inactive")
 
 rows, _ := result.RowsAffected()
 fmt.Printf("Deleted %d rows\n", rows)
@@ -407,16 +440,17 @@ Count rows in a table.
 테이블의 행 수를 계산합니다.
 
 ```go
-func (c *Client) Count(ctx context.Context, table string, conditionAndArgs ...interface{}) (int64, error)
+func (c *Client) Count(table string, conditionAndArgs ...interface{}) (int64, error)
+func (c *Client) CountContext(ctx context.Context, table string, conditionAndArgs ...interface{}) (int64, error)
 ```
 
 **Examples / 예제**:
 ```go
 // Count all / 전체 수
-total, _ := db.Count(ctx, "users")
+total, _ := db.Count("users")
 
 // Count with condition / 조건으로 계산
-adults, _ := db.Count(ctx, "users", "age >= ?", 18)
+adults, _ := db.Count("users", "age >= ?", 18)
 ```
 
 #### Exists
@@ -426,13 +460,14 @@ Check if rows exist in a table.
 테이블에 행이 존재하는지 확인합니다.
 
 ```go
-func (c *Client) Exists(ctx context.Context, table string, conditionAndArgs ...interface{}) (bool, error)
+func (c *Client) Exists(table string, conditionAndArgs ...interface{}) (bool, error)
+func (c *Client) ExistsContext(ctx context.Context, table string, conditionAndArgs ...interface{}) (bool, error)
 ```
 
 **Examples / 예제**:
 ```go
 // Check existence / 존재 확인
-exists, _ := db.Exists(ctx, "users", "email = ?", "john@example.com")
+exists, _ := db.Exists("users", "email = ?", "john@example.com")
 if exists {
     fmt.Println("User already exists")
 }
@@ -670,8 +705,8 @@ err := db.Transaction(ctx, func(tx *mysql.Tx) error {
     // All operations within this function are in a transaction
     // 이 함수 내의 모든 작업은 트랜잭션 내에서 실행됩니다
 
-    tx.Insert(ctx, "users", map[string]any{"name": "Alice"})
-    tx.Insert(ctx, "users", map[string]any{"name": "Bob"})
+    tx.Insert("users", map[string]any{"name": "Alice"})
+    tx.Insert("users", map[string]any{"name": "Bob"})
 
     return nil // Commits / 커밋
 })
@@ -682,7 +717,7 @@ if err != nil {
 // Complex transaction with error handling / 에러 처리를 포함한 복잡한 트랜잭션
 err := db.Transaction(ctx, func(tx *mysql.Tx) error {
     // Deduct from account / 계정에서 차감
-    result, err := tx.Update(ctx, "accounts",
+    result, err := tx.Update("accounts",
         map[string]any{"balance": db.Raw("balance - ?", amount)},
         "user_id = ?", fromUserID)
     if err != nil {
@@ -695,7 +730,7 @@ err := db.Transaction(ctx, func(tx *mysql.Tx) error {
     }
 
     // Add to account / 계정에 추가
-    _, err = tx.Update(ctx, "accounts",
+    _, err = tx.Update("accounts",
         map[string]any{"balance": db.Raw("balance + ?", amount)},
         "user_id = ?", toUserID)
     if err != nil {
@@ -703,7 +738,7 @@ err := db.Transaction(ctx, func(tx *mysql.Tx) error {
     }
 
     // Log transaction / 트랜잭션 로그
-    tx.Insert(ctx, "transaction_logs", map[string]any{
+    tx.Insert("transaction_logs", map[string]any{
         "from_user": fromUserID,
         "to_user":   toUserID,
         "amount":    amount,
@@ -716,7 +751,7 @@ err := db.Transaction(ctx, func(tx *mysql.Tx) error {
 **Auto Rollback on Panic / 패닉 시 자동 롤백**:
 ```go
 err := db.Transaction(ctx, func(tx *mysql.Tx) error {
-    tx.Insert(ctx, "users", map[string]any{"name": "Alice"})
+    tx.Insert("users", map[string]any{"name": "Alice"})
 
     panic("Something went wrong!") // Auto rollback / 자동 롤백
 
@@ -733,7 +768,7 @@ err := db.Transaction(ctx, func(tx *mysql.Tx) error {
 
 ```go
 // Create / 생성
-result, _ := db.Insert(ctx, "products", map[string]any{
+result, _ := db.Insert("products", map[string]any{
     "name":  "iPhone 14",
     "price": 999.99,
     "stock": 100,
@@ -741,16 +776,16 @@ result, _ := db.Insert(ctx, "products", map[string]any{
 productID, _ := result.LastInsertId()
 
 // Read / 읽기
-product, _ := db.SelectOne(ctx, "products", "id = ?", productID)
+product, _ := db.SelectOne("products", "id = ?", productID)
 fmt.Printf("Product: %v\n", product)
 
 // Update / 업데이트
-db.Update(ctx, "products",
+db.Update("products",
     map[string]any{"stock": 95},
     "id = ?", productID)
 
 // Delete / 삭제
-db.Delete(ctx, "products", "id = ?", productID)
+db.Delete("products", "id = ?", productID)
 ```
 
 ### Pattern 2: Pagination / 페이징
@@ -761,7 +796,7 @@ pageSize := 20
 offset := (page - 1) * pageSize
 
 // Get total count / 전체 수 가져오기
-total, _ := db.Count(ctx, "users", "status = ?", "active")
+total, _ := db.Count("users", "status = ?", "active")
 
 // Get page data / 페이지 데이터 가져오기
 users, _ := db.SelectWhere(ctx, "users", "status = ?", "active",
@@ -778,7 +813,7 @@ fmt.Printf("Page %d of %d\n", page, (total+int64(pageSize)-1)/int64(pageSize))
 // Using transaction for bulk insert / 대량 삽입을 위한 트랜잭션 사용
 err := db.Transaction(ctx, func(tx *mysql.Tx) error {
     for _, user := range users {
-        _, err := tx.Insert(ctx, "users", map[string]any{
+        _, err := tx.Insert("users", map[string]any{
             "name":  user.Name,
             "email": user.Email,
         })
@@ -817,7 +852,7 @@ whereClause := strings.Join(conditions, " AND ")
 allArgs := append([]interface{}{whereClause}, args...)
 
 // Execute / 실행
-users, _ := db.SelectAll(ctx, "users", allArgs...)
+users, _ := db.SelectAll("users", allArgs...)
 ```
 
 ### Pattern 5: Aggregation with GROUP BY / GROUP BY를 사용한 집계
@@ -860,7 +895,7 @@ for _, row := range results {
 
 ```go
 // Update only if condition met / 조건이 충족되는 경우에만 업데이트
-result, _ := db.Update(ctx, "inventory",
+result, _ := db.Update("inventory",
     map[string]any{"stock": db.Raw("stock - ?", quantity)},
     "product_id = ? AND stock >= ?", productID, quantity)
 
@@ -874,7 +909,7 @@ if affected == 0 {
 
 ```go
 // Soft delete (mark as deleted) / 소프트 삭제 (삭제로 표시)
-db.Update(ctx, "users",
+db.Update("users",
     map[string]any{
         "deleted_at": time.Now(),
         "status":     "deleted",
@@ -882,23 +917,23 @@ db.Update(ctx, "users",
     "id = ?", userID)
 
 // Query excluding soft deleted / 소프트 삭제된 항목 제외하고 쿼리
-activeUsers, _ := db.SelectAll(ctx, "users", "deleted_at IS NULL")
+activeUsers, _ := db.SelectAll("users", "deleted_at IS NULL")
 ```
 
 ### Pattern 9: Upsert (Insert or Update) / Upsert (삽입 또는 업데이트)
 
 ```go
 // Check if exists / 존재하는지 확인
-exists, _ := db.Exists(ctx, "users", "email = ?", email)
+exists, _ := db.Exists("users", "email = ?", email)
 
 if exists {
     // Update / 업데이트
-    db.Update(ctx, "users",
+    db.Update("users",
         map[string]any{"last_seen": time.Now()},
         "email = ?", email)
 } else {
     // Insert / 삽입
-    db.Insert(ctx, "users", map[string]any{
+    db.Insert("users", map[string]any{
         "email":     email,
         "last_seen": time.Now(),
     })
@@ -909,9 +944,9 @@ if exists {
 
 ```go
 // Get parent with children / 부모와 자식 가져오기
-parent, _ := db.SelectOne(ctx, "categories", "id = ?", parentID)
+parent, _ := db.SelectOne("categories", "id = ?", parentID)
 
-children, _ := db.SelectAll(ctx, "categories", "parent_id = ?", parentID)
+children, _ := db.SelectAll("categories", "parent_id = ?", parentID)
 
 result := map[string]interface{}{
     "parent":   parent,
@@ -942,7 +977,7 @@ type AuthService struct {
 
 func (s *AuthService) Register(ctx context.Context, email, password string) error {
     // Check if user exists / 사용자 존재 확인
-    exists, _ := s.db.Exists(ctx, "users", "email = ?", email)
+    exists, _ := s.db.Exists("users", "email = ?", email)
     if exists {
         return errors.New("email already registered")
     }
@@ -951,7 +986,7 @@ func (s *AuthService) Register(ctx context.Context, email, password string) erro
     hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
     // Create user / 사용자 생성
-    _, err := s.db.Insert(ctx, "users", map[string]any{
+    _, err := s.db.Insert("users", map[string]any{
         "email":    email,
         "password": string(hashedPassword),
         "status":   "active",
@@ -961,7 +996,7 @@ func (s *AuthService) Register(ctx context.Context, email, password string) erro
 
 func (s *AuthService) Login(ctx context.Context, email, password string) (map[string]interface{}, error) {
     // Get user / 사용자 가져오기
-    user, err := s.db.SelectOne(ctx, "users", "email = ? AND status = ?", email, "active")
+    user, err := s.db.SelectOne("users", "email = ? AND status = ?", email, "active")
     if err != nil {
         return nil, errors.New("invalid credentials")
     }
@@ -976,7 +1011,7 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (map[st
     }
 
     // Update last login / 마지막 로그인 업데이트
-    s.db.Update(ctx, "users",
+    s.db.Update("users",
         map[string]any{"last_login": time.Now()},
         "id = ?", user["id"])
 
@@ -1009,7 +1044,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, userID int64, items []Or
 
     err := s.db.Transaction(ctx, func(tx *mysql.Tx) error {
         // Create order / 주문 생성
-        result, err := tx.Insert(ctx, "orders", map[string]any{
+        result, err := tx.Insert("orders", map[string]any{
             "user_id":    userID,
             "status":     "pending",
             "created_at": time.Now(),
@@ -1023,7 +1058,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, userID int64, items []Or
         // Add order items and update inventory / 주문 항목 추가 및 재고 업데이트
         for _, item := range items {
             // Check stock / 재고 확인
-            product, err := tx.SelectOne(ctx, "products", "id = ?", item.ProductID)
+            product, err := tx.SelectOne("products", "id = ?", item.ProductID)
             if err != nil {
                 return err
             }
@@ -1034,7 +1069,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, userID int64, items []Or
             }
 
             // Insert order item / 주문 항목 삽입
-            _, err = tx.Insert(ctx, "order_items", map[string]any{
+            _, err = tx.Insert("order_items", map[string]any{
                 "order_id":   orderID,
                 "product_id": item.ProductID,
                 "quantity":   item.Quantity,
@@ -1045,7 +1080,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, userID int64, items []Or
             }
 
             // Update stock / 재고 업데이트
-            _, err = tx.Update(ctx, "products",
+            _, err = tx.Update("products",
                 map[string]any{"stock": stock - item.Quantity},
                 "id = ?", item.ProductID)
             if err != nil {
@@ -1061,7 +1096,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, userID int64, items []Or
 
 func (s *OrderService) GetOrderWithItems(ctx context.Context, orderID int64) (map[string]interface{}, error) {
     // Get order details / 주문 세부사항 가져오기
-    order, err := s.db.SelectOne(ctx, "orders", "id = ?", orderID)
+    order, err := s.db.SelectOne("orders", "id = ?", orderID)
     if err != nil {
         return nil, err
     }
@@ -1099,7 +1134,7 @@ func (s *BlogService) CreatePost(ctx context.Context, authorID int64, title, con
 
     err := s.db.Transaction(ctx, func(tx *mysql.Tx) error {
         // Create post / 게시물 생성
-        result, err := tx.Insert(ctx, "posts", map[string]any{
+        result, err := tx.Insert("posts", map[string]any{
             "author_id":  authorID,
             "title":      title,
             "content":    content,
@@ -1115,19 +1150,19 @@ func (s *BlogService) CreatePost(ctx context.Context, authorID int64, title, con
         // Add tags / 태그 추가
         for _, tag := range tags {
             // Get or create tag / 태그 가져오기 또는 생성
-            existingTag, err := tx.SelectOne(ctx, "tags", "name = ?", tag)
+            existingTag, err := tx.SelectOne("tags", "name = ?", tag)
             var tagID int64
 
             if err != nil {
                 // Create new tag / 새 태그 생성
-                result, _ := tx.Insert(ctx, "tags", map[string]any{"name": tag})
+                result, _ := tx.Insert("tags", map[string]any{"name": tag})
                 tagID, _ = result.LastInsertId()
             } else {
                 tagID = existingTag["id"].(int64)
             }
 
             // Link post to tag / 게시물을 태그에 연결
-            tx.Insert(ctx, "post_tags", map[string]any{
+            tx.Insert("post_tags", map[string]any{
                 "post_id": postID,
                 "tag_id":  tagID,
             })
@@ -1238,7 +1273,7 @@ type NotificationService struct {
 }
 
 func (s *NotificationService) SendNotification(ctx context.Context, userID int64, notifType, title, message string) error {
-    _, err := s.db.Insert(ctx, "notifications", map[string]any{
+    _, err := s.db.Insert("notifications", map[string]any{
         "user_id":    userID,
         "type":       notifType,
         "title":      title,
@@ -1279,12 +1314,12 @@ func (s *NotificationService) MarkAsRead(ctx context.Context, notificationIDs []
 ```go
 // ✅ Good / 좋은 예
 ctx := context.Background()
-users, err := db.SelectAll(ctx, "users")
+users, err := db.SelectAll("users")
 
 // ✅ Better - with timeout / 더 좋은 예 - 타임아웃 포함
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 defer cancel()
-users, err := db.SelectAll(ctx, "users")
+users, err := db.SelectAll("users")
 
 // ❌ Bad - no context / 나쁜 예 - context 없음
 // Not possible with this package / 이 패키지에서는 불가능
@@ -1308,38 +1343,38 @@ defer db.Close()
 ```go
 // ✅ Good - atomic operations / 좋은 예 - 원자적 작업
 err := db.Transaction(ctx, func(tx *mysql.Tx) error {
-    tx.Insert(ctx, "orders", orderData)
-    tx.Update(ctx, "inventory", stockUpdate)
+    tx.Insert("orders", orderData)
+    tx.Update("inventory", stockUpdate)
     return nil
 })
 
 // ❌ Bad - non-atomic / 나쁜 예 - 비원자적
-db.Insert(ctx, "orders", orderData)
-db.Update(ctx, "inventory", stockUpdate) // May fail after insert / 삽입 후 실패할 수 있음
+db.Insert("orders", orderData)
+db.Update("inventory", stockUpdate) // May fail after insert / 삽입 후 실패할 수 있음
 ```
 
 ### 4. Handle Errors Properly / 에러 적절히 처리
 
 ```go
 // ✅ Good / 좋은 예
-user, err := db.SelectOne(ctx, "users", "id = ?", userID)
+user, err := db.SelectOne("users", "id = ?", userID)
 if err != nil {
     log.Printf("Failed to get user: %v", err)
     return err
 }
 
 // ❌ Bad - ignore errors / 나쁜 예 - 에러 무시
-user, _ := db.SelectOne(ctx, "users", "id = ?", userID)
+user, _ := db.SelectOne("users", "id = ?", userID)
 ```
 
 ### 5. Use Prepared Statements (Automatic) / Prepared Statement 사용 (자동)
 
 ```go
 // ✅ Good - parameterized query / 좋은 예 - 파라미터화된 쿼리
-users, _ := db.SelectAll(ctx, "users", "email = ?", email)
+users, _ := db.SelectAll("users", "email = ?", email)
 
 // ❌ Bad - SQL injection risk / 나쁜 예 - SQL 인젝션 위험
-users, _ := db.SelectAll(ctx, "users", fmt.Sprintf("email = '%s'", email))
+users, _ := db.SelectAll("users", fmt.Sprintf("email = '%s'", email))
 ```
 
 ### 6. Connection Pool Configuration / 연결 풀 설정
@@ -1361,7 +1396,7 @@ db, _ := mysql.New(mysql.WithDSN("..."))
 
 ```go
 // For simple queries / 간단한 쿼리용
-users, _ := db.SelectAll(ctx, "users", "age > ?", 18)
+users, _ := db.SelectAll("users", "age > ?", 18)
 
 // For queries with options / 옵션이 있는 쿼리용
 users, _ := db.SelectWhere(ctx, "users", "age > ?", 18,
@@ -1398,9 +1433,9 @@ users, _ := db.SelectWhere(ctx, "users", "id < ? AND status = ?", lastID, "activ
 
 ```go
 // ❌ Bad - N+1 queries / 나쁜 예 - N+1 쿼리
-users, _ := db.SelectAll(ctx, "users")
+users, _ := db.SelectAll("users")
 for _, user := range users {
-    orders, _ := db.SelectAll(ctx, "orders", "user_id = ?", user["id"])
+    orders, _ := db.SelectAll("orders", "user_id = ?", user["id"])
     // Process orders...
 }
 
@@ -1421,7 +1456,7 @@ func (s *Service) GetUser(ctx context.Context, id int64) (map[string]interface{}
         log.Printf("GetUser(%d) took %v", id, time.Since(start))
     }()
 
-    return s.db.SelectOne(ctx, "users", "id = ?", id)
+    return s.db.SelectOne("users", "id = ?", id)
 }
 ```
 
@@ -1429,12 +1464,12 @@ func (s *Service) GetUser(ctx context.Context, id int64) (map[string]interface{}
 
 ```go
 // ✅ Good - implement soft delete / 좋은 예 - 소프트 삭제 구현
-db.Update(ctx, "users",
+db.Update("users",
     map[string]any{"deleted_at": time.Now()},
     "id = ?", userID)
 
 // Always filter out soft deleted / 항상 소프트 삭제된 항목 필터링
-users, _ := db.SelectAll(ctx, "users", "deleted_at IS NULL")
+users, _ := db.SelectAll("users", "deleted_at IS NULL")
 ```
 
 ### 12. Use Indexes / 인덱스 사용
@@ -1453,7 +1488,7 @@ CREATE INDEX idx_orders_user_status ON orders(user_id, status);
 // For bulk inserts, use transaction / 대량 삽입은 트랜잭션 사용
 err := db.Transaction(ctx, func(tx *mysql.Tx) error {
     for _, item := range items {
-        tx.Insert(ctx, "items", item)
+        tx.Insert("items", item)
     }
     return nil
 })
@@ -1590,8 +1625,8 @@ Error 1213: Deadlock found when trying to get lock
 2. Order operations consistently / 작업 순서 일관성 유지:
    ```go
    // Always update in same order / 항상 같은 순서로 업데이트
-   tx.Update(ctx, "table1", ...)
-   tx.Update(ctx, "table2", ...)
+   tx.Update("table1", ...)
+   tx.Update("table2", ...)
    ```
 
 3. Keep transactions short / 트랜잭션을 짧게 유지
@@ -1633,7 +1668,7 @@ invalid connection
 Auto reconnect is built-in / 자동 재연결이 내장되어 있습니다:
 ```go
 // Package handles this automatically / 패키지가 자동으로 처리
-users, _ := db.SelectAll(ctx, "users")
+users, _ := db.SelectAll("users")
 // If connection is lost, will retry / 연결이 손실되면 재시도
 ```
 
@@ -1707,7 +1742,7 @@ db, _ := mysql.New(mysql.WithDSN(dsn))
 
 ```go
 // ✅ No defer needed / defer 불필요
-users, _ := db.SelectAll(ctx, "users")
+users, _ := db.SelectAll("users")
 
 // ⚠️ Defer needed for raw queries / raw 쿼리는 defer 필요
 rows, _ := db.Query(ctx, "SELECT * FROM users")
@@ -1724,7 +1759,7 @@ defer rows.Close()
 **A**: NULL 값은 결과 맵에서 `nil`로 반환됩니다.
 
 ```go
-user, _ := db.SelectOne(ctx, "users", "id = ?", 123)
+user, _ := db.SelectOne("users", "id = ?", 123)
 
 if user["middle_name"] == nil {
     fmt.Println("No middle name")
@@ -1744,7 +1779,7 @@ if user["middle_name"] == nil {
 
 ```go
 // Use simple API for simple queries / 간단한 쿼리는 simple API 사용
-users, _ := db.SelectAll(ctx, "users")
+users, _ := db.SelectAll("users")
 
 // Use raw SQL for complex queries / 복잡한 쿼리는 raw SQL 사용
 rows, _ := db.Query(ctx, "WITH ...")
@@ -1761,9 +1796,9 @@ rows, _ := db.Query(ctx, "WITH ...")
 
 ```go
 err := db.Transaction(ctx, func(tx *mysql.Tx) error {
-    tx.Insert(ctx, "table1", data1)
-    tx.Update(ctx, "table2", data2, "id = ?", id)
-    tx.Delete(ctx, "table3", "id = ?", id)
+    tx.Insert("table1", data1)
+    tx.Update("table2", data2, "id = ?", id)
+    tx.Delete("table3", "id = ?", id)
     return nil // All commit together / 모두 함께 커밋
 })
 ```
@@ -1900,7 +1935,7 @@ defer rows.Close()
 // ... scanning logic ...
 
 // After (this package) / 이후 (이 패키지)
-users, _ := db.SelectAll(ctx, "users", "age > ?", 18)
+users, _ := db.SelectAll("users", "age > ?", 18)
 ```
 
 ---
@@ -1939,11 +1974,11 @@ rows.Scan(&data)
 db, _ := mysql.New(mysql.WithDSN("..."))
 
 go func() {
-    db.SelectAll(ctx, "users")
+    db.SelectAll("users")
 }()
 
 go func() {
-    db.Insert(ctx, "users", data)
+    db.Insert("users", data)
 }()
 ```
 
