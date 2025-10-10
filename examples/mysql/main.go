@@ -324,7 +324,8 @@ func example1SelectAll(ctx context.Context, db *mysql.Client, logger *logging.Lo
 	logger.Info("")
 
 	// Select all users from Seoul / 서울의 모든 사용자 선택
-	users, err := db.SelectAll(ctx, "users", "city = ?", "Seoul")
+	// Using non-context version for simplicity / 간단함을 위해 non-context 버전 사용
+	users, err := db.SelectAll("users", "city = ?", "Seoul")
 	if err != nil {
 		return fmt.Errorf("selectAll failed: %w", err)
 	}
@@ -346,7 +347,8 @@ func example2SelectOne(ctx context.Context, db *mysql.Client, logger *logging.Lo
 	logger.Info("👤 예제 2: SelectOne - 단일 사용자 선택")
 	logger.Info("")
 
-	user, err := db.SelectOne(ctx, "users", "email = ?", "john@example.com")
+	// Using non-context version / non-context 버전 사용
+	user, err := db.SelectOne("users", "email = ?", "john@example.com")
 	if err != nil {
 		return fmt.Errorf("selectOne failed: %w", err)
 	}
@@ -370,7 +372,8 @@ func example3Insert(ctx context.Context, db *mysql.Client, logger *logging.Logge
 	timestamp := time.Now().Unix()
 	email := fmt.Sprintf("david.kim.%d@example.com", timestamp)
 
-	result, err := db.Insert(ctx, "users", map[string]any{
+	// Using non-context version / non-context 버전 사용
+	result, err := db.Insert("users", map[string]any{
 		"name":  "David Kim",
 		"email": email,
 		"age":   32,
@@ -395,7 +398,7 @@ func example4Update(ctx context.Context, db *mysql.Client, logger *logging.Logge
 	logger.Info("")
 
 	// Update Jane Smith's age / Jane Smith의 나이 업데이트
-	result, err := db.Update(ctx, "users",
+	result, err := db.Update("users",
 		map[string]any{
 			"age": 26,
 		},
@@ -419,7 +422,7 @@ func example5Count(ctx context.Context, db *mysql.Client, logger *logging.Logger
 	logger.Info("")
 
 	// Count all users / 모든 사용자 수
-	totalCount, err := db.Count(ctx, "users")
+	totalCount, err := db.Count("users")
 	if err != nil {
 		return fmt.Errorf("count failed: %w", err)
 	}
@@ -427,7 +430,7 @@ func example5Count(ctx context.Context, db *mysql.Client, logger *logging.Logger
 	logger.Info(fmt.Sprintf("전체 사용자: %d명", totalCount))
 
 	// Count users older than 25 / 25세 이상 사용자 수
-	adultCount, err := db.Count(ctx, "users", "age > ?", 25)
+	adultCount, err := db.Count("users", "age > ?", 25)
 	if err != nil {
 		return fmt.Errorf("count with condition failed: %w", err)
 	}
@@ -445,7 +448,7 @@ func example6Exists(ctx context.Context, db *mysql.Client, logger *logging.Logge
 	logger.Info("")
 
 	// Check if John Doe exists / John Doe 존재 확인
-	exists, err := db.Exists(ctx, "users", "email = ?", "john@example.com")
+	exists, err := db.Exists("users", "email = ?", "john@example.com")
 	if err != nil {
 		return fmt.Errorf("exists failed: %w", err)
 	}
@@ -474,7 +477,7 @@ func example7Transaction(ctx context.Context, db *mysql.Client, logger *logging.
 	err := db.Transaction(ctx, func(tx *mysql.Tx) error {
 		// Insert first user / 첫 번째 사용자 삽입
 		email1 := fmt.Sprintf("emily.park.%d@example.com", timestamp)
-		result1, err := tx.Insert(ctx, "users", map[string]any{
+		result1, err := tx.Insert("users", map[string]any{
 			"name":  "Emily Park",
 			"email": email1,
 			"age":   27,
@@ -488,7 +491,7 @@ func example7Transaction(ctx context.Context, db *mysql.Client, logger *logging.
 
 		// Insert second user / 두 번째 사용자 삽입
 		email2 := fmt.Sprintf("frank.lee.%d@example.com", timestamp+1)
-		result2, err := tx.Insert(ctx, "users", map[string]any{
+		result2, err := tx.Insert("users", map[string]any{
 			"name":  "Frank Lee",
 			"email": email2,
 			"age":   29,
@@ -521,7 +524,7 @@ func example8Delete(ctx context.Context, db *mysql.Client, logger *logging.Logge
 	logger.Info("")
 
 	// Delete Charlie Brown (one of the sample users) / 샘플 사용자 중 한 명인 Charlie Brown 삭제
-	result, err := db.Delete(ctx, "users", "email = ?", "charlie@example.com")
+	result, err := db.Delete("users", "email = ?", "charlie@example.com")
 	if err != nil {
 		return fmt.Errorf("delete failed: %w", err)
 	}
@@ -744,7 +747,8 @@ func example16SelectColumn(ctx context.Context, db *mysql.Client, logger *loggin
 	// SELECT email FROM users
 	logger.Info("Selecting all email addresses...")
 	logger.Info("모든 이메일 주소 선택 중...")
-	emails, err := db.SelectColumn(ctx, "users", "email")
+	// Using non-context version / non-context 버전 사용
+	emails, err := db.SelectColumn("users", "email")
 	if err != nil {
 		return fmt.Errorf("SelectColumn failed: %w", err)
 	}
@@ -763,7 +767,7 @@ func example16SelectColumn(ctx context.Context, db *mysql.Client, logger *loggin
 	logger.Info("")
 	logger.Info("Selecting names of users older than 25...")
 	logger.Info("25세 이상 사용자의 이름 선택 중...")
-	names, err := db.SelectColumn(ctx, "users", "name", "age > ?", 25)
+	names, err := db.SelectColumn("users", "name", "age > ?", 25)
 	if err != nil {
 		return fmt.Errorf("SelectColumn with condition failed: %w", err)
 	}
@@ -793,7 +797,8 @@ func example17SelectColumns(ctx context.Context, db *mysql.Client, logger *loggi
 	// SELECT name, email FROM users
 	logger.Info("Selecting name and email of all users...")
 	logger.Info("모든 사용자의 이름과 이메일 선택 중...")
-	users, err := db.SelectColumns(ctx, "users", []string{"name", "email"})
+	// Using non-context version / non-context 버전 사용
+	users, err := db.SelectColumns("users", []string{"name", "email"})
 	if err != nil {
 		return fmt.Errorf("SelectColumns failed: %w", err)
 	}
@@ -812,7 +817,7 @@ func example17SelectColumns(ctx context.Context, db *mysql.Client, logger *loggi
 	logger.Info("")
 	logger.Info("Selecting name, age, and city of users older than 25...")
 	logger.Info("25세 이상 사용자의 이름, 나이, 도시 선택 중...")
-	usersWithAge, err := db.SelectColumns(ctx, "users", []string{"name", "age", "city"}, "age > ?", 25)
+	usersWithAge, err := db.SelectColumns("users", []string{"name", "age", "city"}, "age > ?", 25)
 	if err != nil {
 		return fmt.Errorf("SelectColumns with condition failed: %w", err)
 	}

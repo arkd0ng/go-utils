@@ -9,16 +9,32 @@ import (
 )
 
 // SelectAll selects all rows from a table with optional conditions
+// Uses context.Background() internally. For timeout/cancellation control, use SelectAllContext.
+//
 // SelectAll은 선택적 조건으로 테이블의 모든 행을 선택합니다
+// 내부적으로 context.Background()를 사용합니다. timeout/cancellation 제어가 필요하면 SelectAllContext를 사용하세요.
 //
 // Example / 예제:
 //
 //	// Select all users / 모든 사용자 선택
-//	users, err := db.SelectAll(ctx, "users")
+//	users, err := db.SelectAll("users")
 //
-//	// Select with condition / 조건과 함께 선택
-//	users, err := db.SelectAll(ctx, "users", "age > ?", 18)
-func (c *Client) SelectAll(ctx context.Context, table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+//	// Select with condition (use placeholder for safety) / 조건과 함께 선택 (안전을 위해 placeholder 사용)
+//	users, err := db.SelectAll("users", "age > ?", 18)
+//	users, err := db.SelectAll("users", "age > ? AND city = ?", 18, "Seoul")
+func (c *Client) SelectAll(table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+	return c.SelectAllContext(context.Background(), table, conditionAndArgs...)
+}
+
+// SelectAllContext selects all rows from a table with optional conditions
+// SelectAllContext는 선택적 조건으로 테이블의 모든 행을 선택합니다
+//
+// Example / 예제:
+//
+//	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+//	defer cancel()
+//	users, err := db.SelectAllContext(ctx, "users", "age > ?", 18)
+func (c *Client) SelectAllContext(ctx context.Context, table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
 	c.mu.RLock()
 	if c.closed {
 		c.mu.RUnlock()
@@ -73,11 +89,17 @@ func (c *Client) SelectAll(ctx context.Context, table string, conditionAndArgs .
 // Example / 예제:
 //
 //	// Select all emails / 모든 이메일 선택
-//	emails, err := db.SelectColumn(ctx, "users", "email")
+//	emails, err := db.SelectColumn("users", "email")
 //
 //	// Select with condition / 조건과 함께 선택
-//	emails, err := db.SelectColumn(ctx, "users", "email", "age > ?", 18)
-func (c *Client) SelectColumn(ctx context.Context, table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+//	emails, err := db.SelectColumn("users", "email", "age > ?", 18)
+func (c *Client) SelectColumn(table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+	return c.SelectColumnContext(context.Background(), table, column, conditionAndArgs...)
+}
+
+// SelectColumnContext selects all rows with a single column from a table
+// SelectColumnContext는 테이블에서 단일 컬럼으로 모든 행을 선택합니다
+func (c *Client) SelectColumnContext(ctx context.Context, table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
 	c.mu.RLock()
 	if c.closed {
 		c.mu.RUnlock()
@@ -132,11 +154,17 @@ func (c *Client) SelectColumn(ctx context.Context, table string, column string, 
 // Example / 예제:
 //
 //	// Select multiple columns / 여러 컬럼 선택
-//	users, err := db.SelectColumns(ctx, "users", []string{"name", "email", "age"})
+//	users, err := db.SelectColumns("users", []string{"name", "email", "age"})
 //
 //	// Select with condition / 조건과 함께 선택
-//	users, err := db.SelectColumns(ctx, "users", []string{"name", "email"}, "age > ?", 18)
-func (c *Client) SelectColumns(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+//	users, err := db.SelectColumns("users", []string{"name", "email"}, "age > ?", 18)
+func (c *Client) SelectColumns(table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+	return c.SelectColumnsContext(context.Background(), table, columns, conditionAndArgs...)
+}
+
+// SelectColumnsContext selects all rows with multiple columns from a table
+// SelectColumnsContext는 테이블에서 여러 컬럼으로 모든 행을 선택합니다
+func (c *Client) SelectColumnsContext(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
 	c.mu.RLock()
 	if c.closed {
 		c.mu.RUnlock()
@@ -195,8 +223,14 @@ func (c *Client) SelectColumns(ctx context.Context, table string, columns []stri
 //
 // Example / 예제:
 //
-//	user, err := db.SelectOne(ctx, "users", "id = ?", 123)
-func (c *Client) SelectOne(ctx context.Context, table string, conditionAndArgs ...interface{}) (map[string]interface{}, error) {
+//	user, err := db.SelectOne("users", "id = ?", 123)
+func (c *Client) SelectOne(table string, conditionAndArgs ...interface{}) (map[string]interface{}, error) {
+	return c.SelectOneContext(context.Background(), table, conditionAndArgs...)
+}
+
+// SelectOneContext selects a single row from a table with conditions
+// SelectOneContext는 조건과 함께 테이블에서 단일 행을 선택합니다
+func (c *Client) SelectOneContext(ctx context.Context, table string, conditionAndArgs ...interface{}) (map[string]interface{}, error) {
 	c.mu.RLock()
 	if c.closed {
 		c.mu.RUnlock()
@@ -252,12 +286,18 @@ func (c *Client) SelectOne(ctx context.Context, table string, conditionAndArgs .
 //
 // Example / 예제:
 //
-//	result, err := db.Insert(ctx, "users", map[string]interface{}{
+//	result, err := db.Insert("users", map[string]interface{}{
 //	    "name":  "John",
 //	    "email": "john@example.com",
 //	    "age":   30,
 //	})
-func (c *Client) Insert(ctx context.Context, table string, data map[string]interface{}) (sql.Result, error) {
+func (c *Client) Insert(table string, data map[string]interface{}) (sql.Result, error) {
+	return c.InsertContext(context.Background(), table, data)
+}
+
+// InsertContext inserts a new row into a table
+// InsertContext는 테이블에 새 행을 삽입합니다
+func (c *Client) InsertContext(ctx context.Context, table string, data map[string]interface{}) (sql.Result, error) {
 	c.mu.RLock()
 	if c.closed {
 		c.mu.RUnlock()
@@ -312,10 +352,16 @@ func (c *Client) Insert(ctx context.Context, table string, data map[string]inter
 //
 // Example / 예제:
 //
-//	result, err := db.Update(ctx, "users",
+//	result, err := db.Update("users",
 //	    map[string]interface{}{"name": "Jane", "age": 31},
 //	    "id = ?", 123)
-func (c *Client) Update(ctx context.Context, table string, data map[string]interface{}, conditionAndArgs ...interface{}) (sql.Result, error) {
+func (c *Client) Update(table string, data map[string]interface{}, conditionAndArgs ...interface{}) (sql.Result, error) {
+	return c.UpdateContext(context.Background(), table, data, conditionAndArgs...)
+}
+
+// UpdateContext updates rows in a table
+// UpdateContext는 테이블의 행을 업데이트합니다
+func (c *Client) UpdateContext(ctx context.Context, table string, data map[string]interface{}, conditionAndArgs ...interface{}) (sql.Result, error) {
 	c.mu.RLock()
 	if c.closed {
 		c.mu.RUnlock()
@@ -375,8 +421,14 @@ func (c *Client) Update(ctx context.Context, table string, data map[string]inter
 //
 // Example / 예제:
 //
-//	result, err := db.Delete(ctx, "users", "id = ?", 123)
-func (c *Client) Delete(ctx context.Context, table string, conditionAndArgs ...interface{}) (sql.Result, error) {
+//	result, err := db.Delete("users", "id = ?", 123)
+func (c *Client) Delete(table string, conditionAndArgs ...interface{}) (sql.Result, error) {
+	return c.DeleteContext(context.Background(), table, conditionAndArgs...)
+}
+
+// DeleteContext deletes rows from a table
+// DeleteContext는 테이블에서 행을 삭제합니다
+func (c *Client) DeleteContext(ctx context.Context, table string, conditionAndArgs ...interface{}) (sql.Result, error) {
 	c.mu.RLock()
 	if c.closed {
 		c.mu.RUnlock()
@@ -423,9 +475,15 @@ func (c *Client) Delete(ctx context.Context, table string, conditionAndArgs ...i
 //
 // Example / 예제:
 //
-//	count, err := db.Count(ctx, "users")
-//	count, err := db.Count(ctx, "users", "age > ?", 18)
-func (c *Client) Count(ctx context.Context, table string, conditionAndArgs ...interface{}) (int64, error) {
+//	count, err := db.Count("users")
+//	count, err := db.Count("users", "age > ?", 18)
+func (c *Client) Count(table string, conditionAndArgs ...interface{}) (int64, error) {
+	return c.CountContext(context.Background(), table, conditionAndArgs...)
+}
+
+// CountContext counts rows in a table with optional conditions
+// CountContext는 선택적 조건으로 테이블의 행 수를 계산합니다
+func (c *Client) CountContext(ctx context.Context, table string, conditionAndArgs ...interface{}) (int64, error) {
 	c.mu.RLock()
 	if c.closed {
 		c.mu.RUnlock()
@@ -479,9 +537,15 @@ func (c *Client) Count(ctx context.Context, table string, conditionAndArgs ...in
 //
 // Example / 예제:
 //
-//	exists, err := db.Exists(ctx, "users", "email = ?", "john@example.com")
-func (c *Client) Exists(ctx context.Context, table string, conditionAndArgs ...interface{}) (bool, error) {
-	count, err := c.Count(ctx, table, conditionAndArgs...)
+//	exists, err := db.Exists("users", "email = ?", "john@example.com")
+func (c *Client) Exists(table string, conditionAndArgs ...interface{}) (bool, error) {
+	return c.ExistsContext(context.Background(), table, conditionAndArgs...)
+}
+
+// ExistsContext checks if at least one row exists with the given conditions
+// ExistsContext는 주어진 조건으로 최소한 하나의 행이 존재하는지 확인합니다
+func (c *Client) ExistsContext(ctx context.Context, table string, conditionAndArgs ...interface{}) (bool, error) {
+	count, err := c.CountContext(ctx, table, conditionAndArgs...)
 	if err != nil {
 		return false, err
 	}

@@ -77,7 +77,13 @@ func (c *Client) Transaction(ctx context.Context, fn func(*Tx) error) error {
 
 // Insert inserts a new row within the transaction
 // Insert는 트랜잭션 내에서 새 행을 삽입합니다
-func (t *Tx) Insert(ctx context.Context, table string, data map[string]interface{}) (sql.Result, error) {
+func (t *Tx) Insert(table string, data map[string]interface{}) (sql.Result, error) {
+	return t.InsertContext(context.Background(), table, data)
+}
+
+// InsertContext inserts a new row within the transaction
+// InsertContext는 트랜잭션 내에서 새 행을 삽입합니다
+func (t *Tx) InsertContext(ctx context.Context, table string, data map[string]interface{}) (sql.Result, error) {
 	if t.finished {
 		return nil, ErrTransactionFailed
 	}
@@ -107,7 +113,13 @@ func (t *Tx) Insert(ctx context.Context, table string, data map[string]interface
 
 // Update updates rows within the transaction
 // Update는 트랜잭션 내에서 행을 업데이트합니다
-func (t *Tx) Update(ctx context.Context, table string, data map[string]interface{}, conditionAndArgs ...interface{}) (sql.Result, error) {
+func (t *Tx) Update(table string, data map[string]interface{}, conditionAndArgs ...interface{}) (sql.Result, error) {
+	return t.UpdateContext(context.Background(), table, data, conditionAndArgs...)
+}
+
+// UpdateContext updates rows within the transaction
+// UpdateContext는 트랜잭션 내에서 행을 업데이트합니다
+func (t *Tx) UpdateContext(ctx context.Context, table string, data map[string]interface{}, conditionAndArgs ...interface{}) (sql.Result, error) {
 	if t.finished {
 		return nil, ErrTransactionFailed
 	}
@@ -142,7 +154,13 @@ func (t *Tx) Update(ctx context.Context, table string, data map[string]interface
 
 // Delete deletes rows within the transaction
 // Delete는 트랜잭션 내에서 행을 삭제합니다
-func (t *Tx) Delete(ctx context.Context, table string, conditionAndArgs ...interface{}) (sql.Result, error) {
+func (t *Tx) Delete(table string, conditionAndArgs ...interface{}) (sql.Result, error) {
+	return t.DeleteContext(context.Background(), table, conditionAndArgs...)
+}
+
+// DeleteContext deletes rows within the transaction
+// DeleteContext는 트랜잭션 내에서 행을 삭제합니다
+func (t *Tx) DeleteContext(ctx context.Context, table string, conditionAndArgs ...interface{}) (sql.Result, error) {
 	if t.finished {
 		return nil, ErrTransactionFailed
 	}
@@ -164,7 +182,13 @@ func (t *Tx) Delete(ctx context.Context, table string, conditionAndArgs ...inter
 
 // SelectAll selects all rows within the transaction
 // SelectAll은 트랜잭션 내에서 모든 행을 선택합니다
-func (t *Tx) SelectAll(ctx context.Context, table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+func (t *Tx) SelectAll(table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+	return t.SelectAllContext(context.Background(), table, conditionAndArgs...)
+}
+
+// SelectAllContext selects all rows within the transaction
+// SelectAllContext는 트랜잭션 내에서 모든 행을 선택합니다
+func (t *Tx) SelectAllContext(ctx context.Context, table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
 	if t.finished {
 		return nil, ErrTransactionFailed
 	}
@@ -191,7 +215,13 @@ func (t *Tx) SelectAll(ctx context.Context, table string, conditionAndArgs ...in
 
 // SelectColumn selects all rows with a single column within the transaction
 // SelectColumn은 트랜잭션 내에서 단일 컬럼으로 모든 행을 선택합니다
-func (t *Tx) SelectColumn(ctx context.Context, table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+func (t *Tx) SelectColumn(table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+	return t.SelectColumnContext(context.Background(), table, column, conditionAndArgs...)
+}
+
+// SelectColumnContext selects all rows with a single column within the transaction
+// SelectColumnContext는 트랜잭션 내에서 단일 컬럼으로 모든 행을 선택합니다
+func (t *Tx) SelectColumnContext(ctx context.Context, table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
 	if t.finished {
 		return nil, ErrTransactionFailed
 	}
@@ -218,7 +248,13 @@ func (t *Tx) SelectColumn(ctx context.Context, table string, column string, cond
 
 // SelectColumns selects all rows with multiple columns within the transaction
 // SelectColumns는 트랜잭션 내에서 여러 컬럼으로 모든 행을 선택합니다
-func (t *Tx) SelectColumns(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+func (t *Tx) SelectColumns(table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+	return t.SelectColumnsContext(context.Background(), table, columns, conditionAndArgs...)
+}
+
+// SelectColumnsContext selects all rows with multiple columns within the transaction
+// SelectColumnsContext는 트랜잭션 내에서 여러 컬럼으로 모든 행을 선택합니다
+func (t *Tx) SelectColumnsContext(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
 	if t.finished {
 		return nil, ErrTransactionFailed
 	}
@@ -250,7 +286,13 @@ func (t *Tx) SelectColumns(ctx context.Context, table string, columns []string, 
 
 // SelectOne selects a single row within the transaction
 // SelectOne은 트랜잭션 내에서 단일 행을 선택합니다
-func (t *Tx) SelectOne(ctx context.Context, table string, conditionAndArgs ...interface{}) (map[string]interface{}, error) {
+func (t *Tx) SelectOne(table string, conditionAndArgs ...interface{}) (map[string]interface{}, error) {
+	return t.SelectOneContext(context.Background(), table, conditionAndArgs...)
+}
+
+// SelectOneContext selects a single row within the transaction
+// SelectOneContext는 트랜잭션 내에서 단일 행을 선택합니다
+func (t *Tx) SelectOneContext(ctx context.Context, table string, conditionAndArgs ...interface{}) (map[string]interface{}, error) {
 	if t.finished {
 		return nil, ErrTransactionFailed
 	}

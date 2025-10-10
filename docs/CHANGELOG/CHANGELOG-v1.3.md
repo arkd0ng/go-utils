@@ -6,6 +6,84 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
+## [v1.3.008] - 2025-10-10
+
+### Added / 추가
+- **Non-Context API Methods** - Simplified API without context parameter / Context 매개변수 없는 간소화된 API:
+  - All Simple API methods now have non-context versions / 모든 Simple API 메서드에 non-context 버전 추가
+  - Methods: `SelectAll`, `SelectColumn`, `SelectColumns`, `SelectOne`, `Insert`, `Update`, `Delete`, `Count`, `Exists`
+  - Context versions renamed with `*Context` suffix / Context 버전은 `*Context` 접미사로 renamed
+  - Transaction methods also updated / Transaction 메서드도 업데이트
+
+### Breaking Changes / 호환성 변경
+- **API Signature Changes** / API 서명 변경:
+  - Old: `db.SelectAll(ctx, "users")`
+  - New: `db.SelectAll("users")` (non-context) or `db.SelectAllContext(ctx, "users")` (with context)
+  - All Simple API methods follow this pattern / 모든 Simple API 메서드가 이 패턴을 따름
+
+### Motivation / 동기
+- **Simplified usage for common cases** / 일반적인 경우의 사용 간소화:
+  - Most CRUD operations don't need timeout/cancellation control / 대부분의 CRUD 작업은 timeout/cancellation 제어가 필요 없음
+  - Non-context versions use `context.Background()` internally / Non-context 버전은 내부적으로 `context.Background()` 사용
+  - `*Context` versions available when explicit control needed / 명시적 제어가 필요할 때는 `*Context` 버전 사용 가능
+
+### Examples / 예제
+
+**Before (v1.3.007)**:
+```go
+ctx := context.Background()
+users, err := db.SelectAll(ctx, "users")
+user, err := db.SelectOne(ctx, "users", "id = ?", 123)
+result, err := db.Insert(ctx, "users", data)
+```
+
+**After (v1.3.008)**:
+```go
+// Simple usage without context / Context 없이 간단한 사용
+users, err := db.SelectAll("users")
+user, err := db.SelectOne("users", "id = ?", 123)
+result, err := db.Insert("users", data)
+
+// With timeout control / Timeout 제어가 필요한 경우
+ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+defer cancel()
+users, err := db.SelectAllContext(ctx, "users")
+```
+
+### Files Modified / 수정된 파일
+```
+database/mysql/simple.go         (modified) - Added non-context wrappers for all methods
+database/mysql/transaction.go    (modified) - Added non-context wrappers for Tx methods
+examples/mysql/main.go            (modified) - Updated examples to use non-context versions
+```
+
+### Migration Guide / 마이그레이션 가이드
+
+**Option 1**: Use non-context versions (recommended for most cases)
+```go
+// Change this:
+db.SelectAll(ctx, "users")
+
+// To this:
+db.SelectAll("users")
+```
+
+**Option 2**: Use *Context versions (for timeout/cancellation control)
+```go
+// Change this:
+db.SelectAll(ctx, "users")
+
+// To this:
+db.SelectAllContext(ctx, "users")
+```
+
+### Verification / 확인
+- ✅ Build successful: `go build ./database/mysql/...`
+- ✅ All tests passed: `go test ./database/mysql -v`
+- ✅ All 17 examples tested with non-context versions
+
+---
+
 ## [v1.3.007] - 2025-10-10
 
 ### Added / 추가
