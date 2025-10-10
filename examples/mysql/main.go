@@ -37,7 +37,7 @@ type MySQLConfig struct {
 func main() {
 	// Initialize logger / 로거 초기화
 	logger, err := logging.New(
-		logging.WithFilePath("./mysql_example.log"),
+		logging.WithFilePath(fmt.Sprintf("./mysql_example_%s.log", time.Now().Format("20060102_150405"))),
 		logging.WithLevel(logging.DEBUG),
 		logging.WithStdout(true),
 	)
@@ -264,6 +264,36 @@ func runExamples(dsn string, cfg MySQLConfig, logger *logging.Logger) error {
 
 	// Example 9: Raw SQL - Use raw SQL queries / Raw SQL 쿼리 사용
 	if err := example9RawSQL(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 10: Query Builder - Simple SELECT with WHERE, ORDER BY, LIMIT
+	if err := example10QueryBuilderSimple(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 11: Query Builder - GROUP BY with COUNT
+	if err := example11QueryBuilderGroupBy(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 12: Query Builder - Complex query with multiple conditions
+	if err := example12QueryBuilderComplex(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 13: SelectWhere - Simple query with options
+	if err := example13SelectWhereSimple(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 14: SelectWhere - GROUP BY with options
+	if err := example14SelectWhereGroupBy(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 15: SelectWhere - Complex with multiple options
+	if err := example15SelectWhereComplex(ctx, db, logger); err != nil {
 		return err
 	}
 
@@ -516,3 +546,174 @@ func example9RawSQL(ctx context.Context, db *mysql.Client, logger *logging.Logge
 	logger.Info("")
 	return nil
 }
+
+// example10QueryBuilderSimple demonstrates Query Builder with simple queries
+// example10QueryBuilderSimple은 간단한 쿼리로 Query Builder를 시연합니다
+func example10QueryBuilderSimple(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("🏗️  Example 10: Query Builder - Simple query")
+	logger.Info("🏗️  예제 10: Query Builder - 간단한 쿼리")
+	logger.Info("")
+
+	// Query: SELECT name, email, age FROM users WHERE age > 25 ORDER BY age DESC LIMIT 3
+	// 쿼리: 나이가 25 이상인 사용자를 나이 내림차순으로 3명 선택
+	users, err := db.Select("name", "email", "age").
+		From("users").
+		Where("age > ?", 25).
+		OrderBy("age DESC").
+		Limit(3).
+		All(ctx)
+	if err != nil {
+		return fmt.Errorf("query builder failed: %w", err)
+	}
+
+	logger.Info(fmt.Sprintf("Top 3 oldest users (age > 25):"))
+	logger.Info(fmt.Sprintf("나이 25세 이상 중 나이가 많은 상위 3명:"))
+	for i, user := range users {
+		logger.Info(fmt.Sprintf("  %d. %s (age: %v, email: %s)",
+			i+1, user["name"], user["age"], user["email"]))
+	}
+	logger.Info("")
+	return nil
+}
+
+// example11QueryBuilderGroupBy demonstrates Query Builder with GROUP BY
+// example11QueryBuilderGroupBy는 GROUP BY를 사용한 Query Builder를 시연합니다
+func example11QueryBuilderGroupBy(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("📊 Example 11: Query Builder - GROUP BY with HAVING")
+	logger.Info("📊 예제 11: Query Builder - HAVING을 사용한 GROUP BY")
+	logger.Info("")
+
+	// Query: SELECT city, COUNT(*) as count FROM users GROUP BY city HAVING COUNT(*) >= 1 ORDER BY count DESC
+	// 쿼리: 도시별 사용자 수를 계산하되, 1명 이상인 도시만 선택하고 사용자 수 내림차순 정렬
+	results, err := db.Select("city", "COUNT(*) as count").
+		From("users").
+		GroupBy("city").
+		Having("COUNT(*) >= ?", 1).
+		OrderBy("count DESC").
+		All(ctx)
+	if err != nil {
+		return fmt.Errorf("query builder GROUP BY failed: %w", err)
+	}
+
+	logger.Info("Cities with 1+ users (sorted by count):")
+	logger.Info("1명 이상 거주하는 도시 (사용자 수 내림차순):")
+	for _, row := range results {
+		logger.Info(fmt.Sprintf("  - %s: %v users", row["city"], row["count"]))
+	}
+	logger.Info("")
+	return nil
+}
+
+// example12QueryBuilderComplex demonstrates Query Builder with complex conditions
+// example12QueryBuilderComplex는 복잡한 조건을 사용한 Query Builder를 시연합니다
+func example12QueryBuilderComplex(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("🔗 Example 12: Query Builder - Multiple WHERE conditions")
+	logger.Info("🔗 예제 12: Query Builder - 다중 WHERE 조건")
+	logger.Info("")
+
+	// Query: SELECT * FROM users WHERE age > 25 AND city IN ('Seoul', 'Busan') ORDER BY name
+	// 쿼리: 나이가 25 이상이고 서울 또는 부산에 거주하는 사용자를 이름순으로 선택
+	users, err := db.Select("*").
+		From("users").
+		Where("age > ?", 25).
+		Where("city IN (?, ?)", "Seoul", "Busan").
+		OrderBy("name ASC").
+		All(ctx)
+	if err != nil {
+		return fmt.Errorf("query builder complex query failed: %w", err)
+	}
+
+	logger.Info(fmt.Sprintf("Users older than 25 in Seoul or Busan:"))
+	logger.Info(fmt.Sprintf("서울 또는 부산에 거주하는 25세 이상 사용자:"))
+	if len(users) == 0 {
+		logger.Info("  (No users found / 사용자 없음)")
+	} else {
+		for i, user := range users {
+			logger.Info(fmt.Sprintf("  %d. %s (age: %v, city: %s)",
+				i+1, user["name"], user["age"], user["city"]))
+		}
+	}
+	logger.Info("")
+	return nil
+}
+
+// example13SelectWhereSimple demonstrates SelectWhere with simple options
+// example13SelectWhereSimple은 간단한 옵션으로 SelectWhere를 시연합니다
+func example13SelectWhereSimple(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("✨ Example 13: SelectWhere - Simple query with options")
+	logger.Info("✨ 예제 13: SelectWhere - 옵션을 사용한 간단한 쿼리")
+	logger.Info("")
+
+	// One-liner query with options / 옵션을 사용한 한 줄 쿼리
+	// SELECT name, email, age FROM users WHERE age > 25 ORDER BY age DESC LIMIT 3
+	users, err := db.SelectWhere(ctx, "users", "age > ?", 25,
+		mysql.WithColumns("name", "email", "age"),
+		mysql.WithOrderBy("age DESC"),
+		mysql.WithLimit(3))
+	if err != nil {
+		return fmt.Errorf("selectWhere failed: %w", err)
+	}
+
+	logger.Info("Top 3 oldest users (age > 25) - using SelectWhere:")
+	logger.Info("나이 25세 이상 중 나이가 많은 상위 3명 - SelectWhere 사용:")
+	for i, user := range users {
+		logger.Info(fmt.Sprintf("  %d. %s (age: %v, email: %s)",
+			i+1, user["name"], user["age"], user["email"]))
+	}
+	logger.Info("")
+	return nil
+}
+
+// example14SelectWhereGroupBy demonstrates SelectWhere with GROUP BY
+// example14SelectWhereGroupBy는 GROUP BY를 사용한 SelectWhere를 시연합니다
+func example14SelectWhereGroupBy(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("📈 Example 14: SelectWhere - GROUP BY with HAVING")
+	logger.Info("📈 예제 14: SelectWhere - HAVING을 사용한 GROUP BY")
+	logger.Info("")
+
+	// One-liner GROUP BY query / 한 줄 GROUP BY 쿼리
+	// SELECT city, COUNT(*) as count FROM users GROUP BY city HAVING COUNT(*) >= 1 ORDER BY count DESC
+	results, err := db.SelectWhere(ctx, "users", "",
+		mysql.WithColumns("city", "COUNT(*) as count"),
+		mysql.WithGroupBy("city"),
+		mysql.WithHaving("COUNT(*) >= ?", 1),
+		mysql.WithOrderBy("count DESC"))
+	if err != nil {
+		return fmt.Errorf("selectWhere with GROUP BY failed: %w", err)
+	}
+
+	logger.Info("Cities with 1+ users (using SelectWhere):")
+	logger.Info("1명 이상 거주하는 도시 (SelectWhere 사용):")
+	for _, row := range results {
+		logger.Info(fmt.Sprintf("  - %s: %v users", row["city"], row["count"]))
+	}
+	logger.Info("")
+	return nil
+}
+
+// example15SelectWhereComplex demonstrates SelectWhere with multiple options
+// example15SelectWhereComplex는 여러 옵션을 사용한 SelectWhere를 시연합니다
+func example15SelectWhereComplex(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("🌟 Example 15: SelectWhere - Multiple conditions and options")
+	logger.Info("🌟 예제 15: SelectWhere - 다중 조건과 옵션")
+	logger.Info("")
+
+	// Complex query in one line / 한 줄로 복잡한 쿼리
+	// SELECT DISTINCT city FROM users WHERE age > 25 ORDER BY city
+	cities, err := db.SelectWhere(ctx, "users", "age > ?", 25,
+		mysql.WithColumns("city"),
+		mysql.WithDistinct(),
+		mysql.WithOrderBy("city ASC"))
+	if err != nil {
+		return fmt.Errorf("selectWhere with DISTINCT failed: %w", err)
+	}
+
+	logger.Info("Distinct cities with users older than 25:")
+	logger.Info("25세 이상 사용자가 있는 도시 목록:")
+	for i, city := range cities {
+		logger.Info(fmt.Sprintf("  %d. %s", i+1, city["city"]))
+	}
+	logger.Info("")
+	return nil
+}
+

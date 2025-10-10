@@ -6,6 +6,114 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
+## [v1.3.005] - 2025-10-10
+
+### Added / 추가
+- **Query Builder API** - Fluent API for complex queries / 복잡한 쿼리를 위한 Fluent API:
+  - Created `database/mysql/builder.go` - Query Builder implementation (~285 lines)
+  - Fluent method chaining: `Select().From().Join().Where().OrderBy().Limit().All()`
+  - Support for INNER JOIN, LEFT JOIN, RIGHT JOIN / INNER JOIN, LEFT JOIN, RIGHT JOIN 지원
+  - Support for GROUP BY, HAVING, ORDER BY, LIMIT, OFFSET / GROUP BY, HAVING, ORDER BY, LIMIT, OFFSET 지원
+  - Works with both Client and Transaction / Client와 Transaction 모두에서 사용 가능
+  - Query Builder로 복잡한 JOIN, 서브쿼리 패턴 해결
+
+- **SelectWhere API** - Functional options for simple queries / 간단한 쿼리를 위한 함수형 옵션:
+  - Created `database/mysql/select_options.go` - SelectWhere with functional options (~360 lines)
+  - **One-liner complex queries**: Single function call with multiple options / 한 줄로 복잡한 쿼리 작성
+  - Functional options pattern (consistent with `WithDSN()`, etc.) / 함수형 옵션 패턴 (WithDSN() 등과 일관성)
+  - Available options / 사용 가능한 옵션:
+    - `WithColumns(...string)` - SELECT specific columns / 특정 컬럼 선택
+    - `WithOrderBy(string)` - Add ORDER BY / ORDER BY 추가
+    - `WithLimit(int)` - Add LIMIT / LIMIT 추가
+    - `WithOffset(int)` - Add OFFSET / OFFSET 추가
+    - `WithGroupBy(...string)` - Add GROUP BY / GROUP BY 추가
+    - `WithHaving(string, ...interface{})` - Add HAVING / HAVING 추가
+    - `WithJoin/WithLeftJoin/WithRightJoin(table, condition)` - Add JOINs / JOIN 추가
+    - `WithDistinct()` - Add DISTINCT keyword / DISTINCT 키워드 추가
+  - Two new methods: `SelectWhere()` and `SelectOneWhere()` / 두 개의 새 메서드
+
+### Technical Details / 기술 세부사항
+
+**New Files / 새 파일**:
+```
+database/mysql/builder.go         (~285 lines) - Query Builder with fluent API
+database/mysql/select_options.go  (~360 lines) - SelectWhere with functional options
+examples/mysql/main.go             (+190 lines) - 6 new examples (10-15)
+```
+
+**API Examples / API 예제**:
+
+1. **Query Builder (Fluent API)**:
+```go
+// Complex query with JOIN / JOIN을 사용한 복잡한 쿼리
+users, _ := db.Select("u.name", "o.total").
+    From("users u").
+    Join("orders o", "u.id = o.user_id").
+    Where("o.status = ?", "completed").
+    OrderBy("o.total DESC").
+    Limit(10).
+    All(ctx)
+
+// GROUP BY with HAVING
+results, _ := db.Select("city", "COUNT(*) as count").
+    From("users").
+    GroupBy("city").
+    Having("COUNT(*) > ?", 10).
+    OrderBy("count DESC").
+    All(ctx)
+```
+
+2. **SelectWhere (Functional Options)**:
+```go
+// One-liner with multiple options / 여러 옵션을 사용한 한 줄 쿼리
+users, _ := db.SelectWhere(ctx, "users", "age > ?", 25,
+    mysql.WithColumns("name", "email", "age"),
+    mysql.WithOrderBy("age DESC"),
+    mysql.WithLimit(3))
+
+// GROUP BY in one line / 한 줄로 GROUP BY
+results, _ := db.SelectWhere(ctx, "users", "",
+    mysql.WithColumns("city", "COUNT(*) as count"),
+    mysql.WithGroupBy("city"),
+    mysql.WithHaving("COUNT(*) > ?", 2),
+    mysql.WithOrderBy("count DESC"))
+
+// DISTINCT query / DISTINCT 쿼리
+cities, _ := db.SelectWhere(ctx, "users", "age > ?", 25,
+    mysql.WithColumns("city"),
+    mysql.WithDistinct(),
+    mysql.WithOrderBy("city ASC"))
+```
+
+**Example Summary / 예제 요약**:
+- Total 15 examples / 총 15개 예제:
+  - Examples 1-9: Simple API (SelectAll, Insert, etc.) / 간단한 API
+  - Examples 10-12: Query Builder (Fluent API) / 쿼리 빌더
+  - Examples 13-15: SelectWhere (Functional Options) / SelectWhere 함수형 옵션
+- All examples tested successfully / 모든 예제 테스트 성공
+
+### Why Both Query Builder and SelectWhere? / 왜 둘 다 제공하는가?
+
+**Query Builder (Fluent API)**:
+- ✅ For complex queries with multiple JOINs / 여러 JOIN이 있는 복잡한 쿼리용
+- ✅ IDE autocomplete support / IDE 자동완성 지원
+- ✅ Step-by-step query building / 단계별 쿼리 빌드
+
+**SelectWhere (Functional Options)**:
+- ✅ For simple to moderate queries / 간단~중간 복잡도 쿼리용
+- ✅ **One-liner**: Entire query in single function call / 한 줄로 전체 쿼리 작성
+- ✅ Consistent with package option pattern / 패키지 옵션 패턴과 일관성
+- ✅ Closer to "30 lines → 2 lines" goal / "30줄 → 2줄" 목표에 더 가까움
+
+### Notes / 참고사항
+- Both APIs support transactions / 두 API 모두 트랜잭션 지원
+- Both APIs have auto-retry, auto-reconnect / 두 API 모두 자동 재시도, 자동 재연결
+- Users can choose based on preference / 사용자가 선호에 따라 선택 가능
+- Query Builder for complex queries / 복잡한 쿼리는 Query Builder
+- SelectWhere for simple one-liners / 간단한 쿼리는 SelectWhere
+
+---
+
 ## [v1.3.004] - 2025-10-10
 
 ### Added / 추가
