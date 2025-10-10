@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 `go-utils`는 Golang 개발을 위한 모듈화된 유틸리티 패키지 모음입니다. 라이브러리는 서브패키지 구조로 설계되어 사용자가 전체 라이브러리가 아닌 특정 유틸리티만 import할 수 있습니다.
 
 **GitHub 저장소**: `github.com/arkd0ng/go-utils`
-**현재 버전**: v0.2.0
+**현재 버전**: v1.2.002 (from cfg/app.yaml)
 **Go 버전**: 1.24.6
 **라이선스**: MIT
 
@@ -52,6 +52,105 @@ go-utils/
 - 16진수: `Hex`, `HexLower`
 - 인코딩: `Base64`, `Base64URL`
 - 사용자 정의: `Custom(charset string, length ...int)`
+
+## 버전 관리 및 CHANGELOG 규칙
+
+### 버전 관리
+
+**버전 형식**: `vMAJOR.MINOR.PATCH` (예: v1.2.002)
+
+**자동 패치 버전 증가 규칙**:
+- 모든 작업 시작 전 패치 버전을 자동으로 1 증가시킵니다
+- 예: v1.2.001 → v1.2.002 → v1.2.003
+- 버전은 `cfg/app.yaml` 파일에서 관리합니다
+
+**버전 히스토리**:
+- **v1.0.x**: Random package 개발
+- **v1.1.x**: Logging package 개발
+- **v1.2.x**: 문서화 작업 (진행 중)
+
+### CHANGELOG 관리
+
+**파일 구조**:
+```
+go-utils/
+├── CHANGELOG.md              # Major/Minor 버전 개요만 포함
+└── docs/
+    ├── CHANGELOG-v1.0.md     # v1.0.x 상세 변경사항
+    ├── CHANGELOG-v1.1.md     # v1.1.x 상세 변경사항
+    └── CHANGELOG-v1.2.md     # v1.2.x 상세 변경사항
+```
+
+**CHANGELOG 규칙**:
+
+1. **루트 CHANGELOG.md**:
+   - Major/Minor 버전의 대략적인 내용만 언급
+   - 각 버전별 상세 CHANGELOG 링크 제공 (예: `docs/CHANGELOG-v1.1.md`)
+
+2. **버전별 CHANGELOG (docs/CHANGELOG-vX.Y.md)**:
+   - 해당 Major.Minor 버전의 모든 패치 변경사항 포함
+   - 각 패치별로 날짜, 커밋 해시, 변경 내용 기록
+
+3. **필수 업데이트 시점**:
+   - 모든 패치 작업 후 GitHub 푸시 전
+   - 모든 문서 작업 후 GitHub 푸시 전
+   - **반드시 CHANGELOG를 업데이트한 후 커밋 및 푸시**
+
+4. **CHANGELOG 형식**:
+   ```markdown
+   ## [v1.2.002] - 2025-10-10
+
+   ### Added
+   - 새로운 기능 추가 사항
+
+   ### Changed
+   - 변경된 기능
+
+   ### Fixed
+   - 버그 수정
+
+   ### Removed
+   - 제거된 기능
+   ```
+
+### Git 커밋 및 푸시 워크플로우
+
+**작업 순서** (모든 작업에 적용):
+
+1. **작업 시작**:
+   - `cfg/app.yaml`의 패치 버전을 1 증가
+   - 예: v1.2.001 → v1.2.002
+
+2. **코드 작업 및 수정**
+
+3. **컴파일 및 테스트**:
+   ```bash
+   go build ./...
+   go test ./... -v
+   ```
+
+4. **문서 작업**:
+   - README 업데이트
+   - 필요시 예제 코드 업데이트
+
+5. **CHANGELOG 업데이트**:
+   - 해당 버전의 `docs/CHANGELOG-vX.Y.md` 업데이트
+   - 변경사항을 명확하게 기록
+
+6. **Git 커밋 및 푸시**:
+   ```bash
+   git add .
+   git commit -m "타입: 간단한 설명"
+   git push
+   ```
+
+**커밋 메시지 타입**:
+- `Feat`: 새로운 기능
+- `Fix`: 버그 수정
+- `Docs`: 문서 변경
+- `Refactor`: 리팩토링
+- `Test`: 테스트 추가/수정
+- `Chore`: 빌드, 설정 등
 
 ## 개발 워크플로우
 
