@@ -18,18 +18,18 @@ import (
 //
 // Output / 출력:
 //
-//	╔════════════════════════════════════════╗
-//	║                                        ║
-//	║       My Application v1.0.0            ║
-//	║                                        ║
-//	╚════════════════════════════════════════╝
+//	╔════════════════════════════════════════════════════════════╗
+//	║                                                            ║
+//	║                 My Application v1.0.0                      ║
+//	║                                                            ║
+//	╚════════════════════════════════════════════════════════════╝
 func (l *Logger) Banner(appName, version string) {
 	// Combine app name and version / 앱 이름과 버전 결합
 	text := fmt.Sprintf("%s %s", appName, version)
 	width := len(text) + 12 // Padding / 패딩
 
-	if width < 40 {
-		width = 40
+	if width < 60 {
+		width = 60
 	}
 
 	// Build banner / 배너 작성
@@ -138,10 +138,10 @@ func (l *Logger) CustomBanner(lines []string) {
 //
 // Output / 출력:
 //
-//	╔════════════════════════════════════════╗
-//	║       My Application v1.0.0            ║
-//	║       Production Server                ║
-//	╚════════════════════════════════════════╝
+//	╔════════════════════════════════════════════════════════════╗
+//	║                 My Application v1.0.0                      ║
+//	║                   Production Server                        ║
+//	╚════════════════════════════════════════════════════════════╝
 func (l *Logger) DoubleBanner(appName, version, description string) {
 	text1 := fmt.Sprintf("%s %s", appName, version)
 	text2 := description
@@ -152,8 +152,8 @@ func (l *Logger) DoubleBanner(appName, version, description string) {
 	}
 	width += 12 // Padding / 패딩
 
-	if width < 40 {
-		width = 40
+	if width < 60 {
+		width = 60
 	}
 
 	var banner strings.Builder
