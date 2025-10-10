@@ -36,6 +36,7 @@ This library is organized into subpackages for better modularity:
 ```
 go-utils/
 ├── random/          # Random generation utilities / 랜덤 생성 유틸리티
+├── logging/         # Logging with file rotation / 파일 로테이션 로깅
 ├── stringutil/      # String manipulation (coming soon) / 문자열 처리 (예정)
 ├── sliceutil/       # Slice helpers (coming soon) / 슬라이스 헬퍼 (예정)
 ├── maputil/         # Map utilities (coming soon) / 맵 유틸리티 (예정)
@@ -90,6 +91,43 @@ if err != nil {
 ```
 
 **[→ View full documentation / 전체 문서 보기](./random/README.md)**
+
+---
+
+### ✅ [logging](./logging/) - Structured Logging with File Rotation
+
+Simple and powerful logging with automatic file rotation, multiple log levels, and banner support.
+
+자동 파일 로테이션, 다중 로그 레벨, 배너 지원이 있는 간단하고 강력한 로깅.
+
+**Key features** / **주요 기능**:
+- Automatic file rotation with lumberjack / lumberjack을 사용한 자동 파일 로테이션
+- Multiple log levels (DEBUG, INFO, WARN, ERROR, FATAL) / 다중 로그 레벨
+- Structured logging with key-value pairs / 키-값 쌍을 사용한 구조화된 로깅
+- Colored console output / 색상 콘솔 출력
+- Banner support for application startup / 애플리케이션 시작 배너
+- Thread-safe / 스레드 안전
+
+```go
+import "github.com/arkd0ng/go-utils/logging"
+
+// Default logger / 기본 로거
+logger := logging.Default()
+defer logger.Close()
+
+// Banner / 배너
+logger.Banner("My Application", "v1.0.0")
+
+// Logging / 로깅
+logger.Info("Application started")
+logger.Error("Error occurred", "code", 500, "message", "internal error")
+
+// Multiple loggers / 여러 로거
+appLogger, _ := logging.New(logging.WithFilePath("./logs/app.log"))
+dbLogger, _ := logging.New(logging.WithFilePath("./logs/db.log"))
+```
+
+**[→ View full documentation / 전체 문서 보기](./logging/README.md)**
 
 ---
 
