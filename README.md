@@ -54,18 +54,39 @@ Generate cryptographically secure random strings with various character sets.
 
 **14개 메서드 제공**: Letters, Alnum, Digits, Hex, AlphaUpper, AlphaLower, Base64URL 등.
 
+**Flexible API**: Support both fixed length and range with variadic parameters and error handling.
+
+**유연한 API**: 가변 인자와 에러 핸들링으로 고정 길이 및 범위 모두 지원.
+
 ```go
-import "github.com/arkd0ng/go-utils/random"
+import (
+    "log"
+    "github.com/arkd0ng/go-utils/random"
+)
 
-// Generate alphanumeric string (32-128 characters)
-// 영숫자 문자열 생성 (32-128자)
-str := random.GenString.Alnum(32, 128)
+// Fixed length: 32 characters / 고정 길이: 32자
+str, err := random.GenString.Alnum(32)
+if err != nil {
+    log.Fatal(err)
+}
 
-// Generate PIN code / PIN 코드 생성
-pin := random.GenString.Digits(6, 6)
+// Range length: 32-128 characters / 범위 길이: 32-128자
+str2, err := random.GenString.Alnum(32, 128)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Generate PIN code (fixed 6 digits) / PIN 코드 생성 (고정 6자리)
+pin, err := random.GenString.Digits(6)
+if err != nil {
+    log.Fatal(err)
+}
 
 // Generate hex color code / 16진수 색상 코드 생성
-color := random.GenString.Hex(6, 6)
+color, err := random.GenString.Hex(6)
+if err != nil {
+    log.Fatal(err)
+}
 ```
 
 **[→ View full documentation / 전체 문서 보기](./random/README.md)**
@@ -95,11 +116,17 @@ import (
 
 func main() {
     // Generate a secure password / 안전한 비밀번호 생성
-    password := random.GenString.Complex(16, 24)
+    password, err := random.GenString.Complex(16, 24)
+    if err != nil {
+        log.Fatal(err)
+    }
     fmt.Println("Password:", password)
 
-    // Generate an API key / API 키 생성
-    apiKey := random.GenString.Alnum(40, 40)
+    // Generate an API key (fixed length) / API 키 생성 (고정 길이)
+    apiKey, err := random.GenString.Alnum(40)
+    if err != nil {
+        log.Fatal(err)
+    }
     fmt.Println("API Key:", apiKey)
 }
 ```
