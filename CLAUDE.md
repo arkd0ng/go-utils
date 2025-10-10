@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 `go-utils`는 Golang 개발을 위한 모듈화된 유틸리티 패키지 모음입니다. 라이브러리는 서브패키지 구조로 설계되어 사용자가 전체 라이브러리가 아닌 특정 유틸리티만 import할 수 있습니다.
 
 **GitHub 저장소**: `github.com/arkd0ng/go-utils`
-**현재 버전**: v1.2.002 (from cfg/app.yaml)
+**현재 버전**: v1.2.004 (from cfg/app.yaml)
 **Go 버전**: 1.24.6
 **라이선스**: MIT
 
@@ -74,22 +74,24 @@ go-utils/
 **파일 구조**:
 ```
 go-utils/
-├── CHANGELOG.md              # Major/Minor 버전 개요만 포함
+├── CHANGELOG.md                     # Major/Minor 버전 개요만 포함
 └── docs/
-    ├── CHANGELOG-v1.0.md     # v1.0.x 상세 변경사항
-    ├── CHANGELOG-v1.1.md     # v1.1.x 상세 변경사항
-    └── CHANGELOG-v1.2.md     # v1.2.x 상세 변경사항
+    └── CHANGELOG/
+        ├── CHANGELOG-v1.0.md        # v1.0.x 상세 변경사항
+        ├── CHANGELOG-v1.1.md        # v1.1.x 상세 변경사항
+        └── CHANGELOG-v1.2.md        # v1.2.x 상세 변경사항
 ```
 
 **CHANGELOG 규칙**:
 
 1. **루트 CHANGELOG.md**:
    - Major/Minor 버전의 대략적인 내용만 언급
-   - 각 버전별 상세 CHANGELOG 링크 제공 (예: `docs/CHANGELOG-v1.1.md`)
+   - 각 버전별 상세 CHANGELOG 링크 제공 (예: `docs/CHANGELOG/CHANGELOG-v1.1.md`)
 
-2. **버전별 CHANGELOG (docs/CHANGELOG-vX.Y.md)**:
+2. **버전별 CHANGELOG (docs/CHANGELOG/CHANGELOG-vX.Y.md)**:
    - 해당 Major.Minor 버전의 모든 패치 변경사항 포함
-   - 각 패치별로 날짜, 커밋 해시, 변경 내용 기록
+   - 각 패치별로 날짜, 변경 내용 기록 (이중 언어)
+   - 최신 패치가 맨 위에 위치
 
 3. **필수 업데이트 시점**:
    - 모든 패치 작업 후 GitHub 푸시 전
@@ -151,6 +153,122 @@ go-utils/
 - `Refactor`: 리팩토링
 - `Test`: 테스트 추가/수정
 - `Chore`: 빌드, 설정 등
+
+## 문서화 작업 워크플로우
+
+### 패키지 문서화 표준 작업 순서
+
+각 패키지에 대한 종합 문서를 작성할 때 다음 순서를 따릅니다:
+
+**1. 버전 증가**:
+```bash
+# cfg/app.yaml의 패치 버전을 1 증가
+# 예: v1.2.003 → v1.2.004
+```
+
+**2. 패키지 분석**:
+- 패키지의 모든 코드 파일 검토 (`*.go`)
+- 패키지 README.md 검토
+- 테스트 파일 검토 (`*_test.go`)
+- examples 디렉토리 검토
+
+**3. 문서 디렉토리 생성**:
+```bash
+mkdir -p docs/{package_name}/
+```
+
+**4. 사용자 매뉴얼 작성** (`docs/{package}/USER_MANUAL.md`):
+
+필수 섹션 (모두 이중 언어):
+- **목차**: 모든 주요 섹션 링크
+- **Introduction / 소개**: 패키지 개요, 주요 기능, 사용 사례
+- **Installation / 설치**: 전제 조건, 패키지 설치, 임포트 방법
+- **Quick Start / 빠른 시작**: 3-5개의 빠른 시작 예제
+- **Configuration Reference / 설정 참조**: 모든 옵션, 메서드, 설정 테이블
+- **Usage Patterns / 사용 패턴**: 일반적인 사용 패턴 5-10개
+- **Common Use Cases / 일반적인 사용 사례**: 실제 사용 사례 5-10개 (전체 코드 포함)
+- **Best Practices / 모범 사례**: 10-15개 모범 사례
+- **Troubleshooting / 문제 해결**: 일반적인 문제 및 해결책
+- **FAQ**: 10-15개 자주 묻는 질문
+
+**5. 개발자 가이드 작성** (`docs/{package}/DEVELOPER_GUIDE.md`):
+
+필수 섹션 (모두 이중 언어):
+- **목차**: 모든 주요 섹션 링크
+- **Architecture Overview / 아키텍처 개요**: 설계 원칙, 상위 수준 아키텍처 다이어그램
+- **Package Structure / 패키지 구조**: 파일 구성, 파일별 책임
+- **Core Components / 핵심 컴포넌트**: 주요 타입, 구조체, 인터페이스
+- **Internal Implementation / 내부 구현**: 흐름 다이어그램, 상세 구현 설명
+- **Design Patterns / 디자인 패턴**: 사용된 패턴 설명 (Singleton, Options 등)
+- **Adding New Features / 새 기능 추가**: 단계별 가이드 및 예제
+- **Testing Guide / 테스트 가이드**: 테스트 구조, 실행 방법, 작성 가이드
+- **Performance / 성능**: 벤치마크, 최적화 기법
+- **Contributing Guidelines / 기여 가이드라인**: 기여 프로세스, 체크리스트
+- **Code Style / 코드 스타일**: 명명 규칙, 주석 스타일, 모범 사례
+
+**6. 테스트 및 빌드**:
+```bash
+go build ./...
+go test ./{package} -v
+```
+
+**7. CHANGELOG 업데이트**:
+- `docs/CHANGELOG/CHANGELOG-v1.2.md`에 새 버전 항목 추가
+- 생성된 문서 파일 나열
+- 주요 섹션 요약
+
+**8. Git 커밋 및 푸시**:
+```bash
+git add cfg/app.yaml docs/CHANGELOG/CHANGELOG-v1.2.md docs/{package}/ {package}/*_test.go
+git commit -m "Docs: Add comprehensive {Package} package documentation (User Manual and Developer Guide)"
+git push
+```
+
+### 문서 디렉토리 구조
+
+```
+go-utils/
+├── docs/
+│   ├── CHANGELOG/
+│   │   ├── CHANGELOG-v1.0.md
+│   │   ├── CHANGELOG-v1.1.md
+│   │   └── CHANGELOG-v1.2.md
+│   ├── random/
+│   │   ├── USER_MANUAL.md      # ~600 lines, 완전한 사용자 가이드
+│   │   └── DEVELOPER_GUIDE.md  # ~700 lines, 완전한 개발자 가이드
+│   └── logging/
+│       ├── USER_MANUAL.md      # ~1000 lines, 완전한 사용자 가이드
+│       └── DEVELOPER_GUIDE.md  # ~900 lines, 완전한 개발자 가이드
+```
+
+### 문서 작성 지침
+
+**이중 언어 형식**:
+- 모든 제목: `## Section Title / 섹션 제목`
+- 모든 설명: 영문 문장 다음에 한글 번역
+- 코드 예제: 주석에 이중 언어 포함
+- 테이블: 헤더와 내용 모두 이중 언어
+
+**코드 예제**:
+```go
+// Create default logger / 기본 로거 생성
+logger := logging.Default()
+defer logger.Close()
+
+// Log messages / 메시지 로깅
+logger.Info("Application started")
+```
+
+**테이블 형식**:
+```markdown
+| Option / 옵션 | Type / 타입 | Default / 기본값 | Description / 설명 |
+```
+
+**일관성**:
+- 모든 섹션 제목은 영문/한글 병기
+- 모든 코드 주석은 이중 언어
+- 파일 경로, 명령어, 코드는 원어 유지
+- 기술 용어는 영문 후 한글 표기
 
 ## 개발 워크플로우
 
