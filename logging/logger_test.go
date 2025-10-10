@@ -338,7 +338,8 @@ func TestAutoBanner(t *testing.T) {
 			name: "Auto extract app name from filename",
 			opts: []Option{
 				WithFilePath("./test_logs/database.log"),
-				// appName not specified, should extract "database" from filename
+				// With app.yaml present, should use "go-utils" from cfg/app.yaml
+				// Without app.yaml, would extract "database" from filename
 			},
 			shouldHaveBanner: true,
 		},
@@ -346,6 +347,7 @@ func TestAutoBanner(t *testing.T) {
 			name: "Auto extract from complex path",
 			opts: []Option{
 				WithFilePath("./test_logs/api-server.log"),
+				// With app.yaml present, should use "go-utils" from cfg/app.yaml
 			},
 			shouldHaveBanner: true,
 		},
@@ -379,19 +381,11 @@ func TestAutoBanner(t *testing.T) {
 				t.Error("Log file should not contain auto banner")
 			}
 
-			// Verify auto-extracted filename in banner
-			// 배너에 자동 추출된 파일명 확인
-			if tt.name == "Auto extract app name from filename" {
-				if !strings.Contains(logStr, "database") {
-					t.Error("Log file should contain auto-extracted app name 'database'")
-				}
-			} else if tt.name == "Auto extract from complex path" {
-				if !strings.Contains(logStr, "api-server") {
-					t.Error("Log file should contain auto-extracted app name 'api-server'")
-				}
-			} else if logger.config.appName != "" && logger.config.appName != "Application" && tt.shouldHaveBanner {
-				// Only verify config appName if it's not the default "Application"
-				// 기본값 "Application"이 아닌 경우에만 config appName 확인
+			// Verify app name in banner
+			// 배너에 앱 이름 확인
+			if logger.config.appName != "" && logger.config.appName != "Application" && tt.shouldHaveBanner {
+				// Verify config appName if it's not the default "Application"
+				// 기본값 "Application"이 아닌 경우 config appName 확인
 				if !strings.Contains(logStr, logger.config.appName) {
 					t.Errorf("Log file should contain app name: %s", logger.config.appName)
 				}
@@ -622,5 +616,40 @@ func TestPrintfVsStructured(t *testing.T) {
 	}
 	if !strings.Contains(logStr, "user_id=67890") {
 		t.Error("Log should contain structured data 'user_id=67890'")
+	}
+}
+
+// TestAppYamlIntegration tests that app.yaml is loaded and used in banner
+// TestAppYamlIntegration은 app.yaml이 로드되고 배너에 사용되는지 테스트합니다
+func TestAppYamlIntegration(t *testing.T) {
+	logger, err := New(
+		WithFilePath("./test_logs/app_yaml.log"),
+	)
+	if err != nil {
+		t.Fatalf("Failed to create logger: %v", err)
+	}
+	defer logger.Close()
+	defer cleanupTestLogs()
+
+	// Write a test log to ensure file is created / 파일 생성을 위해 테스트 로그 작성
+	logger.Info("Test log message")
+
+	// Read log file / 로그 파일 읽기
+	content, err := os.ReadFile("./test_logs/app_yaml.log")
+	if err != nil {
+		t.Fatalf("Failed to read log file: %v", err)
+	}
+
+	logStr := string(content)
+
+	// Verify that app.yaml values are in the banner / app.yaml 값이 배너에 있는지 확인
+	// Should contain "go-utils" (app name from cfg/app.yaml)
+	if !strings.Contains(logStr, "go-utils") {
+		t.Error("Log file should contain app name 'go-utils' from cfg/app.yaml")
+	}
+
+	// Should contain "v1.2.001" (version from cfg/app.yaml)
+	if !strings.Contains(logStr, "v1.2.001") {
+		t.Error("Log file should contain version 'v1.2.001' from cfg/app.yaml")
 	}
 }

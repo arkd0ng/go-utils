@@ -22,6 +22,7 @@ go get github.com/arkd0ng/go-utils/logging
 - **Multiple Loggers** - Create separate loggers for different purposes / 용도별 독립 로거 생성
 - **Automatic Banner** - Prints banner on logger creation by default / 로거 생성 시 자동 배너 출력
 - **Smart Banner** - Auto-extracts app name from log filename / 로그 파일명에서 앱 이름 자동 추출
+- **Version Management** - Auto-loads app name and version from `app.yaml` / `app.yaml`에서 앱 이름과 버전 자동 로드
 - **Banner Support** - ASCII art banners for application startup / 애플리케이션 시작 배너 지원
 - **Thread-Safe** - Safe for concurrent use / 동시성 안전
 
@@ -298,6 +299,64 @@ logger, _ := logging.New(
 // 배너 출력: "ProductionAPI v3.2.1"
 ```
 
+#### Version Management with app.yaml / app.yaml을 이용한 버전 관리
+
+**자동으로 app.yaml에서 앱 이름과 버전을 로드합니다!**
+
+The logger automatically loads app name and version from `app.yaml` if it exists.
+
+로거는 `app.yaml` 파일이 존재하면 자동으로 앱 이름과 버전을 로드합니다.
+
+**Create app.yaml / app.yaml 생성:**
+
+Place the file in one of these locations / 다음 위치 중 하나에 파일을 배치하세요:
+- `cfg/app.yaml` (recommended / 권장)
+- `apps/app.yaml`
+- `app.yaml` (root directory / 루트 디렉토리)
+
+```yaml
+# cfg/app.yaml
+app:
+  name: go-utils
+  version: v1.2.001
+  description: A collection of frequently used utility functions
+```
+
+**Usage / 사용법:**
+
+```go
+// Automatically loads from cfg/app.yaml
+// cfg/app.yaml에서 자동으로 로드
+logger := logging.Default()
+// Prints banner: "go-utils v1.2.001" ✨
+// 배너 출력: "go-utils v1.2.001" ✨
+
+// You can still override with WithAppName/WithAppVersion
+// WithAppName/WithAppVersion으로 재정의 가능
+logger, _ := logging.New(
+    logging.WithAppName("CustomName"),  // Overrides app.yaml
+    logging.WithAppVersion("v2.0.0"),   // Overrides app.yaml
+)
+```
+
+**Search Order / 검색 순서:**
+
+The logger searches for app.yaml in the following order:
+
+로거는 다음 순서로 app.yaml을 검색합니다:
+
+1. `cfg/app.yaml` (current directory / 현재 디렉토리)
+2. `apps/app.yaml`
+3. `app.yaml`
+4. `../cfg/app.yaml` (parent directory / 상위 디렉토리)
+5. `../apps/app.yaml`
+6. `../app.yaml`
+7. And so on... / 계속...
+
+This works even when running tests from subdirectories!
+
+서브디렉토리에서 테스트를 실행할 때도 작동합니다!
+
 #### Disable Auto Banner / 자동 배너 비활성화
 
 ```go
@@ -379,9 +438,11 @@ logger.SeparatorLine("=", 50)
 | Option / 옵션 | Description / 설명 | Default / 기본값 |
 |--------------|-------------------|-----------------|
 | `WithAutoBanner(bool)` | Auto-print banner on creation / 생성 시 자동 배너 출력 | `true` |
-| `WithAppName(string)` | Application name for banner / 배너 애플리케이션 이름 | `"Application"` |
-| `WithAppVersion(string)` | Application version for banner / 배너 애플리케이션 버전 | `"v1.0.0"` |
+| `WithAppName(string)` | Application name for banner / 배너 애플리케이션 이름 | From `app.yaml` or `"Application"` |
+| `WithAppVersion(string)` | Application version for banner / 배너 애플리케이션 버전 | From `app.yaml` or `"v1.0.0"` |
 | `WithBanner(name, version)` | Convenience: set name, version & enable auto banner / 편의 함수 | - |
+
+**Note / 참고:** If `cfg/app.yaml` or `apps/app.yaml` exists, app name and version are automatically loaded from there. / `cfg/app.yaml` 또는 `apps/app.yaml`이 존재하면 앱 이름과 버전이 자동으로 로드됩니다.
 
 ## Advanced Usage / 고급 사용법
 
@@ -518,13 +579,17 @@ go test -bench=.
 
 ## Dependencies / 의존성
 
-This package uses [lumberjack](https://github.com/natefinch/lumberjack) for log file rotation.
+This package uses the following dependencies:
 
-이 패키지는 로그 파일 로테이션을 위해 [lumberjack](https://github.com/natefinch/lumberjack)을 사용합니다.
+이 패키지는 다음 의존성을 사용합니다:
 
 - **lumberjack** (v2.2.1) - MIT License - Copyright (c) 2014 Nate Finch
   - Provides automatic log file rotation and compression
   - 자동 로그 파일 로테이션 및 압축 제공
+
+- **yaml.v3** (v3.0.1) - MIT License / Apache License 2.0
+  - YAML parsing for app.yaml configuration
+  - app.yaml 설정을 위한 YAML 파싱
 
 ## Performance / 성능
 

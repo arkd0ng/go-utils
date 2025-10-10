@@ -31,6 +31,18 @@ type config struct {
 // defaultConfig returns the default configuration
 // defaultConfig는 기본 설정을 반환합니다
 func defaultConfig() *config {
+	// Try to load version from app.yaml / app.yaml에서 버전 로드 시도
+	appVersion := TryLoadAppVersion()
+	if appVersion == "" {
+		appVersion = "v1.0.0" // Fallback to default / 기본값으로 대체
+	}
+
+	// Try to load app name from app.yaml / app.yaml에서 앱 이름 로드 시도
+	appName := TryLoadAppName()
+	if appName == "" {
+		appName = "Application" // Fallback to default / 기본값으로 대체
+	}
+
 	return &config{
 		filename:     "./logs/app.log",
 		maxSize:      100,  // 100 MB
@@ -43,9 +55,9 @@ func defaultConfig() *config {
 		enableStdout: false, // Disabled by default, file only / 기본적으로 비활성화, 파일만 출력
 		enableFile:   true,
 		timeFormat:   "2006-01-02 15:04:05",
-		autoBanner:   true,        // Auto banner enabled by default / 기본적으로 자동 배너 활성화
-		appName:      "Application", // Default app name / 기본 애플리케이션 이름
-		appVersion:   "v1.0.0",      // Default version / 기본 버전
+		autoBanner:   true,    // Auto banner enabled by default / 기본적으로 자동 배너 활성화
+		appName:      appName,    // From app.yaml or default / app.yaml 또는 기본값
+		appVersion:   appVersion, // From app.yaml or default / app.yaml 또는 기본값
 	}
 }
 
