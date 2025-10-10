@@ -15,7 +15,9 @@ go get github.com/arkd0ng/go-utils/logging
 - **Zero Configuration** - Works out of the box with sensible defaults / 기본 설정으로 즉시 사용 가능
 - **Automatic File Rotation** - Uses lumberjack for log file management / lumberjack을 사용한 로그 파일 자동 관리
 - **Multiple Log Levels** - DEBUG, INFO, WARN, ERROR, FATAL / 5가지 로그 레벨 지원
+- **Two Logging Styles** - Both structured (key-value) and Printf-style logging / 구조화 및 Printf 스타일 모두 지원
 - **Structured Logging** - Key-value pairs for searchable logs / 검색 가능한 키-값 쌍 로깅
+- **Printf-Style Logging** - Familiar `fmt.Printf` syntax / 친숙한 `fmt.Printf` 문법
 - **Colored Output** - Color-coded console output / 색상으로 구분된 콘솔 출력
 - **Multiple Loggers** - Create separate loggers for different purposes / 용도별 독립 로거 생성
 - **Automatic Banner** - Prints banner on logger creation by default / 로거 생성 시 자동 배너 출력
@@ -43,6 +45,10 @@ func main() {
     logger.Info("Application started")
     logger.Warn("This is a warning")
     logger.Error("An error occurred")
+
+    // Printf-style logging / Printf 스타일 로깅
+    port := 8080
+    logger.Infof("Server listening on port %d", port)
 }
 ```
 
@@ -103,10 +109,20 @@ logger.Error("Error messages")
 logger.Fatal("Fatal errors - exits program") // Calls os.Exit(1) / os.Exit(1) 호출
 ```
 
-### Structured Logging / 구조화된 로깅
+### Two Logging Styles: Structured vs Printf / 두 가지 로깅 스타일: 구조화 vs Printf
+
+이 로깅 패키지는 두 가지 로깅 스타일을 모두 지원합니다:
+
+This logging package supports two logging styles:
+
+#### 1. Structured Logging (권장 / Recommended)
+
+구조화된 로깅은 **키-값 쌍**을 사용하여 로그를 기록합니다. 로그 분석 도구에서 검색하고 필터링하기 쉽습니다.
+
+Structured logging uses **key-value pairs**. This format is easy to search and filter in log analysis tools.
 
 ```go
-// Log with key-value pairs / 키-값 쌍으로 로깅
+// Structured logging with key-value pairs / 키-값 쌍을 사용한 구조화된 로깅
 logger.Info("User login",
     "user_id", 12345,
     "username", "john.doe",
@@ -116,6 +132,98 @@ logger.Info("User login",
 // Output / 출력:
 // 2025-10-10 15:30:45 [INFO] User login user_id=12345 username=john.doe ip=192.168.1.100
 ```
+
+**장점 (Advantages):**
+- 로그 분석 도구에서 쉽게 파싱 가능 / Easy to parse in log analysis tools
+- 필드별 검색/필터링 가능 / Searchable and filterable by field
+- 구조화된 데이터 형식 / Structured data format
+
+**사용 사례 (Use Cases):**
+- 프로덕션 환경 / Production environments
+- 로그 분석이 필요한 경우 / When log analysis is needed
+- 자동화된 모니터링 / Automated monitoring
+
+#### 2. Printf-Style Logging (친숙함 / Familiar)
+
+Printf 스타일은 **형식 문자열**을 사용하여 로그를 기록합니다. 표준 라이브러리의 `fmt.Printf`와 동일한 방식입니다.
+
+Printf-style uses **format strings**, just like `fmt.Printf` from the standard library.
+
+```go
+// Printf-style logging with format string / 형식 문자열을 사용한 Printf 스타일 로깅
+logger.Infof("User login: %s (ID: %d, IP: %s)", "john.doe", 12345, "192.168.1.100")
+
+// Output / 출력:
+// 2025-10-10 15:30:45 [INFO] User login: john.doe (ID: 12345, IP: 192.168.1.100)
+```
+
+**장점 (Advantages):**
+- 친숙한 문법 (표준 라이브러리와 동일) / Familiar syntax (same as standard library)
+- 읽기 쉬운 메시지 / Human-readable messages
+- 빠른 작성 / Quick to write
+
+**사용 사례 (Use Cases):**
+- 개발/디버깅 환경 / Development/debugging
+- 사람이 읽는 로그 메시지 / Human-readable log messages
+- 간단한 로깅 / Simple logging
+
+### 비교 예제 / Comparison Examples
+
+```go
+user := "alice"
+userID := 67890
+loginTime := time.Now()
+
+// 1. Structured logging (키-값 쌍) / Structured logging (key-value pairs)
+logger.Info("User login successful",
+    "username", user,
+    "user_id", userID,
+    "timestamp", loginTime,
+)
+// Output / 출력:
+// 2025-10-10 15:30:45 [INFO] User login successful username=alice user_id=67890 timestamp=2025-10-10 15:30:45.123456789 +0900 KST
+
+// 2. Printf-style logging (형식 문자열) / Printf-style logging (format string)
+logger.Infof("User login successful: %s (ID: %d) at %s", user, userID, loginTime.Format("15:04:05"))
+// Output / 출력:
+// 2025-10-10 15:30:45 [INFO] User login successful: alice (ID: 67890) at 15:30:45
+```
+
+### 모든 로그 레벨에서 두 스타일 모두 지원 / Both Styles Supported for All Levels
+
+```go
+// Structured logging / 구조화된 로깅
+logger.Debug("Debug info", "key", "value")
+logger.Info("Info message", "key", "value")
+logger.Warn("Warning", "key", "value")
+logger.Error("Error occurred", "key", "value")
+
+// Printf-style logging / Printf 스타일 로깅
+logger.Debugf("Debug: %s = %v", "key", "value")
+logger.Infof("Info: %s = %v", "key", "value")
+logger.Warnf("Warning: %s = %v", "key", "value")
+logger.Errorf("Error: %s = %v", "key", "value")
+```
+
+### 어떤 스타일을 사용해야 할까요? / Which Style Should You Use?
+
+| 상황 / Situation | 권장 스타일 / Recommended Style |
+|-----------------|-------------------------------|
+| 프로덕션 환경 / Production | Structured (`Info`, `Error`, etc.) |
+| 로그 분석/모니터링 / Log analysis/monitoring | Structured (`Info`, `Error`, etc.) |
+| 개발/디버깅 / Development/debugging | Printf (`Infof`, `Errorf`, etc.) |
+| 사람이 읽는 메시지 / Human-readable messages | Printf (`Infof`, `Errorf`, etc.) |
+| 빠른 프로토타이핑 / Quick prototyping | Printf (`Infof`, `Errorf`, etc.) |
+
+**💡 권장사항 / Recommendation:**
+
+프로덕션 환경에서는 **구조화된 로깅(Structured Logging)**을 사용하세요. 로그 분석 도구(예: ELK, Splunk, Datadog)에서 쉽게 검색하고 필터링할 수 있습니다.
+
+For production environments, use **Structured Logging**. It's easier to search and filter in log analysis tools (e.g., ELK, Splunk, Datadog).
+
+개발 중이거나 빠르게 로그를 확인하고 싶을 때는 **Printf 스타일**이 더 편리할 수 있습니다.
+
+During development or when you want to quickly check logs, **Printf-style** may be more convenient.
 
 ### Setting Log Level / 로그 레벨 설정
 

@@ -216,6 +216,94 @@ func (l *Logger) Fatal(msg string, keysAndValues ...interface{}) {
 	os.Exit(1)
 }
 
+// logf is the internal logging function for Printf-style formatting
+// logf는 Printf 스타일 형식화를 위한 내부 로깅 함수입니다
+func (l *Logger) logf(level Level, format string, args ...interface{}) {
+	// Skip if level is below configured minimum
+	// 레벨이 설정된 최소값보다 낮으면 건너뜀
+	if level < l.config.level {
+		return
+	}
+
+	// Format the message / 메시지 형식화
+	msg := fmt.Sprintf(format, args...)
+
+	// Use the existing log function without key-value pairs
+	// 키-값 쌍 없이 기존 log 함수 사용
+	l.log(level, msg)
+}
+
+// Debugf logs a formatted message at DEBUG level
+// Debugf는 DEBUG 레벨로 형식화된 메시지를 로깅합니다
+//
+// Parameters / 매개변수:
+//   - format: format string / 형식 문자열
+//   - args: arguments for formatting / 형식화를 위한 인자
+//
+// Example / 예제:
+//
+//	logger.Debugf("Processing request from %s (ID: %d)", username, userID)
+func (l *Logger) Debugf(format string, args ...interface{}) {
+	l.logf(DEBUG, format, args...)
+}
+
+// Infof logs a formatted message at INFO level
+// Infof는 INFO 레벨로 형식화된 메시지를 로깅합니다
+//
+// Parameters / 매개변수:
+//   - format: format string / 형식 문자열
+//   - args: arguments for formatting / 형식화를 위한 인자
+//
+// Example / 예제:
+//
+//	logger.Infof("Server started on port %d", port)
+func (l *Logger) Infof(format string, args ...interface{}) {
+	l.logf(INFO, format, args...)
+}
+
+// Warnf logs a formatted message at WARN level
+// Warnf는 WARN 레벨로 형식화된 메시지를 로깅합니다
+//
+// Parameters / 매개변수:
+//   - format: format string / 형식 문자열
+//   - args: arguments for formatting / 형식화를 위한 인자
+//
+// Example / 예제:
+//
+//	logger.Warnf("Memory usage at %d%%", memPercent)
+func (l *Logger) Warnf(format string, args ...interface{}) {
+	l.logf(WARN, format, args...)
+}
+
+// Errorf logs a formatted message at ERROR level
+// Errorf는 ERROR 레벨로 형식화된 메시지를 로깅합니다
+//
+// Parameters / 매개변수:
+//   - format: format string / 형식 문자열
+//   - args: arguments for formatting / 형식화를 위한 인자
+//
+// Example / 예제:
+//
+//	logger.Errorf("Failed to connect to %s: %v", host, err)
+func (l *Logger) Errorf(format string, args ...interface{}) {
+	l.logf(ERROR, format, args...)
+}
+
+// Fatalf logs a formatted message at FATAL level and exits the program
+// Fatalf는 FATAL 레벨로 형식화된 메시지를 로깅하고 프로그램을 종료합니다
+//
+// Parameters / 매개변수:
+//   - format: format string / 형식 문자열
+//   - args: arguments for formatting / 형식화를 위한 인자
+//
+// Example / 예제:
+//
+//	logger.Fatalf("Critical error: %v", err)
+func (l *Logger) Fatalf(format string, args ...interface{}) {
+	l.logf(FATAL, format, args...)
+	os.Exit(1)
+}
+
 // SetLevel changes the minimum log level
 // SetLevel은 최소 로그 레벨을 변경합니다
 //

@@ -501,3 +501,101 @@ func BenchmarkStructuredLogging(b *testing.B) {
 		)
 	}
 }
+
+// TestPrintfStyleLogging tests Printf-style formatted logging methods
+// TestPrintfStyleLogging은 Printf 스타일 형식화된 로깅 메서드를 테스트합니다
+func TestPrintfStyleLogging(t *testing.T) {
+	logger, err := New(
+		WithFilePath("./test_logs/printf_style.log"),
+		WithLevel(DEBUG),
+	)
+	if err != nil {
+		t.Fatalf("Failed to create logger: %v", err)
+	}
+	defer logger.Close()
+	defer cleanupTestLogs()
+
+	// Test all Printf-style methods / 모든 Printf 스타일 메서드 테스트
+	user := "john_doe"
+	userID := 12345
+
+	logger.Debugf("Debug: User %s with ID %d", user, userID)
+	logger.Infof("Info: User %s with ID %d", user, userID)
+	logger.Warnf("Warning: User %s with ID %d", user, userID)
+	logger.Errorf("Error: User %s with ID %d", user, userID)
+
+	// Read log file and verify content / 로그 파일 읽기 및 내용 확인
+	content, err := os.ReadFile("./test_logs/printf_style.log")
+	if err != nil {
+		t.Fatalf("Failed to read log file: %v", err)
+	}
+
+	logStr := string(content)
+
+	// Verify formatted messages are in the log / 형식화된 메시지가 로그에 있는지 확인
+	expectedMessages := []string{
+		"Debug: User john_doe with ID 12345",
+		"Info: User john_doe with ID 12345",
+		"Warning: User john_doe with ID 12345",
+		"Error: User john_doe with ID 12345",
+	}
+
+	for _, expected := range expectedMessages {
+		if !strings.Contains(logStr, expected) {
+			t.Errorf("Log should contain: %s", expected)
+		}
+	}
+
+	// Verify log levels are present / 로그 레벨이 있는지 확인
+	for _, level := range []string{"[DEBUG]", "[INFO]", "[WARN]", "[ERROR]"} {
+		if !strings.Contains(logStr, level) {
+			t.Errorf("Log should contain level: %s", level)
+		}
+	}
+}
+
+// TestPrintfVsStructured tests the difference between Printf and structured logging
+// TestPrintfVsStructured는 Printf와 구조화된 로깅의 차이를 테스트합니다
+func TestPrintfVsStructured(t *testing.T) {
+	logger, err := New(
+		WithFilePath("./test_logs/printf_vs_structured.log"),
+	)
+	if err != nil {
+		t.Fatalf("Failed to create logger: %v", err)
+	}
+	defer logger.Close()
+	defer cleanupTestLogs()
+
+	user := "alice"
+	userID := 67890
+
+	// Printf-style logging / Printf 스타일 로깅
+	logger.Infof("User login: %s (ID: %d)", user, userID)
+
+	// Structured logging / 구조화된 로깅
+	logger.Info("User login", "username", user, "user_id", userID)
+
+	// Read log file / 로그 파일 읽기
+	content, err := os.ReadFile("./test_logs/printf_vs_structured.log")
+	if err != nil {
+		t.Fatalf("Failed to read log file: %v", err)
+	}
+
+	logStr := string(content)
+
+	// Both should contain user information / 둘 다 사용자 정보를 포함해야 함
+	if !strings.Contains(logStr, "alice") {
+		t.Error("Log should contain username 'alice'")
+	}
+	if !strings.Contains(logStr, "67890") {
+		t.Error("Log should contain user ID '67890'")
+	}
+
+	// Structured logging should have key=value format / 구조화된 로깅은 키=값 형식이어야 함
+	if !strings.Contains(logStr, "username=alice") {
+		t.Error("Log should contain structured data 'username=alice'")
+	}
+	if !strings.Contains(logStr, "user_id=67890") {
+		t.Error("Log should contain structured data 'user_id=67890'")
+	}
+}
