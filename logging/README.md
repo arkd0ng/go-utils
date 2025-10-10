@@ -114,7 +114,7 @@ logger.Info("User login",
 )
 
 // Output / 출력:
-// [INFO] 2025-10-10 15:30:45 User login user_id=12345 username=john.doe ip=192.168.1.100
+// 2025-10-10 15:30:45 [INFO] User login user_id=12345 username=john.doe ip=192.168.1.100
 ```
 
 ### Setting Log Level / 로그 레벨 설정
