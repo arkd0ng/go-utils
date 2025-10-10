@@ -60,7 +60,7 @@ func main() {
 		"user", config.MySQL.User)
 
 	// Check if MySQL is running / MySQL 실행 여부 확인
-	wasRunning := isMySQLRunning()
+	wasRunning := isMySQLRunning(config.MySQL)
 
 	if !wasRunning {
 		logger.Info("MySQL is not running, starting daemon...")
@@ -157,9 +157,15 @@ func buildDSN(cfg MySQLConfig) string {
 
 // isMySQLRunning checks if MySQL service is running
 // isMySQLRunning은 MySQL 서비스가 실행 중인지 확인합니다
-func isMySQLRunning() bool {
-	// Try to connect to MySQL / MySQL 연결 시도
-	cmd := exec.Command("mysql", "-u", "root", "-ptest1234", "-e", "SELECT 1")
+func isMySQLRunning(cfg MySQLConfig) bool {
+	// Try to connect to MySQL using configured credentials
+	// 설정된 자격 증명을 사용하여 MySQL 연결 시도
+	cmd := exec.Command("mysql",
+		"-h", cfg.Host,
+		"-P", fmt.Sprintf("%d", cfg.Port),
+		"-u", cfg.User,
+		fmt.Sprintf("-p%s", cfg.Password),
+		"-e", "SELECT 1")
 	err := cmd.Run()
 	return err == nil
 }
