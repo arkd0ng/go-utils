@@ -6,6 +6,70 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
+## [v1.3.007] - 2025-10-10
+
+### Added / 추가
+- **New Simple API Methods** - SelectColumn and SelectColumns for column-specific queries / 컬럼 특정 쿼리를 위한 SelectColumn과 SelectColumns:
+  - `SelectColumn(ctx, table, column, conditionAndArgs...)` - Select single column / 단일 컬럼 선택
+  - `SelectColumns(ctx, table, []columns, conditionAndArgs...)` - Select multiple columns / 여러 컬럼 선택
+  - Available in both `Client` and `Tx` (Transaction) / Client와 Tx(트랜잭션) 모두에서 사용 가능
+
+### Motivation / 동기
+- Query Builder의 `Select()` 메서드와 충돌을 피하기 위해 `SelectColumn`, `SelectColumns`로 명명
+- Simple API를 더욱 명확하고 사용하기 쉽게 만들기 위함
+- `SELECT * FROM table` (SelectAll), `SELECT column FROM table` (SelectColumn), `SELECT col1, col2 FROM table` (SelectColumns)로 구분
+
+### API Examples / API 예제
+
+**SelectColumn - Single column selection / 단일 컬럼 선택**:
+```go
+// SELECT email FROM users
+emails, _ := db.SelectColumn(ctx, "users", "email")
+
+// SELECT name FROM users WHERE age > 25
+names, _ := db.SelectColumn(ctx, "users", "name", "age > ?", 25)
+
+// Process results / 결과 처리
+for _, row := range emails {
+    fmt.Println(row["email"])
+}
+```
+
+**SelectColumns - Multiple columns selection / 여러 컬럼 선택**:
+```go
+// SELECT name, email FROM users
+users, _ := db.SelectColumns(ctx, "users", []string{"name", "email"})
+
+// SELECT name, age, city FROM users WHERE age > 25
+users, _ := db.SelectColumns(ctx, "users", []string{"name", "age", "city"}, "age > ?", 25)
+
+// Process results / 결과 처리
+for _, user := range users {
+    fmt.Printf("%s <%s>\n", user["name"], user["email"])
+}
+```
+
+### Files Modified / 수정된 파일
+```
+database/mysql/simple.go          (+120 lines) - Added SelectColumn and SelectColumns to Client
+database/mysql/transaction.go     (+61 lines)  - Added SelectColumn and SelectColumns to Tx
+examples/mysql/main.go             (+118 lines) - Added Example 16 and 17
+docs/database/mysql/USER_MANUAL.md      (updated) - Added SelectColumn and SelectColumns documentation
+docs/database/mysql/DEVELOPER_GUIDE.md  (updated) - Updated file structure table
+```
+
+### Examples / 예제
+- **Example 16**: SelectColumn - Single column selection / 단일 컬럼 선택
+- **Example 17**: SelectColumns - Multiple columns selection / 여러 컬럼 선택
+- Total 17 examples now (1-9: Simple API, 10-12: Query Builder, 13-15: SelectWhere, 16-17: SelectColumn/Columns) / 총 17개 예제
+
+### Verification / 확인
+- ✅ Build successful: `go build ./database/mysql/...`
+- ✅ All tests passed: `go test ./database/mysql -v`
+- ✅ All 17 examples tested
+
+---
+
 ## [v1.3.006] - 2025-10-10
 
 ### Added / 추가

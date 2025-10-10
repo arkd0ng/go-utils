@@ -67,6 +67,129 @@ func (c *Client) SelectAll(ctx context.Context, table string, conditionAndArgs .
 	return results, nil
 }
 
+// SelectColumn selects all rows with a single column from a table
+// SelectColumn은 테이블에서 단일 컬럼으로 모든 행을 선택합니다
+//
+// Example / 예제:
+//
+//	// Select all emails / 모든 이메일 선택
+//	emails, err := db.SelectColumn(ctx, "users", "email")
+//
+//	// Select with condition / 조건과 함께 선택
+//	emails, err := db.SelectColumn(ctx, "users", "email", "age > ?", 18)
+func (c *Client) SelectColumn(ctx context.Context, table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+	c.mu.RLock()
+	if c.closed {
+		c.mu.RUnlock()
+		return nil, ErrClosed
+	}
+	c.mu.RUnlock()
+
+	// Build query / 쿼리 빌드
+	query := fmt.Sprintf("SELECT %s FROM %s", column, table)
+	var args []interface{}
+
+	if len(conditionAndArgs) > 0 {
+		condition := fmt.Sprintf("%v", conditionAndArgs[0])
+		query += " WHERE " + condition
+		if len(conditionAndArgs) > 1 {
+			args = conditionAndArgs[1:]
+		}
+	}
+
+	start := time.Now()
+
+	// Execute with retry / 재시도로 실행
+	var rows *sql.Rows
+	err := c.executeWithRetry(ctx, func() error {
+		db := c.getCurrentConnection()
+		var execErr error
+		rows, execErr = db.QueryContext(ctx, query, args...)
+		return execErr
+	})
+
+	duration := time.Since(start)
+
+	if err != nil {
+		c.logQuery(query, args, duration, err)
+		return nil, c.wrapError("SelectColumn", query, args, err, duration)
+	}
+
+	// Scan rows / 행 스캔
+	results, err := scanRows(rows)
+	if err != nil {
+		c.logQuery(query, args, duration, err)
+		return nil, c.wrapError("SelectColumn", query, args, err, duration)
+	}
+
+	c.logQuery(query, args, duration, nil)
+	return results, nil
+}
+
+// SelectColumns selects all rows with multiple columns from a table
+// SelectColumns는 테이블에서 여러 컬럼으로 모든 행을 선택합니다
+//
+// Example / 예제:
+//
+//	// Select multiple columns / 여러 컬럼 선택
+//	users, err := db.SelectColumns(ctx, "users", []string{"name", "email", "age"})
+//
+//	// Select with condition / 조건과 함께 선택
+//	users, err := db.SelectColumns(ctx, "users", []string{"name", "email"}, "age > ?", 18)
+func (c *Client) SelectColumns(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+	c.mu.RLock()
+	if c.closed {
+		c.mu.RUnlock()
+		return nil, ErrClosed
+	}
+	c.mu.RUnlock()
+
+	if len(columns) == 0 {
+		return nil, fmt.Errorf("%w: no columns provided", ErrQueryFailed)
+	}
+
+	// Build query / 쿼리 빌드
+	columnList := strings.Join(columns, ", ")
+	query := fmt.Sprintf("SELECT %s FROM %s", columnList, table)
+	var args []interface{}
+
+	if len(conditionAndArgs) > 0 {
+		condition := fmt.Sprintf("%v", conditionAndArgs[0])
+		query += " WHERE " + condition
+		if len(conditionAndArgs) > 1 {
+			args = conditionAndArgs[1:]
+		}
+	}
+
+	start := time.Now()
+
+	// Execute with retry / 재시도로 실행
+	var rows *sql.Rows
+	err := c.executeWithRetry(ctx, func() error {
+		db := c.getCurrentConnection()
+		var execErr error
+		rows, execErr = db.QueryContext(ctx, query, args...)
+		return execErr
+	})
+
+	duration := time.Since(start)
+
+	if err != nil {
+		c.logQuery(query, args, duration, err)
+		return nil, c.wrapError("SelectColumns", query, args, err, duration)
+	}
+
+	// Scan rows / 행 스캔
+	results, err := scanRows(rows)
+	if err != nil {
+		c.logQuery(query, args, duration, err)
+		return nil, c.wrapError("SelectColumns", query, args, err, duration)
+	}
+
+	c.logQuery(query, args, duration, nil)
+	return results, nil
+}
+
 // SelectOne selects a single row from a table with conditions
 // SelectOne은 조건과 함께 테이블에서 단일 행을 선택합니다
 //

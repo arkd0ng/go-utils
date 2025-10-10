@@ -297,6 +297,22 @@ func runExamples(dsn string, cfg MySQLConfig, logger *logging.Logger) error {
 		return err
 	}
 
+	// Example 16: SelectColumn - Select single column / 단일 컬럼 선택
+	if err := example16SelectColumn(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 17: SelectColumns - Select multiple columns / 여러 컬럼 선택
+	if err := example17SelectColumns(ctx, db, logger); err != nil {
+		return err
+	}
+
+	logger.Info("========================================")
+	logger.Info("All examples completed successfully!")
+	logger.Info("모든 예제가 성공적으로 완료되었습니다!")
+	logger.Info("========================================")
+	logger.Info("")
+
 	return nil
 }
 
@@ -713,6 +729,105 @@ func example15SelectWhereComplex(ctx context.Context, db *mysql.Client, logger *
 	for i, city := range cities {
 		logger.Info(fmt.Sprintf("  %d. %s", i+1, city["city"]))
 	}
+	logger.Info("")
+	return nil
+}
+
+// example16SelectColumn demonstrates SelectColumn - single column selection
+// example16SelectColumn은 SelectColumn을 시연합니다 - 단일 컬럼 선택
+func example16SelectColumn(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 16: SelectColumn - Single Column Selection")
+	logger.Info("예제 16: SelectColumn - 단일 컬럼 선택")
+	logger.Info("========================================")
+
+	// SELECT email FROM users
+	logger.Info("Selecting all email addresses...")
+	logger.Info("모든 이메일 주소 선택 중...")
+	emails, err := db.SelectColumn(ctx, "users", "email")
+	if err != nil {
+		return fmt.Errorf("SelectColumn failed: %w", err)
+	}
+
+	logger.Info(fmt.Sprintf("Found %d email addresses:", len(emails)))
+	logger.Info(fmt.Sprintf("%d개의 이메일 주소를 찾았습니다:", len(emails)))
+	for i, row := range emails {
+		if i >= 5 {
+			logger.Info("  ... (truncated)")
+			break
+		}
+		logger.Info(fmt.Sprintf("  %d. %s", i+1, row["email"]))
+	}
+
+	// SELECT name FROM users WHERE age > 25
+	logger.Info("")
+	logger.Info("Selecting names of users older than 25...")
+	logger.Info("25세 이상 사용자의 이름 선택 중...")
+	names, err := db.SelectColumn(ctx, "users", "name", "age > ?", 25)
+	if err != nil {
+		return fmt.Errorf("SelectColumn with condition failed: %w", err)
+	}
+
+	logger.Info(fmt.Sprintf("Found %d names:", len(names)))
+	logger.Info(fmt.Sprintf("%d개의 이름을 찾았습니다:", len(names)))
+	for i, row := range names {
+		if i >= 5 {
+			logger.Info("  ... (truncated)")
+			break
+		}
+		logger.Info(fmt.Sprintf("  %d. %s", i+1, row["name"]))
+	}
+
+	logger.Info("")
+	return nil
+}
+
+// example17SelectColumns demonstrates SelectColumns - multiple columns selection
+// example17SelectColumns는 SelectColumns를 시연합니다 - 여러 컬럼 선택
+func example17SelectColumns(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 17: SelectColumns - Multiple Columns Selection")
+	logger.Info("예제 17: SelectColumns - 여러 컬럼 선택")
+	logger.Info("========================================")
+
+	// SELECT name, email FROM users
+	logger.Info("Selecting name and email of all users...")
+	logger.Info("모든 사용자의 이름과 이메일 선택 중...")
+	users, err := db.SelectColumns(ctx, "users", []string{"name", "email"})
+	if err != nil {
+		return fmt.Errorf("SelectColumns failed: %w", err)
+	}
+
+	logger.Info(fmt.Sprintf("Found %d users:", len(users)))
+	logger.Info(fmt.Sprintf("%d명의 사용자를 찾았습니다:", len(users)))
+	for i, user := range users {
+		if i >= 5 {
+			logger.Info("  ... (truncated)")
+			break
+		}
+		logger.Info(fmt.Sprintf("  %d. %s <%s>", i+1, user["name"], user["email"]))
+	}
+
+	// SELECT name, age, city FROM users WHERE age > 25
+	logger.Info("")
+	logger.Info("Selecting name, age, and city of users older than 25...")
+	logger.Info("25세 이상 사용자의 이름, 나이, 도시 선택 중...")
+	usersWithAge, err := db.SelectColumns(ctx, "users", []string{"name", "age", "city"}, "age > ?", 25)
+	if err != nil {
+		return fmt.Errorf("SelectColumns with condition failed: %w", err)
+	}
+
+	logger.Info(fmt.Sprintf("Found %d users:", len(usersWithAge)))
+	logger.Info(fmt.Sprintf("%d명의 사용자를 찾았습니다:", len(usersWithAge)))
+	for i, user := range usersWithAge {
+		if i >= 5 {
+			logger.Info("  ... (truncated)")
+			break
+		}
+		logger.Info(fmt.Sprintf("  %d. %s (age: %v, city: %s)",
+			i+1, user["name"], user["age"], user["city"]))
+	}
+
 	logger.Info("")
 	return nil
 }

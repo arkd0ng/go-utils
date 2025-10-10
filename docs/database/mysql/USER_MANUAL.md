@@ -282,6 +282,54 @@ user, _ := db.SelectOne(ctx, "users", "id = ?", 123)
 user, _ := db.SelectOne(ctx, "users", "email = ?", "john@example.com")
 ```
 
+#### SelectColumn
+
+Select all rows with a single column from a table.
+
+테이블에서 단일 컬럼으로 모든 행을 선택합니다.
+
+```go
+func (c *Client) SelectColumn(ctx context.Context, table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error)
+```
+
+**Examples / 예제**:
+```go
+// SELECT email FROM users
+emails, _ := db.SelectColumn(ctx, "users", "email")
+
+// SELECT name FROM users WHERE age > 25
+names, _ := db.SelectColumn(ctx, "users", "name", "age > ?", 25)
+
+// Process results / 결과 처리
+for _, row := range emails {
+    fmt.Println(row["email"])
+}
+```
+
+#### SelectColumns
+
+Select all rows with multiple columns from a table.
+
+테이블에서 여러 컬럼으로 모든 행을 선택합니다.
+
+```go
+func (c *Client) SelectColumns(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error)
+```
+
+**Examples / 예제**:
+```go
+// SELECT name, email FROM users
+users, _ := db.SelectColumns(ctx, "users", []string{"name", "email"})
+
+// SELECT name, age, city FROM users WHERE age > 25
+users, _ := db.SelectColumns(ctx, "users", []string{"name", "age", "city"}, "age > ?", 25)
+
+// Process results / 결과 처리
+for _, user := range users {
+    fmt.Printf("%s <%s>\n", user["name"], user["email"])
+}
+```
+
 #### Insert
 
 Insert a new row into a table.

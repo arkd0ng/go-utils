@@ -189,6 +189,65 @@ func (t *Tx) SelectAll(ctx context.Context, table string, conditionAndArgs ...in
 	return scanRows(rows)
 }
 
+// SelectColumn selects all rows with a single column within the transaction
+// SelectColumn은 트랜잭션 내에서 단일 컬럼으로 모든 행을 선택합니다
+func (t *Tx) SelectColumn(ctx context.Context, table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+	if t.finished {
+		return nil, ErrTransactionFailed
+	}
+
+	// Build query / 쿼리 빌드
+	query := fmt.Sprintf("SELECT %s FROM %s", column, table)
+	var args []interface{}
+
+	if len(conditionAndArgs) > 0 {
+		condition := fmt.Sprintf("%v", conditionAndArgs[0])
+		query += " WHERE " + condition
+		if len(conditionAndArgs) > 1 {
+			args = conditionAndArgs[1:]
+		}
+	}
+
+	rows, err := t.tx.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return scanRows(rows)
+}
+
+// SelectColumns selects all rows with multiple columns within the transaction
+// SelectColumns는 트랜잭션 내에서 여러 컬럼으로 모든 행을 선택합니다
+func (t *Tx) SelectColumns(ctx context.Context, table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
+	if t.finished {
+		return nil, ErrTransactionFailed
+	}
+
+	if len(columns) == 0 {
+		return nil, fmt.Errorf("%w: no columns provided", ErrQueryFailed)
+	}
+
+	// Build query / 쿼리 빌드
+	columnList := joinStrings(columns, ", ")
+	query := fmt.Sprintf("SELECT %s FROM %s", columnList, table)
+	var args []interface{}
+
+	if len(conditionAndArgs) > 0 {
+		condition := fmt.Sprintf("%v", conditionAndArgs[0])
+		query += " WHERE " + condition
+		if len(conditionAndArgs) > 1 {
+			args = conditionAndArgs[1:]
+		}
+	}
+
+	rows, err := t.tx.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return scanRows(rows)
+}
+
 // SelectOne selects a single row within the transaction
 // SelectOne은 트랜잭션 내에서 단일 행을 선택합니다
 func (t *Tx) SelectOne(ctx context.Context, table string, conditionAndArgs ...interface{}) (map[string]interface{}, error) {

@@ -156,10 +156,10 @@ database/mysql/
 | `types.go` | ~73 | Common types (Tx, CredentialRefreshFunc) |
 | `retry.go` | ~120 | executeWithRetry(), exponential backoff |
 | `scan.go` | ~180 | scanRows(), scanRow(), scanCount(), type conversion |
-| `simple.go` | ~370 | SelectAll, SelectOne, Insert, Update, Delete, Count, Exists |
+| `simple.go` | ~490 | SelectAll, SelectColumn, SelectColumns, SelectOne, Insert, Update, Delete, Count, Exists |
 | `select_options.go` | ~360 | SelectWhere, SelectOneWhere, functional options |
 | `builder.go` | ~285 | Query Builder, fluent API |
-| `transaction.go` | ~230 | Transaction(), Tx methods |
+| `transaction.go` | ~291 | Transaction(), Tx methods (SelectAll, SelectColumn, SelectColumns, SelectOne, Insert, Update, Delete) |
 | `client_test.go` | ~120 | Unit tests |
 
 **Total**: ~2,648 lines / 총 ~2,648줄
