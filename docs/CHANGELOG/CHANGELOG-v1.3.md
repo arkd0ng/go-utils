@@ -6,6 +6,75 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
+## [v1.3.006] - 2025-10-10
+
+### Added / 추가
+- **Comprehensive Documentation for MySQL Package** / MySQL 패키지 종합 문서:
+  - Created `docs/database/mysql/USER_MANUAL.md` - Complete user manual with all usage patterns, API reference, troubleshooting, FAQ
+  - Created `docs/database/mysql/DEVELOPER_GUIDE.md` - Complete developer guide with architecture, internal implementation, design patterns, testing guide
+
+### Documentation Contents / 문서 내용
+
+**USER_MANUAL.md** (~1000+ lines):
+- Introduction and Design Philosophy / 소개 및 설계 철학
+- Installation and Quick Start / 설치 및 빠른 시작
+- Configuration Reference (all options with defaults) / 설정 참조
+- Complete API Reference:
+  - Simple API (SelectAll, Insert, Update, Delete, Exec) / 간단한 API
+  - SelectWhere API (Functional Options) / SelectWhere API (함수형 옵션)
+  - Query Builder API (Fluent API) / 쿼리 빌더 API
+  - Raw SQL API / Raw SQL API
+- Usage Patterns (10 common patterns) / 사용 패턴
+- Common Use Cases:
+  - User Authentication System / 사용자 인증 시스템
+  - E-commerce Order Management / 전자상거래 주문 관리
+  - Blog Post System / 블로그 게시물 시스템
+  - Analytics Dashboard / 분석 대시보드
+  - Notification System / 알림 시스템
+- Best Practices (15 recommendations) / 모범 사례
+- Troubleshooting (10 common problems) / 문제 해결
+- FAQ (15 frequently asked questions) / 자주 묻는 질문
+
+**DEVELOPER_GUIDE.md** (~900+ lines):
+- Architecture Overview / 아키텍처 개요
+- Package Structure (14 files, ~2,648 lines) / 패키지 구조
+- Core Components:
+  - Client struct with connection pooling
+  - Config with validation
+  - Tx (Transaction) with auto rollback
+  - QueryBuilder for fluent API
+  - Error types classification
+- Internal Implementation:
+  - Connection Management (multi-pool strategy)
+  - Query Execution Flow
+  - Auto-Retry with Exponential Backoff
+  - Health Check System
+  - Credential Rotation Support
+- Design Patterns:
+  - Functional Options Pattern
+  - Builder Pattern
+  - Singleton Pattern
+  - Strategy Pattern
+  - Decorator Pattern
+  - Template Method Pattern
+- Adding New Features (step-by-step guides)
+- Testing Guide (setup, test cases, benchmarking)
+- Performance characteristics and optimization
+- Contributing Guidelines
+- Code Style conventions
+
+### Files Created / 생성된 파일
+```
+docs/database/mysql/USER_MANUAL.md      (~1000+ lines) - Complete user manual
+docs/database/mysql/DEVELOPER_GUIDE.md  (~900+ lines) - Complete developer guide
+```
+
+### Verification / 확인
+- ✅ Build successful: `go build ./database/mysql/...`
+- ✅ All tests passed: `go test ./database/mysql -v`
+
+---
+
 ## [v1.3.005] - 2025-10-10
 
 ### Added / 추가
