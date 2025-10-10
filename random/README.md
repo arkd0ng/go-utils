@@ -18,10 +18,33 @@ Generate random strings with customizable length ranges and character sets.
 
 ### Available Methods / 사용 가능한 메서드
 
-- **`GenString.Letters(min, max int)`** - Alphabetic characters only (a-z, A-Z) / 알파벳만 (a-z, A-Z)
-- **`GenString.Alnum(min, max int)`** - Alphanumeric characters (a-z, A-Z, 0-9) / 영숫자 (a-z, A-Z, 0-9)
+#### Basic Methods / 기본 메서드
+
+- **`GenString.Letters(min, max int)`** - Alphabetic characters (a-z, A-Z) / 알파벳 (a-z, A-Z)
+- **`GenString.Alnum(min, max int)`** - Alphanumeric (a-z, A-Z, 0-9) / 영숫자 (a-z, A-Z, 0-9)
+- **`GenString.Digits(min, max int)`** - Numeric digits only (0-9) / 숫자만 (0-9)
 - **`GenString.Complex(min, max int)`** - Alphanumeric + all special characters / 영숫자 + 모든 특수문자
-- **`GenString.Standard(min, max int)`** - Alphanumeric + limited special characters (!@#$%^&*-_) / 영숫자 + 제한된 특수문자
+- **`GenString.Standard(min, max int)`** - Alphanumeric + safe special characters (!@#$%^&*-_) / 영숫자 + 안전한 특수문자
+
+#### Case-Specific Methods / 대소문자 구분 메서드
+
+- **`GenString.AlphaUpper(min, max int)`** - Uppercase letters only (A-Z) / 대문자만 (A-Z)
+- **`GenString.AlphaLower(min, max int)`** - Lowercase letters only (a-z) / 소문자만 (a-z)
+- **`GenString.AlnumUpper(min, max int)`** - Uppercase + digits (A-Z, 0-9) / 대문자 + 숫자 (A-Z, 0-9)
+- **`GenString.AlnumLower(min, max int)`** - Lowercase + digits (a-z, 0-9) / 소문자 + 숫자 (a-z, 0-9)
+
+#### Hexadecimal Methods / 16진수 메서드
+
+- **`GenString.Hex(min, max int)`** - Uppercase hexadecimal (0-9, A-F) / 대문자 16진수 (0-9, A-F)
+- **`GenString.HexLower(min, max int)`** - Lowercase hexadecimal (0-9, a-f) / 소문자 16진수 (0-9, a-f)
+
+#### Encoding Methods / 인코딩 메서드
+
+- **`GenString.Base64(min, max int)`** - Base64 character set (A-Z, a-z, 0-9, +, /) / Base64 문자 집합
+- **`GenString.Base64URL(min, max int)`** - URL-safe Base64 (A-Z, a-z, 0-9, -, _) / URL-safe Base64
+
+#### Custom Method / 사용자 정의 메서드
+
 - **`GenString.Custom(charset string, min, max int)`** - Custom character set / 사용자 정의 문자 집합
 
 ## Usage / 사용법
@@ -87,18 +110,41 @@ password := random.GenString.Complex(16, 24)
 apiKey := random.GenString.Alnum(40, 40)
 
 // Generate a random username / 랜덤 사용자명 생성
-username := random.GenString.Letters(8, 12)
+username := random.GenString.AlphaLower(8, 12)
 
-// Generate a verification code with numbers only / 숫자로만 인증 코드 생성
+// Generate a PIN code / PIN 코드 생성
+pin := random.GenString.Digits(6, 6)
+
+// Generate a hex color code / 16진수 색상 코드 생성
+color := random.GenString.Hex(6, 6) // e.g., "A3F5C2"
+
+// Generate a license key / 라이선스 키 생성
+license := random.GenString.AlnumUpper(20, 20)
+
+// Generate a URL-safe token / URL-safe 토큰 생성
+token := random.GenString.Base64URL(32, 32)
+
+// Generate a custom verification code / 사용자 정의 인증 코드 생성
 code := random.GenString.Custom("0123456789", 6, 6)
 ```
 
 ## Character Sets / 문자 집합
 
-- **Letters**: `A-Z`, `a-z`
-- **Alnum**: `A-Z`, `a-z`, `0-9`
-- **Complex**: `A-Z`, `a-z`, `0-9`, `!@#$%^&*()-_=+[]{}|;:,.<>?/`
-- **Standard**: `A-Z`, `a-z`, `0-9`, `!@#$%^&*-_`
+| Method / 메서드 | Character Set / 문자 집합 | Use Case / 사용 사례 |
+|-----------------|---------------------------|---------------------|
+| **Letters** | `A-Z`, `a-z` | General text / 일반 텍스트 |
+| **Alnum** | `A-Z`, `a-z`, `0-9` | General codes / 일반 코드 |
+| **Digits** | `0-9` | PIN, OTP / PIN, OTP |
+| **Complex** | `A-Z`, `a-z`, `0-9`, `!@#$%^&*()-_=+[]{}|;:,.<>?/` | Secure passwords / 강력한 비밀번호 |
+| **Standard** | `A-Z`, `a-z`, `0-9`, `!@#$%^&*-_` | Safe passwords / 안전한 비밀번호 |
+| **AlphaUpper** | `A-Z` | Ticket codes / 티켓 코드 |
+| **AlphaLower** | `a-z` | Usernames / 사용자명 |
+| **AlnumUpper** | `A-Z`, `0-9` | License keys / 라이선스 키 |
+| **AlnumLower** | `a-z`, `0-9` | Tokens / 토큰 |
+| **Hex** | `0-9`, `A-F` | Color codes / 색상 코드 |
+| **HexLower** | `0-9`, `a-f` | UUID, hashes / UUID, 해시 |
+| **Base64** | `A-Z`, `a-z`, `0-9`, `+`, `/` | Base64 encoding / Base64 인코딩 |
+| **Base64URL** | `A-Z`, `a-z`, `0-9`, `-`, `_` | URL-safe tokens / URL-safe 토큰 |
 
 ## Security / 보안
 

@@ -77,4 +77,45 @@ func main() {
 	// Session Token / 세션 토큰
 	sessionToken := random.GenString.Alnum(64, 64)
 	fmt.Printf("Session Token / 세션 토큰:           %s\n", sessionToken)
+
+	fmt.Println()
+	fmt.Println("=== Additional Method Examples ===")
+	fmt.Println("=== 추가 메서드 예제 ===")
+	fmt.Println()
+
+	// PIN Code / PIN 코드
+	pinCode := random.GenString.Digits(6, 6)
+	fmt.Printf("PIN Code / PIN 코드:                 %s\n", pinCode)
+
+	// Hex Color Code / 16진수 색상 코드
+	colorCode := random.GenString.Hex(6, 6)
+	fmt.Printf("Hex Color / 16진수 색상:             #%s\n", colorCode)
+
+	// UUID-like (lowercase hex) / UUID 형태 (소문자 16진수)
+	uuidLike := random.GenString.HexLower(32, 32)
+	fmt.Printf("UUID-like / UUID 형태:               %s\n", uuidLike)
+
+	// Coupon Code (uppercase) / 쿠폰 코드 (대문자)
+	couponCode := random.GenString.AlphaUpper(10, 10)
+	fmt.Printf("Coupon Code / 쿠폰 코드:             %s\n", couponCode)
+
+	// Subdomain (lowercase) / 서브도메인 (소문자)
+	subdomain := random.GenString.AlphaLower(8, 12)
+	fmt.Printf("Subdomain / 서브도메인:              %s\n", subdomain)
+
+	// License Key (uppercase + digits) / 라이선스 키 (대문자 + 숫자)
+	licenseKey := random.GenString.AlnumUpper(16, 16)
+	fmt.Printf("License Key / 라이선스 키:           %s\n", licenseKey)
+
+	// Token (lowercase + digits) / 토큰 (소문자 + 숫자)
+	token := random.GenString.AlnumLower(20, 20)
+	fmt.Printf("Token / 토큰:                        %s\n", token)
+
+	// URL-safe Token / URL-safe 토큰
+	urlSafeToken := random.GenString.Base64URL(32, 32)
+	fmt.Printf("URL-safe Token / URL-safe 토큰:      %s\n", urlSafeToken)
+
+	// Base64-like / Base64 형태
+	base64Like := random.GenString.Base64(24, 24)
+	fmt.Printf("Base64-like / Base64 형태:           %s\n", base64Like)
 }

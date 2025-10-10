@@ -50,12 +50,22 @@ Generate cryptographically secure random strings with various character sets.
 
 다양한 문자 집합으로 암호학적으로 안전한 랜덤 문자열을 생성합니다.
 
+**14 methods available** including: Letters, Alnum, Digits, Hex, AlphaUpper, AlphaLower, Base64URL, and more.
+
+**14개 메서드 제공**: Letters, Alnum, Digits, Hex, AlphaUpper, AlphaLower, Base64URL 등.
+
 ```go
 import "github.com/arkd0ng/go-utils/random"
 
 // Generate alphanumeric string (32-128 characters)
 // 영숫자 문자열 생성 (32-128자)
 str := random.GenString.Alnum(32, 128)
+
+// Generate PIN code / PIN 코드 생성
+pin := random.GenString.Digits(6, 6)
+
+// Generate hex color code / 16진수 색상 코드 생성
+color := random.GenString.Hex(6, 6)
 ```
 
 **[→ View full documentation / 전체 문서 보기](./random/README.md)**

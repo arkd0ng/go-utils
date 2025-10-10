@@ -365,3 +365,211 @@ func BenchmarkCustom(b *testing.B) {
 		GenString.Custom(charset, 16, 32)
 	}
 }
+
+// TestDigits tests the Digits method
+// TestDigits는 Digits 메서드를 테스트합니다
+func TestDigits(t *testing.T) {
+	tests := []struct {
+		name string
+		min  int
+		max  int
+	}{
+		{"Fixed length", 6, 6},
+		{"Variable length", 4, 8},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := GenString.Digits(tt.min, tt.max)
+
+			// Check length / 길이 확인
+			if len(result) < tt.min || len(result) > tt.max {
+				t.Errorf("Digits() length = %d, want between %d and %d", len(result), tt.min, tt.max)
+			}
+
+			// Check that all characters are digits
+			// 모든 문자가 숫자인지 확인
+			for _, char := range result {
+				if !unicode.IsDigit(char) {
+					t.Errorf("Digits() contains non-digit character: %c", char)
+				}
+			}
+		})
+	}
+}
+
+// TestHex tests the Hex method
+// TestHex는 Hex 메서드를 테스트합니다
+func TestHex(t *testing.T) {
+	result := GenString.Hex(8, 16)
+
+	// Check length / 길이 확인
+	if len(result) < 8 || len(result) > 16 {
+		t.Errorf("Hex() length = %d, want between 8 and 16", len(result))
+	}
+
+	// Check that all characters are valid hex (0-9, A-F)
+	// 모든 문자가 유효한 16진수(0-9, A-F)인지 확인
+	for _, char := range result {
+		if !strings.ContainsRune(charsetHex, char) {
+			t.Errorf("Hex() contains invalid hex character: %c", char)
+		}
+	}
+}
+
+// TestHexLower tests the HexLower method
+// TestHexLower는 HexLower 메서드를 테스트합니다
+func TestHexLower(t *testing.T) {
+	result := GenString.HexLower(8, 16)
+
+	// Check length / 길이 확인
+	if len(result) < 8 || len(result) > 16 {
+		t.Errorf("HexLower() length = %d, want between 8 and 16", len(result))
+	}
+
+	// Check that all characters are valid lowercase hex (0-9, a-f)
+	// 모든 문자가 유효한 소문자 16진수(0-9, a-f)인지 확인
+	for _, char := range result {
+		if !strings.ContainsRune(charsetHexLower, char) {
+			t.Errorf("HexLower() contains invalid hex character: %c", char)
+		}
+	}
+}
+
+// TestAlphaUpper tests the AlphaUpper method
+// TestAlphaUpper는 AlphaUpper 메서드를 테스트합니다
+func TestAlphaUpper(t *testing.T) {
+	result := GenString.AlphaUpper(8, 12)
+
+	// Check length / 길이 확인
+	if len(result) < 8 || len(result) > 12 {
+		t.Errorf("AlphaUpper() length = %d, want between 8 and 12", len(result))
+	}
+
+	// Check that all characters are uppercase letters
+	// 모든 문자가 대문자인지 확인
+	for _, char := range result {
+		if !unicode.IsUpper(char) || !unicode.IsLetter(char) {
+			t.Errorf("AlphaUpper() contains non-uppercase character: %c", char)
+		}
+	}
+}
+
+// TestAlphaLower tests the AlphaLower method
+// TestAlphaLower는 AlphaLower 메서드를 테스트합니다
+func TestAlphaLower(t *testing.T) {
+	result := GenString.AlphaLower(8, 12)
+
+	// Check length / 길이 확인
+	if len(result) < 8 || len(result) > 12 {
+		t.Errorf("AlphaLower() length = %d, want between 8 and 12", len(result))
+	}
+
+	// Check that all characters are lowercase letters
+	// 모든 문자가 소문자인지 확인
+	for _, char := range result {
+		if !unicode.IsLower(char) || !unicode.IsLetter(char) {
+			t.Errorf("AlphaLower() contains non-lowercase character: %c", char)
+		}
+	}
+}
+
+// TestAlnumUpper tests the AlnumUpper method
+// TestAlnumUpper는 AlnumUpper 메서드를 테스트합니다
+func TestAlnumUpper(t *testing.T) {
+	result := GenString.AlnumUpper(16, 20)
+
+	// Check length / 길이 확인
+	if len(result) < 16 || len(result) > 20 {
+		t.Errorf("AlnumUpper() length = %d, want between 16 and 20", len(result))
+	}
+
+	// Check that all characters are uppercase or digits
+	// 모든 문자가 대문자 또는 숫자인지 확인
+	for _, char := range result {
+		if !strings.ContainsRune(charsetAlphaUpper+charsetDigits, char) {
+			t.Errorf("AlnumUpper() contains invalid character: %c", char)
+		}
+	}
+}
+
+// TestAlnumLower tests the AlnumLower method
+// TestAlnumLower는 AlnumLower 메서드를 테스트합니다
+func TestAlnumLower(t *testing.T) {
+	result := GenString.AlnumLower(16, 20)
+
+	// Check length / 길이 확인
+	if len(result) < 16 || len(result) > 20 {
+		t.Errorf("AlnumLower() length = %d, want between 16 and 20", len(result))
+	}
+
+	// Check that all characters are lowercase or digits
+	// 모든 문자가 소문자 또는 숫자인지 확인
+	for _, char := range result {
+		if !strings.ContainsRune(charsetAlphaLower+charsetDigits, char) {
+			t.Errorf("AlnumLower() contains invalid character: %c", char)
+		}
+	}
+}
+
+// TestBase64 tests the Base64 method
+// TestBase64는 Base64 메서드를 테스트합니다
+func TestBase64(t *testing.T) {
+	result := GenString.Base64(16, 32)
+
+	// Check length / 길이 확인
+	if len(result) < 16 || len(result) > 32 {
+		t.Errorf("Base64() length = %d, want between 16 and 32", len(result))
+	}
+
+	// Check that all characters are valid Base64 characters
+	// 모든 문자가 유효한 Base64 문자인지 확인
+	for _, char := range result {
+		if !strings.ContainsRune(charsetBase64, char) {
+			t.Errorf("Base64() contains invalid character: %c", char)
+		}
+	}
+}
+
+// TestBase64URL tests the Base64URL method
+// TestBase64URL은 Base64URL 메서드를 테스트합니다
+func TestBase64URL(t *testing.T) {
+	result := GenString.Base64URL(16, 32)
+
+	// Check length / 길이 확인
+	if len(result) < 16 || len(result) > 32 {
+		t.Errorf("Base64URL() length = %d, want between 16 and 32", len(result))
+	}
+
+	// Check that all characters are valid URL-safe Base64 characters
+	// 모든 문자가 유효한 URL-safe Base64 문자인지 확인
+	for _, char := range result {
+		if !strings.ContainsRune(charsetBase64URL, char) {
+			t.Errorf("Base64URL() contains invalid character: %c", char)
+		}
+	}
+}
+
+// BenchmarkDigits benchmarks the Digits method
+// BenchmarkDigits는 Digits 메서드의 성능을 벤치마크합니다
+func BenchmarkDigits(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		GenString.Digits(6, 6)
+	}
+}
+
+// BenchmarkHex benchmarks the Hex method
+// BenchmarkHex는 Hex 메서드의 성능을 벤치마크합니다
+func BenchmarkHex(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		GenString.Hex(8, 16)
+	}
+}
+
+// BenchmarkBase64URL benchmarks the Base64URL method
+// BenchmarkBase64URL은 Base64URL 메서드의 성능을 벤치마크합니다
+func BenchmarkBase64URL(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		GenString.Base64URL(32, 32)
+	}
+}
