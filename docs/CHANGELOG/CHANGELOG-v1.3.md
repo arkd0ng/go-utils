@@ -98,5 +98,61 @@ Time 3:00 - [Session1-NEW, Session2-NEW, Session3-NEW] (Session1 rotated to Cred
 
 ---
 
+## [v1.3.002] - 2025-10-10
+
+### Added / 추가
+- **Core Implementation / 핵심 구현**:
+  - Implemented Phase 1 (Foundation): errors.go, types.go, config.go
+  - Implemented Phase 2 (Core Features): options.go, client.go, connection.go, rotation.go
+  - 7 core files with bilingual comments
+  - Phase 1 (기초) 구현: 에러 타입, 공통 타입, 설정 구조체
+  - Phase 2 (핵심 기능) 구현: 옵션, 클라이언트, 연결 관리, 순환 로직
+
+- **Features Implemented / 구현된 기능**:
+  - Client struct with multiple connection pools / 다중 연결 풀을 갖춘 클라이언트 구조체
+  - Functional options pattern (20+ options) / 함수형 옵션 패턴 (20개 이상 옵션)
+  - Auto health check goroutine / 자동 헬스 체크 goroutine
+  - Credential rotation goroutine / 자격 증명 순환 goroutine
+  - Round-robin connection selection / Round-robin 연결 선택
+  - Configuration validation / 설정 검증
+  - Comprehensive error types / 포괄적인 에러 타입
+
+- **Testing / 테스팅**:
+  - Basic unit tests for config, options, and client creation
+  - All tests passing (100% pass rate)
+  - 설정, 옵션, 클라이언트 생성에 대한 기본 유닛 테스트
+  - 모든 테스트 통과 (100% 통과율)
+
+### Technical Details / 기술 세부사항
+
+**Files Created / 생성된 파일**:
+```
+database/mysql/
+├── errors.go        (130 lines) - Error types and classification
+├── types.go         (73 lines) - Common types (CredentialRefreshFunc, Tx)
+├── config.go        (130 lines) - Configuration structure and validation
+├── options.go       (230 lines) - 20+ functional options
+├── client.go        (260 lines) - Main client with connection management
+├── connection.go    (75 lines) - Health check and connection monitoring
+├── rotation.go      (85 lines) - Credential rotation logic
+└── client_test.go   (120 lines) - Unit tests
+```
+
+**Dependencies / 의존성**:
+- Added `github.com/go-sql-driver/mysql v1.9.3`
+- Added `filippo.io/edwards25519 v1.1.0` (MySQL driver dependency)
+
+### Changed / 변경
+- go.mod: Added MySQL driver dependency / MySQL 드라이버 의존성 추가
+
+### Notes / 참고사항
+- Compilation successful / 컴파일 성공
+- All basic tests passing / 모든 기본 테스트 통과
+- Remaining work: simple.go, builder.go, transaction.go, retry.go, scan.go, README
+- 남은 작업: simple.go, builder.go, transaction.go, retry.go, scan.go, README
+
+---
+
 **Version History / 버전 히스토리**:
+- v1.3.002: Core implementation (Phase 1 & 2) / 핵심 구현 (Phase 1 & 2)
 - v1.3.001: Design documents for database/mysql package / database/mysql 패키지 설계 문서
