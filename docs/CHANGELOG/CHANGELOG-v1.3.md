@@ -61,9 +61,18 @@ mysql:
 
 **Example Highlights / 예제 주요 사항**:
 - Database configuration loaded from YAML file / YAML 파일에서 데이터베이스 설정 로드
-- Logging package integration for all operations / 모든 작업에 로깅 패키지 통합
+- **Full logging integration**: Replaced all `fmt.Print` statements with logging package / 완전한 로깅 통합: 모든 `fmt.Print` 문을 로깅 패키지로 교체
+- All output logged to both console and file / 모든 출력이 콘솔과 파일 모두에 로깅됨
 - Auto MySQL start/stop if not running / 실행 중이 아니면 MySQL 자동 시작/중지
+- **Repeatable examples**: Uses timestamp-based unique emails / 반복 실행 가능한 예제: 타임스탬프 기반 고유 이메일 사용
+- No hardcoded credentials in helper functions / 헬퍼 함수에 하드코딩된 자격 증명 없음
 - All 9 examples executed successfully / 모든 9개 예제가 성공적으로 실행됨
+
+### Fixed / 수정
+- **Duplicate key errors**: Insert examples now generate timestamp-based unique emails / 중복 키 에러 수정: Insert 예제가 이제 타임스탬프 기반 고유 이메일 생성
+- **Delete example**: Changed to delete existing sample user (charlie@example.com) instead of non-existent user / Delete 예제를 존재하지 않는 사용자 대신 기존 샘플 사용자 삭제로 변경
+- **Hardcoded credentials**: Removed from `isMySQLRunning()` function / isMySQLRunning() 함수에서 하드코딩된 자격 증명 제거
+- Error message capitalization to follow Go conventions (ST1005) / Go 규칙에 따라 에러 메시지 대문자 수정
 
 ### Dependencies / 의존성
 - Added `gopkg.in/yaml.v3` for YAML configuration parsing / YAML 설정 파싱용
@@ -72,6 +81,7 @@ mysql:
 - Examples demonstrate "30 lines → 2 lines" simplicity goal / 예제가 "30줄 → 2줄" 간결함 목표를 시연
 - All examples include bilingual output (English/Korean) / 모든 예제가 이중 언어 출력 포함 (영문/한글)
 - Examples tested on macOS with Homebrew MySQL 9.4.0 / macOS Homebrew MySQL 9.4.0에서 테스트됨
+- Examples are fully repeatable with no duplicate key errors / 예제는 중복 키 에러 없이 완전히 반복 실행 가능
 
 ---
 

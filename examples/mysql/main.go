@@ -36,7 +36,15 @@ type MySQLConfig struct {
 
 func main() {
 	// Initialize logger / 로거 초기화
-	logger := logging.Default()
+	logger, err := logging.New(
+		logging.WithFilePath("./mysql_example.log"),
+		logging.WithLevel(logging.DEBUG),
+		logging.WithStdout(true),
+	)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to initialize logger: %v\n", err)
+		os.Exit(1)
+	}
 	defer logger.Close()
 
 	// Print banner / 배너 출력
@@ -91,9 +99,11 @@ func main() {
 		logger.Info("MySQL이 이미 실행 중입니다")
 	}
 
-	fmt.Println("\n" + strings.Repeat("=", 70))
-	fmt.Println("Running Examples / 예제 실행 중")
-	fmt.Println(strings.Repeat("=", 70) + "\n")
+	logger.Info("")
+	logger.Info(strings.Repeat("=", 70))
+	logger.Info("Running Examples / 예제 실행 중")
+	logger.Info(strings.Repeat("=", 70))
+	logger.Info("")
 
 	// Run all examples / 모든 예제 실행
 	if err := runExamples(dsn, config.MySQL, logger); err != nil {
@@ -101,10 +111,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("\n" + strings.Repeat("=", 70))
+	logger.Info("")
+	logger.Info(strings.Repeat("=", 70))
 	logger.Info("All examples completed successfully!")
 	logger.Info("모든 예제가 성공적으로 완료되었습니다!")
-	fmt.Println(strings.Repeat("=", 70) + "\n")
+	logger.Info(strings.Repeat("=", 70))
+	logger.Info("")
 }
 
 // loadDatabaseConfig loads database configuration from YAML file
@@ -211,47 +223,47 @@ func runExamples(dsn string, cfg MySQLConfig, logger *logging.Logger) error {
 	ctx := context.Background()
 
 	// Example 1: SelectAll - Select all users / 모든 사용자 선택
-	if err := example1SelectAll(ctx, db); err != nil {
+	if err := example1SelectAll(ctx, db, logger); err != nil {
 		return err
 	}
 
 	// Example 2: SelectOne - Select single user / 단일 사용자 선택
-	if err := example2SelectOne(ctx, db); err != nil {
+	if err := example2SelectOne(ctx, db, logger); err != nil {
 		return err
 	}
 
 	// Example 3: Insert - Insert new user / 새 사용자 삽입
-	if err := example3Insert(ctx, db); err != nil {
+	if err := example3Insert(ctx, db, logger); err != nil {
 		return err
 	}
 
 	// Example 4: Update - Update user / 사용자 업데이트
-	if err := example4Update(ctx, db); err != nil {
+	if err := example4Update(ctx, db, logger); err != nil {
 		return err
 	}
 
 	// Example 5: Count - Count users / 사용자 수 계산
-	if err := example5Count(ctx, db); err != nil {
+	if err := example5Count(ctx, db, logger); err != nil {
 		return err
 	}
 
 	// Example 6: Exists - Check if user exists / 사용자 존재 확인
-	if err := example6Exists(ctx, db); err != nil {
+	if err := example6Exists(ctx, db, logger); err != nil {
 		return err
 	}
 
 	// Example 7: Transaction - Insert with transaction / 트랜잭션으로 삽입
-	if err := example7Transaction(ctx, db); err != nil {
+	if err := example7Transaction(ctx, db, logger); err != nil {
 		return err
 	}
 
 	// Example 8: Delete - Delete user / 사용자 삭제
-	if err := example8Delete(ctx, db); err != nil {
+	if err := example8Delete(ctx, db, logger); err != nil {
 		return err
 	}
 
 	// Example 9: Raw SQL - Use raw SQL queries / Raw SQL 쿼리 사용
-	if err := example9RawSQL(ctx, db); err != nil {
+	if err := example9RawSQL(ctx, db, logger); err != nil {
 		return err
 	}
 
@@ -260,149 +272,165 @@ func runExamples(dsn string, cfg MySQLConfig, logger *logging.Logger) error {
 
 // example1SelectAll demonstrates SelectAll method
 // example1SelectAll은 SelectAll 메서드를 시연합니다
-func example1SelectAll(ctx context.Context, db *mysql.Client) error {
-	fmt.Println("📋 Example 1: SelectAll - Select all users")
-	fmt.Println("📋 예제 1: SelectAll - 모든 사용자 선택\n")
+func example1SelectAll(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("📋 Example 1: SelectAll - Select all users")
+	logger.Info("📋 예제 1: SelectAll - 모든 사용자 선택")
+	logger.Info("")
 
 	// Select all users from Seoul / 서울의 모든 사용자 선택
 	users, err := db.SelectAll(ctx, "users", "city = ?", "Seoul")
 	if err != nil {
-		return fmt.Errorf("SelectAll failed: %w", err)
+		return fmt.Errorf("selectAll failed: %w", err)
 	}
 
-	fmt.Printf("Found %d users from Seoul:\n", len(users))
-	fmt.Printf("서울에서 %d명의 사용자를 찾았습니다:\n", len(users))
+	logger.Info(fmt.Sprintf("Found %d users from Seoul:", len(users)))
+	logger.Info(fmt.Sprintf("서울에서 %d명의 사용자를 찾았습니다:", len(users)))
 	for i, user := range users {
-		fmt.Printf("  %d. %s (age: %v, email: %s)\n",
-			i+1, user["name"], user["age"], user["email"])
+		logger.Info(fmt.Sprintf("  %d. %s (age: %v, email: %s)",
+			i+1, user["name"], user["age"], user["email"]))
 	}
-	fmt.Println()
+	logger.Info("")
 	return nil
 }
 
 // example2SelectOne demonstrates SelectOne method
 // example2SelectOne은 SelectOne 메서드를 시연합니다
-func example2SelectOne(ctx context.Context, db *mysql.Client) error {
-	fmt.Println("👤 Example 2: SelectOne - Select single user")
-	fmt.Println("👤 예제 2: SelectOne - 단일 사용자 선택\n")
+func example2SelectOne(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("👤 Example 2: SelectOne - Select single user")
+	logger.Info("👤 예제 2: SelectOne - 단일 사용자 선택")
+	logger.Info("")
 
 	user, err := db.SelectOne(ctx, "users", "email = ?", "john@example.com")
 	if err != nil {
-		return fmt.Errorf("SelectOne failed: %w", err)
+		return fmt.Errorf("selectOne failed: %w", err)
 	}
 
-	fmt.Printf("Found user: %s\n", user["name"])
-	fmt.Printf("  - Email: %s\n", user["email"])
-	fmt.Printf("  - Age: %v\n", user["age"])
-	fmt.Printf("  - City: %s\n", user["city"])
-	fmt.Println()
+	logger.Info(fmt.Sprintf("Found user: %s", user["name"]))
+	logger.Info(fmt.Sprintf("  - Email: %s", user["email"]))
+	logger.Info(fmt.Sprintf("  - Age: %v", user["age"]))
+	logger.Info(fmt.Sprintf("  - City: %s", user["city"]))
+	logger.Info("")
 	return nil
 }
 
 // example3Insert demonstrates Insert method
 // example3Insert는 Insert 메서드를 시연합니다
-func example3Insert(ctx context.Context, db *mysql.Client) error {
-	fmt.Println("➕ Example 3: Insert - Insert new user")
-	fmt.Println("➕예제 3: Insert - 새 사용자 삽입\n")
+func example3Insert(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("➕ Example 3: Insert - Insert new user")
+	logger.Info("➕예제 3: Insert - 새 사용자 삽입")
+	logger.Info("")
 
-	result, err := db.Insert(ctx, "users", map[string]interface{}{
+	// Generate unique email with timestamp / 타임스탬프로 유니크한 이메일 생성
+	timestamp := time.Now().Unix()
+	email := fmt.Sprintf("david.kim.%d@example.com", timestamp)
+
+	result, err := db.Insert(ctx, "users", map[string]any{
 		"name":  "David Kim",
-		"email": "david@example.com",
+		"email": email,
 		"age":   32,
 		"city":  "Daegu",
 	})
 	if err != nil {
-		return fmt.Errorf("Insert failed: %w", err)
+		return fmt.Errorf("insert failed: %w", err)
 	}
 
 	id, _ := result.LastInsertId()
-	fmt.Printf("✅ Inserted user 'David Kim' with ID: %d\n", id)
-	fmt.Printf("✅ 'David Kim' 사용자를 ID %d로 삽입했습니다\n", id)
-	fmt.Println()
+	logger.Info(fmt.Sprintf("✅ Inserted user 'David Kim' (%s) with ID: %d", email, id))
+	logger.Info(fmt.Sprintf("✅ 'David Kim' (%s) 사용자를 ID %d로 삽입했습니다", email, id))
+	logger.Info("")
 	return nil
 }
 
 // example4Update demonstrates Update method
 // example4Update는 Update 메서드를 시연합니다
-func example4Update(ctx context.Context, db *mysql.Client) error {
-	fmt.Println("🔄 Example 4: Update - Update user")
-	fmt.Println("🔄 예제 4: Update - 사용자 업데이트\n")
+func example4Update(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("🔄 Example 4: Update - Update user")
+	logger.Info("🔄 예제 4: Update - 사용자 업데이트")
+	logger.Info("")
 
+	// Update Jane Smith's age / Jane Smith의 나이 업데이트
 	result, err := db.Update(ctx, "users",
-		map[string]interface{}{
-			"age":  33,
-			"city": "Daejeon",
+		map[string]any{
+			"age": 26,
 		},
-		"email = ?", "david@example.com")
+		"email = ?", "jane@example.com")
 	if err != nil {
-		return fmt.Errorf("Update failed: %w", err)
+		return fmt.Errorf("update failed: %w", err)
 	}
 
 	rows, _ := result.RowsAffected()
-	fmt.Printf("✅ Updated %d user(s)\n", rows)
-	fmt.Printf("✅ %d명의 사용자를 업데이트했습니다\n", rows)
-	fmt.Println()
+	logger.Info(fmt.Sprintf("✅ Updated %d user(s) - Jane's age changed to 26", rows))
+	logger.Info(fmt.Sprintf("✅ %d명의 사용자를 업데이트했습니다 - Jane의 나이를 26으로 변경", rows))
+	logger.Info("")
 	return nil
 }
 
 // example5Count demonstrates Count method
 // example5Count는 Count 메서드를 시연합니다
-func example5Count(ctx context.Context, db *mysql.Client) error {
-	fmt.Println("🔢 Example 5: Count - Count users")
-	fmt.Println("🔢 예제 5: Count - 사용자 수 계산\n")
+func example5Count(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("🔢 Example 5: Count - Count users")
+	logger.Info("🔢 예제 5: Count - 사용자 수 계산")
+	logger.Info("")
 
 	// Count all users / 모든 사용자 수
 	totalCount, err := db.Count(ctx, "users")
 	if err != nil {
-		return fmt.Errorf("Count failed: %w", err)
+		return fmt.Errorf("count failed: %w", err)
 	}
-	fmt.Printf("Total users: %d\n", totalCount)
-	fmt.Printf("전체 사용자: %d명\n", totalCount)
+	logger.Info(fmt.Sprintf("Total users: %d", totalCount))
+	logger.Info(fmt.Sprintf("전체 사용자: %d명", totalCount))
 
 	// Count users older than 25 / 25세 이상 사용자 수
 	adultCount, err := db.Count(ctx, "users", "age > ?", 25)
 	if err != nil {
-		return fmt.Errorf("Count with condition failed: %w", err)
+		return fmt.Errorf("count with condition failed: %w", err)
 	}
-	fmt.Printf("Users older than 25: %d\n", adultCount)
-	fmt.Printf("25세 이상 사용자: %d명\n", adultCount)
-	fmt.Println()
+	logger.Info(fmt.Sprintf("Users older than 25: %d", adultCount))
+	logger.Info(fmt.Sprintf("25세 이상 사용자: %d명", adultCount))
+	logger.Info("")
 	return nil
 }
 
 // example6Exists demonstrates Exists method
 // example6Exists는 Exists 메서드를 시연합니다
-func example6Exists(ctx context.Context, db *mysql.Client) error {
-	fmt.Println("🔍 Example 6: Exists - Check if user exists")
-	fmt.Println("🔍 예제 6: Exists - 사용자 존재 확인\n")
+func example6Exists(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("🔍 Example 6: Exists - Check if user exists")
+	logger.Info("🔍 예제 6: Exists - 사용자 존재 확인")
+	logger.Info("")
 
-	exists, err := db.Exists(ctx, "users", "email = ?", "david@example.com")
+	// Check if John Doe exists / John Doe 존재 확인
+	exists, err := db.Exists(ctx, "users", "email = ?", "john@example.com")
 	if err != nil {
-		return fmt.Errorf("Exists failed: %w", err)
+		return fmt.Errorf("exists failed: %w", err)
 	}
 
 	if exists {
-		fmt.Println("✅ User 'david@example.com' exists")
-		fmt.Println("✅ 사용자 'david@example.com'이 존재합니다")
+		logger.Info("✅ User 'john@example.com' exists")
+		logger.Info("✅ 사용자 'john@example.com'이 존재합니다")
 	} else {
-		fmt.Println("❌ User 'david@example.com' does not exist")
-		fmt.Println("❌ 사용자 'david@example.com'이 존재하지 않습니다")
+		logger.Info("❌ User 'john@example.com' does not exist")
+		logger.Info("❌ 사용자 'john@example.com'이 존재하지 않습니다")
 	}
-	fmt.Println()
+	logger.Info("")
 	return nil
 }
 
 // example7Transaction demonstrates Transaction method
 // example7Transaction은 Transaction 메서드를 시연합니다
-func example7Transaction(ctx context.Context, db *mysql.Client) error {
-	fmt.Println("💳 Example 7: Transaction - Insert with transaction")
-	fmt.Println("💳 예제 7: Transaction - 트랜잭션으로 삽입\n")
+func example7Transaction(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("💳 Example 7: Transaction - Insert with transaction")
+	logger.Info("💳 예제 7: Transaction - 트랜잭션으로 삽입")
+	logger.Info("")
+
+	// Generate unique emails with timestamp / 타임스탬프로 유니크한 이메일 생성
+	timestamp := time.Now().Unix()
 
 	err := db.Transaction(ctx, func(tx *mysql.Tx) error {
 		// Insert first user / 첫 번째 사용자 삽입
-		result1, err := tx.Insert(ctx, "users", map[string]interface{}{
+		email1 := fmt.Sprintf("emily.park.%d@example.com", timestamp)
+		result1, err := tx.Insert(ctx, "users", map[string]any{
 			"name":  "Emily Park",
-			"email": "emily@example.com",
+			"email": email1,
 			"age":   27,
 			"city":  "Gwangju",
 		})
@@ -410,12 +438,13 @@ func example7Transaction(ctx context.Context, db *mysql.Client) error {
 			return err // Auto rollback / 자동 롤백
 		}
 		id1, _ := result1.LastInsertId()
-		fmt.Printf("  - Inserted Emily Park (ID: %d)\n", id1)
+		logger.Info(fmt.Sprintf("  - Inserted Emily Park (ID: %d)", id1))
 
 		// Insert second user / 두 번째 사용자 삽입
-		result2, err := tx.Insert(ctx, "users", map[string]interface{}{
+		email2 := fmt.Sprintf("frank.lee.%d@example.com", timestamp+1)
+		result2, err := tx.Insert(ctx, "users", map[string]any{
 			"name":  "Frank Lee",
-			"email": "frank@example.com",
+			"email": email2,
 			"age":   29,
 			"city":  "Ulsan",
 		})
@@ -423,54 +452,57 @@ func example7Transaction(ctx context.Context, db *mysql.Client) error {
 			return err // Auto rollback / 자동 롤백
 		}
 		id2, _ := result2.LastInsertId()
-		fmt.Printf("  - Inserted Frank Lee (ID: %d)\n", id2)
+		logger.Info(fmt.Sprintf("  - Inserted Frank Lee (ID: %d)", id2))
 
 		return nil // Auto commit / 자동 커밋
 	})
 
 	if err != nil {
-		return fmt.Errorf("Transaction failed: %w", err)
+		return fmt.Errorf("transaction failed: %w", err)
 	}
 
-	fmt.Println("✅ Transaction completed successfully")
-	fmt.Println("✅ 트랜잭션이 성공적으로 완료되었습니다")
-	fmt.Println()
+	logger.Info("✅ Transaction completed successfully")
+	logger.Info("✅ 트랜잭션이 성공적으로 완료되었습니다")
+	logger.Info("")
 	return nil
 }
 
 // example8Delete demonstrates Delete method
 // example8Delete는 Delete 메서드를 시연합니다
-func example8Delete(ctx context.Context, db *mysql.Client) error {
-	fmt.Println("🗑️  Example 8: Delete - Delete user")
-	fmt.Println("🗑️  예제 8: Delete - 사용자 삭제\n")
+func example8Delete(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("🗑️  Example 8: Delete - Delete user")
+	logger.Info("🗑️  예제 8: Delete - 사용자 삭제")
+	logger.Info("")
 
-	result, err := db.Delete(ctx, "users", "email = ?", "david@example.com")
+	// Delete Charlie Brown (one of the sample users) / 샘플 사용자 중 한 명인 Charlie Brown 삭제
+	result, err := db.Delete(ctx, "users", "email = ?", "charlie@example.com")
 	if err != nil {
-		return fmt.Errorf("Delete failed: %w", err)
+		return fmt.Errorf("delete failed: %w", err)
 	}
 
 	rows, _ := result.RowsAffected()
-	fmt.Printf("✅ Deleted %d user(s)\n", rows)
-	fmt.Printf("✅ %d명의 사용자를 삭제했습니다\n", rows)
-	fmt.Println()
+	logger.Info(fmt.Sprintf("✅ Deleted %d user(s) - Charlie Brown removed", rows))
+	logger.Info(fmt.Sprintf("✅ %d명의 사용자를 삭제했습니다 - Charlie Brown 제거됨", rows))
+	logger.Info("")
 	return nil
 }
 
 // example9RawSQL demonstrates raw SQL queries
 // example9RawSQL은 raw SQL 쿼리를 시연합니다
-func example9RawSQL(ctx context.Context, db *mysql.Client) error {
-	fmt.Println("🔧 Example 9: Raw SQL - Use raw SQL queries")
-	fmt.Println("🔧 예제 9: Raw SQL - Raw SQL 쿼리 사용\n")
+func example9RawSQL(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("🔧 Example 9: Raw SQL - Use raw SQL queries")
+	logger.Info("🔧 예제 9: Raw SQL - Raw SQL 쿼리 사용")
+	logger.Info("")
 
 	// Execute raw query / Raw 쿼리 실행
 	rows, err := db.Query(ctx, "SELECT city, COUNT(*) as count FROM users GROUP BY city ORDER BY count DESC")
 	if err != nil {
-		return fmt.Errorf("Raw query failed: %w", err)
+		return fmt.Errorf("raw query failed: %w", err)
 	}
 	defer rows.Close()
 
-	fmt.Println("Users per city:")
-	fmt.Println("도시별 사용자 수:")
+	logger.Info("Users per city:")
+	logger.Info("도시별 사용자 수:")
 
 	for rows.Next() {
 		var city string
@@ -478,9 +510,9 @@ func example9RawSQL(ctx context.Context, db *mysql.Client) error {
 		if err := rows.Scan(&city, &count); err != nil {
 			return err
 		}
-		fmt.Printf("  - %s: %d users\n", city, count)
+		logger.Info(fmt.Sprintf("  - %s: %d users", city, count))
 	}
 
-	fmt.Println()
+	logger.Info("")
 	return nil
 }
