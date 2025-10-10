@@ -4,6 +4,40 @@ All notable changes for documentation work (v1.2.x) are documented in this file.
 
 문서화 작업(v1.2.x)의 모든 주요 변경사항이 이 파일에 기록됩니다.
 
+## [v1.2.004] - 2025-10-10
+
+### Added / 추가
+- Created comprehensive Logging package documentation / 종합 Logging 패키지 문서 생성
+- Added `docs/logging/USER_MANUAL.md` - Complete user manual with bilingual content (~1000 lines) / 이중 언어 내용이 포함된 완전한 사용자 매뉴얼 추가 (~1000줄)
+- Added `docs/logging/DEVELOPER_GUIDE.md` - Complete developer guide with bilingual content (~900 lines) / 이중 언어 내용이 포함된 완전한 개발자 가이드 추가 (~900줄)
+
+### Changed / 변경
+- Updated version to v1.2.004 in `cfg/app.yaml` / `cfg/app.yaml`의 버전을 v1.2.004로 업데이트
+- Updated test to reflect current version (v1.2.004) / 현재 버전을 반영하도록 테스트 업데이트 (v1.2.004)
+
+### Documentation / 문서
+- User manual includes / 사용자 매뉴얼 포함 내용:
+  - Introduction and feature overview / 소개 및 기능 개요
+  - Installation guide / 설치 가이드
+  - Quick start examples / 빠른 시작 예제
+  - Complete configuration reference (rotation, logger, banner options) / 완전한 설정 참조 (로테이션, 로거, 배너 옵션)
+  - Logging methods (structured and Printf-style) / 로깅 메서드 (구조화 및 Printf 스타일)
+  - Banner features and version management / 배너 기능 및 버전 관리
+  - Usage patterns and common use cases / 사용 패턴 및 일반적인 사용 사례
+  - Best practices and troubleshooting / 모범 사례 및 문제 해결
+  - Comprehensive FAQ section / 종합 FAQ 섹션
+- Developer guide includes / 개발자 가이드 포함 내용:
+  - Architecture overview and design principles / 아키텍처 개요 및 설계 원칙
+  - Package structure and file organization / 패키지 구조 및 파일 구성
+  - Core components (Logger, Config, Level) / 핵심 컴포넌트 (Logger, Config, Level)
+  - Internal implementation details / 내부 구현 세부 사항
+  - Options pattern guide / Options 패턴 가이드
+  - Log levels and color system / 로그 레벨 및 색상 시스템
+  - Banner system architecture / 배너 시스템 아키텍처
+  - File rotation with Lumberjack / Lumberjack을 사용한 파일 로테이션
+  - Testing guide with examples / 예제가 포함된 테스트 가이드
+  - Contributing guidelines and code style / 기여 가이드라인 및 코드 스타일
+
 ## [v1.2.003] - 2025-10-10
 
 ### Added / 추가
