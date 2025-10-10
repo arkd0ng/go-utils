@@ -96,17 +96,11 @@ if err != nil {
 
 ### ✅ [logging](./logging/) - Structured Logging with File Rotation
 
-Simple and powerful logging with automatic file rotation, multiple log levels, and banner support.
+Simple and powerful logging with automatic file rotation (lumberjack), structured logging, and banner support.
 
-자동 파일 로테이션, 다중 로그 레벨, 배너 지원이 있는 간단하고 강력한 로깅.
+자동 파일 로테이션(lumberjack), 구조화된 로깅, 배너 지원이 있는 간단하고 강력한 로깅 패키지입니다.
 
-**Key features** / **주요 기능**:
-- Automatic file rotation with lumberjack / lumberjack을 사용한 자동 파일 로테이션
-- Multiple log levels (DEBUG, INFO, WARN, ERROR, FATAL) / 다중 로그 레벨
-- Structured logging with key-value pairs / 키-값 쌍을 사용한 구조화된 로깅
-- Colored console output / 색상 콘솔 출력
-- Banner support for application startup / 애플리케이션 시작 배너
-- Thread-safe / 스레드 안전
+**Features**: Multiple log levels, key-value logging, colored output, thread-safe / 다중 로그 레벨, 키-값 로깅, 색상 출력, 스레드 안전
 
 ```go
 import "github.com/arkd0ng/go-utils/logging"
@@ -115,14 +109,10 @@ import "github.com/arkd0ng/go-utils/logging"
 logger := logging.Default()
 defer logger.Close()
 
-// Banner / 배너
 logger.Banner("My Application", "v1.0.0")
+logger.Info("Application started", "port", 8080)
 
-// Logging / 로깅
-logger.Info("Application started")
-logger.Error("Error occurred", "code", 500, "message", "internal error")
-
-// Multiple loggers / 여러 로거
+// Multiple loggers for different purposes / 용도별 여러 로거
 appLogger, _ := logging.New(logging.WithFilePath("./logs/app.log"))
 dbLogger, _ := logging.New(logging.WithFilePath("./logs/db.log"))
 ```
