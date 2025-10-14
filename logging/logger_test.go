@@ -648,8 +648,8 @@ func TestAppYamlIntegration(t *testing.T) {
 		t.Error("Log file should contain app name 'go-utils' from cfg/app.yaml")
 	}
 
-	// Should contain "v1.4.017" (version from cfg/app.yaml)
-	if !strings.Contains(logStr, "v1.4.017") {
-		t.Error("Log file should contain version 'v1.4.017' from cfg/app.yaml")
+	// Should contain "v1.5.009" (version from cfg/app.yaml)
+	if !strings.Contains(logStr, "v1.5.009") {
+		t.Error("Log file should contain version 'v1.5.009' from cfg/app.yaml")
 	}
 }

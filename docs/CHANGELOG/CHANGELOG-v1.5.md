@@ -8,6 +8,75 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.009] - 2025-10-14
+
+### Changed / 변경
+
+- **DOCS**: Updated root documentation for project organization
+- **문서**: 프로젝트 구성을 위한 루트 문서 업데이트
+- **README.md**: Added comprehensive stringutil package section
+- **README.md**: 포괄적인 stringutil 패키지 섹션 추가
+- **CHANGELOG.md**: Added v1.5.x overview section
+- **CHANGELOG.md**: v1.5.x 개요 섹션 추가
+
+### Documentation Updates / 문서 업데이트
+
+1. **Root README.md** (`/README.md`):
+   - Updated package structure diagram with stringutil (marked as available, not "coming soon")
+   - 패키지 구조 다이어그램 업데이트 (stringutil을 사용 가능으로 표시)
+   - Added detailed stringutil section in "Available Packages"
+   - "사용 가능한 패키지"에 상세한 stringutil 섹션 추가
+   - Included 37 functions across 5 categories
+   - 5개 카테고리에 걸쳐 37개 함수 포함
+   - Added comprehensive code examples with Unicode support
+   - 유니코드 지원이 포함된 포괄적인 코드 예제 추가
+   - Updated version history (v1.5.x as current)
+   - 버전 히스토리 업데이트 (v1.5.x를 현재로 표시)
+
+2. **Root CHANGELOG.md** (`/CHANGELOG.md`):
+   - Added v1.5.x section as "Current"
+   - v1.5.x 섹션을 "현재"로 추가
+   - Moved v1.4.x to previous versions
+   - v1.4.x를 이전 버전으로 이동
+   - Documented stringutil package highlights
+   - stringutil 패키지 주요 사항 문서화
+   - Added design principles and key features
+   - 설계 원칙 및 주요 기능 추가
+
+3. **Version Update**:
+   - Updated `cfg/app.yaml` version: v1.5.008 → v1.5.009
+   - `cfg/app.yaml` 버전 업데이트: v1.5.008 → v1.5.009
+   - Updated logging test to reflect new version
+   - 새 버전을 반영하도록 로깅 테스트 업데이트
+
+### Testing / 테스트
+
+- All tests passing for random, logging, and stringutil packages
+- random, logging, stringutil 패키지의 모든 테스트 통과
+- Fixed `TestAppYamlIntegration` to expect v1.5.009
+- `TestAppYamlIntegration` 수정하여 v1.5.009 기대
+
+### Files Modified / 수정된 파일
+
+- `README.md` - Added stringutil section, updated version history
+- `CHANGELOG.md` - Added v1.5.x overview
+- `cfg/app.yaml` - Updated version to v1.5.009
+- `logging/logger_test.go` - Updated version expectation in test
+- `docs/CHANGELOG/CHANGELOG-v1.5.md` - Added this entry
+
+### Notes / 참고사항
+
+- Documentation organization complete
+- 문서 구성 완료
+- All package READMEs reviewed and consistent
+- 모든 패키지 README 검토 및 일관성 확인
+- Project ready for v1.5.x series completion
+- v1.5.x 시리즈 완료를 위한 프로젝트 준비 완료
+- Current version: v1.5.009
+- 현재 버전: v1.5.009
+
+---
+
 ## [v1.5.008] - 2025-10-14 16:04
 
 ### Added / 추가

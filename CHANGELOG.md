@@ -18,7 +18,30 @@ This file contains a high-level overview of major and minor versions. For detail
 
 ---
 
-## [v1.4.x] - Redis Package / Redis 패키지 (현재 / Current)
+## [v1.5.x] - String Utilities Package / 문자열 유틸리티 패키지 (현재 / Current)
+
+**Focus / 초점**: Extreme simplicity string manipulation utilities / 극도로 간단한 문자열 처리 유틸리티
+
+**Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.5.md](docs/CHANGELOG/CHANGELOG-v1.5.md)
+
+### Highlights / 주요 사항
+- **Complete stringutil package**: 20 lines → 1 line of code / 완전한 stringutil 패키지: 20줄 → 1줄 코드
+- **37 functions**: Case conversion, manipulation, validation, search & replace, utilities / 37개 함수
+- **Unicode-safe**: All operations use rune (not byte) for proper Unicode support / 유니코드 안전
+- **Zero dependencies**: Standard library only / 제로 의존성: 표준 라이브러리만
+- **Functional programming**: Map and Filter for functional-style operations / 함수형 프로그래밍
+- **Comprehensive documentation**: USER_MANUAL and DEVELOPER_GUIDE / 포괄적인 문서화
+
+**Key Design Principles / 주요 설계 원칙**:
+- Extreme Simplicity: 20 lines → 1 line / 극도의 간결함: 20줄 → 1줄
+- Unicode First: Works with Korean, emoji, and all Unicode characters / 유니코드 우선
+- Practical Over Perfect: 99% use cases covered / 실용성 중심: 99% 사용 사례 커버
+
+**Latest Version / 최신 버전**: v1.5.009 (2025-10-14)
+
+---
+
+## [v1.4.x] - Redis Package / Redis 패키지
 
 **Focus / 초점**: Extreme simplicity Redis client with comprehensive operations support / 포괄적인 작업 지원을 갖춘 극도로 간단한 Redis 클라이언트
 

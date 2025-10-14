@@ -40,7 +40,7 @@ go-utils/
 ├── database/
 │   ├── mysql/       # Extreme simplicity MySQL client / 극도로 간단한 MySQL 클라이언트
 │   └── redis/       # Extreme simplicity Redis client / 극도로 간단한 Redis 클라이언트
-├── stringutil/      # String manipulation (coming soon) / 문자열 처리 (예정)
+├── stringutil/      # String manipulation utilities / 문자열 처리 유틸리티
 ├── sliceutil/       # Slice helpers (coming soon) / 슬라이스 헬퍼 (예정)
 ├── maputil/         # Map utilities (coming soon) / 맵 유틸리티 (예정)
 └── ...
@@ -286,9 +286,60 @@ val, _ := rdb.Get(ctx, "key")
 
 ---
 
+### ✅ [stringutil](./stringutil/) - String Manipulation Utilities
+
+Extreme simplicity string utilities - reduce 20 lines of string manipulation code to just 1 line.
+
+극도로 간단한 문자열 유틸리티 - 20줄의 문자열 처리 코드를 단 1줄로 줄입니다.
+
+**Core Features**: Unicode-safe operations, zero dependencies, 37 functions across 5 categories / 유니코드 안전 작업, 제로 의존성, 5개 카테고리에 걸쳐 37개 함수
+
+**Categories / 카테고리**:
+- **Case Conversion (5)**: ToSnakeCase, ToCamelCase, ToKebabCase, ToPascalCase, ToScreamingSnakeCase / 케이스 변환
+- **String Manipulation (9)**: Truncate, Reverse, Capitalize, Clean, RemoveDuplicates / 문자열 조작
+- **Validation (8)**: IsEmail, IsURL, IsAlphanumeric, IsNumeric, IsBlank / 유효성 검사
+- **Search & Replace (6)**: ContainsAny, ContainsAll, ReplaceAll, ReplaceIgnoreCase / 검색 및 치환
+- **Utilities (9)**: CountWords, Lines, Words, Map, Filter, PadLeft, PadRight / 유틸리티
+
+```go
+import "github.com/arkd0ng/go-utils/stringutil"
+
+// Case conversion / 케이스 변환
+snake := stringutil.ToSnakeCase("HelloWorld")  // "hello_world"
+camel := stringutil.ToCamelCase("hello_world") // "helloWorld"
+kebab := stringutil.ToKebabCase("HelloWorld")  // "hello-world"
+
+// String manipulation / 문자열 조작
+short := stringutil.Truncate("Long text here", 10)           // "Long text..."
+reversed := stringutil.Reverse("Hello")                       // "olleH"
+cleaned := stringutil.Clean("  hello   world  ")            // "hello world"
+
+// Validation / 유효성 검사
+if stringutil.IsEmail("user@example.com") {
+    // Valid email / 유효한 이메일
+}
+
+// Unicode-safe (works with Korean, emoji, etc.) / 유니코드 안전 (한글, 이모지 등 지원)
+truncated := stringutil.Truncate("안녕하세요 반갑습니다", 5)  // "안녕하세요..."
+reversed := stringutil.Reverse("안녕")                        // "녕안"
+
+// Functional programming (Map/Filter) / 함수형 프로그래밍
+names := []string{"alice", "bob", "charlie"}
+upper := stringutil.Map(names, func(s string) string {
+    return strings.ToUpper(s)
+}) // ["ALICE", "BOB", "CHARLIE"]
+
+filtered := stringutil.Filter(names, func(s string) bool {
+    return len(s) > 3
+}) // ["alice", "charlie"]
+```
+
+**[→ View full documentation / 전체 문서 보기](./stringutil/README.md)**
+
+---
+
 ### 🔜 Coming Soon / 개발 예정
 
-- **stringutil** - String manipulation utilities / 문자열 처리 유틸리티
 - **sliceutil** - Slice/Array helpers / 슬라이스/배열 헬퍼
 - **maputil** - Map utilities / 맵 유틸리티
 - **fileutil** - File/Path utilities / 파일/경로 유틸리티
@@ -376,7 +427,17 @@ For detailed version history, see:
 - [CHANGELOG.md](./CHANGELOG.md) - Major/Minor 버전 개요
 - [docs/CHANGELOG/](./docs/CHANGELOG/) - 상세한 패치별 변경사항
 
-### v1.4.x (Current / 현재)
+### v1.5.x (Current / 현재)
+
+- **NEW**: `stringutil` package - String manipulation utilities / 문자열 처리 유틸리티
+  - 20 lines → 1 line code reduction / 20줄 → 1줄 코드 감소
+  - 37 functions across 5 categories / 5개 카테고리에 걸쳐 37개 함수
+  - Unicode-safe operations (rune-based) / 유니코드 안전 작업 (rune 기반)
+  - Zero external dependencies / 외부 의존성 제로
+  - Functional programming (Map/Filter) / 함수형 프로그래밍
+  - Comprehensive documentation (USER_MANUAL, DEVELOPER_GUIDE) / 포괄적인 문서화
+
+### v1.4.x
 
 - **NEW**: `database/redis` package - Extreme simplicity Redis client / 극도로 간단한 Redis 클라이언트
   - 20 lines → 2 lines code reduction / 20줄 → 2줄 코드 감소
