@@ -8,6 +8,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.020] - 2025-10-14
+
+### Removed / 제거
+
+- **GIT**: Removed .claude/ directory and CLAUDE.md from GitHub repository
+- **GIT**: GitHub 저장소에서 .claude/ 디렉토리 및 CLAUDE.md 제거
+- Personal Claude Code configuration files no longer tracked by git
+- 개인 Claude Code 설정 파일은 더 이상 git에서 추적되지 않음
+- Files remain in local directory for continued use
+- 파일은 계속 사용을 위해 로컬 디렉토리에 유지됨
+- Already in .gitignore to prevent future tracking
+- 향후 추적을 방지하기 위해 이미 .gitignore에 포함됨
+
+### Updated Files / 업데이트된 파일
+
+- Removed from git: `.claude/settings.local.json`, `CLAUDE.md`
+
+### Notes / 참고사항
+
+- These are personal development settings and should not be shared in repository
+- 이것들은 개인 개발 설정이며 저장소에서 공유되어서는 안 됨
+- Local files preserved for developer use
+- 개발자 사용을 위해 로컬 파일 보존됨
+- Current version: v1.4.020
+- 현재 버전: v1.4.020
+
+---
+
 ## [v1.4.019] - 2025-10-14
 
 ### Changed / 변경
