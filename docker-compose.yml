@@ -49,11 +49,46 @@ services:
     networks:
       - go-utils-network
 
+  redis:
+    image: redis:7-alpine
+    container_name: go-utils-redis
+    restart: unless-stopped
+
+    # Port mapping / 포트 매핑
+    ports:
+      - "6379:6379"
+
+    # Volume mapping / 볼륨 매핑
+    volumes:
+      # Persistent data / 영구 데이터
+      - redis_data:/data
+      # Redis configuration / Redis 설정
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+
+    # Redis configuration / Redis 설정
+    command: redis-server /usr/local/etc/redis/redis.conf --appendonly yes
+
+    # Health check / 헬스 체크
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+    # Network / 네트워크
+    networks:
+      - go-utils-network
+
 # Volumes / 볼륨
 volumes:
   mysql_data:
     driver: local
     name: go-utils-mysql-data
+
+  redis_data:
+    driver: local
+    name: go-utils-redis-data
 
 # Networks / 네트워크
 networks:

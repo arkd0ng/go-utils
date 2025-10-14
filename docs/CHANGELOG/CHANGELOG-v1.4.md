@@ -8,6 +8,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.004] - 2025-10-14
+
+### Added / 추가
+- Docker Redis setup with docker-compose.yml configuration
+- Docker Redis 설정 및 docker-compose.yml 구성
+- Created redis.conf for Redis server configuration
+- Redis 서버 설정을 위한 redis.conf 생성
+- Created 4 Redis management scripts:
+- 4개의 Redis 관리 스크립트 생성:
+  - `docker-redis-start.sh` - Start Docker Redis / Docker Redis 시작
+  - `docker-redis-stop.sh` - Stop and cleanup Docker Redis / Docker Redis 중지 및 정리
+  - `docker-redis-logs.sh` - View Redis logs / Redis 로그 확인
+  - `docker-redis-cli.sh` - Connect to Redis CLI / Redis CLI 연결
+- Created cfg/redis.yaml for Redis package configuration
+- Redis 패키지 설정을 위한 cfg/redis.yaml 생성
+- Created redis/README.md with usage and troubleshooting guide
+- 사용법 및 문제 해결 가이드가 포함된 redis/README.md 생성
+
+### Configuration / 설정
+- Redis 7-alpine image with persistent data volume
+- 영구 데이터 볼륨이 있는 Redis 7-alpine 이미지
+- AOF (Append Only File) persistence enabled
+- AOF (Append Only File) 영속성 활성화
+- Health check with redis-cli ping
+- redis-cli ping을 사용한 헬스 체크
+- 16 databases (0-15) available
+- 16개 데이터베이스 (0-15) 사용 가능
+
+---
+
 ## [v1.4.003] - 2025-10-14
 
 ### Added / 추가

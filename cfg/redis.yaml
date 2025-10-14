@@ -1,0 +1,30 @@
+# Redis Configuration
+# Redis 설정
+
+redis:
+  # Redis server address / Redis 서버 주소
+  addr: localhost:6379
+
+  # Redis password (empty for no password) / Redis 비밀번호 (비밀번호 없으면 공백)
+  password: ""
+
+  # Redis database number (0-15) / Redis 데이터베이스 번호 (0-15)
+  db: 0
+
+  # Connection pool size / 연결 풀 크기
+  pool_size: 10
+
+  # Minimum idle connections / 최소 유휴 연결 수
+  min_idle_conns: 5
+
+  # Maximum number of retries / 최대 재시도 횟수
+  max_retries: 3
+
+  # Retry interval in milliseconds / 재시도 간격 (밀리초)
+  retry_interval: 100
+
+  # Enable health check / 헬스 체크 활성화
+  enable_health_check: true
+
+  # Health check interval in seconds / 헬스 체크 간격 (초)
+  health_check_interval: 30
