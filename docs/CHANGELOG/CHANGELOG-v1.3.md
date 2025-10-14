@@ -6,9 +6,55 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
-## [v1.3.010] - 2025-10-14 (MySQL Advanced Features)
+## [v1.3.010] - 2025-10-14 (MySQL Advanced Features Documentation Update)
+
+### Changed / 변경
+- **Documentation Updates** / 문서 업데이트:
+  - Updated `database/mysql/README.md` with all 9 new advanced features (batch operations, upsert, pagination, soft delete, query stats, pool metrics, schema inspector, migration helpers, CSV export/import)
+  - Updated root `README.md` MySQL section with advanced features list
+  - Updated `CLAUDE.md` MySQL architecture section with comprehensive feature list and file structure
+  - Added detailed examples for all new features in dual-language format (English/Korean)
+  - Added 5 new best practices related to advanced features
+  - Version references updated from v1.3.008/009 to v1.3.010
+
+### Files Updated / 업데이트된 파일
+- `database/mysql/README.md` (Added 9 advanced feature sections with examples)
+- `README.md` (Updated MySQL package feature list)
+- `CLAUDE.md` (Updated MySQL architecture with 9 advanced features)
+- `cfg/app.yaml` (Version v1.3.010)
+
+---
+
+## [v1.3.009] - 2025-10-14 (MySQL Advanced Features Implementation)
 
 ### Added / 추가
+- **Batch Operations** / 배치 작업:
+  - `batch.go`: Batch operations for improved performance
+  - `BatchInsert()`: Insert multiple rows in a single query
+  - `BatchUpdate()`: Update multiple rows with different values
+  - `BatchDelete()`: Delete multiple rows by IDs
+  - `BatchSelectByIDs()`: Select multiple rows by IDs
+
+- **Upsert Operations** / Upsert 작업:
+  - `upsert.go`: Insert or update operations
+  - `Upsert()`: INSERT ... ON DUPLICATE KEY UPDATE
+  - `UpsertBatch()`: Batch upsert for multiple rows
+  - `Replace()`: REPLACE INTO (DELETE + INSERT)
+
+- **Pagination** / 페이지네이션:
+  - `pagination.go`: Pagination with metadata
+  - `Paginate()`: Simple table pagination with page metadata
+  - `PaginateQuery()`: Paginate custom queries
+  - `PaginationResult` struct: TotalRows, TotalPages, HasNext, HasPrev, Page, PageSize
+
+- **Soft Delete** / 소프트 삭제:
+  - `softdelete.go`: Soft delete functionality (requires deleted_at column)
+  - `SoftDelete()`: Mark rows as deleted by setting deleted_at
+  - `Restore()`: Restore soft-deleted rows
+  - `SelectAllWithTrashed()`: Include soft-deleted rows in results
+  - `SelectAllOnlyTrashed()`: Select only soft-deleted rows
+  - `PermanentDelete()`: Permanently delete rows (hard delete)
+
 - **Query Statistics Tracking** / 쿼리 통계 추적:
   - `stats.go`: Query execution statistics with `QueryStats` struct
   - `GetQueryStats()`: Returns comprehensive statistics (total, success, failed queries, durations)

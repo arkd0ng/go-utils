@@ -129,7 +129,18 @@ Reduce 30+ lines of boilerplate code to just 2 lines with auto-everything: conne
 
 30줄 이상의 보일러플레이트 코드를 단 2줄로 줄이고, 연결 관리, 재시도, 재연결, 리소스 정리를 모두 자동화합니다.
 
-**Features**: Zero-downtime credential rotation, SQL-like API, auto retry, transaction support, no defer rows.Close() / 무중단 자격 증명 순환, SQL 문법에 가까운 API, 자동 재시도, 트랜잭션 지원, defer rows.Close() 불필요
+**Core Features**: Zero-downtime credential rotation, SQL-like API, auto retry, transaction support, no defer rows.Close() / 무중단 자격 증명 순환, SQL 문법에 가까운 API, 자동 재시도, 트랜잭션 지원, defer rows.Close() 불필요
+
+**Advanced Features** (v1.3.010+):
+- **Batch Operations**: BatchInsert, BatchUpdate, BatchDelete, BatchSelectByIDs / 배치 작업
+- **Upsert**: Upsert, UpsertBatch, Replace (ON DUPLICATE KEY UPDATE) / Upsert 작업
+- **Pagination**: Paginate, PaginateQuery with metadata / 메타데이터를 포함한 페이지네이션
+- **Soft Delete**: SoftDelete, Restore, SelectAllWithTrashed / 소프트 삭제
+- **Query Statistics**: Performance monitoring, slow query logging / 쿼리 통계
+- **Pool Metrics**: Connection pool health monitoring / 연결 풀 모니터링
+- **Schema Inspector**: GetTables, GetColumns, GetIndexes, InspectTable / 스키마 검사
+- **Migration Helpers**: CreateTable, AddColumn, AddIndex, AddForeignKey / 마이그레이션 헬퍼
+- **CSV Export/Import**: ExportTableToCSV, ImportFromCSV / CSV 내보내기/가져오기
 
 ```go
 import (

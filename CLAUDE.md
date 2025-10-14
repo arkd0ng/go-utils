@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 `go-utils`는 Golang 개발을 위한 모듈화된 유틸리티 패키지 모음입니다. 라이브러리는 서브패키지 구조로 설계되어 사용자가 전체 라이브러리가 아닌 특정 유틸리티만 import할 수 있습니다.
 
 **GitHub 저장소**: `github.com/arkd0ng/go-utils`
-**현재 버전**: v1.2.004 (from cfg/app.yaml)
+**현재 버전**: v1.3.010 (from cfg/app.yaml)
 **Go 버전**: 1.24.6
 **라이선스**: MIT
 
@@ -23,8 +23,22 @@ go-utils/
 │   ├── string.go       # 핵심 랜덤 문자열 생성 로직
 │   ├── string_test.go  # 충돌 확률 테스트를 포함한 종합 테스트
 │   └── README.md       # 패키지별 문서 (이중 언어: 영문/한글)
+├── logging/             # 구조화된 로깅 및 파일 로테이션
+│   ├── logger.go       # 핵심 로깅 로직
+│   ├── options.go      # 함수형 옵션 패턴
+│   └── README.md       # 패키지별 문서 (이중 언어: 영문/한글)
+├── database/
+│   └── mysql/          # 극도로 간단한 MySQL/MariaDB 클라이언트
+│       ├── client.go   # 클라이언트 핵심 로직
+│       ├── simple.go   # 간단한 CRUD API (7개 메서드)
+│       ├── builder.go  # Query Builder (Fluent API)
+│       ├── transaction.go  # 트랜잭션 지원
+│       ├── rotation.go # 자격 증명 순환 로직
+│       └── README.md   # 패키지별 문서 (이중 언어: 영문/한글)
 ├── examples/
-│   └── random_string/  # 모든 메서드를 시연하는 실행 예제
+│   ├── random_string/  # 모든 14개 random 메서드 시연
+│   ├── logging/        # 로깅 기능 및 설정 시연
+│   └── mysql/          # MySQL 패키지의 17개 예제 시연
 └── (향후 패키지)        # stringutil, sliceutil, maputil, fileutil 등
 ```
 
@@ -68,6 +82,124 @@ go-utils/
 - 배너 출력: 애플리케이션 시작 시 정보 표시
 - 색상 출력: stdout에 색상 적용 (파일에는 미적용)
 
+### MySQL 패키지 아키텍처
+
+`database/mysql` 패키지는 극도로 간단한 MySQL/MariaDB 클라이언트를 제공합니다:
+- **30줄 → 2줄 코드 감소**: 보일러플레이트 코드 대폭 제거
+- **자동 연결 관리**: 연결, 재시도, 재연결, 리소스 정리 모두 자동
+- **무중단 자격 증명 순환**: 다중 연결 풀로 zero-downtime 자격 증명 교체
+- **Options Pattern**: 함수형 옵션으로 유연한 설정
+- **3가지 API 레벨**: Simple API, Query Builder, Raw SQL
+
+**3가지 API 레벨**:
+
+1. **Simple API (7개 메서드)**:
+   - `SelectAll`, `SelectOne`, `Insert`, `Update`, `Delete`, `Count`, `Exists`
+   - 가장 간단한 CRUD 작업을 1-2줄로 처리
+   - Context 버전과 non-context 버전 제공 (예: `SelectAll`, `SelectAllContext`)
+   - 추가 메서드: `SelectColumn`, `SelectColumns` (특정 컬럼만 선택)
+
+2. **Query Builder (Fluent API)**:
+   - 체이닝으로 복잡한 쿼리 구성 (JOIN, GROUP BY, HAVING 등)
+   - 메서드: `Select().From().Where().OrderBy().Limit().All()`
+   - 트랜잭션 내에서도 사용 가능
+
+3. **SelectWhere API**:
+   - Query Builder와 Simple API의 중간 레벨
+   - 함수형 옵션으로 한 줄에 복잡한 쿼리 작성
+   - 옵션: `WithColumns`, `WithOrderBy`, `WithLimit`, `WithGroupBy`, `WithHaving`, `WithDistinct`
+
+4. **Raw SQL**:
+   - `Query`, `Exec`, `QueryRow` 메서드로 직접 SQL 실행
+   - 완전한 제어가 필요한 경우
+
+**핵심 기능**:
+- **자동 재시도**: 네트워크 오류 시 자동 재시도 (설정 가능)
+- **헬스 체크**: 백그라운드에서 연결 상태 모니터링
+- **트랜잭션**: `Transaction()` 메서드로 자동 commit/rollback
+- **자격 증명 순환**: `WithCredentialRefresh()`로 동적 자격 증명 관리
+- **자동 리소스 정리**: defer rows.Close() 불필요 (Simple API)
+
+**고급 기능 (v1.3.010+)**:
+
+1. **Batch Operations (batch.go)**:
+   - `BatchInsert`: 한 쿼리로 여러 행 삽입
+   - `BatchUpdate`: 여러 행을 다른 값으로 업데이트
+   - `BatchDelete`: ID로 여러 행 삭제
+   - `BatchSelectByIDs`: ID로 여러 행 선택
+
+2. **Upsert Operations (upsert.go)**:
+   - `Upsert`: INSERT ... ON DUPLICATE KEY UPDATE
+   - `UpsertBatch`: 배치 Upsert
+   - `Replace`: REPLACE INTO (DELETE + INSERT)
+
+3. **Pagination (pagination.go)**:
+   - `Paginate`: 간단한 페이지네이션 (메타데이터 포함)
+   - `PaginateQuery`: 커스텀 쿼리 페이지네이션
+   - `PaginationResult`: TotalRows, TotalPages, HasNext, HasPrev 제공
+
+4. **Soft Delete (softdelete.go)**:
+   - `SoftDelete`: deleted_at 컬럼으로 소프트 삭제
+   - `Restore`: 소프트 삭제된 행 복원
+   - `SelectAllWithTrashed`: 소프트 삭제된 행 포함
+   - `SelectAllOnlyTrashed`: 소프트 삭제된 행만
+   - `PermanentDelete`: 영구 삭제
+
+5. **Query Statistics (stats.go)**:
+   - `GetQueryStats`: 쿼리 통계 (TotalQueries, AverageDuration 등)
+   - `ResetQueryStats`: 통계 초기화
+   - `EnableSlowQueryLog`: 느린 쿼리 로깅 활성화
+   - `GetSlowQueries`: 느린 쿼리 목록
+
+6. **Pool Metrics (metrics.go)**:
+   - `GetPoolMetrics`: 연결 풀 메트릭
+   - `GetPoolHealthInfo`: 풀 상태 정보 (Healthy, Status, Message)
+   - `GetConnectionUtilization`: 연결 사용률 (%)
+
+7. **Schema Inspector (schema.go)**:
+   - `GetTables`: 모든 테이블 목록
+   - `GetColumns`: 테이블 컬럼 정보
+   - `GetIndexes`: 테이블 인덱스 정보
+   - `TableExists`: 테이블 존재 확인
+   - `InspectTable`: 전체 테이블 정보
+
+8. **Migration Helpers (migration.go)**:
+   - `CreateTable`: 스키마로 테이블 생성
+   - `DropTable`: 테이블 삭제
+   - `TruncateTable`: 테이블 초기화
+   - `AddColumn`: 컬럼 추가
+   - `DropColumn`: 컬럼 삭제
+   - `AddIndex`: 인덱스 추가
+   - `AddForeignKey`: 외래 키 제약 조건 추가
+
+9. **CSV Export/Import (export.go)**:
+   - `ExportTableToCSV`: 전체 테이블을 CSV로 내보내기
+   - `ImportFromCSV`: CSV를 테이블로 가져오기
+   - `ExportQueryToCSV`: 쿼리 결과를 CSV로 내보내기
+   - 컬럼 매핑 지원 (`WithColumnMapping`)
+
+**파일 구조**:
+- `client.go`: 클라이언트 핵심 로직 및 New() 생성자
+- `simple.go`: 7개 Simple API 메서드 (SelectAll, Insert 등)
+- `builder.go`: Query Builder (Fluent API)
+- `select_options.go`: SelectWhere API 함수형 옵션
+- `transaction.go`: 트랜잭션 지원
+- `rotation.go`: 자격 증명 순환 로직
+- `connection.go`: 연결 관리 및 헬스 체크
+- `retry.go`: 재시도 로직
+- `scan.go`: 행 스캔 및 타입 변환
+- `errors.go`: 에러 타입 정의
+- `config.go`: 설정 구조체
+- `batch.go`: 배치 작업
+- `upsert.go`: Upsert 작업
+- `pagination.go`: 페이지네이션
+- `softdelete.go`: 소프트 삭제
+- `stats.go`: 쿼리 통계
+- `metrics.go`: 풀 메트릭
+- `schema.go`: 스키마 검사
+- `migration.go`: 마이그레이션 헬퍼
+- `export.go`: CSV 내보내기/가져오기
+
 ## 버전 관리 및 CHANGELOG 규칙
 
 ### 버전 관리
@@ -82,13 +214,15 @@ go-utils/
 **버전 히스토리**:
 - **v1.0.x**: Random package 개발
 - **v1.1.x**: Logging package 개발
-- **v1.2.x**: 문서화 작업 (진행 중)
+- **v1.2.x**: Random 및 Logging 패키지 종합 문서화 (USER_MANUAL, DEVELOPER_GUIDE)
+- **v1.3.x** (현재): MySQL package 개발 및 문서화
 
 ### 외부 의존성
 
 프로젝트에서 사용하는 외부 라이브러리:
+- **github.com/go-sql-driver/mysql**: MySQL 드라이버 (database/mysql 패키지)
 - **gopkg.in/natefinch/lumberjack.v2**: 파일 로테이션 (logging 패키지)
-- **gopkg.in/yaml.v3**: YAML 설정 파일 파싱 (cfg/app.yaml)
+- **gopkg.in/yaml.v3**: YAML 설정 파일 파싱 (cfg/app.yaml, cfg/database.yaml)
 
 ### CHANGELOG 관리
 
@@ -100,7 +234,8 @@ go-utils/
     └── CHANGELOG/
         ├── CHANGELOG-v1.0.md        # v1.0.x 상세 변경사항
         ├── CHANGELOG-v1.1.md        # v1.1.x 상세 변경사항
-        └── CHANGELOG-v1.2.md        # v1.2.x 상세 변경사항
+        ├── CHANGELOG-v1.2.md        # v1.2.x 상세 변경사항
+        └── CHANGELOG-v1.3.md        # v1.3.x 상세 변경사항
 ```
 
 **CHANGELOG 규칙**:
@@ -253,13 +388,20 @@ go-utils/
 │   ├── CHANGELOG/
 │   │   ├── CHANGELOG-v1.0.md
 │   │   ├── CHANGELOG-v1.1.md
-│   │   └── CHANGELOG-v1.2.md
+│   │   ├── CHANGELOG-v1.2.md
+│   │   └── CHANGELOG-v1.3.md
 │   ├── random/
 │   │   ├── USER_MANUAL.md      # ~600 lines, 완전한 사용자 가이드
 │   │   └── DEVELOPER_GUIDE.md  # ~700 lines, 완전한 개발자 가이드
-│   └── logging/
-│       ├── USER_MANUAL.md      # ~1000 lines, 완전한 사용자 가이드
-│       └── DEVELOPER_GUIDE.md  # ~900 lines, 완전한 개발자 가이드
+│   ├── logging/
+│   │   ├── USER_MANUAL.md      # ~1000 lines, 완전한 사용자 가이드
+│   │   └── DEVELOPER_GUIDE.md  # ~900 lines, 완전한 개발자 가이드
+│   └── database/
+│       └── mysql/
+│           ├── USER_MANUAL.md      # 완전한 사용자 가이드
+│           ├── DEVELOPER_GUIDE.md  # 완전한 개발자 가이드
+│           ├── DESIGN_PLAN.md      # 설계 계획 문서
+│           └── WORK_PLAN.md        # 작업 계획 문서
 ```
 
 ### 문서 작성 지침
@@ -301,9 +443,12 @@ go test ./... -v
 
 # 특정 패키지에 대한 테스트 실행
 go test ./random -v
+go test ./logging -v
+go test ./database/mysql -v
 
 # 단일 테스트 실행
 go test ./random -v -run TestLetters
+go test ./database/mysql -v -run TestSelectAll
 
 # 벤치마크 실행
 go test ./... -bench=.
@@ -324,18 +469,73 @@ go run examples/random_string/main.go
 # logging 예제 실행
 go run examples/logging/main.go
 
+# MySQL 예제 실행 (MySQL 서버 필요)
+go run examples/mysql/main.go
+
 # 예제 바이너리 빌드
 go build -o bin/random_example examples/random_string/main.go
 go build -o bin/logging_example examples/logging/main.go
+go build -o bin/mysql_example examples/mysql/main.go
 ```
 
 **예제 디렉토리 구조**:
 - `examples/random_string/main.go`: 모든 14개 random 메서드 시연
 - `examples/logging/main.go`: 로깅 기능 및 설정 시연
+- `examples/mysql/main.go`: MySQL 패키지의 17개 예제 시연
+  - Simple API (SelectAll, Insert, Update, Delete, Count, Exists)
+  - Query Builder (WHERE, JOIN, GROUP BY, HAVING, ORDER BY, LIMIT)
+  - SelectWhere API (함수형 옵션)
+  - SelectColumn, SelectColumns
+  - Transaction
+  - Raw SQL
+
+**MySQL 예제 실행 요구사항**:
+- MySQL 서버 실행 중이어야 함 (또는 예제가 자동으로 brew services start mysql 실행)
+- `cfg/database.yaml` 설정 파일 필요
+- 테스트 데이터베이스 및 테이블 (예제가 자동으로 설정)
+
+### MySQL 개발 워크플로우
+
+```bash
+# MySQL 서비스 상태 확인
+brew services info mysql
+
+# MySQL 서비스 시작
+brew services start mysql
+
+# MySQL 서비스 중지
+brew services stop mysql
+
+# MySQL 재설치 (필요시)
+brew reinstall mysql
+
+# MySQL 클라이언트로 접속
+mysql -h localhost -P 3306 -u root -p
+
+# 테스트 데이터베이스 및 테이블 생성 (예제 실행 전)
+# mysql 디렉토리에서 스크립트 실행
+mysql -u root -p < mysql/setup.sql
+```
+
+**MySQL 패키지 테스트**:
+
+```bash
+# MySQL 패키지만 테스트
+go test ./database/mysql -v
+
+# 특정 테스트 실행
+go test ./database/mysql -v -run TestSelectAll
+go test ./database/mysql -v -run TestTransaction
+
+# 커버리지 확인
+go test ./database/mysql -cover
+go test ./database/mysql -coverprofile=coverage.out
+go tool cover -html=coverage.out
+```
 
 ### 새로운 기능 추가
 
-`random` 패키지에 새로운 메서드를 추가할 때:
+**`random` 패키지에 새로운 메서드를 추가할 때**:
 
 1. 필요한 경우 `random/string.go` 상단에 문자 집합 상수 추가
 2. `stringGenerator` 구조체에 메서드 생성
@@ -348,6 +548,20 @@ go build -o bin/logging_example examples/logging/main.go
 6. `random/README.md`에 메서드 문서 업데이트
 7. `examples/random_string/main.go`에 사용 예제 추가
 8. 새 패키지나 주요 기능을 추가하는 경우 루트 `README.md` 업데이트
+
+**`mysql` 패키지에 새로운 메서드를 추가할 때**:
+
+1. 적절한 파일 선택:
+   - Simple API → `simple.go`
+   - Query Builder → `builder.go`
+   - SelectWhere 옵션 → `select_options.go`
+   - 트랜잭션 → `transaction.go`
+2. Context 버전과 non-context 버전 모두 제공 (Simple API의 경우)
+3. 이중 언어 문서 포함 (영문/한글)
+4. 재시도 로직이 필요한 경우 `executeWithRetry()` 사용
+5. `database/mysql/client_test.go`에 테스트 추가
+6. `examples/mysql/main.go`에 예제 추가
+7. `database/mysql/README.md` 업데이트
 
 ### 새로운 유틸리티 패키지 생성
 
@@ -427,7 +641,13 @@ if err != nil {
   - 이중 언어 문서 추가
 - **v1.0.x**: Random package 안정화 및 테스트 강화
 - **v1.1.x**: Logging package 추가 (파일 로테이션, 구조화 로깅)
-- **v1.2.x** (현재): 종합 문서화 작업 (USER_MANUAL, DEVELOPER_GUIDE)
+- **v1.2.x**: Random 및 Logging 패키지 종합 문서화 (USER_MANUAL, DEVELOPER_GUIDE)
+- **v1.3.x** (현재): MySQL package 추가
+  - 극도로 간단한 MySQL/MariaDB 클라이언트 (30줄 → 2줄)
+  - 3가지 API 레벨: Simple API, Query Builder, SelectWhere API
+  - 무중단 자격 증명 순환 기능
+  - 자동 연결 관리, 재시도, 리소스 정리
+  - 종합 문서화 (USER_MANUAL, DEVELOPER_GUIDE)
 
 ## 향후 로드맵
 
