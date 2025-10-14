@@ -8,6 +8,84 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.011] - 2025-10-14
+
+### Added / 추가
+- **DOCS**: Created comprehensive DEVELOPER_GUIDE.md for Redis package
+- **문서**: Redis 패키지에 대한 포괄적인 DEVELOPER_GUIDE.md 생성
+- Complete developer guide with 1550+ lines covering all technical details
+- 모든 기술 세부사항을 다루는 1550줄 이상의 완전한 개발자 가이드
+- Table of contents with 10 major sections
+- 10개 주요 섹션이 있는 목차
+- Architecture overview with design philosophy and high-level diagrams
+- 설계 철학 및 상위 수준 다이어그램이 포함된 아키텍처 개요
+- Complete package structure with file responsibilities (17 files, ~1888 lines)
+- 파일 책임이 포함된 완전한 패키지 구조 (17개 파일, 약 1888줄)
+- Core components documentation:
+- 핵심 컴포넌트 문서화:
+  - Client structure and lifecycle
+  - Configuration and options pattern
+  - Error handling and classification
+  - Retry logic with exponential backoff
+  - Health check implementation
+- Internal implementation details:
+- 내부 구현 세부사항:
+  - String operations flow
+  - Generic type-safe methods (GetAs[T], HGetAllAs[T])
+  - Pipeline operations
+  - Transaction operations with optimistic locking
+  - Pub/Sub operations
+- Design patterns documentation:
+- 디자인 패턴 문서화:
+  - Functional Options Pattern
+  - Type Alias Pattern (hiding go-redis dependency)
+  - Retry with Exponential Backoff
+  - Health Check Pattern
+  - Generic Methods Pattern
+- Adding new features guide with step-by-step examples
+- 단계별 예제가 포함된 새 기능 추가 가이드
+- Comprehensive testing guide:
+- 포괄적인 테스트 가이드:
+  - Running tests and benchmarks
+  - Test structure and categories
+  - Test best practices
+  - Integration testing with Docker
+- Performance optimization guide:
+- 성능 최적화 가이드:
+  - Benchmarking tips
+  - Connection pooling recommendations
+  - Pipeline usage for batch operations
+  - Timeout guidelines
+  - Performance monitoring
+- Contributing guidelines with code review checklist
+- 코드 리뷰 체크리스트가 포함된 기여 가이드라인
+- Code style guide:
+- 코드 스타일 가이드:
+  - Naming conventions
+  - Documentation style
+  - Code organization
+  - Error handling patterns
+  - Testing style
+- Appendix with glossary and useful links
+- 용어집 및 유용한 링크가 포함된 부록
+- All content is bilingual (English/Korean)
+- 모든 내용은 이중 언어 (영문/한글)
+
+### Created Files / 생성된 파일
+- `docs/database/redis/DEVELOPER_GUIDE.md` (1551 lines)
+
+### Notes / 참고사항
+- DEVELOPER_GUIDE.md completes Redis package documentation
+- DEVELOPER_GUIDE.md로 Redis 패키지 문서화 완료
+- Together with USER_MANUAL.md, provides complete documentation for users and developers
+- USER_MANUAL.md와 함께 사용자 및 개발자를 위한 완전한 문서 제공
+- Redis package documentation work is now complete
+- Redis 패키지 문서화 작업 완료
+- Current version: v1.4.011
+- 현재 버전: v1.4.011
+
+---
+
 ## [v1.4.010] - 2025-10-14
 
 ### Added / 추가
