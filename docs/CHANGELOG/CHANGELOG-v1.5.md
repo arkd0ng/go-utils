@@ -8,6 +8,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.017] - 2025-10-14 17:30
+
+### Added / 추가
+- **FEAT**: Added Unicode operation functions (Group 5: 3 functions)
+- **DEPENDENCY**: Added golang.org/x/text for Unicode support
+
+### New Functions / 새로운 함수
+1. **RuneCount(s string) int** - Count Unicode characters (not bytes)
+2. **Width(s string) int** - Calculate display width (CJK double-width support)
+3. **Normalize(s string, form string) string** - Unicode normalization (NFC/NFD/NFKC/NFKD)
+
+### Testing / 테스트
+- 30 comprehensive test cases, all passing
+- Includes idempotent normalization tests
+- CJK width calculation tests
+
+### Files Modified / 수정된 파일
+- stringutil/unicode.go (NEW - 3 functions)
+- stringutil/unicode_test.go (NEW - 30 test cases)
+- examples/stringutil/main.go (added 8 examples)
+- go.mod (added golang.org/x/text dependency)
+
+### Notes / 참고사항
+- Function count: 50 → 53 (16/16 complete) ✅
+- Current version: v1.5.017
+- **All 16 planned functions completed!**
+- stringutil package now has 53 total functions
+
+---
+
 ## [v1.5.016] - 2025-10-14 17:25
 
 ### Added / 추가

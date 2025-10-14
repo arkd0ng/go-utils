@@ -143,6 +143,21 @@ func main() {
 	logger.Info(fmt.Sprintf("Unquote(\"'world'\"): %s", stringutil.Unquote("'world'")))
 	logger.Info("")
 
+	// Unicode Examples / 유니코드 예제
+	logger.Info("=== Unicode Examples ===")
+	logger.Info("=== 유니코드 예제 ===")
+	logger.Info("")
+
+	logger.Info(fmt.Sprintf("RuneCount('hello'): %d", stringutil.RuneCount("hello")))
+	logger.Info(fmt.Sprintf("RuneCount('안녕하세요'): %d", stringutil.RuneCount("안녕하세요")))
+	logger.Info(fmt.Sprintf("RuneCount('🔥🔥'): %d", stringutil.RuneCount("🔥🔥")))
+	logger.Info(fmt.Sprintf("Width('hello'): %d", stringutil.Width("hello")))
+	logger.Info(fmt.Sprintf("Width('안녕'): %d", stringutil.Width("안녕")))
+	logger.Info(fmt.Sprintf("Width('hello世界'): %d", stringutil.Width("hello世界")))
+	logger.Info(fmt.Sprintf("Normalize('café', 'NFC'): %s", stringutil.Normalize("café", "NFC")))
+	logger.Info(fmt.Sprintf("Normalize('①②③', 'NFKC'): %s", stringutil.Normalize("①②③", "NFKC")))
+	logger.Info("")
+
 	logger.Info("=== All examples completed successfully! ===")
 	logger.Info("=== 모든 예제가 성공적으로 완료되었습니다! ===")
 }
