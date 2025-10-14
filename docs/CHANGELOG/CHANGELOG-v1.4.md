@@ -8,6 +8,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.007] - 2025-10-14
+
+### Added / 추가
+- **DOCS**: Created comprehensive examples/redis/README.md
+- **문서**: 포괄적인 examples/redis/README.md 생성
+- Documented all 8 example categories with detailed descriptions
+- 상세 설명과 함께 8개 예제 카테고리 모두 문서화
+- Added running instructions and prerequisites (Docker/Local Redis)
+- 실행 지침 및 전제 조건 추가 (Docker/로컬 Redis)
+- Added configuration section for customizing Redis connection
+- Redis 연결 사용자 정의를 위한 설정 섹션 추가
+- Added output example showing what users can expect
+- 사용자가 기대할 수 있는 출력 예제 추가
+- Added comprehensive troubleshooting section
+- 포괄적인 문제 해결 섹션 추가
+- Added links to additional resources and documentation
+- 추가 리소스 및 문서 링크 추가
+
+### Examples Documented / 문서화된 예제
+1. String Operations - Set, Get, MSet, MGet, Incr
+2. Hash Operations - HSet, HGet, HGetAll, HGetAllAs[T], HIncrBy
+3. List Operations - LPush, RPush, LPop, RPop, LRange, LLen
+4. Set Operations - SAdd, SMembers, SCard, SUnion, SInter, SDiff
+5. Sorted Set Operations - ZAdd, ZRange, ZRangeByScore, ZScore
+6. Key Operations - Del, Exists, Expire, TTL, Keys, Type
+7. Pipeline Operations - Batch command execution
+8. Transaction Operations - Optimistic locking with WATCH/MULTI/EXEC
+
+### Notes / 참고사항
+- README follows same format as MySQL examples for consistency
+- README는 일관성을 위해 MySQL 예제와 동일한 형식 사용
+- All examples include bilingual descriptions (English/Korean)
+- 모든 예제는 이중 언어 설명 포함 (영문/한글)
+- Current version: v1.4.007
+- 현재 버전: v1.4.007
+
+---
+
 ## [v1.4.006] - 2025-10-14
 
 ### Changed / 변경
