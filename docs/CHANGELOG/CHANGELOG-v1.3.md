@@ -6,6 +6,45 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
+## [v1.3.017] - 2025-10-14 (Organize Example Output in Results Directory)
+
+### Changed / 변경
+- **Organized Output Structure** / 출력 구조 정리:
+  - `examples/mysql/main.go`: All outputs now go to `results/` directory
+  - Log files: `./results/logs/mysql_example_YYYYMMDD_HHMMSS.log`
+  - CSV exports: `./results/mysql_export/users_export_YYYYMMDD_HHMMSS.csv`
+  - Creates directories automatically if they don't exist
+
+- **Updated .gitignore** / .gitignore 업데이트:
+  - Added `examples/mysql/results/` to ignore example outputs
+  - Removed old pattern `mysql_export_*/`
+
+- **Added README** / README 추가:
+  - `examples/mysql/README.md`: Comprehensive guide for running examples
+  - Documents new directory structure
+  - Lists all 35 examples with descriptions
+  - Cleaning up instructions
+
+### Benefits / 장점
+- **Clean Structure** / 깨끗한 구조: All outputs in one organized location
+- **Easy Cleanup** / 쉬운 정리: `rm -rf results/` removes everything
+- **Timestamped Files** / 타임스탬프 파일: Easy to identify when files were created
+- **No Directory Pollution** / 디렉토리 오염 없음: Examples directory stays clean
+
+### Directory Structure / 디렉토리 구조
+```
+examples/mysql/
+├── main.go
+├── README.md
+└── results/
+    ├── logs/
+    │   └── mysql_example_20251014_120000.log
+    └── mysql_export/
+        └── users_export_20251014_120000.csv
+```
+
+---
+
 ## [v1.3.016] - 2025-10-14 (Auto-cleanup Docker MySQL After Examples/Tests)
 
 ### Added / 추가

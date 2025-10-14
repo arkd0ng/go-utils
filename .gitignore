@@ -34,8 +34,8 @@ logs/
 *.log
 test_logs/
 
-# MySQL export directories
-mysql_export_*/
+# Example results directory
+examples/mysql/results/
 
 # Backup files
 *.backup

@@ -1,216 +1,130 @@
-# MySQL Package Examples / MySQL 패키지 예제
+# MySQL Package Examples
 
-This example demonstrates all features of the `database/mysql` package.
+This directory contains comprehensive examples demonstrating all features of the go-utils MySQL package.
 
-이 예제는 `database/mysql` 패키지의 모든 기능을 시연합니다.
+이 디렉토리는 go-utils MySQL 패키지의 모든 기능을 시연하는 포괄적인 예제를 포함합니다.
 
-## Features / 기능
+## Running Examples / 예제 실행
 
-This example includes:
+```bash
+cd examples/mysql
+go run .
+```
 
-이 예제에는 다음이 포함됩니다:
+The examples will automatically:
+- Start Docker MySQL if not running
+- Run all 35 examples
+- Stop Docker MySQL (if it was started by the examples)
 
-1. **Auto MySQL Management / 자동 MySQL 관리**: Automatically starts/stops MySQL daemon if needed
-2. **SelectAll**: Select multiple rows with conditions / 조건과 함께 여러 행 선택
-3. **SelectOne**: Select single row / 단일 행 선택
-4. **Insert**: Insert new records / 새 레코드 삽입
-5. **Update**: Update existing records / 기존 레코드 업데이트
-6. **Count**: Count rows with conditions / 조건과 함께 행 개수 계산
-7. **Exists**: Check if record exists / 레코드 존재 확인
-8. **Transaction**: Multi-operation transaction with auto commit/rollback / 자동 커밋/롤백이 있는 다중 작업 트랜잭션
-9. **Delete**: Delete records / 레코드 삭제
-10. **Raw SQL**: Execute raw SQL queries / Raw SQL 쿼리 실행
+예제는 자동으로:
+- MySQL이 실행 중이 아니면 Docker MySQL 시작
+- 35개 예제 모두 실행
+- Docker MySQL 중지 (예제에서 시작한 경우)
+
+## Output Directory Structure / 출력 디렉토리 구조
+
+All example outputs are organized in the `results/` directory:
+
+모든 예제 출력은 `results/` 디렉토리에 정리됩니다:
+
+```
+examples/mysql/
+├── main.go
+├── README.md
+└── results/                    # Created automatically / 자동 생성
+    ├── logs/                   # Log files / 로그 파일
+    │   └── mysql_example_20251014_120000.log
+    └── mysql_export/           # CSV export files / CSV 내보내기 파일
+        └── users_export_20251014_120000.csv
+```
+
+**Benefits / 장점:**
+- Clean directory structure / 깨끗한 디렉토리 구조
+- All outputs in one place / 모든 출력을 한 곳에
+- Easy to clean up / 쉬운 정리
+- Files named with timestamps / 타임스탬프로 파일 이름 지정
+
+## Examples Covered / 포함된 예제
+
+### Basic Operations (Examples 1-9) / 기본 작업 (예제 1-9)
+1. SelectAll - Select all records
+2. SelectOne - Select single record
+3. Insert - Insert new record
+4. Update - Update record
+5. Count - Count records
+6. Exists - Check if record exists
+7. Transaction - Use transactions
+8. Delete - Delete record
+9. RawSQL - Execute raw SQL queries
+
+### Query Builder (Examples 10-12) / 쿼리 빌더 (예제 10-12)
+10. Simple SELECT with WHERE, ORDER BY, LIMIT
+11. GROUP BY with COUNT
+12. Complex query with multiple conditions
+
+### SelectWhere API (Examples 13-15) / SelectWhere API (예제 13-15)
+13. Simple query with options
+14. GROUP BY with options
+15. Multiple conditions and options
+
+### Column Selection (Examples 16-17) / 컬럼 선택 (예제 16-17)
+16. SelectColumn - Select single column
+17. SelectColumns - Select multiple columns
+
+### Batch Operations (Examples 18-20) / 배치 작업 (예제 18-20)
+18. BatchInsert - Insert multiple rows in single query
+19. BatchUpdate - Update multiple rows in transaction
+20. BatchDelete - Delete multiple rows by IDs
+
+### Upsert Operations (Examples 21-22) / Upsert 작업 (예제 21-22)
+21. Upsert - Insert or update on duplicate
+22. UpsertBatch - Batch upsert operations
+
+### Pagination (Examples 23-24) / 페이지네이션 (예제 23-24)
+23. Basic pagination with metadata
+24. Pagination with WHERE and ORDER BY
+
+### Soft Delete (Examples 25-27) / 소프트 삭제 (예제 25-27)
+24.5. Prepare table for soft delete (auto migration)
+25. SoftDelete - Mark record as deleted
+26. Restore - Restore soft-deleted record
+27. SelectTrashed - Query trashed and all records
+
+### Query Statistics (Examples 28-29) / 쿼리 통계 (예제 28-29)
+28. QueryStats - Query execution statistics
+29. SlowQueryLog - Slow query detection
+
+### Pool Metrics (Example 30) / 풀 메트릭 (예제 30)
+30. PoolMetrics - Connection pool metrics
+
+### Schema Inspector (Examples 31-32) / 스키마 검사기 (예제 31-32)
+31. GetTables - List all tables
+32. InspectTable - Comprehensive table inspection
+
+### Migration (Examples 33-34) / 마이그레이션 (예제 33-34)
+33. CreateTable - Create new table
+34. Migration operations - Add/modify/drop columns
+
+### CSV Export (Example 35) / CSV 내보내기 (예제 35)
+35. ExportCSV - Export table to CSV file
 
 ## Prerequisites / 전제 조건
 
-1. **Homebrew** must be installed / Homebrew가 설치되어 있어야 합니다
-2. **MySQL** must be installed via Homebrew / MySQL이 Homebrew를 통해 설치되어 있어야 합니다:
-   ```bash
-   brew install mysql
-   ```
+- Docker Desktop installed and running
+- Go 1.24.6 or higher
 
-3. **Test database** must be set up / 테스트 데이터베이스가 설정되어 있어야 합니다:
-   ```bash
-   # Start MySQL
-   brew services start mysql
+Docker Desktop이 설치되어 실행 중이어야 합니다.
 
-   # Create database and sample data
-   mysql -u root <<'EOF'
-   CREATE DATABASE IF NOT EXISTS testdb;
-   USE testdb;
+## Cleaning Up / 정리
 
-   CREATE TABLE IF NOT EXISTS users (
-       id INT AUTO_INCREMENT PRIMARY KEY,
-       name VARCHAR(100) NOT NULL,
-       email VARCHAR(100) NOT NULL UNIQUE,
-       age INT NOT NULL,
-       city VARCHAR(100),
-       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   );
+To remove all example outputs:
 
-   INSERT INTO users (name, email, age, city) VALUES
-       ('John Doe', 'john@example.com', 30, 'Seoul'),
-       ('Jane Smith', 'jane@example.com', 25, 'Busan'),
-       ('Bob Johnson', 'bob@example.com', 35, 'Seoul'),
-       ('Alice Williams', 'alice@example.com', 28, 'Incheon'),
-       ('Charlie Brown', 'charlie@example.com', 22, 'Seoul')
-   ON DUPLICATE KEY UPDATE name=name;
-   EOF
-   ```
-
-## Running the Example / 예제 실행
-
-### Option 1: Run directly / 직접 실행
-```bash
-cd examples/mysql
-go run main.go
-```
-
-### Option 2: Build and run / 빌드 후 실행
-```bash
-cd examples/mysql
-go build -o mysql-example
-./mysql-example
-```
-
-## How It Works / 작동 방식
-
-The example program:
-
-예제 프로그램은:
-
-1. **Checks MySQL status** / **MySQL 상태 확인**: Detects if MySQL is already running
-2. **Starts MySQL if needed** / **필요시 MySQL 시작**: Automatically starts the daemon if not running
-3. **Runs all examples** / **모든 예제 실행**: Demonstrates all package features
-4. **Stops MySQL on exit** / **종료 시 MySQL 중지**: Uses `defer` to stop the daemon if it was started by this program
-
-**Important**: If MySQL was already running before starting this program, it will remain running after the program exits.
-
-**중요**: 이 프로그램을 시작하기 전에 MySQL이 이미 실행 중이었다면, 프로그램 종료 후에도 계속 실행됩니다.
-
-## Expected Output / 예상 출력
-
-```
-✅ MySQL is already running
-✅ MySQL이 이미 실행 중입니다
-
-======================================================================
-MySQL Package Examples - go-utils/database/mysql
-======================================================================
-
-📋 Example 1: SelectAll - Select all users
-📋 예제 1: SelectAll - 모든 사용자 선택
-
-Found 3 users from Seoul:
-서울에서 3명의 사용자를 찾았습니다:
-  1. John Doe (age: 30, email: john@example.com)
-  2. Bob Johnson (age: 35, email: bob@example.com)
-  3. Charlie Brown (age: 22, email: charlie@example.com)
-
-👤 Example 2: SelectOne - Select single user
-👤 예제 2: SelectOne - 단일 사용자 선택
-
-Found user: John Doe
-  - Email: john@example.com
-  - Age: 30
-  - City: Seoul
-
-[... more examples ...]
-
-======================================================================
-✅ All examples completed successfully!
-✅ 모든 예제가 성공적으로 완료되었습니다!
-======================================================================
-```
-
-## Key Features Demonstrated / 시연된 주요 기능
-
-### 1. Extreme Simplicity / 극도의 간결함
-```go
-// Just 2 lines! / 단 2줄!
-db, _ := mysql.New(mysql.WithDSN(dsn))
-users, _ := db.SelectAll(ctx, "users", "age > ?", 18)
-```
-
-### 2. No defer rows.Close() / defer rows.Close() 불필요
-```go
-// No need to manually close rows
-// 수동으로 rows를 닫을 필요 없음
-users, _ := db.SelectAll(ctx, "users")
-// Automatic cleanup handled internally
-// 내부적으로 자동 정리 처리
-```
-
-### 3. Transaction Support / 트랜잭션 지원
-```go
-db.Transaction(ctx, func(tx *mysql.Tx) error {
-    tx.Insert(ctx, "users", map[string]interface{}{"name": "Emily"})
-    tx.Insert(ctx, "users", map[string]interface{}{"name": "Frank"})
-    return nil // Auto commit / 자동 커밋
-})
-```
-
-### 4. Auto Daemon Management / 자동 데몬 관리
-```go
-// Automatically starts MySQL if not running
-// 실행 중이 아니면 자동으로 MySQL 시작
-wasRunning := isMySQLRunning()
-if !wasRunning {
-    startMySQL()
-    defer stopMySQL() // Stop on exit / 종료 시 중지
-}
-```
-
-## Troubleshooting / 문제 해결
-
-### MySQL won't start / MySQL이 시작되지 않음
-```bash
-# Check MySQL status
-brew services list | grep mysql
-
-# View MySQL error log
-tail -f /opt/homebrew/var/mysql/*.err
-
-# Restart MySQL
-brew services restart mysql
-```
-
-### Connection refused / 연결 거부
-```bash
-# Ensure MySQL is running
-mysql -u root -e "SELECT VERSION();"
-
-# Check if socket file exists
-ls -la /tmp/mysql.sock
-```
-
-### Permission denied / 권한 거부
-```bash
-# Ensure you have permission to start/stop services
-brew services list
-
-# Try running with sudo (not recommended)
-sudo brew services start mysql
-```
-
-## Clean Up / 정리
-
-To remove the test database:
-
-테스트 데이터베이스를 제거하려면:
+모든 예제 출력을 제거하려면:
 
 ```bash
-mysql -u root -e "DROP DATABASE testdb;"
+rm -rf results/
 ```
 
-To stop MySQL:
+The `results/` directory will be automatically recreated when you run the examples again.
 
-MySQL을 중지하려면:
-
-```bash
-brew services stop mysql
-```
-
-## License / 라이선스
-
-MIT
+`results/` 디렉토리는 예제를 다시 실행할 때 자동으로 재생성됩니다.

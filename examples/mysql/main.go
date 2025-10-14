@@ -35,9 +35,13 @@ type MySQLConfig struct {
 }
 
 func main() {
+	// Create results directories / 결과 디렉토리 생성
+	os.MkdirAll("./results/logs", 0755)
+	os.MkdirAll("./results/mysql_export", 0755)
+
 	// Initialize logger / 로거 초기화
 	logger, err := logging.New(
-		logging.WithFilePath(fmt.Sprintf("./mysql_example_%s.log", time.Now().Format("20060102_150405"))),
+		logging.WithFilePath(fmt.Sprintf("./results/logs/mysql_example_%s.log", time.Now().Format("20060102_150405"))),
 		logging.WithLevel(logging.DEBUG),
 		logging.WithStdout(true),
 	)
@@ -1727,11 +1731,8 @@ func example35ExportCSV(ctx context.Context, db *mysql.Client, logger *logging.L
 	logger.Info("예제 35: ExportCSV - 테이블을 CSV 파일로 내보내기")
 	logger.Info("========================================")
 
-	// Create temporary directory / 임시 디렉토리 생성
-	tmpDir := fmt.Sprintf("./mysql_export_%d", time.Now().Unix())
-	os.MkdirAll(tmpDir, 0755)
-
-	csvPath := fmt.Sprintf("%s/users_export.csv", tmpDir)
+	// Create CSV file path / CSV 파일 경로 생성
+	csvPath := fmt.Sprintf("./results/mysql_export/users_export_%s.csv", time.Now().Format("20060102_150405"))
 
 	// Configure export options / 내보내기 옵션 설정
 	opts := mysql.DefaultCSVExportOptions()
