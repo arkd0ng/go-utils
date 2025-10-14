@@ -1,6 +1,6 @@
 # Timeutil Package - Developer Guide / 개발자 가이드
 
-**Version / 버전**: v1.6.002
+**Version / 버전**: v1.6.006
 **Package / 패키지**: `github.com/arkd0ng/go-utils/timeutil`
 **Go Version / Go 버전**: 1.16+
 
@@ -141,14 +141,14 @@ timeutil/
 | `diff.go` | ~150 | Time difference / 시간 차이 | 8 |
 | `timezone.go` | ~200 | Timezone ops / 타임존 작업 | 10 |
 | `arithmetic.go` | ~200 | Date arithmetic / 날짜 연산 | 16 |
-| `format.go` | ~150 | Formatting / 포맷팅 | 8 |
+| `format.go` | ~195 | Formatting / 포맷팅 | 13 |
 | `parse.go` | ~120 | Parsing / 파싱 | 6 |
 | `comparison.go` | ~250 | Comparisons / 비교 | 18 |
 | `age.go` | ~100 | Age / 나이 | 4 |
 | `relative.go` | ~150 | Relative time / 상대 시간 | 4 |
 | `unix.go` | ~150 | Unix timestamps / Unix 타임스탬프 | 12 |
 | `business.go` | ~200 | Business days / 영업일 | 7 |
-| **Total / 합계** | **~1,820** | | **95+** |
+| **Total / 합계** | **~1,865** | | **102** |
 
 ---
 
@@ -391,6 +391,107 @@ func Format(t time.Time, layout string) string {
 - Intuitive tokens that don't require memorization / 암기가 필요 없는 직관적인 토큰
 - Simple string replacement for conversion / 변환을 위한 간단한 문자열 치환
 - Converts to Go's standard format under the hood / 내부적으로 Go의 표준 포맷으로 변환
+
+### 6. Korean Weekday Support / 한글 요일 지원
+
+Located in `format.go`:
+
+`format.go`에 위치:
+
+The package provides 5 specialized functions for Korean weekday formatting, added in v1.6.006.
+
+패키지는 v1.6.006에서 추가된 한글 요일 포맷팅을 위한 5개의 특수 함수를 제공합니다.
+
+```go
+// WeekdayKorean returns the Korean name of the weekday
+// WeekdayKorean은 요일의 한글 이름을 반환합니다
+func WeekdayKorean(t time.Time) string {
+    weekdays := []string{
+        "일요일", // Sunday
+        "월요일", // Monday
+        "화요일", // Tuesday
+        "수요일", // Wednesday
+        "목요일", // Thursday
+        "금요일", // Friday
+        "토요일", // Saturday
+    }
+    return weekdays[t.Weekday()]
+}
+
+// WeekdayKoreanShort returns the short Korean name of the weekday
+// WeekdayKoreanShort는 요일의 짧은 한글 이름을 반환합니다
+func WeekdayKoreanShort(t time.Time) string {
+    weekdays := []string{
+        "일", // Sunday
+        "월", // Monday
+        "화", // Tuesday
+        "수", // Wednesday
+        "목", // Thursday
+        "금", // Friday
+        "토", // Saturday
+    }
+    return weekdays[t.Weekday()]
+}
+
+// FormatKoreanDateTime formats a time with Korean weekday
+// Format: YYYY년 MM월 DD일 (요일) HH시 mm분 ss초
+func FormatKoreanDateTime(t time.Time) string {
+    t = t.In(defaultLocation)
+    return t.Format("2006년 01월 02일") + " (" + WeekdayKorean(t) + ") " + t.Format("15시 04분 05초")
+}
+
+// FormatKoreanDateWithWeekday formats a date with full Korean weekday
+// Format: YYYY년 MM월 DD일 (요일)
+func FormatKoreanDateWithWeekday(t time.Time) string {
+    t = t.In(defaultLocation)
+    return t.Format("2006년 01월 02일") + " (" + WeekdayKorean(t) + ")"
+}
+
+// FormatKoreanDateShort formats a date with short Korean weekday
+// Format: YYYY년 MM월 DD일 (요일)
+func FormatKoreanDateShort(t time.Time) string {
+    t = t.In(defaultLocation)
+    return t.Format("2006년 01월 02일") + " (" + WeekdayKoreanShort(t) + ")"
+}
+```
+
+**Design Rationale / 설계 근거**:
+- Uses Go's `time.Weekday` enum as array index (0=Sunday, 6=Saturday) / Go의 `time.Weekday` 열거형을 배열 인덱스로 사용 (0=일요일, 6=토요일)
+- Provides both full names ("월요일") and short names ("월") / 전체 이름("월요일")과 짧은 이름("월") 모두 제공
+- Leverages existing Format infrastructure / 기존 Format 인프라 활용
+- Avoids Format() helper to prevent token replacement issues / 토큰 치환 문제를 방지하기 위해 Format() 헬퍼 우회
+- Thread-safe: uses immutable string arrays / 스레드 안전: 불변 문자열 배열 사용
+
+**Usage Examples / 사용 예제**:
+```go
+t := time.Date(2025, 10, 14, 15, 30, 0, 0, time.UTC) // Tuesday
+
+// Full weekday / 전체 요일
+weekday := timeutil.WeekdayKorean(t)
+fmt.Println(weekday) // "화요일"
+
+// Short weekday / 짧은 요일
+short := timeutil.WeekdayKoreanShort(t)
+fmt.Println(short) // "화"
+
+// Formatted date/time with weekday / 요일이 포함된 날짜/시간 포맷
+datetime := timeutil.FormatKoreanDateTime(t)
+fmt.Println(datetime) // "2025년 10월 14일 (화요일) 15시 30분 00초"
+
+// Date with full weekday / 전체 요일이 포함된 날짜
+date := timeutil.FormatKoreanDateWithWeekday(t)
+fmt.Println(date) // "2025년 10월 14일 (화요일)"
+
+// Date with short weekday / 짧은 요일이 포함된 날짜
+dateShort := timeutil.FormatKoreanDateShort(t)
+fmt.Println(dateShort) // "2025년 10월 14일 (화)"
+```
+
+**Implementation Notes / 구현 참고사항**:
+- Initial implementation used Format() helper which caused double-replacement issues / 초기 구현은 Format() 헬퍼를 사용하여 이중 치환 문제 발생
+- Changed to use Go's native format strings directly / Go의 네이티브 포맷 문자열을 직접 사용하도록 변경
+- Weekday arrays are constant and initialized once / 요일 배열은 상수이며 한 번만 초기화됨
+- All formatting functions respect defaultLocation timezone / 모든 포맷팅 함수는 defaultLocation 타임존 준수
 
 ---
 

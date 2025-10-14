@@ -13,6 +13,7 @@ func main() {
 	logger, err := logging.New(
 		logging.WithFilePath("./logs/timeutil-example.log"),
 		logging.WithLevel(logging.DEBUG),
+		logging.WithStdout(true),
 	)
 	if err != nil {
 		fmt.Printf("Failed to create logger: %v\n", err)
@@ -21,9 +22,9 @@ func main() {
 	defer logger.Close()
 
 	// Print banner / 배너 출력
-	logger.Banner("Timeutil Package Examples", "v1.6.005")
-	logger.Info("Starting comprehensive timeutil examples with all 97 functions")
-	logger.Info("시작: 모든 97개 함수를 포함한 포괄적인 timeutil 예제")
+	logger.Banner("Timeutil Package Examples", "v1.6.006")
+	logger.Info("Starting comprehensive timeutil examples with all 102 functions")
+	logger.Info("시작: 모든 102개 함수를 포함한 포괄적인 timeutil 예제")
 
 	// ============================================================
 	// 1. Time Difference Functions (8 functions)
@@ -195,12 +196,12 @@ func main() {
 	logger.Info("StartOfQuarter(baseTime)", "result", timeutil.FormatDateTime(startOfQuarter))
 
 	// ============================================================
-	// 4. Date Formatting Functions (8 functions)
-	// 4. 날짜 포맷팅 함수 (8개 함수)
+	// 4. Date Formatting Functions (13 functions)
+	// 4. 날짜 포맷팅 함수 (13개 함수)
 	// ============================================================
 	logger.Info("")
 	logger.Info("=" + repeat("=", 60))
-	logger.Info("4. Date Formatting Functions / 날짜 포맷팅 함수 (8 functions)")
+	logger.Info("4. Date Formatting Functions / 날짜 포맷팅 함수 (13 functions)")
 	logger.Info("=" + repeat("=", 60))
 
 	formatTime := time.Date(2025, 10, 14, 15, 4, 5, 0, timeutil.KST)
@@ -228,6 +229,36 @@ func main() {
 
 	// FormatKorean - Format in Korean style / 한국어 스타일 포맷
 	logger.Info("FormatKorean(formatTime)", "result", timeutil.FormatKorean(formatTime))
+
+	// WeekdayKorean - Get Korean weekday name / 한글 요일 이름 가져오기
+	// Returns full Korean weekday name (e.g., "월요일", "화요일")
+	// 전체 한글 요일 이름을 반환합니다 (예: "월요일", "화요일")
+	weekdayKorean := timeutil.WeekdayKorean(formatTime)
+	logger.Info("WeekdayKorean(formatTime)", "result", weekdayKorean)
+
+	// WeekdayKoreanShort - Get short Korean weekday name / 짧은 한글 요일 이름 가져오기
+	// Returns short Korean weekday name (e.g., "월", "화")
+	// 짧은 한글 요일 이름을 반환합니다 (예: "월", "화")
+	weekdayShort := timeutil.WeekdayKoreanShort(formatTime)
+	logger.Info("WeekdayKoreanShort(formatTime)", "result", weekdayShort)
+
+	// FormatKoreanDateTime - Format date/time with Korean weekday / 한글 요일이 포함된 날짜/시간 포맷
+	// Format: YYYY년 MM월 DD일 (요일) HH시 mm분 ss초
+	// Expected output: "2025년 10월 14일 (화요일) 15시 04분 05초"
+	koreanDateTime := timeutil.FormatKoreanDateTime(formatTime)
+	logger.Info("FormatKoreanDateTime(formatTime)", "result", koreanDateTime)
+
+	// FormatKoreanDateWithWeekday - Format date with full Korean weekday / 전체 한글 요일이 포함된 날짜 포맷
+	// Format: YYYY년 MM월 DD일 (요일)
+	// Expected output: "2025년 10월 14일 (화요일)"
+	koreanDateFull := timeutil.FormatKoreanDateWithWeekday(formatTime)
+	logger.Info("FormatKoreanDateWithWeekday(formatTime)", "result", koreanDateFull)
+
+	// FormatKoreanDateShort - Format date with short Korean weekday / 짧은 한글 요일이 포함된 날짜 포맷
+	// Format: YYYY년 MM월 DD일 (요일)
+	// Expected output: "2025년 10월 14일 (화)"
+	koreanDateShort := timeutil.FormatKoreanDateShort(formatTime)
+	logger.Info("FormatKoreanDateShort(formatTime)", "result", koreanDateShort)
 
 	// FormatWithTimezone - Format with specific timezone / 특정 타임존으로 포맷
 	formatted, _ := timeutil.FormatWithTimezone(formatTime, "America/New_York")
@@ -485,7 +516,7 @@ func main() {
 	logger.Info("10. Business Day Functions / 영업일 함수 (7 functions)")
 	logger.Info("=" + repeat("=", 60))
 
-	bizMonday := time.Date(2025, 10, 13, 0, 0, 0, 0, timeutil.KST)    // Monday
+	bizMonday := time.Date(2025, 10, 13, 0, 0, 0, 0, timeutil.KST)   // Monday
 	bizSaturday := time.Date(2025, 10, 18, 0, 0, 0, 0, timeutil.KST) // Saturday
 	newYearDay := time.Date(2025, 1, 1, 0, 0, 0, 0, timeutil.KST)    // New Year
 
@@ -552,14 +583,14 @@ func main() {
 	logger.Info("Summary / 요약")
 	logger.Info("=" + repeat("=", 60))
 
-	logger.Info("All 97 timeutil functions demonstrated successfully!")
-	logger.Info("모든 97개 timeutil 함수를 성공적으로 시연했습니다!")
+	logger.Info("All 102 timeutil functions demonstrated successfully!")
+	logger.Info("모든 102개 timeutil 함수를 성공적으로 시연했습니다!")
 	logger.Info("")
 	logger.Info("Categories covered / 다뤄진 카테고리:")
 	logger.Info("  1. Time Difference (8 functions) / 시간 차이 (8개 함수)")
 	logger.Info("  2. Timezone Operations (10 functions) / 타임존 작업 (10개 함수)")
 	logger.Info("  3. Date Arithmetic (16 functions) / 날짜 연산 (16개 함수)")
-	logger.Info("  4. Date Formatting (8 functions) / 날짜 포맷팅 (8개 함수)")
+	logger.Info("  4. Date Formatting (13 functions) / 날짜 포맷팅 (13개 함수)")
 	logger.Info("  5. Time Parsing (6 functions) / 시간 파싱 (6개 함수)")
 	logger.Info("  6. Time Comparisons (18 functions) / 시간 비교 (18개 함수)")
 	logger.Info("  7. Age Calculations (4 functions) / 나이 계산 (4개 함수)")
@@ -567,7 +598,7 @@ func main() {
 	logger.Info("  9. Unix Timestamp (12 functions) / Unix 타임스탬프 (12개 함수)")
 	logger.Info("  10. Business Days (7 functions) / 영업일 (7개 함수)")
 	logger.Info("")
-	logger.Info("Total: 93 functions demonstrated / 총 93개 함수 시연 완료")
+	logger.Info("Total: 102 functions demonstrated / 총 102개 함수 시연 완료")
 	logger.Info("")
 	logger.Info("Check the log file at ./logs/timeutil-example.log for detailed output")
 	logger.Info("상세한 출력은 ./logs/timeutil-example.log 파일을 확인하세요")

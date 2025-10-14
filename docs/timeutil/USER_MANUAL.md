@@ -1,6 +1,6 @@
 # Timeutil Package - User Manual / 사용자 매뉴얼
 
-**Version / 버전**: v1.6.002
+**Version / 버전**: v1.6.006
 **Package / 패키지**: `github.com/arkd0ng/go-utils/timeutil`
 **Go Version / Go 버전**: 1.16+
 
@@ -38,7 +38,7 @@ The `timeutil` package provides an extremely simple and intuitive API for time a
 
 ### Key Features / 주요 기능
 
-- **80+ functions** organized into 10 categories / 10개 카테고리로 구성된 80개 이상 함수
+- **102 functions** organized into 10 categories / 10개 카테고리로 구성된 102개 함수
 - **KST (GMT+9) default timezone** for Korean users / 한국 사용자를 위한 KST (GMT+9) 기본 타임존
 - **Custom format tokens** like YYYY-MM-DD instead of Go's confusing 2006-01-02 / Go의 혼란스러운 2006-01-02 대신 YYYY-MM-DD 같은 커스텀 포맷 토큰
 - **Business day support** with Korean holiday calendar / 한국 공휴일 달력이 포함된 영업일 지원
@@ -808,22 +808,96 @@ custom := timeutil.FormatCustom(time.Now(), "Jan 2, 2006 at 3:04 PM")
 fmt.Println(custom) // "Oct 14, 2025 at 3:04 PM"
 ```
 
-#### FormatWithTimezone(t time.Time, layout, tz string) (string, error)
+#### FormatWithTimezone(t time.Time, tz string) (string, error)
 
-Formats time in a specific timezone.
+Formats time in a specific timezone using default DateTime format (YYYY-MM-DD HH:mm:ss).
 
-특정 타임존으로 시간을 포맷합니다.
+기본 DateTime 포맷(YYYY-MM-DD HH:mm:ss)을 사용하여 특정 타임존으로 시간을 포맷합니다.
 
 ```go
-formatted, err := timeutil.FormatWithTimezone(
-    time.Now(),
-    "YYYY-MM-DD HH:mm:ss",
-    "America/New_York",
-)
+formatted, err := timeutil.FormatWithTimezone(time.Now(), "America/New_York")
 if err != nil {
     log.Fatal(err)
 }
 fmt.Println(formatted) // "2025-10-14 02:04:05" (EDT)
+```
+
+#### WeekdayKorean(t time.Time) string
+
+Returns the Korean name of the weekday.
+
+요일의 한글 이름을 반환합니다.
+
+```go
+t := time.Date(2025, 10, 14, 0, 0, 0, 0, time.UTC) // Tuesday
+weekday := timeutil.WeekdayKorean(t)
+fmt.Println(weekday) // "화요일"
+
+// All weekdays / 모든 요일:
+// Sunday    -> "일요일"
+// Monday    -> "월요일"
+// Tuesday   -> "화요일"
+// Wednesday -> "수요일"
+// Thursday  -> "목요일"
+// Friday    -> "금요일"
+// Saturday  -> "토요일"
+```
+
+#### WeekdayKoreanShort(t time.Time) string
+
+Returns the short Korean name of the weekday.
+
+요일의 짧은 한글 이름을 반환합니다.
+
+```go
+t := time.Date(2025, 10, 14, 0, 0, 0, 0, time.UTC) // Tuesday
+weekday := timeutil.WeekdayKoreanShort(t)
+fmt.Println(weekday) // "화"
+
+// All short weekdays / 모든 짧은 요일:
+// Sunday    -> "일"
+// Monday    -> "월"
+// Tuesday   -> "화"
+// Wednesday -> "수"
+// Thursday  -> "목"
+// Friday    -> "금"
+// Saturday  -> "토"
+```
+
+#### FormatKoreanDateTime(t time.Time) string
+
+Formats a time in Korean format with weekday (YYYY년 MM월 DD일 (요일) HH시 mm분 ss초).
+
+요일을 포함한 한국어 포맷으로 시간을 포맷합니다(YYYY년 MM월 DD일 (요일) HH시 mm분 ss초).
+
+```go
+t := time.Date(2025, 10, 14, 15, 30, 0, 0, time.UTC)
+formatted := timeutil.FormatKoreanDateTime(t)
+fmt.Println(formatted) // "2025년 10월 14일 (화요일) 15시 30분 00초"
+```
+
+#### FormatKoreanDateWithWeekday(t time.Time) string
+
+Formats a date in Korean format with full weekday (YYYY년 MM월 DD일 (요일)).
+
+전체 요일을 포함한 한국어 날짜 포맷으로 포맷합니다(YYYY년 MM월 DD일 (요일)).
+
+```go
+t := time.Date(2025, 10, 14, 0, 0, 0, 0, time.UTC)
+formatted := timeutil.FormatKoreanDateWithWeekday(t)
+fmt.Println(formatted) // "2025년 10월 14일 (화요일)"
+```
+
+#### FormatKoreanDateShort(t time.Time) string
+
+Formats a date in Korean format with short weekday (YYYY년 MM월 DD일 (요일)).
+
+짧은 요일을 포함한 한국어 날짜 포맷으로 포맷합니다(YYYY년 MM월 DD일 (요일)).
+
+```go
+t := time.Date(2025, 10, 14, 0, 0, 0, 0, time.UTC)
+formatted := timeutil.FormatKoreanDateShort(t)
+fmt.Println(formatted) // "2025년 10월 14일 (화)"
 ```
 
 ---
@@ -2235,5 +2309,5 @@ For more information, see:
 
 ---
 
-**Version / 버전**: v1.6.002
+**Version / 버전**: v1.6.006
 **Last Updated / 마지막 업데이트**: 2025-10-14
