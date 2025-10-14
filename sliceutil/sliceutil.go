@@ -95,4 +95,4 @@ package sliceutil
 
 // Version is the current package version.
 // Version은 현재 패키지 버전입니다.
-const Version = "1.7.009"
+const Version = "1.7.010"
