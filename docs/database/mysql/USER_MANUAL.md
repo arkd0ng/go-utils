@@ -1,9 +1,9 @@
 # MySQL Package - User Manual / 사용자 매뉴얼
 
 **Package**: `github.com/arkd0ng/go-utils/database/mysql`
-**Version**: v1.3.006
+**Version**: v1.3.013
 **Author**: arkd0ng
-**Last Updated**: 2025-10-10
+**Last Updated**: 2025-10-14
 
 ---
 
@@ -14,11 +14,12 @@
 3. [Quick Start / 빠른 시작](#quick-start--빠른-시작)
 4. [Configuration Reference / 설정 참조](#configuration-reference--설정-참조)
 5. [API Reference / API 참조](#api-reference--api-참조)
-6. [Usage Patterns / 사용 패턴](#usage-patterns--사용-패턴)
-7. [Common Use Cases / 일반적인 사용 사례](#common-use-cases--일반적인-사용-사례)
-8. [Best Practices / 모범 사례](#best-practices--모범-사례)
-9. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
-10. [FAQ](#faq)
+6. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
+7. [Usage Patterns / 사용 패턴](#usage-patterns--사용-패턴)
+8. [Common Use Cases / 일반적인 사용 사례](#common-use-cases--일반적인-사용-사례)
+9. [Best Practices / 모범 사례](#best-practices--모범-사례)
+10. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
+11. [FAQ](#faq)
 
 ---
 
@@ -759,6 +760,914 @@ err := db.Transaction(ctx, func(tx *mysql.Tx) error {
 })
 // Transaction is automatically rolled back / 트랜잭션이 자동으로 롤백됩니다
 ```
+
+---
+
+## Advanced Features / 고급 기능
+
+### 1. Batch Operations / 배치 작업
+
+Batch operations allow you to perform multiple database operations efficiently in a single query.
+
+배치 작업을 사용하면 단일 쿼리로 여러 데이터베이스 작업을 효율적으로 수행할 수 있습니다.
+
+#### BatchInsert
+
+Insert multiple rows in a single query for better performance.
+
+성능 향상을 위해 단일 쿼리로 여러 행을 삽입합니다.
+
+```go
+data := []map[string]interface{}{
+    {"name": "John", "age": 30, "email": "john@example.com"},
+    {"name": "Jane", "age": 25, "email": "jane@example.com"},
+    {"name": "Bob", "age": 35, "email": "bob@example.com"},
+}
+
+result, err := db.BatchInsert(ctx, "users", data)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Get number of affected rows / 영향받은 행 수 가져오기
+affected, _ := result.RowsAffected()
+fmt.Printf("Inserted %d rows\n", affected)
+```
+
+**When to use / 사용 시기**:
+- Importing large amounts of data / 대량 데이터 가져오기
+- Bulk user registration / 대량 사용자 등록
+- Seeding database with test data / 테스트 데이터로 데이터베이스 시드
+- ETL operations / ETL 작업
+
+#### BatchUpdate
+
+Perform multiple update operations in a transaction.
+
+트랜잭션에서 여러 업데이트 작업을 수행합니다.
+
+```go
+updates := []mysql.BatchUpdateItem{
+    {
+        Data: map[string]interface{}{"age": 31, "status": "active"},
+        ConditionAndArgs: []interface{}{"id = ?", 1},
+    },
+    {
+        Data: map[string]interface{}{"age": 26, "status": "active"},
+        ConditionAndArgs: []interface{}{"id = ?", 2},
+    },
+}
+
+err := db.BatchUpdate(ctx, "users", updates)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+#### BatchDelete
+
+Delete multiple rows by IDs in a single query.
+
+단일 쿼리로 ID로 여러 행을 삭제합니다.
+
+```go
+ids := []interface{}{1, 2, 3, 4, 5}
+result, err := db.BatchDelete(ctx, "users", "id", ids)
+if err != nil {
+    log.Fatal(err)
+}
+
+affected, _ := result.RowsAffected()
+fmt.Printf("Deleted %d rows\n", affected)
+```
+
+#### BatchSelectByIDs
+
+Select multiple rows by IDs in a single query.
+
+단일 쿼리로 ID로 여러 행을 선택합니다.
+
+```go
+ids := []interface{}{1, 2, 3, 4, 5}
+users, err := db.BatchSelectByIDs(ctx, "users", "id", ids)
+if err != nil {
+    log.Fatal(err)
+}
+
+for _, user := range users {
+    fmt.Printf("User: %v\n", user)
+}
+```
+
+**Performance Benefits / 성능 이점**:
+- Reduces network round-trips / 네트워크 왕복 감소
+- Minimizes query parsing overhead / 쿼리 파싱 오버헤드 최소화
+- Improves transaction efficiency / 트랜잭션 효율성 향상
+
+---
+
+### 2. Upsert Operations / Upsert 작업
+
+Upsert allows you to insert a row or update it if it already exists.
+
+Upsert를 사용하면 행을 삽입하거나 이미 존재하면 업데이트할 수 있습니다.
+
+#### Upsert
+
+Insert or update a single row.
+
+단일 행을 삽입하거나 업데이트합니다.
+
+```go
+data := map[string]interface{}{
+    "email": "john@example.com",  // Unique key
+    "name": "John Doe",
+    "age": 30,
+}
+
+// Columns to update on duplicate / 중복 시 업데이트할 컬럼
+updateColumns := []string{"name", "age"}
+
+result, err := db.Upsert(ctx, "users", data, updateColumns)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Check if inserted or updated / 삽입 또는 업데이트 확인
+affected, _ := result.RowsAffected()
+if affected == 1 {
+    fmt.Println("New row inserted")
+} else if affected == 2 {
+    fmt.Println("Existing row updated")
+}
+```
+
+#### UpsertBatch
+
+Perform multiple upsert operations in a single query.
+
+단일 쿼리로 여러 upsert 작업을 수행합니다.
+
+```go
+data := []map[string]interface{}{
+    {"email": "john@example.com", "name": "John", "age": 30},
+    {"email": "jane@example.com", "name": "Jane", "age": 25},
+}
+
+updateColumns := []string{"name", "age"}
+result, err := db.UpsertBatch(ctx, "users", data, updateColumns)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+#### Replace
+
+Perform a REPLACE operation (delete + insert).
+
+REPLACE 작업을 수행합니다 (삭제 + 삽입).
+
+**Warning**: REPLACE deletes the old row and inserts a new one, which can have side effects with foreign keys and auto-increment values.
+
+**경고**: REPLACE는 기존 행을 삭제하고 새 행을 삽입하므로 외래 키 및 auto_increment 값에 부작용이 있을 수 있습니다.
+
+```go
+data := map[string]interface{}{
+    "id": 1,
+    "name": "John Doe",
+    "age": 30,
+}
+
+result, err := db.Replace(ctx, "users", data)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+**When to use / 사용 시기**:
+- Syncing data from external sources / 외부 소스에서 데이터 동기화
+- Implementing cache invalidation / 캐시 무효화 구현
+- Idempotent API operations / 멱등 API 작업
+- Data reconciliation / 데이터 조정
+
+---
+
+### 3. Pagination / 페이지네이션
+
+Built-in pagination support with comprehensive metadata.
+
+종합적인 메타데이터를 포함한 내장 페이지네이션 지원입니다.
+
+#### Paginate
+
+Perform paginated query on a table.
+
+테이블에 대해 페이지네이션 쿼리를 수행합니다.
+
+```go
+// Get page 1 with 10 items per page / 페이지 1을 페이지당 10개 항목으로 가져오기
+result, err := db.Paginate(ctx, "users", 1, 10)
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Page %d of %d\n", result.Page, result.TotalPages)
+fmt.Printf("Total rows: %d\n", result.TotalRows)
+fmt.Printf("Has next: %v\n", result.HasNext)
+
+for _, user := range result.Data {
+    fmt.Printf("User: %v\n", user)
+}
+```
+
+**With filters and options / 필터 및 옵션 포함**:
+
+```go
+result, err := db.Paginate(ctx, "users", 2, 20,
+    "age > ?", 18,  // WHERE condition
+    mysql.WithColumns("id", "name", "email"),
+    mysql.WithOrderBy("created_at DESC"))
+```
+
+#### PaginationResult Methods
+
+The `PaginationResult` struct provides convenient methods:
+
+`PaginationResult` 구조체는 편리한 메서드를 제공합니다:
+
+```go
+result, _ := db.Paginate(ctx, "users", 2, 20)
+
+// Check page status / 페이지 상태 확인
+if result.IsFirstPage() {
+    fmt.Println("This is the first page")
+}
+
+if result.IsLastPage() {
+    fmt.Println("This is the last page")
+}
+
+// Get next/previous page numbers / 다음/이전 페이지 번호 가져오기
+nextPage := result.NextPage()  // Returns 0 if no next page
+prevPage := result.PrevPage()  // Returns 0 if no previous page
+
+// Navigation / 네비게이션
+if nextPage > 0 {
+    nextResult, _ := db.Paginate(ctx, "users", nextPage, 20)
+    // Display next page...
+}
+```
+
+#### PaginateQuery
+
+Paginate custom queries.
+
+사용자 정의 쿼리를 페이지네이션합니다.
+
+```go
+baseQuery := `
+    SELECT u.*, COUNT(o.id) as order_count
+    FROM users u
+    LEFT JOIN orders o ON u.id = o.user_id
+    GROUP BY u.id
+`
+
+countQuery := "SELECT COUNT(*) FROM users"
+
+result, err := db.PaginateQuery(ctx, baseQuery, countQuery, 1, 10)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+**When to use / 사용 시기**:
+- Displaying large result sets / 큰 결과 세트 표시
+- API endpoints with pagination / 페이지네이션이 있는 API 엔드포인트
+- User-facing lists and tables / 사용자 대면 목록 및 테이블
+- Search results / 검색 결과
+
+---
+
+### 4. Soft Delete / 소프트 삭제
+
+Soft delete marks rows as deleted without actually removing them from the database.
+
+소프트 삭제는 데이터베이스에서 실제로 제거하지 않고 행을 삭제된 것으로 표시합니다.
+
+**Table Requirement**: Your table must have a `deleted_at` timestamp column.
+
+**테이블 요구사항**: 테이블에 `deleted_at` 타임스탬프 컬럼이 있어야 합니다.
+
+```sql
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    deleted_at TIMESTAMP NULL DEFAULT NULL
+);
+```
+
+#### SoftDelete
+
+Mark rows as deleted by setting `deleted_at` timestamp.
+
+`deleted_at` 타임스탬프를 설정하여 행을 삭제된 것으로 표시합니다.
+
+```go
+// Soft delete a user / 사용자를 소프트 삭제
+result, err := db.SoftDelete(ctx, "users", "id = ?", 1)
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Soft deleted %d rows\n", result.RowsAffected())
+```
+
+#### Restore
+
+Restore soft-deleted rows by setting `deleted_at` to NULL.
+
+`deleted_at`을 NULL로 설정하여 소프트 삭제된 행을 복구합니다.
+
+```go
+// Restore a soft-deleted user / 소프트 삭제된 사용자 복구
+result, err := db.Restore(ctx, "users", "id = ?", 1)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+#### SelectAllWithTrashed
+
+Select all rows including soft-deleted ones.
+
+소프트 삭제된 것을 포함하여 모든 행을 선택합니다.
+
+```go
+users, err := db.SelectAllWithTrashed(ctx, "users")
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+#### SelectAllOnlyTrashed
+
+Select only soft-deleted rows.
+
+소프트 삭제된 행만 선택합니다.
+
+```go
+deletedUsers, err := db.SelectAllOnlyTrashed(ctx, "users", "age > ?", 18)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+#### PermanentDelete
+
+Physically delete rows from the database (cannot be restored).
+
+데이터베이스에서 행을 물리적으로 삭제합니다 (복구 불가).
+
+```go
+result, err := db.PermanentDelete(ctx, "users", "id = ?", 1)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+**When to use / 사용 시기**:
+- Maintaining audit trails / 감사 추적 유지
+- Allowing user-initiated data recovery / 사용자 시작 데이터 복구 허용
+- Complying with data retention policies / 데이터 보존 정책 준수
+- Implementing "trash" or "recycle bin" features / "휴지통" 기능 구현
+
+---
+
+### 5. Query Statistics / 쿼리 통계
+
+Track and monitor query execution statistics.
+
+쿼리 실행 통계를 추적하고 모니터링합니다.
+
+#### Enable Query Stats
+
+Enable statistics tracking (must be called before queries).
+
+통계 추적을 활성화합니다 (쿼리 전에 호출해야 함).
+
+```go
+client, _ := mysql.New(mysql.WithDSN("..."))
+client.EnableQueryStats()  // Enable stats tracking
+
+// Execute queries... / 쿼리 실행...
+
+// Get statistics / 통계 가져오기
+stats := client.GetQueryStats()
+fmt.Printf("Total queries: %d\n", stats.TotalQueries)
+fmt.Printf("Success queries: %d\n", stats.SuccessQueries)
+fmt.Printf("Failed queries: %d\n", stats.FailedQueries)
+fmt.Printf("Average duration: %v\n", stats.AvgDuration)
+fmt.Printf("Slow queries: %d\n", stats.SlowQueries)
+
+// Calculate success rate / 성공률 계산
+successRate := float64(stats.SuccessQueries) / float64(stats.TotalQueries) * 100
+fmt.Printf("Success rate: %.2f%%\n", successRate)
+```
+
+#### Slow Query Logging
+
+Track and handle slow queries automatically.
+
+느린 쿼리를 자동으로 추적하고 처리합니다.
+
+```go
+// Enable slow query logging with 1 second threshold
+// 1초 임계값으로 느린 쿼리 로깅 활성화
+client.EnableSlowQueryLog(1*time.Second, func(info mysql.SlowQueryInfo) {
+    log.Printf("Slow query detected: %s (took %v)", info.Query, info.Duration)
+
+    // Send to monitoring system / 모니터링 시스템으로 전송
+    metrics.RecordSlowQuery(info.Query, info.Duration)
+})
+
+// Get recent slow queries / 최근 느린 쿼리 가져오기
+slowQueries := client.GetSlowQueries(10)  // Last 10 slow queries
+for _, sq := range slowQueries {
+    fmt.Printf("Query: %s\n", sq.Query)
+    fmt.Printf("Duration: %v\n", sq.Duration)
+    fmt.Printf("Timestamp: %v\n", sq.Timestamp)
+}
+```
+
+#### Reset Statistics
+
+Reset query statistics to start fresh.
+
+새로 시작하기 위해 쿼리 통계를 재설정합니다.
+
+```go
+client.ResetQueryStats()
+```
+
+**When to use / 사용 시기**:
+- Monitoring application performance / 애플리케이션 성능 모니터링
+- Identifying slow queries for optimization / 최적화를 위한 느린 쿼리 식별
+- Tracking database health / 데이터베이스 상태 추적
+- Debugging performance issues / 성능 문제 디버깅
+
+---
+
+### 6. Pool Metrics / 풀 메트릭
+
+Monitor connection pool health and performance.
+
+연결 풀 상태 및 성능을 모니터링합니다.
+
+#### Get Pool Metrics
+
+Get detailed metrics for all connection pools.
+
+모든 연결 풀에 대한 상세 메트릭을 가져옵니다.
+
+```go
+metrics := client.GetPoolMetrics()
+
+fmt.Printf("Total pools: %d\n", metrics.PoolCount)
+fmt.Printf("Total connections: %d\n", metrics.TotalConnections)
+fmt.Printf("Healthy: %v\n", metrics.Healthy)
+
+for _, pool := range metrics.PoolStats {
+    fmt.Printf("\nPool %d:\n", pool.Index)
+    fmt.Printf("  Max open connections: %d\n", pool.MaxOpenConns)
+    fmt.Printf("  Open connections: %d\n", pool.OpenConnections)
+    fmt.Printf("  In use: %d\n", pool.InUse)
+    fmt.Printf("  Idle: %d\n", pool.Idle)
+    fmt.Printf("  Wait count: %d\n", pool.WaitCount)
+    fmt.Printf("  Wait duration: %v\n", pool.WaitDuration)
+}
+```
+
+#### Pool Health Check
+
+Check the health of all connection pools.
+
+모든 연결 풀의 상태를 확인합니다.
+
+```go
+health := client.GetPoolHealthInfo(ctx)
+
+if !health.Healthy {
+    fmt.Printf("Unhealthy pools: %v\n", health.UnhealthyPool)
+    for _, detail := range health.Details {
+        if !detail.Healthy {
+            fmt.Printf("Pool %d error: %v (ping: %v)\n",
+                detail.Index, detail.Error, detail.PingTime)
+        }
+    }
+}
+```
+
+#### Connection Utilization
+
+Monitor connection pool utilization percentage.
+
+연결 풀 사용률을 모니터링합니다.
+
+```go
+utilization := client.GetConnectionUtilization()
+
+for i, util := range utilization {
+    fmt.Printf("Pool %d utilization: %.2f%%\n", i, util)
+
+    if util > 80 {
+        log.Printf("WARNING: High utilization on pool %d\n", i)
+    }
+}
+```
+
+#### Wait Statistics
+
+Track connection wait statistics.
+
+연결 대기 통계를 추적합니다.
+
+```go
+waitStats := client.GetWaitStatistics()
+
+for _, ws := range waitStats {
+    if ws.WaitCount > 0 {
+        fmt.Printf("Pool %d: %d waits, avg %v\n",
+            ws.PoolIndex, ws.WaitCount, ws.AvgWaitTime)
+    }
+}
+```
+
+**When to use / 사용 시기**:
+- Production monitoring and alerting / 프로덕션 모니터링 및 경고
+- Capacity planning / 용량 계획
+- Detecting connection leaks / 연결 누수 감지
+- Optimizing pool configuration / 풀 설정 최적화
+
+---
+
+### 7. Schema Inspector / 스키마 검사기
+
+Introspect database schema and table structure.
+
+데이터베이스 스키마 및 테이블 구조를 검사합니다.
+
+#### Get Tables
+
+List all tables in the current database.
+
+현재 데이터베이스의 모든 테이블을 나열합니다.
+
+```go
+tables, err := client.GetTables(ctx)
+if err != nil {
+    log.Fatal(err)
+}
+
+for _, table := range tables {
+    fmt.Printf("Table: %s (Engine: %s, Rows: %d)\n",
+        table.Name, table.Engine, table.Rows)
+}
+```
+
+#### Get Columns
+
+Get information about all columns in a table.
+
+테이블의 모든 컬럼에 대한 정보를 가져옵니다.
+
+```go
+columns, err := client.GetColumns(ctx, "users")
+if err != nil {
+    log.Fatal(err)
+}
+
+for _, col := range columns {
+    nullable := "NOT NULL"
+    if col.Nullable {
+        nullable = "NULL"
+    }
+    fmt.Printf("%s %s %s\n", col.Name, col.Type, nullable)
+
+    if col.Default.Valid {
+        fmt.Printf("  DEFAULT: %s\n", col.Default.String)
+    }
+
+    if col.Key != "" {
+        fmt.Printf("  KEY: %s\n", col.Key)
+    }
+}
+```
+
+#### Get Indexes
+
+Get information about all indexes on a table.
+
+테이블의 모든 인덱스에 대한 정보를 가져옵니다.
+
+```go
+indexes, err := client.GetIndexes(ctx, "users")
+if err != nil {
+    log.Fatal(err)
+}
+
+for _, idx := range indexes {
+    uniqueStr := ""
+    if idx.Unique {
+        uniqueStr = "UNIQUE"
+    }
+    fmt.Printf("%s %s INDEX %s (%s)\n",
+        uniqueStr, idx.IndexType, idx.Name,
+        strings.Join(idx.Columns, ", "))
+}
+```
+
+#### Inspect Table
+
+Get comprehensive information about a table.
+
+테이블에 대한 종합적인 정보를 가져옵니다.
+
+```go
+inspection, err := client.InspectTable(ctx, "users")
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Table: %s\n", inspection.Info.Name)
+fmt.Printf("Engine: %s\n", inspection.Info.Engine)
+fmt.Printf("Rows: %d\n", inspection.Info.Rows)
+fmt.Printf("Size: %.2f MB\n", float64(inspection.Size)/(1024*1024))
+fmt.Printf("Columns: %d\n", len(inspection.Columns))
+fmt.Printf("Indexes: %d\n", len(inspection.Indexes))
+fmt.Printf("Primary Key: %v\n", inspection.PrimaryKey)
+
+// Or use the String() method for formatted output
+// 또는 포맷된 출력을 위해 String() 메서드 사용
+fmt.Println(inspection.String())
+```
+
+#### Other Schema Methods
+
+```go
+// Check if table exists / 테이블 존재 확인
+exists, _ := client.TableExists(ctx, "users")
+
+// Get table schema (CREATE TABLE statement) / 테이블 스키마 가져오기
+schema, _ := client.GetTableSchema(ctx, "users")
+
+// Get primary key columns / 기본 키 컬럼 가져오기
+pkCols, _ := client.GetPrimaryKey(ctx, "users")
+
+// Get foreign keys / 외래 키 가져오기
+fks, _ := client.GetForeignKeys(ctx, "orders")
+
+// Get table size / 테이블 크기 가져오기
+size, _ := client.GetTableSize(ctx, "users")
+
+// Get database size / 데이터베이스 크기 가져오기
+dbSize, _ := client.GetDatabaseSize(ctx)
+```
+
+**When to use / 사용 시기**:
+- Generating documentation / 문서 생성
+- Schema comparison and validation / 스키마 비교 및 검증
+- Migration planning / 마이그레이션 계획
+- Database administration tools / 데이터베이스 관리 도구
+
+---
+
+### 8. Migration Helpers / 마이그레이션 헬퍼
+
+Schema migration operations made simple.
+
+간단하게 만든 스키마 마이그레이션 작업입니다.
+
+#### Create Table
+
+Create a new table with schema definition.
+
+스키마 정의로 새 테이블을 생성합니다.
+
+```go
+schema := `
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    age INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_email (email)
+`
+
+err := client.CreateTable(ctx, "users", schema)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+#### CreateTableIfNotExists
+
+Create table only if it doesn't exist.
+
+테이블이 존재하지 않는 경우에만 생성합니다.
+
+```go
+err := client.CreateTableIfNotExists(ctx, "users", schema)
+```
+
+#### Add/Drop/Modify Columns
+
+```go
+// Add column / 컬럼 추가
+err := client.AddColumn(ctx, "users", "phone", "VARCHAR(20)")
+
+// Add column with position / 위치 지정하여 컬럼 추가
+err := client.AddColumn(ctx, "users", "status",
+    "ENUM('active','inactive') AFTER email")
+
+// Drop column / 컬럼 삭제
+err := client.DropColumn(ctx, "users", "old_field")
+
+// Modify column / 컬럼 수정
+err := client.ModifyColumn(ctx, "users", "age", "SMALLINT UNSIGNED")
+
+// Rename column / 컬럼 이름 변경
+err := client.RenameColumn(ctx, "users", "old_name", "new_name",
+    "VARCHAR(255)")
+```
+
+#### Add/Drop Indexes
+
+```go
+// Add simple index / 단순 인덱스 추가
+err := client.AddIndex(ctx, "users", "idx_email",
+    []string{"email"}, false)
+
+// Add unique index / 유니크 인덱스 추가
+err := client.AddIndex(ctx, "users", "idx_username",
+    []string{"username"}, true)
+
+// Add composite index / 복합 인덱스 추가
+err := client.AddIndex(ctx, "orders", "idx_user_date",
+    []string{"user_id", "created_at"}, false)
+
+// Drop index / 인덱스 삭제
+err := client.DropIndex(ctx, "users", "idx_email")
+```
+
+#### Foreign Keys
+
+```go
+// Add foreign key / 외래 키 추가
+err := client.AddForeignKey(ctx,
+    "orders",           // table
+    "fk_user",          // constraint name
+    "user_id",          // column
+    "users",            // referenced table
+    "id",               // referenced column
+    "CASCADE",          // on delete
+    "CASCADE")          // on update
+
+// Drop foreign key / 외래 키 삭제
+err := client.DropForeignKey(ctx, "orders", "fk_user")
+```
+
+#### Other Migration Operations
+
+```go
+// Drop table / 테이블 삭제
+err := client.DropTable(ctx, "old_users", true)  // ifExists = true
+
+// Truncate table / 테이블 초기화
+err := client.TruncateTable(ctx, "temp_data")
+
+// Rename table / 테이블 이름 변경
+err := client.RenameTable(ctx, "old_users", "users")
+
+// Copy table / 테이블 복사
+err := client.CopyTable(ctx, "users", "users_backup", true)  // with data
+
+// Change storage engine / 스토리지 엔진 변경
+err := client.AlterTableEngine(ctx, "users", "InnoDB")
+
+// Change character set / 문자 집합 변경
+err := client.AlterTableCharset(ctx, "users", "utf8mb4",
+    "utf8mb4_unicode_ci")
+```
+
+**When to use / 사용 시기**:
+- Application deployment and updates / 애플리케이션 배포 및 업데이트
+- Schema version control / 스키마 버전 제어
+- Database refactoring / 데이터베이스 리팩토링
+- Development environment setup / 개발 환경 설정
+
+---
+
+### 9. CSV Export/Import / CSV 내보내기/가져오기
+
+Export data to CSV files and import from CSV files.
+
+데이터를 CSV 파일로 내보내고 CSV 파일에서 가져옵니다.
+
+#### Export Table to CSV
+
+Export a table to CSV file with options.
+
+옵션으로 테이블을 CSV 파일로 내보냅니다.
+
+```go
+opts := mysql.DefaultCSVExportOptions()
+opts.Columns = []string{"id", "name", "email", "age"}
+opts.Where = "created_at >= ?"
+opts.WhereArgs = []interface{}{"2024-01-01"}
+opts.OrderBy = "id ASC"
+opts.Limit = 1000
+
+err := client.ExportTableToCSV(ctx, "users", "/path/to/users.csv", opts)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+**CSV Export Options / CSV 내보내기 옵션**:
+
+```go
+type CSVExportOptions struct {
+    IncludeHeaders bool          // Include column headers / 컬럼 헤더 포함
+    Delimiter      rune          // Delimiter character / 구분 문자
+    Columns        []string      // Columns to export / 내보낼 컬럼
+    Where          string        // WHERE clause filter / WHERE 절 필터
+    WhereArgs      []interface{} // WHERE clause arguments / WHERE 절 인자
+    OrderBy        string        // ORDER BY clause / ORDER BY 절
+    Limit          int           // LIMIT number of rows / 행 수 제한
+    NullValue      string        // NULL value representation / NULL 값 표현
+}
+```
+
+#### Import from CSV
+
+Import data from CSV file into a table.
+
+CSV 파일에서 테이블로 데이터를 가져옵니다.
+
+```go
+opts := mysql.DefaultCSVImportOptions()
+opts.Columns = []string{"id", "name", "email", "age"}
+opts.BatchSize = 500
+opts.IgnoreDuplicates = true  // Skip duplicates / 중복 건너뛰기
+
+err := client.ImportFromCSV(ctx, "users", "/path/to/users.csv", opts)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+**CSV Import Options / CSV 가져오기 옵션**:
+
+```go
+type CSVImportOptions struct {
+    HasHeaders         bool          // First row contains headers / 첫 행에 헤더 포함
+    Delimiter          rune          // Delimiter character / 구분 문자
+    Columns            []string      // Columns to import / 가져올 컬럼
+    SkipRows           int           // Skip first N rows / 첫 N개 행 건너뛰기
+    BatchSize          int           // Batch size for bulk insert / 배치 크기
+    IgnoreDuplicates   bool          // Ignore duplicate key errors / 중복 키 에러 무시
+    ReplaceOnDuplicate bool          // Replace on duplicate keys / 중복 키에서 교체
+    NullValue          string        // NULL value representation / NULL 값 표현
+}
+```
+
+#### Export Query Result to CSV
+
+Export custom query results to CSV.
+
+사용자 정의 쿼리 결과를 CSV로 내보냅니다.
+
+```go
+query := `
+    SELECT u.id, u.name, COUNT(o.id) as order_count
+    FROM users u
+    LEFT JOIN orders o ON u.id = o.user_id
+    GROUP BY u.id, u.name
+    HAVING order_count > 10
+`
+
+opts := mysql.DefaultCSVExportOptions()
+err := client.ExportQueryToCSV(ctx, query, nil, "/path/to/report.csv", opts)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+**When to use / 사용 시기**:
+- Data backup and recovery / 데이터 백업 및 복구
+- Data migration between systems / 시스템 간 데이터 마이그레이션
+- Report generation / 보고서 생성
+- Bulk data import from external sources / 외부 소스에서 대량 데이터 가져오기
 
 ---
 

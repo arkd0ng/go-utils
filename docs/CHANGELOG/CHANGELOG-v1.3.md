@@ -6,7 +6,58 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
-## [v1.3.013] - 2025-10-14 (MySQL Comprehensive Test Suite)
+## [v1.3.013] - 2025-10-14 (MySQL Documentation Update)
+
+### Changed / 변경
+- **Updated MySQL Package Documentation** / MySQL 패키지 문서 업데이트:
+  - `docs/database/mysql/USER_MANUAL.md`: Added comprehensive "Advanced Features" section with 9 new feature categories
+  - `docs/database/mysql/DEVELOPER_GUIDE.md`: Added "Advanced Features Architecture" section with detailed implementation explanations
+  - Updated version numbers to v1.3.013 in all documentation files
+  - Updated file structure table to include all new feature files
+
+### Documentation / 문서화
+- **USER_MANUAL.md Updates** (~900 new lines):
+  - Section 6: Advanced Features with 9 subsections
+  - Batch Operations: BatchInsert, BatchUpdate, BatchDelete, BatchSelectByIDs with complete examples
+  - Upsert Operations: Upsert, UpsertBatch, Replace with usage patterns
+  - Pagination: Paginate, PaginateQuery with helper methods and navigation examples
+  - Soft Delete: SoftDelete, Restore, SelectAllWithTrashed, SelectAllOnlyTrashed, PermanentDelete
+  - Query Statistics: EnableQueryStats, EnableSlowQueryLog, GetQueryStats with monitoring examples
+  - Pool Metrics: GetPoolMetrics, GetPoolHealthInfo, GetConnectionUtilization, GetWaitStatistics
+  - Schema Inspector: GetTables, GetColumns, GetIndexes, InspectTable with introspection examples
+  - Migration Helpers: CreateTable, AddColumn, AddIndex, AddForeignKey and 20+ DDL operations
+  - CSV Export/Import: ExportTableToCSV, ImportFromCSV, ExportQueryToCSV with options
+
+- **DEVELOPER_GUIDE.md Updates** (~300 new lines):
+  - Advanced Features Architecture section with implementation details for all 9 features
+  - Design goals and philosophy for each feature
+  - Key design decisions explained with rationale
+  - Performance characteristics and optimization tips
+  - Thread safety and concurrency considerations
+  - Architecture diagrams and flow explanations
+  - Updated package structure table with new files (~6,000+ total lines)
+
+### Features Documented / 문서화된 기능
+1. **Batch Operations**: Performance optimization for bulk operations
+2. **Upsert Operations**: Idempotent inserts with MySQL's ON DUPLICATE KEY UPDATE
+3. **Pagination**: Comprehensive pagination with rich metadata
+4. **Soft Delete**: Data recovery and audit trail support
+5. **Query Statistics**: Zero-overhead performance monitoring
+6. **Pool Metrics**: Connection pool health monitoring
+7. **Schema Inspector**: Programmatic access to database metadata
+8. **Migration Helpers**: High-level API for schema changes
+9. **CSV Export/Import**: Efficient data exchange with external systems
+
+### Best Practices / 모범 사례
+- Added "When to use" sections for each advanced feature
+- Performance tips and common pitfalls documented
+- Cross-references between USER_MANUAL and DEVELOPER_GUIDE
+- Dual-language format maintained throughout (English/Korean)
+- Complete code examples with inline comments
+
+---
+
+## [v1.3.012] - 2025-10-14 (MySQL Comprehensive Test Suite)
 
 ### Added / 추가
 - **Comprehensive Test Files for MySQL Advanced Features** / MySQL 고급 기능을 위한 종합 테스트 파일:
