@@ -55,8 +55,8 @@ func main() {
 	logger.Banner("MySQL Package Examples", "go-utils/database/mysql")
 
 	// Load database configuration / 데이터베이스 설정 로드
-	logger.Info("Loading database configuration from cfg/database.yaml")
-	logger.Info("cfg/database.yaml에서 데이터베이스 설정 로드 중")
+	logger.Info("Loading database configuration from cfg/database-mysql.yaml")
+	logger.Info("cfg/database-mysql.yaml에서 데이터베이스 설정 로드 중")
 	config, err := loadDatabaseConfig()
 	if err != nil {
 		logger.Error("Failed to load database config", "error", err)
@@ -151,7 +151,7 @@ func loadDatabaseConfig() (*DatabaseConfig, error) {
 	// Navigate to project root (examples/mysql -> go-utils)
 	// 프로젝트 루트로 이동
 	projectRoot := filepath.Join(wd, "..", "..")
-	configPath := filepath.Join(projectRoot, "cfg", "database.yaml")
+	configPath := filepath.Join(projectRoot, "cfg", "database-mysql.yaml")
 
 	// Read YAML file / YAML 파일 읽기
 	data, err := os.ReadFile(configPath)

@@ -38,7 +38,8 @@ go-utils/
 ├── random/          # Random generation utilities / 랜덤 생성 유틸리티
 ├── logging/         # Logging with file rotation / 파일 로테이션 로깅
 ├── database/
-│   └── mysql/       # Extreme simplicity MySQL client / 극도로 간단한 MySQL 클라이언트
+│   ├── mysql/       # Extreme simplicity MySQL client / 극도로 간단한 MySQL 클라이언트
+│   └── redis/       # Extreme simplicity Redis client / 극도로 간단한 Redis 클라이언트
 ├── stringutil/      # String manipulation (coming soon) / 문자열 처리 (예정)
 ├── sliceutil/       # Slice helpers (coming soon) / 슬라이스 헬퍼 (예정)
 ├── maputil/         # Map utilities (coming soon) / 맵 유틸리티 (예정)
@@ -205,6 +206,86 @@ users, _ := db.SelectAll(ctx, "users", "age > ?", 18)
 
 ---
 
+### ✅ [database/redis](./database/redis/) - Extreme Simplicity Redis Client
+
+Reduce 20+ lines of boilerplate code to just 2 lines with auto-everything: connection management, retry, reconnect, and resource cleanup.
+
+20줄 이상의 보일러플레이트 코드를 단 2줄로 줄이고, 연결 관리, 재시도, 재연결, 리소스 정리를 모두 자동화합니다.
+
+**Core Features**: Auto-retry with exponential backoff, connection pooling, health check, pipeline support, transaction support, Pub/Sub / 지수 백오프를 사용한 자동 재시도, 연결 풀링, 헬스 체크, 파이프라인 지원, 트랜잭션 지원, Pub/Sub
+
+**Operations Supported / 지원되는 작업**:
+- **String**: Set, Get, MGet, MSet, Incr, Decr, SetNX, SetEX / 문자열 작업
+- **Hash**: HSet, HGet, HGetAll, HSetMap, HDel, HIncrBy / 해시 작업
+- **List**: LPush, RPush, LPop, RPop, LRange, LLen / 리스트 작업
+- **Set**: SAdd, SRem, SMembers, SUnion, SInter, SDiff / 집합 작업
+- **Sorted Set**: ZAdd, ZRange, ZRangeByScore, ZScore / 정렬 집합 작업
+- **Key**: Del, Exists, Expire, TTL, Keys, Scan / 키 작업
+- **Advanced**: Pipeline, Transaction, Pub/Sub / 고급 기능
+
+```go
+import (
+    "context"
+    "github.com/arkd0ng/go-utils/database/redis"
+)
+
+// Create client / 클라이언트 생성
+rdb, _ := redis.New(redis.WithAddr("localhost:6379"))
+defer rdb.Close()
+
+ctx := context.Background()
+
+// String operations / 문자열 작업
+rdb.Set(ctx, "key", "value")
+val, _ := rdb.Get(ctx, "key")
+
+// Hash operations / 해시 작업
+rdb.HSetMap(ctx, "user:123", map[string]interface{}{
+    "name":  "John",
+    "email": "john@example.com",
+    "age":   30,
+})
+fields, _ := rdb.HGetAll(ctx, "user:123")
+
+// List operations (queue) / 리스트 작업 (큐)
+rdb.RPush(ctx, "queue", "task1", "task2")
+item, _ := rdb.LPop(ctx, "queue")
+
+// Pipeline for batch operations / 배치 작업을 위한 파이프라인
+rdb.Pipeline(ctx, func(pipe redis.Pipeliner) error {
+    pipe.Set(ctx, "key1", "value1", 0)
+    pipe.Set(ctx, "key2", "value2", 0)
+    pipe.Incr(ctx, "counter")
+    return nil
+})
+```
+
+**Before vs After**:
+```go
+// ❌ Before: 20+ lines with standard go-redis
+import "github.com/redis/go-redis/v9"
+
+rdb := redis.NewClient(&redis.Options{Addr: "localhost:6379"})
+err := rdb.Set(ctx, "key", "value", 0).Err()
+if err != nil {
+    return err
+}
+val, err := rdb.Get(ctx, "key").Result()
+if err != nil {
+    return err
+}
+// ... 매번 .Err() 또는 .Result() 호출...
+
+// ✅ After: 2 lines with this package
+rdb, _ := redis.New(redis.WithAddr("localhost:6379"))
+rdb.Set(ctx, "key", "value")
+val, _ := rdb.Get(ctx, "key")
+```
+
+**[→ View full documentation / 전체 문서 보기](./database/redis/README.md)**
+
+---
+
 ### 🔜 Coming Soon / 개발 예정
 
 - **stringutil** - String manipulation utilities / 문자열 처리 유틸리티
@@ -295,13 +376,24 @@ For detailed version history, see:
 - [CHANGELOG.md](./CHANGELOG.md) - Major/Minor 버전 개요
 - [docs/CHANGELOG/](./docs/CHANGELOG/) - 상세한 패치별 변경사항
 
-### v1.3.x (Current / 현재)
+### v1.4.x (Current / 현재)
+
+- **NEW**: `database/redis` package - Extreme simplicity Redis client / 극도로 간단한 Redis 클라이언트
+  - 20 lines → 2 lines code reduction / 20줄 → 2줄 코드 감소
+  - Auto-retry with exponential backoff / 지수 백오프를 사용한 자동 재시도
+  - Connection pooling and health check / 연결 풀링 및 헬스 체크
+  - 60+ methods: String, Hash, List, Set, Sorted Set, Key operations
+  - Pipeline, Transaction, Pub/Sub support / 파이프라인, 트랜잭션, Pub/Sub 지원
+  - Type-safe generic methods / 타입 안전 제네릭 메서드
+- **DOCKER**: Docker Redis setup with automated scripts / 자동화된 스크립트를 사용한 Docker Redis 설정
+
+### v1.3.x
 
 - **NEW**: `database/mysql` package - Extreme simplicity MySQL/MariaDB client / 극도로 간단한 MySQL/MariaDB 클라이언트
   - 30 lines → 2 lines code reduction / 30줄 → 2줄 코드 감소
   - Zero-downtime credential rotation / 무중단 자격 증명 순환
   - Auto everything: connection, retry, cleanup / 모든 것 자동화
-  - 7 Simple API methods: SelectAll, SelectOne, Insert, Update, Delete, Count, Exists
+  - 7 Simple API methods + Advanced features / 7개 Simple API 메서드 + 고급 기능
 - **DOCS**: Comprehensive documentation for Random and Logging packages / Random 및 Logging 패키지 종합 문서화
   - User manuals and developer guides / 사용자 매뉴얼 및 개발자 가이드
   - Bilingual documentation (English/Korean) / 이중 언어 문서 (영문/한글)

@@ -8,6 +8,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.008] - 2025-10-14
+
+### Changed / 변경
+- **REFACTOR**: Updated examples/redis/main.go to use logging package and results directory
+- **리팩토링**: examples/redis/main.go를 logging 패키지 사용 및 results 디렉토리 사용하도록 업데이트
+- Redis examples now use structured logging with automatic log file creation
+- Redis 예제는 이제 자동 로그 파일 생성과 함께 구조화된 로깅 사용
+- Added Docker auto-start and auto-stop functionality (like MySQL examples)
+- Docker 자동 시작 및 자동 중지 기능 추가 (MySQL 예제와 동일)
+- All example functions now accept logger parameter for consistent logging
+- 모든 예제 함수는 이제 일관된 로깅을 위해 logger 매개변수 수용
+- Results saved to `./results/logs/redis_example_YYYYMMDD_HHMMSS.log`
+- 결과는 `./results/logs/redis_example_YYYYMMDD_HHMMSS.log`에 저장됨
+
+### Changed / 변경 (Config Files)
+- **BREAKING**: Renamed `cfg/database.yaml` to `cfg/database-mysql.yaml`
+- **중단**: `cfg/database.yaml`을 `cfg/database-mysql.yaml`로 이름 변경
+- **BREAKING**: Renamed `cfg/redis.yaml` to `cfg/database-redis.yaml`
+- **중단**: `cfg/redis.yaml`을 `cfg/database-redis.yaml`로 이름 변경
+- Updated all references in code and documentation to use new config file names
+- 코드 및 문서의 모든 참조를 새 설정 파일 이름 사용하도록 업데이트
+- Consistent naming convention: `database-{provider}.yaml` for all database configs
+- 일관된 명명 규칙: 모든 데이터베이스 설정에 대해 `database-{provider}.yaml`
+
+### Updated Files / 업데이트된 파일
+- `examples/redis/main.go`: Complete rewrite with logging integration
+- `examples/mysql/main.go`: Updated config file path references
+- `CLAUDE.md`: Updated all config file path references
+- `cfg/database.yaml` → `cfg/database-mysql.yaml`
+- `cfg/redis.yaml` → `cfg/database-redis.yaml`
+
+### Notes / 참고사항
+- Redis examples now follow same pattern as MySQL examples for consistency
+- Redis 예제는 이제 일관성을 위해 MySQL 예제와 동일한 패턴 사용
+- All database configuration files now use `database-{provider}.yaml` naming
+- 모든 데이터베이스 설정 파일은 이제 `database-{provider}.yaml` 명명 사용
+- Current version: v1.4.008
+- 현재 버전: v1.4.008
+
+---
+
 ## [v1.4.007] - 2025-10-14
 
 ### Added / 추가

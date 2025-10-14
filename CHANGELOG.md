@@ -18,26 +18,50 @@ This file contains a high-level overview of major and minor versions. For detail
 
 ---
 
-## [v1.3.x] - Database Utilities / 데이터베이스 유틸리티 (진행 중 / In Progress)
+## [v1.4.x] - Redis Package / Redis 패키지 (현재 / Current)
+
+**Focus / 초점**: Extreme simplicity Redis client with comprehensive operations support / 포괄적인 작업 지원을 갖춘 극도로 간단한 Redis 클라이언트
+
+**Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.4.md](docs/CHANGELOG/CHANGELOG-v1.4.md)
+
+### Highlights / 주요 사항
+- **Complete Redis package**: 20 lines → 2 lines of code / 완전한 Redis 패키지: 20줄 → 2줄 코드
+- **60+ methods**: String, Hash, List, Set, Sorted Set, Key operations / 60개 이상 메서드
+- **Advanced features**: Pipeline, Transaction, Pub/Sub / 고급 기능: 파이프라인, 트랜잭션, Pub/Sub
+- **Auto-retry**: Exponential backoff for network errors / 자동 재시도: 네트워크 에러에 대한 지수 백오프
+- **Connection pooling**: Built-in connection pool for high performance / 연결 풀링: 고성능을 위한 내장 연결 풀
+- **Health check**: Background health monitoring / 헬스 체크: 백그라운드 헬스 모니터링
+- **Type-safe**: Generic methods for type-safe operations / 타입 안전: 타입 안전 작업을 위한 제네릭 메서드
+- **Docker setup**: Automated Docker Redis with management scripts / Docker 설정: 관리 스크립트를 사용한 자동화된 Docker Redis
+
+**Key Design Principles / 주요 설계 원칙**:
+- Extreme Simplicity: If not dramatically simpler, don't build it / 극도의 간결함: 극적으로 간단하지 않으면 만들지 마세요
+- Auto Everything: Connection, retry, reconnect, cleanup / 모든 것 자동: 연결, 재시도, 재연결, 정리
+- Context Support: All methods support context for cancellation / Context 지원: 모든 메서드가 취소를 위한 context 지원
+
+**Latest Version / 최신 버전**: v1.4.005 (2025-10-14)
+
+---
+
+## [v1.3.x] - MySQL Package / MySQL 패키지
 
 **Focus / 초점**: Extreme simplicity MySQL/MariaDB package with zero-downtime credential rotation / 무중단 자격 증명 순환을 갖춘 극도로 간단한 MySQL/MariaDB 패키지
 
 **Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.3.md](docs/CHANGELOG/CHANGELOG-v1.3.md)
 
 ### Highlights / 주요 사항
-- **Design documents for database/mysql package** / database/mysql 패키지 설계 문서
-- **Extreme simplicity**: 30 lines → 2 lines of code / 극도의 간결함: 30줄 → 2줄 코드
-- **Auto everything**: Connection management, retry, cleanup / 모든 것 자동: 연결 관리, 재시도, 정리
+- **Complete MySQL package**: 30 lines → 2 lines of code / 완전한 MySQL 패키지: 30줄 → 2줄 코드
 - **Three-layer API**: Simple, Query Builder, Raw SQL / 3계층 API: 간단, 쿼리 빌더, Raw SQL
 - **Zero-downtime credential rotation**: Multiple connection pools with rolling rotation / 무중단 자격 증명 순환: 순환 교체 방식의 다중 연결 풀
-- **User-provided credential refresh function**: Compatible with Vault, AWS Secrets Manager, etc. / 사용자 제공 자격 증명 갱신 함수: Vault, AWS Secrets Manager 등과 호환
+- **Advanced features**: Batch, Upsert, Pagination, Soft Delete, Query Stats, Schema Inspector, Migration Helpers, CSV Export/Import / 고급 기능
+- **Auto everything**: Connection management, retry, cleanup / 모든 것 자동: 연결 관리, 재시도, 정리
 
 **Key Design Principles / 주요 설계 원칙**:
 - Zero Mental Overhead: Connect once, forget about DB state / 한 번 연결하면 DB 상태를 잊어버려도 됨
 - SQL-Like API: Close to actual SQL syntax / SQL 문법에 가까운 API
 - "If not 10x simpler, don't build it" / "10배 간단하지 않으면 만들지 마세요"
 
-**Latest Version / 최신 버전**: v1.3.001 (2025-10-10) - Design documents only / 설계 문서만
+**Latest Version / 최신 버전**: v1.3.017 (2025-10-14)
 
 ---
 

@@ -354,7 +354,7 @@ go-utils/
 - **github.com/go-sql-driver/mysql**: MySQL 드라이버 (database/mysql 패키지)
 - **github.com/redis/go-redis/v9**: Redis 클라이언트 (database/redis 패키지)
 - **gopkg.in/natefinch/lumberjack.v2**: 파일 로테이션 (logging 패키지)
-- **gopkg.in/yaml.v3**: YAML 설정 파일 파싱 (cfg/app.yaml, cfg/database.yaml, cfg/redis.yaml)
+- **gopkg.in/yaml.v3**: YAML 설정 파일 파싱 (cfg/app.yaml, cfg/database-mysql.yaml, cfg/database-redis.yaml)
 
 ### CHANGELOG 관리
 
@@ -645,12 +645,12 @@ go build -o bin/redis_example examples/redis/main.go
 
 **MySQL 예제 실행 요구사항**:
 - MySQL 서버 실행 중이어야 함 (Docker: `./scripts/docker-mysql-start.sh`)
-- `cfg/database.yaml` 설정 파일 필요
+- `cfg/database-mysql.yaml` 설정 파일 필요
 - 테스트 데이터베이스 및 테이블 (예제가 자동으로 설정)
 
 **Redis 예제 실행 요구사항**:
 - Redis 서버 실행 중이어야 함 (Docker: `./scripts/docker-redis-start.sh`)
-- `cfg/redis.yaml` 설정 파일 필요
+- `cfg/database-redis.yaml` 설정 파일 필요
 - 예제가 자동으로 데이터 생성 및 정리
 
 ### Docker 개발 워크플로우
