@@ -35,13 +35,18 @@ func init() {
 
 // Time constants / 시간 상수
 const (
-	SecondsPerMinute = 60
-	SecondsPerHour   = 3600
-	SecondsPerDay    = 86400
-	DaysPerWeek      = 7
-	MonthsPerYear    = 12
-	HoursPerDay      = 24
-	MinutesPerHour   = 60
+	SecondsPerMinute  = 60
+	SecondsPerHour    = 3600
+	SecondsPerDay     = 86400
+	MinutesPerHour    = 60
+	HoursPerDay       = 24
+	DaysPerWeek       = 7
+	DaysPerYear       = 365
+	DaysPerLeapYear   = 366
+	MonthsPerYear     = 12
+	MonthsPerQuarter  = 3
+	QuartersPerYear   = 4
+	WeeksPerYear      = 52
 )
 
 // Common format layouts / 일반 포맷 레이아웃

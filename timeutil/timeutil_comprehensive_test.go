@@ -1273,3 +1273,130 @@ func TestClearHolidays(t *testing.T) {
 		t.Errorf("ClearHolidays() left %v holidays, want 0", len(holidays))
 	}
 }
+
+// ============================================================
+// Benchmark Tests / 벤치마크 테스트
+// ============================================================
+
+// BenchmarkSubTime benchmarks SubTime function / SubTime 함수 벤치마크
+func BenchmarkSubTime(b *testing.B) {
+	start := time.Now()
+	end := start.Add(24 * time.Hour)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = SubTime(start, end)
+	}
+}
+
+// BenchmarkDiffInDays benchmarks DiffInDays function / DiffInDays 함수 벤치마크
+func BenchmarkDiffInDays(b *testing.B) {
+	start := time.Now()
+	end := start.Add(24 * time.Hour)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = DiffInDays(start, end)
+	}
+}
+
+// BenchmarkConvertTimezone benchmarks ConvertTimezone function / ConvertTimezone 함수 벤치마크
+func BenchmarkConvertTimezone(b *testing.B) {
+	t := time.Now()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = ConvertTimezone(t, "America/New_York")
+	}
+}
+
+// BenchmarkFormatDate benchmarks FormatDate function / FormatDate 함수 벤치마크
+func BenchmarkFormatDate(b *testing.B) {
+	t := time.Now()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = FormatDate(t)
+	}
+}
+
+// BenchmarkFormatDateTime benchmarks FormatDateTime function / FormatDateTime 함수 벤치마크
+func BenchmarkFormatDateTime(b *testing.B) {
+	t := time.Now()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = FormatDateTime(t)
+	}
+}
+
+// BenchmarkFormat benchmarks Format function with custom tokens / 커스텀 토큰으로 Format 함수 벤치마크
+func BenchmarkFormat(b *testing.B) {
+	t := time.Now()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = Format(t, "YYYY-MM-DD HH:mm:ss")
+	}
+}
+
+// BenchmarkParseDate benchmarks ParseDate function / ParseDate 함수 벤치마크
+func BenchmarkParseDate(b *testing.B) {
+	dateStr := "2025-10-14"
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = ParseDate(dateStr)
+	}
+}
+
+// BenchmarkParseDateTime benchmarks ParseDateTime function / ParseDateTime 함수 벤치마크
+func BenchmarkParseDateTime(b *testing.B) {
+	dateTimeStr := "2025-10-14 15:04:05"
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = ParseDateTime(dateTimeStr)
+	}
+}
+
+// BenchmarkParse benchmarks Parse function with auto-detection / 자동 감지로 Parse 함수 벤치마크
+func BenchmarkParse(b *testing.B) {
+	dateStr := "2025-10-14"
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = Parse(dateStr)
+	}
+}
+
+// BenchmarkRelativeTime benchmarks RelativeTime function / RelativeTime 함수 벤치마크
+func BenchmarkRelativeTime(b *testing.B) {
+	t := time.Now().Add(-2 * time.Hour)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = RelativeTime(t)
+	}
+}
+
+// BenchmarkAge benchmarks Age function / Age 함수 벤치마크
+func BenchmarkAge(b *testing.B) {
+	birthDate := time.Date(1990, 5, 15, 0, 0, 0, 0, KST)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = Age(birthDate)
+	}
+}
+
+// BenchmarkIsBusinessDay benchmarks IsBusinessDay function / IsBusinessDay 함수 벤치마크
+func BenchmarkIsBusinessDay(b *testing.B) {
+	AddKoreanHolidays(2025)
+	t := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = IsBusinessDay(t)
+	}
+}

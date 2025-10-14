@@ -8,6 +8,56 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.6.007] - 2025-10-14
+
+### Added / 추가
+
+- **FEATURE**: Added 12 new utility functions across 3 new files
+  - **Week functions** (week.go - 4 functions):
+    - `WeekOfYear(t)` - Returns ISO 8601 week number (1-53)
+    - `WeekOfMonth(t)` - Returns week number of the month (1-6)
+    - `DaysInMonth(t)` - Returns number of days in the month (28-31)
+    - `DaysInYear(t)` - Returns number of days in the year (365 or 366)
+
+  - **Month functions** (month.go - 4 functions):
+    - `MonthKorean(t)` - Returns Korean month name (e.g., "10월")
+    - `MonthName(t)` - Returns English month name (e.g., "October")
+    - `MonthNameShort(t)` - Returns short month name (e.g., "Oct")
+    - `Quarter(t)` - Returns quarter of the year (1-4)
+
+  - **Sleep functions** (sleep.go - 4 functions):
+    - `SleepUntil(t)` - Sleeps until the specified time
+    - `SleepUntilNextHour()` - Sleeps until the next hour
+    - `SleepUntilNextDay()` - Sleeps until midnight
+    - `SleepUntilNextWeek()` - Sleeps until next Monday
+
+### Fixed / 수정
+
+- **TEST**: Fixed test duplication issue by removing old `timeutil_test.go`
+- **TEST**: Merged all tests into `timeutil_comprehensive_test.go`
+- **TEST**: Added 12 benchmark tests to comprehensive test suite
+
+### Enhanced / 개선
+
+- **CONSTANTS**: Added new time constants
+  - `DaysPerYear = 365`
+  - `DaysPerLeapYear = 366`
+  - `MonthsPerQuarter = 3`
+  - `QuartersPerYear = 4`
+  - `WeeksPerYear = 52`
+
+### Testing / 테스트
+
+- Created: `timeutil/week_test.go` - Tests for week-related functions (4 tests + 3 benchmarks)
+- Created: `timeutil/month_test.go` - Tests for month-related functions (4 tests + 3 benchmarks)
+- Created: `timeutil/sleep_test.go` - Tests for sleep functions (4 tests + 1 benchmark)
+- Updated: `timeutil/timeutil_comprehensive_test.go` - Added 12 benchmarks
+- All 107 tests passing ✅
+
+**Total timeutil functions: 114 functions** (102 → 114, +12 new functions)
+
+---
+
 ## [v1.6.006] - 2025-10-14
 
 ### Added / 추가
