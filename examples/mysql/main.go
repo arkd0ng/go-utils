@@ -582,7 +582,7 @@ func runExamples(dsn string, cfg MySQLConfig, logger *logging.Logger) error {
 
 // example1SelectAll demonstrates SelectAll method
 // example1SelectAll은 SelectAll 메서드를 시연합니다
-func example1SelectAll(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+func example1SelectAll(_ context.Context, db *mysql.Client, logger *logging.Logger) error {
 	logger.Info("📋 Example 1: SelectAll - Select all users")
 	logger.Info("📋 예제 1: SelectAll - 모든 사용자 선택")
 	logger.Info("")
@@ -606,7 +606,7 @@ func example1SelectAll(ctx context.Context, db *mysql.Client, logger *logging.Lo
 
 // example2SelectOne demonstrates SelectOne method
 // example2SelectOne은 SelectOne 메서드를 시연합니다
-func example2SelectOne(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+func example2SelectOne(_ context.Context, db *mysql.Client, logger *logging.Logger) error {
 	logger.Info("👤 Example 2: SelectOne - Select single user")
 	logger.Info("👤 예제 2: SelectOne - 단일 사용자 선택")
 	logger.Info("")
@@ -627,7 +627,7 @@ func example2SelectOne(ctx context.Context, db *mysql.Client, logger *logging.Lo
 
 // example3Insert demonstrates Insert method
 // example3Insert는 Insert 메서드를 시연합니다
-func example3Insert(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+func example3Insert(_ context.Context, db *mysql.Client, logger *logging.Logger) error {
 	logger.Info("➕ Example 3: Insert - Insert new user")
 	logger.Info("➕예제 3: Insert - 새 사용자 삽입")
 	logger.Info("")
@@ -656,7 +656,7 @@ func example3Insert(ctx context.Context, db *mysql.Client, logger *logging.Logge
 
 // example4Update demonstrates Update method
 // example4Update는 Update 메서드를 시연합니다
-func example4Update(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+func example4Update(_ context.Context, db *mysql.Client, logger *logging.Logger) error {
 	logger.Info("🔄 Example 4: Update - Update user")
 	logger.Info("🔄 예제 4: Update - 사용자 업데이트")
 	logger.Info("")
@@ -680,7 +680,7 @@ func example4Update(ctx context.Context, db *mysql.Client, logger *logging.Logge
 
 // example5Count demonstrates Count method
 // example5Count는 Count 메서드를 시연합니다
-func example5Count(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+func example5Count(_ context.Context, db *mysql.Client, logger *logging.Logger) error {
 	logger.Info("🔢 Example 5: Count - Count users")
 	logger.Info("🔢 예제 5: Count - 사용자 수 계산")
 	logger.Info("")
@@ -706,7 +706,7 @@ func example5Count(ctx context.Context, db *mysql.Client, logger *logging.Logger
 
 // example6Exists demonstrates Exists method
 // example6Exists는 Exists 메서드를 시연합니다
-func example6Exists(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+func example6Exists(_ context.Context, db *mysql.Client, logger *logging.Logger) error {
 	logger.Info("🔍 Example 6: Exists - Check if user exists")
 	logger.Info("🔍 예제 6: Exists - 사용자 존재 확인")
 	logger.Info("")
@@ -782,7 +782,7 @@ func example7Transaction(ctx context.Context, db *mysql.Client, logger *logging.
 
 // example8Delete demonstrates Delete method
 // example8Delete는 Delete 메서드를 시연합니다
-func example8Delete(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+func example8Delete(_ context.Context, db *mysql.Client, logger *logging.Logger) error {
 	logger.Info("🗑️  Example 8: Delete - Delete user")
 	logger.Info("🗑️  예제 8: Delete - 사용자 삭제")
 	logger.Info("")
@@ -849,8 +849,8 @@ func example10QueryBuilderSimple(ctx context.Context, db *mysql.Client, logger *
 		return fmt.Errorf("query builder failed: %w", err)
 	}
 
-	logger.Info(fmt.Sprintf("Top 3 oldest users (age > 25):"))
-	logger.Info(fmt.Sprintf("나이 25세 이상 중 나이가 많은 상위 3명:"))
+	logger.Info("Top 3 oldest users (age > 25):")
+	logger.Info("나이 25세 이상 중 나이가 많은 상위 3명:")
 	for i, user := range users {
 		logger.Info(fmt.Sprintf("  %d. %s (age: %v, email: %s)",
 			i+1, user["name"], user["age"], user["email"]))
@@ -906,8 +906,8 @@ func example12QueryBuilderComplex(ctx context.Context, db *mysql.Client, logger 
 		return fmt.Errorf("query builder complex query failed: %w", err)
 	}
 
-	logger.Info(fmt.Sprintf("Users older than 25 in Seoul or Busan:"))
-	logger.Info(fmt.Sprintf("서울 또는 부산에 거주하는 25세 이상 사용자:"))
+	logger.Info("Users older than 25 in Seoul or Busan:")
+	logger.Info("서울 또는 부산에 거주하는 25세 이상 사용자:")
 	if len(users) == 0 {
 		logger.Info("  (No users found / 사용자 없음)")
 	} else {
@@ -1002,7 +1002,7 @@ func example15SelectWhereComplex(ctx context.Context, db *mysql.Client, logger *
 
 // example16SelectColumn demonstrates SelectColumn - single column selection
 // example16SelectColumn은 SelectColumn을 시연합니다 - 단일 컬럼 선택
-func example16SelectColumn(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+func example16SelectColumn(_ context.Context, db *mysql.Client, logger *logging.Logger) error {
 	logger.Info("========================================")
 	logger.Info("Example 16: SelectColumn - Single Column Selection")
 	logger.Info("예제 16: SelectColumn - 단일 컬럼 선택")
@@ -1052,7 +1052,7 @@ func example16SelectColumn(ctx context.Context, db *mysql.Client, logger *loggin
 
 // example17SelectColumns demonstrates SelectColumns - multiple columns selection
 // example17SelectColumns는 SelectColumns를 시연합니다 - 여러 컬럼 선택
-func example17SelectColumns(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+func example17SelectColumns(_ context.Context, db *mysql.Client, logger *logging.Logger) error {
 	logger.Info("========================================")
 	logger.Info("Example 17: SelectColumns - Multiple Columns Selection")
 	logger.Info("예제 17: SelectColumns - 여러 컬럼 선택")
@@ -1257,7 +1257,7 @@ func example21Upsert(ctx context.Context, db *mysql.Client, logger *logging.Logg
 
 	result, err := db.Upsert(ctx, "users", data, []string{"name", "age", "city"})
 	if err != nil {
-		return fmt.Errorf("Upsert failed: %w", err)
+		return fmt.Errorf("[ERROR] Upsert failed: %w", err)
 	}
 
 	rows, _ := result.RowsAffected()
@@ -1274,7 +1274,7 @@ func example21Upsert(ctx context.Context, db *mysql.Client, logger *logging.Logg
 
 	result, err = db.Upsert(ctx, "users", data, []string{"name", "age", "city"})
 	if err != nil {
-		return fmt.Errorf("Upsert failed: %w", err)
+		return fmt.Errorf("[ERROR] Upsert failed: %w", err)
 	}
 
 	rows, _ = result.RowsAffected()
@@ -1343,7 +1343,7 @@ func example23Pagination(ctx context.Context, db *mysql.Client, logger *logging.
 
 	result, err := db.Paginate(ctx, "users", page, pageSize)
 	if err != nil {
-		return fmt.Errorf("Paginate failed: %w", err)
+		return fmt.Errorf("[ERROR] Paginate failed: %w", err)
 	}
 
 	logger.Info(fmt.Sprintf("✅ Page: %d/%d", result.Page, result.TotalPages))
@@ -1373,7 +1373,7 @@ func example24PaginationWithOptions(ctx context.Context, db *mysql.Client, logge
 		mysql.WithOrderBy("age DESC"),
 		mysql.WithColumns("name", "email", "age"))
 	if err != nil {
-		return fmt.Errorf("Paginate with options failed: %w", err)
+		return fmt.Errorf("[ERROR] Paginate with options failed: %w", err)
 	}
 
 	logger.Info("Users older than 25, ordered by age (descending):")
@@ -1508,7 +1508,7 @@ func example26RestoreSoftDeleted(ctx context.Context, db *mysql.Client, logger *
 
 	result, err := db.Restore(ctx, "users", "id = ?", userID)
 	if err != nil {
-		return fmt.Errorf("Restore failed: %w", err)
+		return fmt.Errorf("[ERROR] Restore failed: %w", err)
 	}
 
 	rows, _ := result.RowsAffected()
@@ -1552,7 +1552,7 @@ func example27SelectTrashed(ctx context.Context, db *mysql.Client, logger *loggi
 
 // example28QueryStats demonstrates GetQueryStats - query execution statistics
 // example28QueryStats는 GetQueryStats를 시연합니다 - 쿼리 실행 통계
-func example28QueryStats(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+func example28QueryStats(_ context.Context, db *mysql.Client, logger *logging.Logger) error {
 	logger.Info("========================================")
 	logger.Info("Example 28: QueryStats - Query execution statistics")
 	logger.Info("예제 28: QueryStats - 쿼리 실행 통계")
@@ -1585,7 +1585,7 @@ func example28QueryStats(ctx context.Context, db *mysql.Client, logger *logging.
 
 // example29SlowQueryLog demonstrates EnableSlowQueryLog - slow query logging
 // example29SlowQueryLog는 EnableSlowQueryLog를 시연합니다 - 느린 쿼리 로깅
-func example29SlowQueryLog(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+func example29SlowQueryLog(_ context.Context, db *mysql.Client, logger *logging.Logger) error {
 	logger.Info("========================================")
 	logger.Info("Example 29: SlowQueryLog - Slow query detection")
 	logger.Info("예제 29: SlowQueryLog - 느린 쿼리 감지")
@@ -1624,7 +1624,7 @@ func example29SlowQueryLog(ctx context.Context, db *mysql.Client, logger *loggin
 
 // example30PoolMetrics demonstrates GetPoolMetrics - connection pool metrics
 // example30PoolMetrics는 GetPoolMetrics를 시연합니다 - 연결 풀 메트릭
-func example30PoolMetrics(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+func example30PoolMetrics(_ context.Context, db *mysql.Client, logger *logging.Logger) error {
 	logger.Info("========================================")
 	logger.Info("Example 30: PoolMetrics - Connection pool metrics")
 	logger.Info("예제 30: PoolMetrics - 연결 풀 메트릭")

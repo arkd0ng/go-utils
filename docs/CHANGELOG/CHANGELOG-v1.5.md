@@ -8,6 +8,81 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.011] - 2025-10-14
+
+### Fixed / 수정
+
+- **CODE**: Fixed unused context parameter warnings in MySQL example
+- **코드**: MySQL 예제에서 사용하지 않는 context 파라미터 경고 수정
+- **CLEAN**: Renamed unused `ctx` parameters to `_` for explicit intent
+- **정리**: 사용하지 않는 `ctx` 파라미터를 `_`로 변경하여 명시적 의도 표시
+
+### Changes / 변경사항
+
+Fixed 12 functions with unused context parameters:
+사용하지 않는 context 파라미터를 가진 12개 함수 수정:
+
+- `example1SelectAll` - line 585
+- `example2SelectOne` - line 609
+- `example3Insert` - line 630
+- `example4Update` - line 659
+- `example5Count` - line 683
+- `example6Exists` - line 709
+- `example8Delete` - line 785
+- `example16SelectColumn` - line 1005
+- `example17SelectColumns` - line 1055
+- `example28QueryStats` - line 1555
+- `example29SlowQueryLog` - line 1588
+- `example30PoolMetrics` - line 1627
+
+**Pattern / 패턴**:
+```go
+// Before / 이전
+func exampleFunc(ctx context.Context, ...) error {
+    // ctx is not used - gopls warning
+    // ctx를 사용하지 않음 - gopls 경고
+}
+
+// After / 이후
+func exampleFunc(_ context.Context, ...) error {
+    // Explicitly indicates parameter is intentionally unused
+    // 파라미터를 의도적으로 사용하지 않음을 명시적으로 표시
+}
+```
+
+### Reason / 이유
+
+These example functions demonstrate non-context versions of methods for simplicity. The `ctx` parameter is kept in the function signature for consistency with other examples that do use context, but is explicitly marked as unused with `_`.
+
+이 예제 함수들은 간단함을 위해 non-context 버전의 메서드를 시연합니다. `ctx` 파라미터는 context를 사용하는 다른 예제들과의 일관성을 위해 함수 시그니처에 유지되지만, `_`로 명시적으로 사용하지 않음을 표시합니다.
+
+### Files Modified / 수정된 파일
+
+- `examples/mysql/main.go`: Fixed 12 function signatures
+- `cfg/app.yaml`: Updated version to v1.5.011
+
+### Benefits / 이점
+
+1. **No gopls warnings**: Clean IDE with no parameter warnings
+2. **gopls 경고 없음**: 파라미터 경고가 없는 깨끗한 IDE
+3. **Explicit intent**: `_` clearly shows parameter is intentionally unused
+4. **명시적 의도**: `_`가 파라미터를 의도적으로 사용하지 않음을 명확히 표시
+5. **Code cleanliness**: Better code hygiene and maintenance
+6. **코드 깔끔함**: 더 나은 코드 위생 및 유지보수
+
+### Notes / 참고사항
+
+- All 12 warnings resolved
+- 12개 경고 모두 해결됨
+- Example builds without errors
+- 예제가 오류 없이 빌드됨
+- Dynamic version test still passing with v1.5.011
+- 동적 버전 테스트가 v1.5.011에서도 여전히 통과
+- Current version: v1.5.011
+- 현재 버전: v1.5.011
+
+---
+
 ## [v1.5.010] - 2025-10-14
 
 ### Fixed / 수정
