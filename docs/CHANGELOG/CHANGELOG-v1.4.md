@@ -8,6 +8,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.018] - 2025-10-14
+
+### Fixed / 수정
+
+- **FIX**: Updated logging package test to check for correct version number
+- **수정**: 올바른 버전 번호를 확인하도록 logging 패키지 테스트 업데이트
+- Fixed `TestBanner()` in `logging/logger_test.go` to expect v1.4.017 instead of v1.4.014
+- `logging/logger_test.go`의 `TestBanner()`를 v1.4.014 대신 v1.4.017을 예상하도록 수정
+- Test was failing because version expectation was outdated
+- 버전 기대값이 오래되어 테스트가 실패했었음
+
+### Verified / 검증
+
+- All 4 packages tested and passing ✅
+- 4개 패키지 모두 테스트되고 통과 ✅
+  - Random package: 17 tests ✅
+  - Logging package: 14 tests ✅
+  - MySQL package: All tests ✅
+  - Redis package: 18 tests ✅
+- All tests verified after directory reorganization
+- 디렉토리 재구성 후 모든 테스트 검증 완료
+- No breaking changes to public API
+- 공개 API에 대한 중단 변경 없음
+
+### Updated Files / 업데이트된 파일
+
+- `logging/logger_test.go` - Updated version expectation in TestBanner
+
+### Notes / 참고사항
+
+- Final verification of all packages after v1.4.016 directory reorganization
+- v1.4.016 디렉토리 재구성 후 모든 패키지의 최종 검증
+- Repository is now in clean state with all tests passing
+- 저장소는 이제 모든 테스트가 통과하는 깨끗한 상태
+- Current version: v1.4.018
+- 현재 버전: v1.4.018
+
+---
+
 ## [v1.4.017] - 2025-10-14
 
 ### Fixed / 수정
