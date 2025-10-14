@@ -136,3 +136,21 @@ func Clean(s string) string {
 
 	return s
 }
+
+// Repeat repeats a string n times.
+// Repeat는 문자열을 n번 반복합니다.
+//
+// Unicode-safe: works correctly with all Unicode characters.
+// 유니코드 안전: 모든 유니코드 문자와 정상 작동.
+//
+// Example:
+//
+//	Repeat("hello", 3)  // "hellohellohello"
+//	Repeat("안녕", 2)     // "안녕안녕"
+//	Repeat("*", 5)      // "*****"
+func Repeat(s string, count int) string {
+	if count < 0 {
+		return ""
+	}
+	return strings.Repeat(s, count)
+}

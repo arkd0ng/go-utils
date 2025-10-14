@@ -56,6 +56,8 @@ func main() {
 	logger.Info(fmt.Sprintf("Capitalize('hello world'): %s", stringutil.Capitalize("hello world")))
 	logger.Info(fmt.Sprintf("Clean('  hello   world  '): '%s'", stringutil.Clean("  hello   world  ")))
 	logger.Info(fmt.Sprintf("RemoveSpaces('h e l l o'): %s", stringutil.RemoveSpaces("h e l l o")))
+	logger.Info(fmt.Sprintf("Repeat('*', 5): %s", stringutil.Repeat("*", 5)))
+	logger.Info(fmt.Sprintf("Repeat('안녕', 3): %s", stringutil.Repeat("안녕", 3)))
 	logger.Info("")
 
 	// Validation Examples / 유효성 검사 예제

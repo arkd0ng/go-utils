@@ -8,6 +8,65 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.012] - 2025-10-14
+
+### Added / 추가
+
+- **FEAT**: Added `Repeat` function to stringutil package
+- **기능**: stringutil 패키지에 `Repeat` 함수 추가
+- Repeats a string n times / 문자열을 n번 반복
+- Unicode-safe implementation / 유니코드 안전 구현
+
+### Implementation / 구현
+
+**Function Signature / 함수 시그니처**:
+```go
+func Repeat(s string, count int) string
+```
+
+**Features / 기능**:
+- Repeats string n times / 문자열 n번 반복
+- Returns empty string for negative count / 음수 count는 빈 문자열 반환
+- Works with all Unicode characters / 모든 유니코드 문자 지원
+- Wraps `strings.Repeat` with validation / 검증과 함께 `strings.Repeat` 래핑
+
+**Examples / 예제**:
+```go
+Repeat("hello", 3)  // "hellohellohello"
+Repeat("안녕", 2)     // "안녕안녕"
+Repeat("*", 5)      // "*****"
+Repeat("test", 0)   // ""
+Repeat("test", -1)  // ""
+```
+
+### Testing / 테스트
+
+- Added `TestRepeat` with 7 test cases / 7개 테스트 케이스를 가진 `TestRepeat` 추가
+- Covers basic, unicode, emoji, edge cases / 기본, 유니코드, 이모지, 엣지 케이스 커버
+- All tests passing / 모든 테스트 통과
+
+### Documentation / 문서
+
+- Added function documentation with examples / 예제가 포함된 함수 문서 추가
+- Updated example file with Repeat demos / Repeat 데모로 예제 파일 업데이트
+- Bilingual comments (English/Korean) / 이중 언어 주석 (영문/한글)
+
+### Files Modified / 수정된 파일
+
+- `stringutil/manipulation.go`: Added `Repeat` function
+- `stringutil/manipulation_test.go`: Added `TestRepeat`
+- `examples/stringutil/main.go`: Added Repeat examples
+- `cfg/app.yaml`: Updated version to v1.5.012
+
+### Notes / 참고사항
+
+- Function count: 37 → 38 / 함수 개수: 37 → 38
+- First of 16 new functions being added / 추가될 16개 함수 중 첫 번째
+- Current version: v1.5.012
+- 현재 버전: v1.5.012
+
+---
+
 ## [v1.5.011] - 2025-10-14
 
 ### Fixed / 수정
