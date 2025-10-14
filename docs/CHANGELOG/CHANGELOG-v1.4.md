@@ -8,7 +8,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.021] - 2025-10-14
+## [v1.4.022] - 2025-10-14 15:29
+
+### Changed / 변경
+
+- **DOCS**: Updated CHANGELOG format to include time (HH:MM) in version entries
+- **문서**: CHANGELOG 형식을 업데이트하여 버전 항목에 시간(시:분) 포함
+- All v1.4.x entries now show date and time for better tracking
+- 모든 v1.4.x 항목이 이제 더 나은 추적을 위해 날짜와 시간 표시
+
+### Notes / 참고사항
+
+- Format changed from `YYYY-MM-DD` to `YYYY-MM-DD HH:MM`
+- 형식이 `YYYY-MM-DD`에서 `YYYY-MM-DD HH:MM`으로 변경됨
+- Current version: v1.4.022
+- 현재 버전: v1.4.022
+
+---
+
+## [v1.4.021] - 2025-10-14 15:27
 
 ### Changed / 변경
 
@@ -22,7 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.019] - 2025-10-14
+## [v1.4.019] - 2025-10-14 15:24
 
 ### Changed / 변경
 
@@ -61,7 +79,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.018] - 2025-10-14
+## [v1.4.018] - 2025-10-14 15:23
 
 ### Fixed / 수정
 
@@ -100,7 +118,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.017] - 2025-10-14
+## [v1.4.017] - 2025-10-14 15:22
 
 ### Fixed / 수정
 
@@ -139,7 +157,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.016] - 2025-10-14
+## [v1.4.016] - 2025-10-14 15:15
 
 ### Changed / 변경
 
@@ -201,7 +219,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.015] - 2025-10-14
+## [v1.4.015] - 2025-10-14 15:10
 
 ### Fixed / 수정
 
@@ -249,7 +267,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.014] - 2025-10-14
+## [v1.4.014] - 2025-10-14 15:00
 
 ### Added / 추가
 - **TESTS**: Replaced MySQL package tests with end-to-end coverage powered by Docker MySQL auto orchestration
@@ -293,7 +311,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.013] - 2025-10-14
+## [v1.4.013] - 2025-10-14 14:50
 
 ### Added / 추가
 - **TESTS**: Comprehensive Redis test suite covering strings, hashes, lists, sets, sorted sets, keys, pipelines, transactions, and pub/sub
@@ -313,7 +331,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.012] - 2025-10-14
+## [v1.4.012] - 2025-10-14 14:40
 
 ### Changed / 변경
 - **DOCS**: Updated Redis documentation to reflect `cfg/database-redis.yaml`
@@ -331,7 +349,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.011] - 2025-10-14
+## [v1.4.011] - 2025-10-14 14:30
 
 ### Added / 추가
 - **DOCS**: Created comprehensive DEVELOPER_GUIDE.md for Redis package
@@ -409,7 +427,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.010] - 2025-10-14
+## [v1.4.010] - 2025-10-14 14:00
 
 ### Added / 추가
 - **DOCS**: Created comprehensive USER_MANUAL.md for Redis package
@@ -467,7 +485,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.009] - 2025-10-14
+## [v1.4.009] - 2025-10-14 13:45
 
 ### Changed / 변경
 - **FIX**: Remove unnecessary go-redis import dependency from examples
@@ -503,7 +521,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.008] - 2025-10-14
+## [v1.4.008] - 2025-10-14 13:30
 
 ### Changed / 변경
 - **REFACTOR**: Updated examples/redis/main.go to use logging package and results directory
@@ -544,7 +562,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.007] - 2025-10-14
+## [v1.4.007] - 2025-10-14 13:00
 
 ### Added / 추가
 - **DOCS**: Created comprehensive examples/redis/README.md
@@ -582,7 +600,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.006] - 2025-10-14
+## [v1.4.006] - 2025-10-14 12:30
 
 ### Changed / 변경
 - **DOCS**: Updated CLAUDE.md with comprehensive Redis package architecture
@@ -630,7 +648,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.005] - 2025-10-14
+## [v1.4.005] - 2025-10-14 12:00
 
 ### Added / 추가
 - **COMPLETE**: Implemented full database/redis package with all core features
@@ -678,7 +696,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.004] - 2025-10-14
+## [v1.4.004] - 2025-10-14 11:30
 
 ### Added / 추가
 - Docker Redis setup with docker-compose.yml configuration
@@ -708,7 +726,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [v1.4.003] - 2025-10-14
+## [v1.4.003] - 2025-10-14 11:00
 
 ### Added / 추가
 - Created WORK_PLAN.md for Redis package with comprehensive implementation roadmap
