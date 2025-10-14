@@ -8,6 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.012] - 2025-10-14
+
+### Changed / 변경
+- **DOCS**: Updated Redis documentation to reflect `cfg/database-redis.yaml`
+- **문서**: Redis 문서를 `cfg/database-redis.yaml` 명명 규칙에 맞게 업데이트
+- Clarified configuration instructions in `database/redis/README.md`
+- `database/redis/README.md`의 설정 지침을 명확히 설명
+- Updated Redis Go compatibility badge to Go 1.18+
+- Redis Go 호환 배지를 Go 1.18+로 업데이트
+- Bumped documentation version headers to v1.4.012 for Redis manuals
+- Redis 매뉴얼 문서 버전 헤더를 v1.4.012로 갱신
+
+### Notes / 참고사항
+- Current version: v1.4.012
+- 현재 버전: v1.4.012
+
+---
+
 ## [v1.4.011] - 2025-10-14
 
 ### Added / 추가

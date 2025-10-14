@@ -142,7 +142,7 @@ Redis 테스팅을 위한 Docker Compose 설정 및 설정 스크립트를 생�
    - `scripts/docker-redis-logs.sh` - View Redis logs
    - `scripts/docker-redis-cli.sh` - Connect to Redis CLI
 
-3. Create `cfg/redis.yaml` configuration file / redis.yaml 설정 파일 생성:
+3. Create `cfg/database-redis.yaml` configuration file / database-redis.yaml 설정 파일 생성:
    ```yaml
    redis:
      addr: localhost:6379

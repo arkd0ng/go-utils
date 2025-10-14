@@ -1,6 +1,6 @@
 # Redis Package - User Manual / Redis 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.4.010
+**Version / 버전**: v1.4.012
 **Last Updated / 최종 업데이트**: 2025-10-14
 
 ---
@@ -1492,4 +1492,4 @@ MIT 라이선스 - 자세한 내용은 [LICENSE](../../../LICENSE) 파일 참조
 ---
 
 **Last Updated / 최종 업데이트**: 2025-10-14
-**Version / 버전**: v1.4.010
+**Version / 버전**: v1.4.012

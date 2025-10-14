@@ -4,7 +4,7 @@ Extreme simplicity Redis client for Go - reduce 20+ lines of code to just 2 line
 
 Go를 위한 극도로 간단한 Redis 클라이언트 - 20줄 이상의 코드를 단 2줄로 축소!
 
-[![Go Version](https://img.shields.io/badge/go-%3E%3D1.16-blue)](https://golang.org/)
+[![Go Version](https://img.shields.io/badge/go-%3E%3D1.18-blue)](https://golang.org/)
 
 ## Features / 기능
 
@@ -308,7 +308,9 @@ pubsub, _ := rdb.PSubscribe(ctx, "notification:*")
 
 ### Using Config File / 설정 파일 사용
 
-Create `cfg/redis.yaml`:
+Create or update `cfg/database-redis.yaml`:
+The repository ships with this file pre-populated; tweak the values to match your environment.
+이 저장소에는 기본값이 채워진 파일이 포함되어 있으므로 환경에 맞게 값을 수정하세요.
 
 ```yaml
 redis:
