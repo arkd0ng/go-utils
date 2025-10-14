@@ -8,6 +8,116 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.008] - 2025-10-14 16:04
+
+### Added / 추가
+
+- **DOCS**: Created comprehensive DEVELOPER_GUIDE.md for stringutil package
+- **문서**: stringutil 패키지에 대한 포괄적인 DEVELOPER_GUIDE.md 생성
+- **CONTENT**: ~1,750 lines of detailed developer documentation
+- **내용**: 약 1,750줄의 상세한 개발자 문서
+
+### Documentation Structure / 문서 구조
+
+- **Table of Contents**: 10 major sections
+- **목차**: 10개 주요 섹션
+- **Architecture Overview**: Design philosophy, high-level architecture, design decisions
+- **아키텍처 개요**: 설계 철학, 상위 수준 아키텍처, 설계 결정
+- **Package Structure**: File organization, dependencies, responsibility breakdown
+- **패키지 구조**: 파일 구성, 의존성, 책임 분류
+- **Core Components**: 5 detailed component implementations
+- **핵심 컴포넌트**: 5개 상세 컴포넌트 구현
+  - Smart Word Splitting algorithm
+  - Unicode-Safe Truncation
+  - Practical Email Validation
+  - Map and Filter (Functional Programming)
+  - Multi-Pattern Replace
+- **Internal Implementation**: Flow diagrams for key functions
+- **내부 구현**: 주요 함수에 대한 흐름 다이어그램
+- **Design Patterns**: 5 patterns with examples
+- **디자인 패턴**: 예제가 있는 5개 패턴
+  - Helper Function Pattern
+  - Wrapper Pattern
+  - Higher-Order Function Pattern
+  - Predicate Pattern
+  - Builder Pattern
+- **Adding New Features**: 7-step guide with templates
+- **새 기능 추가**: 템플릿이 있는 7단계 가이드
+- **Testing Guide**: Test structure, running tests, writing good tests
+- **테스트 가이드**: 테스트 구조, 테스트 실행, 좋은 테스트 작성
+- **Performance**: Time/space complexity, optimization techniques
+- **성능**: 시간/공간 복잡도, 최적화 기법
+- **Contributing Guidelines**: Complete workflow and review checklist
+- **기여 가이드라인**: 완전한 워크플로우 및 리뷰 체크리스트
+- **Code Style**: Naming conventions, comment style, error handling
+- **코드 스타일**: 명명 규칙, 주석 스타일, 에러 처리
+- **Appendix**: Complete function reference
+- **부록**: 완전한 함수 참조
+
+### Key Topics Covered / 다룬 주요 주제
+
+- Design philosophy: "20 lines → 1 line"
+- 설계 철학: "20줄 → 1줄"
+- Unicode safety implementation ([]rune vs byte)
+- 유니코드 안전 구현 ([]rune vs byte)
+- Zero dependencies approach
+- 제로 의존성 접근
+- Practical validation vs RFC compliance
+- 실용적 검증 vs RFC 준수
+- Smart case conversion algorithm
+- 스마트 케이스 변환 알고리즘
+- Performance optimization techniques
+- 성능 최적화 기법
+- Functional programming patterns (Map/Filter)
+- 함수형 프로그래밍 패턴 (Map/Filter)
+
+### Files Created / 생성된 파일
+
+- `docs/stringutil/DEVELOPER_GUIDE.md` (~1,750 lines)
+- Architecture diagrams in ASCII art
+- 아스키 아트로 된 아키텍처 다이어그램
+- Flow diagrams for key algorithms
+- 주요 알고리즘에 대한 흐름 다이어그램
+- Complete code examples with explanations
+- 설명이 있는 완전한 코드 예제
+- All sections in bilingual format (English/Korean)
+- 모든 섹션은 이중 언어 형식 (영문/한글)
+
+### Notes / 참고사항
+
+- Comprehensive developer documentation complete
+- 포괄적인 개발자 문서 완성
+- Package documentation now complete (USER_MANUAL + DEVELOPER_GUIDE)
+- 패키지 문서화 완료 (USER_MANUAL + DEVELOPER_GUIDE)
+- Total documentation: ~3,600 lines
+- 전체 문서: 약 3,600줄
+- Current version: v1.5.008
+- 현재 버전: v1.5.008
+
+---
+
+## [v1.5.007] - 2025-10-14 16:01
+
+### Fixed / 수정
+
+- **FIX**: Fixed MySQL example Docker cleanup to handle container not found errors
+- **수정**: MySQL 예제 Docker 정리에서 컨테이너 찾을 수 없음 에러 처리 수정
+- Added conditional check before stopping/removing Docker containers
+- Docker 컨테이너 중지/제거 전 조건 확인 추가
+- Improved error messages for Docker operations
+- Docker 작업에 대한 에러 메시지 개선
+
+### Files Modified / 수정된 파일
+
+- `examples/mysql/main.go` - Enhanced Docker cleanup logic
+
+### Notes / 참고사항
+
+- Current version: v1.5.007
+- 현재 버전: v1.5.007
+
+---
+
 ## [v1.5.005] - 2025-10-14 15:57
 
 ### Added / 추가
