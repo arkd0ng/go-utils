@@ -6,6 +6,49 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
+## [v1.3.016] - 2025-10-14 (Auto-cleanup Docker MySQL After Examples/Tests)
+
+### Added / 추가
+- **TestHelper for Integration Tests** / 통합 테스트용 TestHelper:
+  - `database/mysql/testhelper.go`: Helper functions for managing Docker MySQL in tests
+  - `NewTestHelper()`: Creates test helper instance
+  - `SetupDocker()`: Automatically starts Docker MySQL if not running
+  - `TeardownDocker()`: Stops Docker MySQL if started by tests
+  - `GetTestDSN()`: Returns test database DSN
+  - `CreateTestClient()`: Creates test MySQL client
+  - `CleanupTestData()`: Cleans up test data after tests
+
+- **Integration Test Example** / 통합 테스트 예제:
+  - `database/mysql/integration_test.go`: Example integration tests
+  - Tests with `+build integration` tag
+  - Run with: `go test -tags=integration ./database/mysql -v`
+
+### Changed / 변경
+- **Auto-cleanup in Examples** / 예제에서 자동 정리:
+  - `examples/mysql/main.go`: Now automatically stops Docker MySQL after completion
+  - **Behavior** / 동작:
+    - If MySQL **not running**: Starts → Runs examples → **Stops automatically**
+    - If MySQL **already running**: Runs examples → **Leaves running**
+  - Prevents leftover Docker containers after running examples
+
+- **Documentation** / 문서화:
+  - `mysql/README.md`: Added "Running Tests" section
+  - Documented auto-cleanup behavior for both examples and tests
+  - Added integration test usage instructions
+
+### Benefits / 장점
+- **Clean Environment** / 깨끗한 환경: No leftover containers after examples/tests
+- **Developer Friendly** / 개발자 친화적: Doesn't stop manually started MySQL
+- **CI/CD Ready** / CI/CD 준비: Tests can run in clean environments
+- **Automatic Lifecycle** / 자동 수명 주기: Start → Test → Stop automatically
+
+### Testing / 테스트
+- ✅ Examples start MySQL, run all tests, and stop MySQL automatically
+- ✅ Examples skip stopping if MySQL was already running
+- ✅ Integration tests can use TestHelper for automatic lifecycle management
+
+---
+
 ## [v1.3.015] - 2025-10-14 (Migration to Docker MySQL)
 
 ### Changed / 변경

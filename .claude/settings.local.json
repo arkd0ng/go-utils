@@ -24,7 +24,9 @@
       "Bash(chmod:*)",
       "Bash(/dev/null)",
       "Bash(./scripts/docker-mysql-start.sh:*)",
-      "Bash(brew uninstall:*)"
+      "Bash(brew uninstall:*)",
+      "Bash(./scripts/docker-mysql-stop.sh:*)",
+      "Bash(timeout 120 go run .)"
     ],
     "deny": [],
     "ask": []

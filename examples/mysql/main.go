@@ -80,7 +80,7 @@ func main() {
 			logger.Info("Docker가 설치되어 실행 중인지 확인하세요:")
 			logger.Info("  1. Install Docker Desktop: https://www.docker.com/products/docker-desktop")
 			logger.Info("  2. Start Docker Desktop")
-			logger.Info("  3. Run: docker-compose up -d")
+			logger.Info("  3. Run: docker compose up -d")
 			os.Exit(1)
 		}
 
@@ -89,13 +89,30 @@ func main() {
 		logger.Info("Docker MySQL 준비 중...")
 		if err := waitForDockerMySQL(config.MySQL, 30*time.Second); err != nil {
 			logger.Error("Docker MySQL failed to become ready", "error", err)
+			// Clean up - stop MySQL if we started it / 정리 - 시작한 경우 MySQL 중지
+			stopDockerMySQL()
 			os.Exit(1)
 		}
 		logger.Info("Docker MySQL is ready!")
 		logger.Info("Docker MySQL 준비 완료!")
+
+		// Ensure MySQL stops when program exits / 프로그램 종료 시 MySQL 중지 보장
+		defer func() {
+			logger.Info("")
+			logger.Info("Stopping Docker MySQL container...")
+			logger.Info("Docker MySQL 컨테이너 중지 중...")
+			if err := stopDockerMySQL(); err != nil {
+				logger.Warn("Failed to stop Docker MySQL", "error", err)
+			} else {
+				logger.Info("✅ Docker MySQL stopped successfully")
+				logger.Info("✅ Docker MySQL이 성공적으로 중지되었습니다")
+			}
+		}()
 	} else {
 		logger.Info("Docker MySQL is already running")
 		logger.Info("Docker MySQL이 이미 실행 중입니다")
+		logger.Info("(Will not stop MySQL as it was already running)")
+		logger.Info("(이미 실행 중이었으므로 MySQL을 중지하지 않습니다)")
 	}
 
 	logger.Info("")

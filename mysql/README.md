@@ -190,15 +190,62 @@ docker inspect go-utils-mysql | grep -A 5 Health
 
 ## Running Examples / 예제 실행
 
-After starting MySQL, you can run the examples:
+The examples will automatically start and stop Docker MySQL:
 
-MySQL을 시작한 후 예제를 실행할 수 있습니다:
+예제는 자동으로 Docker MySQL을 시작하고 중지합니다:
 
 ```bash
 cd examples/mysql
 go run .
 ```
 
-The examples will automatically detect and use the Docker MySQL container.
+**Behavior / 동작:**
+- If MySQL is **not running**: Starts MySQL → Runs examples → **Stops MySQL automatically**
+- If MySQL is **already running**: Runs examples → **Leaves MySQL running**
 
-예제는 자동으로 Docker MySQL 컨테이너를 감지하고 사용합니다.
+**동작:**
+- MySQL이 **실행 중이 아닌 경우**: MySQL 시작 → 예제 실행 → **MySQL 자동 중지**
+- MySQL이 **이미 실행 중인 경우**: 예제 실행 → **MySQL을 계속 실행 상태로 유지**
+
+This ensures a clean environment after running examples.
+
+이렇게 하면 예제 실행 후 깨끗한 환경이 보장됩니다.
+
+## Running Tests / 테스트 실행
+
+### Unit Tests / 단위 테스트
+
+Unit tests don't require a database:
+
+단위 테스트는 데이터베이스가 필요하지 않습니다:
+
+```bash
+go test ./database/mysql -v
+```
+
+### Integration Tests / 통합 테스트
+
+Integration tests automatically manage Docker MySQL lifecycle:
+
+통합 테스트는 Docker MySQL 수명 주기를 자동으로 관리합니다:
+
+```bash
+# Run integration tests / 통합 테스트 실행
+go test -tags=integration ./database/mysql -v
+```
+
+**Behavior / 동작:**
+- If MySQL is **not running**: Starts MySQL → Runs tests → **Stops MySQL automatically**
+- If MySQL is **already running**: Runs tests → **Leaves MySQL running**
+
+Integration tests use the `TestHelper` which automatically:
+- Starts Docker MySQL if not running
+- Waits for MySQL to be ready
+- Cleans up test data
+- Stops MySQL if it was started by the test
+
+통합 테스트는 `TestHelper`를 사용하여 자동으로:
+- MySQL이 실행 중이 아니면 Docker MySQL을 시작
+- MySQL이 준비될 때까지 대기
+- 테스트 데이터 정리
+- 테스트에서 시작한 경우 MySQL 중지
