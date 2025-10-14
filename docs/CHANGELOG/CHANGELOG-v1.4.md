@@ -8,6 +8,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.013] - 2025-10-14
+
+### Added / 추가
+- **TESTS**: Comprehensive Redis test suite covering strings, hashes, lists, sets, sorted sets, keys, pipelines, transactions, and pub/sub
+- **테스트**: 문자열, 해시, 리스트, 집합, 정렬 집합, 키, 파이프라인, 트랜잭션, pub/sub을 아우르는 Redis 테스트 스위트 추가
+- **INFRA**: Shared Redis test helper that auto-starts Docker Redis when needed and flushes databases between tests
+- **인프라**: 필요 시 Docker Redis를 자동으로 시작하고 각 테스트 사이 DB를 초기화하는 테스트 헬퍼 추가
+
+### Changed / 변경
+- **REFACTOR**: Reworked `client_test.go` to validate configuration options, ping health checks, and close behavior
+- **리팩터링**: `client_test.go`를 재구성하여 설정 옵션, Ping 헬스 체크, Close 동작을 검증하도록 개선
+- **DOCS**: Bumped Redis documentation headers to v1.4.013 to match latest release
+- **문서**: 최신 릴리스에 맞춰 Redis 문서 헤더를 v1.4.013으로 업데이트
+
+### Notes / 참고사항
+- Current version: v1.4.013
+- 현재 버전: v1.4.013
+
+---
+
 ## [v1.4.012] - 2025-10-14
 
 ### Changed / 변경
