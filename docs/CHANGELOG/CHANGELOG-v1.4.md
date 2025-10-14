@@ -8,6 +8,64 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.010] - 2025-10-14
+
+### Added / 추가
+- **DOCS**: Created comprehensive USER_MANUAL.md for Redis package
+- **문서**: Redis 패키지에 대한 포괄적인 USER_MANUAL.md 생성
+- Complete user manual with 1200+ lines covering all Redis package features
+- Redis 패키지의 모든 기능을 다루는 1200줄 이상의 완전한 사용자 매뉴얼
+- Table of contents with 11 major sections
+- 11개 주요 섹션이 있는 목차
+- Introduction explaining extreme simplicity philosophy (20+ lines → 2 lines)
+- 극도의 간결함 철학 설명 소개 (20줄 이상 → 2줄)
+- Installation instructions for Docker and local Redis setup
+- Docker 및 로컬 Redis 설정을 위한 설치 지침
+- Quick Start with 3 progressive examples
+- 3개 단계별 예제가 포함된 빠른 시작
+- Configuration reference with detailed table of all 10 options
+- 10개 모든 옵션의 상세 테이블이 포함된 설정 참조
+- Core operations documentation for all 6 Redis data types:
+- 6가지 Redis 데이터 타입 모두에 대한 핵심 작업 문서화:
+  - String Operations (Set, Get, MSet, MGet, Incr, Decr, Append, SetNX, SetEX)
+  - Hash Operations (HSet, HGet, HGetAll, HGetAllAs[T], HSetMap, HDel, HExists, HLen, HIncrBy)
+  - List Operations (LPush, RPush, LPop, RPop, LRange, LLen, LIndex, LSet, LRem)
+  - Set Operations (SAdd, SRem, SMembers, SIsMember, SCard, SUnion, SInter, SDiff)
+  - Sorted Set Operations (ZAdd, ZRange, ZRangeByScore, ZRem, ZScore, ZIncrBy, ZCard, ZRank)
+  - Key Operations (Del, Exists, Expire, TTL, Keys, Scan, Rename, Type)
+- Advanced features documentation:
+- 고급 기능 문서화:
+  - Pipeline operations for batch command execution
+  - Transactions with optimistic locking (WATCH/MULTI/EXEC)
+  - Pub/Sub for message publishing and subscribing
+- 6 usage patterns with code examples:
+- 코드 예제가 포함된 6개 사용 패턴:
+  - Session Storage, Cache with TTL, Rate Limiting, Distributed Lock, Task Queue, Leaderboard
+- 5 common use cases with complete implementation code:
+- 완전한 구현 코드가 포함된 5개 일반 사용 사례:
+  - User Session Management, API Rate Limiting, Real-time Chat, Leaderboard System, Job Queue
+- 10 best practices with good/bad examples
+- 좋은/나쁜 예제가 포함된 10개 모범 사례
+- Troubleshooting section with 6 common problems and solutions
+- 6개 일반 문제 및 해결책이 포함된 문제 해결 섹션
+- FAQ with 15 questions and detailed answers
+- 15개 질문 및 상세 답변이 포함된 FAQ
+- All content is bilingual (English/Korean)
+- 모든 내용은 이중 언어 (영문/한글)
+
+### Created Files / 생성된 파일
+- `docs/database/redis/USER_MANUAL.md` (1200+ lines)
+
+### Notes / 참고사항
+- USER_MANUAL.md follows same comprehensive format as MySQL package
+- USER_MANUAL.md는 MySQL 패키지와 동일한 포괄적인 형식 사용
+- Next: DEVELOPER_GUIDE.md creation planned for v1.4.011
+- 다음: DEVELOPER_GUIDE.md 생성 v1.4.011에 계획됨
+- Current version: v1.4.010
+- 현재 버전: v1.4.010
+
+---
+
 ## [v1.4.009] - 2025-10-14
 
 ### Changed / 변경
