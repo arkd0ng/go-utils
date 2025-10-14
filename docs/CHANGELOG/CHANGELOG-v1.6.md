@@ -8,6 +8,99 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.6.004] - 2025-10-14
+
+### Changed / 변경
+
+- **EXAMPLES**: Enhanced examples/stringutil/main.go to include ALL 53 functions / examples/stringutil/main.go를 모든 53개 함수 포함하도록 개선
+  - Expanded from basic examples to comprehensive demonstration / 기본 예제에서 포괄적인 시연으로 확장
+  - Added detailed logging with function descriptions (English/Korean) / 함수 설명이 있는 상세한 로깅 추가 (영문/한글)
+  - Organized into 12 sections with clear categorization / 명확한 분류로 12개 섹션으로 구성
+  - Added 5 real-world usage scenarios / 5개의 실제 사용 시나리오 추가
+
+### Example Coverage / 예제 커버리지
+
+**All 10 Categories + Additional Sections / 모든 10개 카테고리 + 추가 섹션**:
+
+1. **Case Conversion (9 functions) / 케이스 변환 (9개 함수)**:
+   - ToSnakeCase, ToCamelCase, ToKebabCase, ToPascalCase, ToScreamingSnakeCase
+   - ToTitle, Slugify, Quote, Unquote
+
+2. **String Manipulation (17 functions) / 문자열 조작 (17개 함수)**:
+   - Truncate, TruncateWithSuffix, Reverse, Capitalize, CapitalizeFirst
+   - RemoveDuplicates, RemoveSpaces, RemoveSpecialChars, Clean, Repeat
+   - Substring, Left, Right, Insert, SwapCase, PadLeft, PadRight
+
+3. **Validation (8 functions) / 유효성 검사 (8개 함수)**:
+   - IsEmail, IsURL, IsAlphanumeric, IsNumeric, IsAlpha
+   - IsBlank, IsLower, IsUpper
+
+4. **Comparison (3 functions) / 비교 (3개 함수)**:
+   - EqualFold, HasPrefix, HasSuffix
+
+5. **Search & Replace (6 functions) / 검색 및 치환 (6개 함수)**:
+   - ContainsAny, ContainsAll, StartsWithAny, EndsWithAny
+   - ReplaceAll, ReplaceIgnoreCase
+
+6. **Unicode Operations (3 functions) / 유니코드 작업 (3개 함수)**:
+   - RuneCount, Width, Normalize
+
+7. **Collection Utilities (7 functions) / 컬렉션 유틸리티 (7개 함수)**:
+   - CountWords, CountOccurrences, Lines, Words, Map, Filter, Join
+
+8. **Encoding/Decoding (8 functions) / 인코딩/디코딩 (8개 함수)**:
+   - Base64Encode, Base64Decode, Base64URLEncode, Base64URLDecode
+   - URLEncode, URLDecode, HTMLEscape, HTMLUnescape
+
+9. **String Distance/Similarity (4 functions) / 문자열 거리/유사도 (4개 함수)**:
+   - LevenshteinDistance, Similarity, HammingDistance, JaroWinklerSimilarity
+
+10. **Formatting (10+ functions) / 포맷팅 (10개 이상 함수)**:
+    - FormatNumber, FormatBytes, FormatWithCount, Ellipsis, Mask
+    - MaskEmail, MaskCreditCard, AddLineNumbers, Indent, Dedent, WrapText
+
+11. **Builder Pattern / 빌더 패턴**:
+    - NewBuilder, NewBuilderWithString with method chaining examples
+    - 메서드 체이닝 예제가 있는 NewBuilder, NewBuilderWithString
+
+12. **Real-world Scenarios / 실제 사용 시나리오**:
+    - Database input processing / 데이터베이스 입력 처리
+    - URL slug generation / URL 슬러그 생성
+    - API response formatting / API 응답 포맷팅
+    - Sensitive data masking / 민감한 데이터 마스킹
+    - Typo correction with similarity / 유사도를 사용한 오타 수정
+
+**Total Functions**: 53 functions fully demonstrated / 53개 함수 완전 시연
+
+### Logging Output / 로깅 출력
+
+- Log file: `./results/logs/stringutil_example_YYYYMMDD_HHMMSS.log` / 로그 파일
+- Detailed function descriptions in English and Korean / 영문 및 한글 상세한 함수 설명
+- Input/output examples for each function / 각 함수의 입력/출력 예제
+- Section separators with 80-character lines / 80자 라인으로 섹션 구분
+- Comprehensive summary at the end / 마지막에 포괄적인 요약
+
+### Files Updated / 업데이트된 파일
+
+- `cfg/app.yaml`: Version updated to v1.6.004 / 버전을 v1.6.004로 업데이트
+- `examples/stringutil/main.go`: Complete rewrite with all 53 functions / 모든 53개 함수를 포함한 완전한 재작성
+- `docs/CHANGELOG/CHANGELOG-v1.6.md`: This entry / 이 항목
+
+### Example Improvements / 예제 개선사항
+
+**Before / 이전**:
+- Basic examples covering ~30% of functions / 함수의 ~30%를 다루는 기본 예제
+- Limited logging and documentation / 제한적인 로깅 및 문서화
+- Simple demonstrations without context / 컨텍스트 없는 간단한 시연
+
+**After / 이후**:
+- Complete coverage of ALL 53 functions (100%) / 모든 53개 함수의 완전한 커버리지 (100%)
+- Detailed bilingual logging for each function / 각 함수에 대한 상세한 이중 언어 로깅
+- Real-world scenarios demonstrating practical usage / 실용적인 사용을 보여주는 실제 시나리오
+- Clear categorization and structured output / 명확한 분류 및 구조화된 출력
+
+---
+
 ## [v1.6.003] - 2025-10-14
 
 ### Changed / 변경
