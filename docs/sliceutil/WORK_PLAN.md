@@ -235,20 +235,20 @@ sliceutil/
 ### v1.7.011 - Sorting Functions / 정렬 함수
 
 **Tasks / 작업**:
-- [ ] Create sliceutil/sort.go / sliceutil/sort.go 생성
-- [ ] Implement 5 functions:
+- [x] Create sliceutil/sort.go / sliceutil/sort.go 생성
+- [x] Implement 5 functions:
   - Sort[T constraints.Ordered](slice []T) []T
   - SortDesc[T constraints.Ordered](slice []T) []T
   - SortBy[T any, K constraints.Ordered](slice []T, keyFunc func(T) K) []T
   - IsSorted[T constraints.Ordered](slice []T) bool
   - IsSortedDesc[T constraints.Ordered](slice []T) bool
-- [ ] Write tests for all 5 functions / 모든 5개 함수에 대한 테스트 작성
-- [ ] Write benchmarks / 벤치마크 작성
-- [ ] Update cfg/app.yaml to v1.7.011 / cfg/app.yaml를 v1.7.011로 업데이트
-- [ ] Update CHANGELOG / CHANGELOG 업데이트
+- [x] Write tests for all 5 functions / 모든 5개 함수에 대한 테스트 작성
+- [x] Write benchmarks / 벤치마크 작성
+- [x] Update cfg/app.yaml to v1.7.011 / cfg/app.yaml를 v1.7.011로 업데이트
+- [x] Update CHANGELOG / CHANGELOG 업데이트
 
 **Deliverables / 결과물**:
-- All 5 sorting functions complete
+- ✅ All 5 sorting functions complete
 
 ---
 
@@ -573,12 +573,12 @@ sliceutil/
 
 ## Status Tracking / 상태 추적
 
-**Current Version / 현재 버전**: v1.7.010
+**Current Version / 현재 버전**: v1.7.011
 **Current Phase / 현재 단계**: Phase 2 - Core Features / 2단계 - 핵심 기능
-**Next Task / 다음 작업**: v1.7.011 - Sorting Functions (5 functions)
+**Next Task / 다음 작업**: v1.7.012 - Predicate Functions (6 functions)
 
-**Overall Progress / 전체 진행률**: 10/18 units (56%)
-**Functions Implemented / 구현된 함수**: 38/60 functions (63%)
+**Overall Progress / 전체 진행률**: 11/18 units (61%)
+**Functions Implemented / 구현된 함수**: 43/60 functions (72%)
 
 ---
 

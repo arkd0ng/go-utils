@@ -8,6 +8,65 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.7.011] - 2025-10-15
+
+### Added / 추가
+
+- **SORTING FUNCTIONS**: Implemented 5 sorting functions / 5개 정렬 함수 구현
+  - `Sort[T constraints.Ordered](slice []T) []T` - Sort in ascending order / 오름차순 정렬
+  - `SortDesc[T constraints.Ordered](slice []T) []T` - Sort in descending order / 내림차순 정렬
+  - `SortBy[T any, K constraints.Ordered](slice []T, keyFunc func(T) K) []T` - Sort by extracted key / 추출한 키로 정렬
+  - `IsSorted[T constraints.Ordered](slice []T) bool` - Check if sorted ascending / 오름차순 정렬 여부 확인
+  - `IsSortedDesc[T constraints.Ordered](slice []T) bool` - Check if sorted descending / 내림차순 정렬 여부 확인
+
+- **TESTS**: Comprehensive tests for sorting functions / 정렬 함수에 대한 포괄적인 테스트
+  - 5 test functions with 45 test cases total / 총 45개 테스트 케이스가 있는 5개 테스트 함수
+  - Edge cases covered (empty, single element, duplicates, negatives) / 엣지 케이스 커버 (비어있음, 단일 요소, 중복, 음수)
+  - Multiple data types tested (int, string, float64, custom structs) / 여러 데이터 타입 테스트 (int, string, float64, 사용자 정의 구조체)
+  - Immutability tests (original slice unchanged) / 불변성 테스트 (원본 슬라이스 변경되지 않음)
+  - 5 benchmark functions / 5개 벤치마크 함수
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.011 / `cfg/app.yaml` 버전을 v1.7.011로 업데이트
+- Updated `sliceutil/sliceutil.go` Version constant to "1.7.011" / `sliceutil/sliceutil.go` 버전 상수를 "1.7.011"로 업데이트
+- Updated `docs/sliceutil/WORK_PLAN.md` progress tracking / `docs/sliceutil/WORK_PLAN.md` 진행 상황 추적 업데이트
+
+### Files Created / 생성된 파일
+
+- `sliceutil/sort.go` - Sorting functions implementation (~180 lines) / 정렬 함수 구현 (~180줄)
+- `sliceutil/sort_test.go` - Comprehensive tests (~460 lines) / 포괄적인 테스트 (~460줄)
+
+### Test Results / 테스트 결과
+
+- ✅ All tests passing (45 test cases) / 모든 테스트 통과 (45개 테스트 케이스)
+- ✅ TestSort: 9 subtests / TestSort: 9개 하위 테스트
+- ✅ TestSortDesc: 9 subtests / TestSortDesc: 9개 하위 테스트
+- ✅ TestSortBy: 6 subtests / TestSortBy: 6개 하위 테스트
+- ✅ TestIsSorted: 9 subtests / TestIsSorted: 9개 하위 테스트
+- ✅ TestIsSortedDesc: 9 subtests / TestIsSortedDesc: 9개 하위 테스트
+
+### Progress / 진행 상황
+
+- **Functions Implemented / 구현된 함수**: 43/60 (72%)
+- **All 5 sorting functions complete! / 모든 5개 정렬 함수 완료!**
+- **Work Units Completed / 완료된 작업 단위**: 11/18 (61%)
+- **Current Phase / 현재 단계**: Phase 2 - Core Features (Complete!) / 2단계 - 핵심 기능 (완료!)
+
+### Milestones / 마일스톤
+
+🎉 **61% Work Units Complete!** / **61% 작업 단위 완료!**
+🎉 **72% Functions Complete!** / **72% 함수 완료!**
+🎉 **Phase 2 Complete - All Core Features Done!** / **2단계 완료 - 모든 핵심 기능 완료!**
+
+### Next Steps / 다음 단계
+
+- **v1.7.012**: Predicate Functions - 6 functions / 조건 검사 함수 - 6개 함수
+  - All, Any, None, AllEqual, IsSortedBy, ContainsAll
+- **Phase 3: Advanced Features** / **3단계: 고급 기능**
+
+---
+
 ## [v1.7.010] - 2025-10-15
 
 ### Added / 추가
