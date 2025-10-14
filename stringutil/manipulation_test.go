@@ -106,6 +106,57 @@ func TestRight(t *testing.T) {
 	}
 }
 
+func TestInsert(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		index    int
+		insert   string
+		expected string
+	}{
+		{"insert at middle", "hello world", 5, ",", "hello, world"},
+		{"insert at start", "hello", 0, "say ", "say hello"},
+		{"insert at end", "hello", 5, " world", "hello world"},
+		{"unicode insert", "안녕하세요", 2, " 반갑습니다 ", "안녕 반갑습니다 하세요"},
+		{"negative index", "hello", -1, "X", "Xhello"},
+		{"index too large", "hello", 100, "!", "hello!"},
+		{"empty insert", "hello", 2, "", "hello"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := Insert(tt.input, tt.index, tt.insert)
+			if result != tt.expected {
+				t.Errorf("Insert(%q, %d, %q) = %q, want %q", tt.input, tt.index, tt.insert, result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestSwapCase(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{"basic swap", "Hello World", "hELLO wORLD"},
+		{"all upper", "HELLO", "hello"},
+		{"all lower", "hello", "HELLO"},
+		{"mixed with numbers", "ABC123xyz", "abc123XYZ"},
+		{"empty string", "", ""},
+		{"no letters", "123!@#", "123!@#"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := SwapCase(tt.input)
+			if result != tt.expected {
+				t.Errorf("SwapCase(%q) = %q, want %q", tt.input, result, tt.expected)
+			}
+		})
+	}
+}
+
 func TestTruncate(t *testing.T) {
 	tests := []struct {
 		input    string

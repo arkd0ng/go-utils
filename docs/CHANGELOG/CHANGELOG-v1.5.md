@@ -8,6 +8,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.014] - 2025-10-14
+
+### Added / 추가
+
+- **FEAT**: Added Insert and SwapCase functions (Group 2: 2 functions)
+- **기능**: Insert 및 SwapCase 함수 추가 (그룹 2: 2개 함수)
+
+### New Functions / 새로운 함수
+
+1. **Insert(s string, index int, insert string) string**
+   - Inserts string at specified index / 지정된 인덱스에 문자열 삽입
+   - Auto-adjusts out-of-bounds indices / 범위 초과 인덱스 자동 조정
+   - Unicode-safe / 유니코드 안전
+   - Examples: `Insert("hello world", 5, ",")` → "hello, world"
+
+2. **SwapCase(s string) string**
+   - Swaps uppercase/lowercase letters / 대소문자 반전
+   - Unicode-safe / 유니코드 안전
+   - Examples: `SwapCase("Hello World")` → "hELLO wORLD"
+
+### Testing / 테스트
+
+- TestInsert: 7 test cases
+- TestSwapCase: 6 test cases  
+- Total: 13 test cases, all passing
+
+### Files Modified / 수정된 파일
+
+- stringutil/manipulation.go: Added 2 functions (~70 lines)
+- stringutil/manipulation_test.go: Added 13 test cases
+- examples/stringutil/main.go: Added 2 examples
+- cfg/app.yaml: Updated version to v1.5.014
+
+### Notes / 참고사항
+
+- Function count: 41 → 43 (6/16 new functions complete)
+- Current version: v1.5.014
+
+---
+
 ## [v1.5.013] - 2025-10-14
 
 ### Added / 추가

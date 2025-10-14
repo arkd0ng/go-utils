@@ -243,3 +243,59 @@ func Right(s string, n int) string {
 	}
 	return string(runes[length-n:])
 }
+
+// Insert inserts a string at the specified index (Unicode-safe).
+// Insert는 지정된 인덱스에 문자열을 삽입합니다 (유니코드 안전).
+//
+// If index is negative or greater than length, it's adjusted to valid range.
+// 인덱스가 음수이거나 길이보다 크면 유효한 범위로 조정됩니다.
+//
+// Example:
+//
+//	Insert("hello world", 5, ",")    // "hello, world"
+//	Insert("hello", 0, "say ")       // "say hello"
+//	Insert("안녕하세요", 2, " 반갑습니다 ")  // "안녕 반갑습니다 하세요"
+func Insert(s string, index int, insert string) string {
+	runes := []rune(s)
+	length := len(runes)
+
+	// Adjust negative index / 음수 인덱스 조정
+	if index < 0 {
+		index = 0
+	}
+	// Adjust out-of-bounds index / 범위 초과 인덱스 조정
+	if index > length {
+		index = length
+	}
+
+	// Build result / 결과 생성
+	result := make([]rune, 0, length+len([]rune(insert)))
+	result = append(result, runes[:index]...)
+	result = append(result, []rune(insert)...)
+	result = append(result, runes[index:]...)
+
+	return string(result)
+}
+
+// SwapCase swaps the case of all letters in a string.
+// SwapCase는 문자열의 모든 글자의 대소문자를 반전합니다.
+//
+// Uppercase becomes lowercase and vice versa.
+// 대문자는 소문자로, 소문자는 대문자로 변환됩니다.
+//
+// Example:
+//
+//	SwapCase("Hello World")  // "hELLO wORLD"
+//	SwapCase("GoLang")       // "gOlANG"
+//	SwapCase("ABC123xyz")    // "abc123XYZ"
+func SwapCase(s string) string {
+	runes := []rune(s)
+	for i, r := range runes {
+		if unicode.IsUpper(r) {
+			runes[i] = unicode.ToLower(r)
+		} else if unicode.IsLower(r) {
+			runes[i] = unicode.ToUpper(r)
+		}
+	}
+	return string(runes)
+}
