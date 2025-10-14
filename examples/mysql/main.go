@@ -67,36 +67,35 @@ func main() {
 		"database", config.MySQL.Database,
 		"user", config.MySQL.User)
 
-	// Check if MySQL is running / MySQL 실행 여부 확인
-	wasRunning := isMySQLRunning(config.MySQL)
+	// Check if Docker MySQL is running / Docker MySQL 실행 여부 확인
+	wasRunning := isDockerMySQLRunning()
 
 	if !wasRunning {
-		logger.Info("MySQL is not running, starting daemon...")
-		logger.Info("MySQL이 실행 중이 아닙니다. 데몬을 시작합니다...")
-		if err := startMySQL(); err != nil {
-			logger.Error("Failed to start MySQL", "error", err)
+		logger.Info("Docker MySQL is not running, starting container...")
+		logger.Info("Docker MySQL이 실행 중이 아닙니다. 컨테이너를 시작합니다...")
+		if err := startDockerMySQL(); err != nil {
+			logger.Error("Failed to start Docker MySQL", "error", err)
+			logger.Info("")
+			logger.Info("Please ensure Docker is installed and running:")
+			logger.Info("Docker가 설치되어 실행 중인지 확인하세요:")
+			logger.Info("  1. Install Docker Desktop: https://www.docker.com/products/docker-desktop")
+			logger.Info("  2. Start Docker Desktop")
+			logger.Info("  3. Run: docker-compose up -d")
 			os.Exit(1)
 		}
 
 		// Wait for MySQL to be ready / MySQL 준비 대기
-		logger.Info("Waiting for MySQL to be ready...")
-		logger.Info("MySQL 준비 중...")
-		time.Sleep(3 * time.Second)
-
-		// Ensure MySQL stops when program exits / 프로그램 종료 시 MySQL 중지 보장
-		defer func() {
-			logger.Info("Stopping MySQL daemon...")
-			logger.Info("MySQL 데몬 중지 중...")
-			if err := stopMySQL(); err != nil {
-				logger.Warn("Failed to stop MySQL", "error", err)
-			} else {
-				logger.Info("MySQL daemon stopped successfully")
-				logger.Info("MySQL 데몬이 성공적으로 중지되었습니다")
-			}
-		}()
+		logger.Info("Waiting for Docker MySQL to be ready...")
+		logger.Info("Docker MySQL 준비 중...")
+		if err := waitForDockerMySQL(config.MySQL, 30*time.Second); err != nil {
+			logger.Error("Docker MySQL failed to become ready", "error", err)
+			os.Exit(1)
+		}
+		logger.Info("Docker MySQL is ready!")
+		logger.Info("Docker MySQL 준비 완료!")
 	} else {
-		logger.Info("MySQL is already running")
-		logger.Info("MySQL이 이미 실행 중입니다")
+		logger.Info("Docker MySQL is already running")
+		logger.Info("Docker MySQL이 이미 실행 중입니다")
 	}
 
 	logger.Info("")
@@ -167,33 +166,79 @@ func buildDSN(cfg MySQLConfig) string {
 	return dsn
 }
 
-// isMySQLRunning checks if MySQL service is running
-// isMySQLRunning은 MySQL 서비스가 실행 중인지 확인합니다
-func isMySQLRunning(cfg MySQLConfig) bool {
-	// Try to connect to MySQL using configured credentials
-	// 설정된 자격 증명을 사용하여 MySQL 연결 시도
-	cmd := exec.Command("mysql",
-		"-h", cfg.Host,
-		"-P", fmt.Sprintf("%d", cfg.Port),
-		"-u", cfg.User,
-		fmt.Sprintf("-p%s", cfg.Password),
-		"-e", "SELECT 1")
-	err := cmd.Run()
-	return err == nil
+// isDockerMySQLRunning checks if Docker MySQL container is running
+// isDockerMySQLRunning은 Docker MySQL 컨테이너가 실행 중인지 확인합니다
+func isDockerMySQLRunning() bool {
+	cmd := exec.Command("docker", "ps", "--filter", "name=go-utils-mysql", "--format", "{{.Names}}")
+	output, err := cmd.Output()
+	if err != nil {
+		return false
+	}
+	return strings.TrimSpace(string(output)) == "go-utils-mysql"
 }
 
-// startMySQL starts the MySQL service
-// startMySQL은 MySQL 서비스를 시작합니다
-func startMySQL() error {
-	cmd := exec.Command("brew", "services", "start", "mysql")
-	return cmd.Run()
+// startDockerMySQL starts the Docker MySQL container using docker-compose
+// startDockerMySQL은 docker-compose를 사용하여 Docker MySQL 컨테이너를 시작합니다
+func startDockerMySQL() error {
+	// Get project root directory / 프로젝트 루트 디렉토리 가져오기
+	wd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("failed to get working directory: %w", err)
+	}
+	projectRoot := filepath.Join(wd, "..", "..")
+
+	// Start Docker Compose / Docker Compose 시작
+	cmd := exec.Command("docker-compose", "up", "-d")
+	cmd.Dir = projectRoot
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to start docker-compose: %w (output: %s)", err, string(output))
+	}
+	return nil
 }
 
-// stopMySQL stops the MySQL service
-// stopMySQL은 MySQL 서비스를 중지합니다
-func stopMySQL() error {
-	cmd := exec.Command("brew", "services", "stop", "mysql")
-	return cmd.Run()
+// waitForDockerMySQL waits for Docker MySQL to be ready
+// waitForDockerMySQL은 Docker MySQL이 준비될 때까지 대기합니다
+func waitForDockerMySQL(cfg MySQLConfig, timeout time.Duration) error {
+	start := time.Now()
+	for {
+		// Try to connect to MySQL / MySQL 연결 시도
+		cmd := exec.Command("docker", "exec", "go-utils-mysql",
+			"mysqladmin", "ping", "-h", "localhost", "-u", cfg.User,
+			fmt.Sprintf("-p%s", cfg.Password))
+		err := cmd.Run()
+		if err == nil {
+			return nil
+		}
+
+		// Check timeout / 타임아웃 확인
+		if time.Since(start) > timeout {
+			return fmt.Errorf("timeout waiting for MySQL to be ready")
+		}
+
+		// Wait before retry / 재시도 전 대기
+		time.Sleep(1 * time.Second)
+	}
+}
+
+// stopDockerMySQL stops the Docker MySQL container
+// stopDockerMySQL은 Docker MySQL 컨테이너를 중지합니다
+func stopDockerMySQL() error {
+	// Get project root directory / 프로젝트 루트 디렉토리 가져오기
+	wd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("failed to get working directory: %w", err)
+	}
+	projectRoot := filepath.Join(wd, "..", "..")
+
+	// Stop Docker Compose / Docker Compose 중지
+	cmd := exec.Command("docker-compose", "down")
+	cmd.Dir = projectRoot
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to stop docker-compose: %w (output: %s)", err, string(output))
+	}
+	return nil
 }
 
 // runExamples runs all MySQL package examples

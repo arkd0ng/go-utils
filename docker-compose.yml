@@ -1,0 +1,64 @@
+# Docker Compose configuration for go-utils development
+# go-utils 개발을 위한 Docker Compose 설정
+
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.1
+    container_name: go-utils-mysql
+    restart: unless-stopped
+
+    # Environment variables / 환경 변수
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpassword
+      # MySQL 8.0+ authentication plugin / MySQL 8.0+ 인증 플러그인
+      MYSQL_ROOT_HOST: '%'
+
+    # Port mapping / 포트 매핑
+    ports:
+      - "3306:3306"
+
+    # Volume mapping / 볼륨 매핑
+    volumes:
+      # Persistent data / 영구 데이터
+      - mysql_data:/var/lib/mysql
+      # Initialization scripts / 초기화 스크립트
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      # Custom MySQL configuration / 사용자 정의 MySQL 설정
+      - ./mysql/conf:/etc/mysql/conf.d
+
+    # MySQL configuration / MySQL 설정
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+      - --max_connections=200
+      - --max_allowed_packet=64M
+
+    # Health check / 헬스 체크
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+    # Network / 네트워크
+    networks:
+      - go-utils-network
+
+# Volumes / 볼륨
+volumes:
+  mysql_data:
+    driver: local
+    name: go-utils-mysql-data
+
+# Networks / 네트워크
+networks:
+  go-utils-network:
+    driver: bridge
+    name: go-utils-network

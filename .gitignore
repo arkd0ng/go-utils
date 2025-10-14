@@ -33,3 +33,9 @@ examples/random_string/random_string
 logs/
 *.log
 test_logs/
+
+# MySQL export directories
+mysql_export_*/
+
+# Backup files
+*.backup

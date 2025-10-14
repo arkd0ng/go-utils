@@ -1,12 +1,15 @@
 # Database Configuration
 # 데이터베이스 설정
+#
+# Note: This configuration is for Docker-based MySQL
+# 참고: 이 설정은 Docker 기반 MySQL용입니다
 
 mysql:
   # Connection settings / 연결 설정
   host: localhost
   port: 3306
   user: root
-  password: "test1234"  # MySQL root password / MySQL root 패스워드
+  password: "rootpassword"  # Docker MySQL root password / Docker MySQL root 패스워드
   database: testdb
 
   # Connection pool settings / 연결 풀 설정

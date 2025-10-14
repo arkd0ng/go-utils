@@ -6,6 +6,104 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
+## [v1.3.015] - 2025-10-14 (Migration to Docker MySQL)
+
+### Changed / 변경
+- **Migrated from Homebrew MySQL to Docker MySQL** / Homebrew MySQL에서 Docker MySQL로 마이그레이션:
+  - Replaced local MySQL service with Docker Compose based MySQL
+  - Improved portability and consistency across development environments
+  - Simplified setup process with automated initialization
+
+### Added / 추가
+- **Docker Configuration** / Docker 설정:
+  - `docker-compose.yml`: Docker Compose configuration for MySQL 8.1
+  - Container name: `go-utils-mysql`
+  - Persistent volume: `go-utils-mysql-data`
+  - Health check with automatic retry
+  - Custom MySQL configuration support
+
+- **MySQL Initialization** / MySQL 초기화:
+  - `mysql/init/01-create-tables.sql`: Automatic database schema creation
+  - Pre-populated with 10 sample users
+  - Creates `users` table with `deleted_at` column for soft delete support
+  - Indexes on email, city, and age columns
+
+- **Custom MySQL Configuration** / 사용자 정의 MySQL 설정:
+  - `mysql/conf/my.cnf`: Custom MySQL server configuration
+  - UTF-8MB4 character set
+  - Optimized connection and performance settings
+  - Slow query logging enabled
+
+- **Management Scripts** / 관리 스크립트:
+  - `scripts/docker-mysql-start.sh`: Start Docker MySQL with health check
+  - `scripts/docker-mysql-stop.sh`: Stop Docker MySQL gracefully
+  - `scripts/docker-mysql-logs.sh`: View MySQL logs in real-time
+  - All scripts with bilingual output (English/Korean)
+
+- **Documentation** / 문서화:
+  - `mysql/README.md`: Comprehensive Docker MySQL usage guide
+  - Quick start guide
+  - Connection details
+  - Troubleshooting section
+  - Custom configuration instructions
+
+### Updated / 업데이트
+- **Database Configuration** / 데이터베이스 설정:
+  - `cfg/database.yaml`: Updated password to `rootpassword` for Docker MySQL
+  - Added note about Docker-based configuration
+
+- **Example Code** / 예제 코드:
+  - `examples/mysql/main.go`: Updated to use Docker MySQL instead of Homebrew MySQL
+  - Added `isDockerMySQLRunning()`: Check if Docker MySQL container is running
+  - Added `startDockerMySQL()`: Start MySQL using docker-compose
+  - Added `waitForDockerMySQL()`: Wait for MySQL to be ready with timeout
+  - Added `stopDockerMySQL()`: Stop MySQL using docker-compose
+  - Removed Homebrew MySQL functions: `isMySQLRunning()`, `startMySQL()`, `stopMySQL()`
+  - Improved error messages with Docker installation instructions
+
+- **Git Configuration** / Git 설정:
+  - `.gitignore`: Added `mysql_export_*/` and `*.backup` patterns
+
+### Migration Guide / 마이그레이션 가이드
+
+**For users migrating from Homebrew MySQL:**
+
+1. Stop Homebrew MySQL:
+   ```bash
+   brew services stop mysql
+   ```
+
+2. Install Docker Desktop from https://www.docker.com/products/docker-desktop
+
+3. Start Docker MySQL:
+   ```bash
+   ./scripts/docker-mysql-start.sh
+   ```
+
+4. (Optional) Remove Homebrew MySQL:
+   ```bash
+   brew uninstall mysql
+   brew cleanup
+   ```
+
+### Connection Details / 연결 정보
+```
+Host: localhost
+Port: 3306
+Database: testdb
+User: root
+Password: rootpassword  (changed from test1234)
+```
+
+### Benefits / 장점
+- **Portability** / 이식성: Same MySQL version across all development environments
+- **Isolation** / 격리: No conflicts with system MySQL installations
+- **Consistency** / 일관성: Guaranteed schema and configuration
+- **Easy Setup** / 간편한 설정: One command to start/stop MySQL
+- **Version Control** / 버전 관리: Docker configuration tracked in git
+
+---
+
 ## [v1.3.014] - 2025-10-14 (Bug Fixes: Soft Delete Schema & MySQL 8.0+ Compatibility)
 
 ### Fixed / 수정

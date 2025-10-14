@@ -17,7 +17,11 @@
       "Bash(git fetch:*)",
       "Bash(git config:*)",
       "Bash(awk:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(brew services:*)",
+      "Bash(docker:*)",
+      "Bash(docker-compose:*)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []
