@@ -8,6 +8,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.016] - 2025-10-14 17:25
+
+### Added / 추가
+- **FEAT**: Added encoding/transformation functions (Group 4: 4 functions)
+
+### New Functions / 새로운 함수
+1. **ToTitle(s string) string** - Convert to Title Case (each word capitalized)
+2. **Slugify(s string) string** - Convert to URL-friendly slug
+3. **Quote(s string) string** - Wrap string in double quotes with escaping
+4. **Unquote(s string) string** - Remove quotes and unescape
+
+### Testing / 테스트
+- 36 test cases, all passing
+- Includes round-trip test for Quote/Unquote
+
+### Files Modified / 수정된 파일
+- stringutil/case.go (added 4 functions)
+- stringutil/case_test.go (added 36 test cases)
+- examples/stringutil/main.go (added examples)
+
+### Notes / 참고사항
+- Function count: 46 → 50 (13/16 complete)
+- Current version: v1.5.016
+- All functions support Unicode properly
+
+---
+
 ## [v1.5.015] - 2025-10-14 17:20
 
 ### Added / 추가

@@ -111,10 +111,6 @@ func main() {
 	logger.Info(fmt.Sprintf("Filter(['hello', 'world', 'foo'], len > 3): %v", filtered))
 	logger.Info("")
 
-	logger.Info("=== All examples completed successfully! ===")
-	logger.Info("=== 모든 예제가 성공적으로 완료되었습니다! ===")
-}
-
 	// Comparison Examples / 비교 예제
 	logger.Info("=== Comparison Examples ===")
 	logger.Info("=== 비교 예제 ===")
@@ -124,3 +120,29 @@ func main() {
 	logger.Info(fmt.Sprintf("HasPrefix('hello world', 'hello'): %v", stringutil.HasPrefix("hello world", "hello")))
 	logger.Info(fmt.Sprintf("HasSuffix('hello world', 'world'): %v", stringutil.HasSuffix("hello world", "world")))
 	logger.Info("")
+
+	// Title and Slug Examples / 타이틀 및 슬러그 예제
+	logger.Info("=== Title and Slug Examples ===")
+	logger.Info("=== 타이틀 및 슬러그 예제 ===")
+	logger.Info("")
+
+	logger.Info(fmt.Sprintf("ToTitle('hello world'): %s", stringutil.ToTitle("hello world")))
+	logger.Info(fmt.Sprintf("ToTitle('user_profile_data'): %s", stringutil.ToTitle("user_profile_data")))
+	logger.Info(fmt.Sprintf("Slugify('Hello World!'): %s", stringutil.Slugify("Hello World!")))
+	logger.Info(fmt.Sprintf("Slugify('Go Utils -- Package'): %s", stringutil.Slugify("Go Utils -- Package")))
+	logger.Info("")
+
+	// Quote Examples / 따옴표 예제
+	logger.Info("=== Quote Examples ===")
+	logger.Info("=== 따옴표 예제 ===")
+	logger.Info("")
+
+	logger.Info(fmt.Sprintf("Quote('hello'): %s", stringutil.Quote("hello")))
+	logger.Info(fmt.Sprintf("Quote('say \"hi\"'): %s", stringutil.Quote("say \"hi\"")))
+	logger.Info(fmt.Sprintf("Unquote('\"hello\"'): %s", stringutil.Unquote("\"hello\"")))
+	logger.Info(fmt.Sprintf("Unquote(\"'world'\"): %s", stringutil.Unquote("'world'")))
+	logger.Info("")
+
+	logger.Info("=== All examples completed successfully! ===")
+	logger.Info("=== 모든 예제가 성공적으로 완료되었습니다! ===")
+}
