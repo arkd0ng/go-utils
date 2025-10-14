@@ -1,9 +1,21 @@
 # Stringutil Package - User Manual
 # Stringutil 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.5.x
+**Version / 버전**: v1.5.018+
 **Package / 패키지**: `github.com/arkd0ng/go-utils/stringutil`
 **Design Philosophy / 설계 철학**: "20 lines → 1 line" (Extreme Simplicity / 극도의 간결함)
+**Function Count / 함수 개수**: 53 functions across 9 categories / 9개 카테고리에 걸친 53개 함수
+
+> **Note**: This manual was initially written for v1.5.x (37 functions). The package has been expanded to 53 functions with additional categories:
+> - Comparison (3 functions): EqualFold, HasPrefix, HasSuffix
+> - Extended Manipulation (8 functions): Repeat, Substring, Left, Right, Insert, SwapCase, ToTitle, Slugify
+> - Quote/Unquote (2 functions): Quote, Unquote
+> - Unicode Operations (3 functions): RuneCount, Width, Normalize
+>
+> For complete API reference, see [stringutil/README.md](../../stringutil/README.md)
+>
+> **참고**: 이 매뉴얼은 처음에 v1.5.x (37개 함수)용으로 작성되었습니다. 패키지는 추가 카테고리와 함께 53개 함수로 확장되었습니다.
+> 전체 API 참조는 [stringutil/README.md](../../stringutil/README.md)를 참조하세요.
 
 ---
 
