@@ -622,6 +622,22 @@ func TestPrintfVsStructured(t *testing.T) {
 // TestAppYamlIntegration tests that app.yaml is loaded and used in banner
 // TestAppYamlIntegration은 app.yaml이 로드되고 배너에 사용되는지 테스트합니다
 func TestAppYamlIntegration(t *testing.T) {
+	// Load expected values from app.yaml / app.yaml에서 예상 값 로드
+	config, err := LoadAppConfig()
+	if err != nil {
+		t.Fatalf("Failed to load app.yaml: %v", err)
+	}
+
+	expectedName := config.App.Name
+	expectedVersion := config.App.Version
+
+	if expectedName == "" {
+		t.Fatal("app.yaml should contain app name")
+	}
+	if expectedVersion == "" {
+		t.Fatal("app.yaml should contain app version")
+	}
+
 	logger, err := New(
 		WithFilePath("./test_logs/app_yaml.log"),
 	)
@@ -643,13 +659,13 @@ func TestAppYamlIntegration(t *testing.T) {
 	logStr := string(content)
 
 	// Verify that app.yaml values are in the banner / app.yaml 값이 배너에 있는지 확인
-	// Should contain "go-utils" (app name from cfg/app.yaml)
-	if !strings.Contains(logStr, "go-utils") {
-		t.Error("Log file should contain app name 'go-utils' from cfg/app.yaml")
+	// Should contain app name from cfg/app.yaml / cfg/app.yaml의 앱 이름이 포함되어야 함
+	if !strings.Contains(logStr, expectedName) {
+		t.Errorf("Log file should contain app name '%s' from cfg/app.yaml", expectedName)
 	}
 
-	// Should contain "v1.5.009" (version from cfg/app.yaml)
-	if !strings.Contains(logStr, "v1.5.009") {
-		t.Error("Log file should contain version 'v1.5.009' from cfg/app.yaml")
+	// Should contain version from cfg/app.yaml / cfg/app.yaml의 버전이 포함되어야 함
+	if !strings.Contains(logStr, expectedVersion) {
+		t.Errorf("Log file should contain version '%s' from cfg/app.yaml", expectedVersion)
 	}
 }

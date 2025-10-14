@@ -8,6 +8,65 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.010] - 2025-10-14
+
+### Fixed / 수정
+
+- **TEST**: Fixed logging test to dynamically read version from cfg/app.yaml
+- **테스트**: cfg/app.yaml에서 버전을 동적으로 읽도록 로깅 테스트 수정
+- **IMPROVEMENT**: Eliminated manual version updates in tests when bumping version
+- **개선**: 버전 업데이트 시 테스트에서 수동 버전 변경 제거
+
+### Changes / 변경사항
+
+**Before / 이전**:
+```go
+// Hard-coded version - needs manual update every version bump
+// 하드코딩된 버전 - 매번 버전 업데이트 시 수동 변경 필요
+if !strings.Contains(logStr, "v1.5.009") {
+    t.Error("Log file should contain version 'v1.5.009'")
+}
+```
+
+**After / 이후**:
+```go
+// Dynamic version loading - no manual update needed
+// 동적 버전 로딩 - 수동 업데이트 불필요
+config, err := LoadAppConfig()
+expectedVersion := config.App.Version
+if !strings.Contains(logStr, expectedVersion) {
+    t.Errorf("Log file should contain version '%s'", expectedVersion)
+}
+```
+
+### Files Modified / 수정된 파일
+
+- `logging/logger_test.go`:
+  - Modified `TestAppYamlIntegration` to load version dynamically
+  - Reads both app name and version from cfg/app.yaml at runtime
+  - Test now works with any version without modification
+- `cfg/app.yaml`: Updated version to v1.5.010
+
+### Benefits / 이점
+
+1. **No more manual test updates**: Tests automatically use current version
+2. **테스트 자동 업데이트**: 테스트가 자동으로 현재 버전 사용
+3. **Reduced maintenance**: One less file to update when bumping version
+4. **유지보수 감소**: 버전 업데이트 시 수정할 파일 하나 감소
+5. **Better test accuracy**: Tests always validate against actual config
+6. **테스트 정확도 향상**: 테스트가 항상 실제 설정과 대조하여 검증
+
+### Notes / 참고사항
+
+- Test verified with both v1.5.009 and v1.5.010
+- v1.5.009 및 v1.5.010 모두에서 테스트 검증 완료
+- All logging tests passing
+- 모든 로깅 테스트 통과
+- Current version: v1.5.010
+- 현재 버전: v1.5.010
+
+---
+
 ## [v1.5.009] - 2025-10-14
 
 ### Changed / 변경
