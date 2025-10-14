@@ -8,6 +8,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.019] - 2025-10-14
+
+### Changed / 변경
+
+- **REFACTOR**: Updated random string examples to use logging package
+- **리팩터링**: random 문자열 예제를 logging 패키지 사용하도록 업데이트
+- Random examples now use structured logging with automatic log file creation
+- Random 예제는 이제 자동 로그 파일 생성과 함께 구조화된 로깅 사용
+- Log files saved to `./results/logs/random_example_YYYYMMDD_HHMMSS.log`
+- 로그 파일은 `./results/logs/random_example_YYYYMMDD_HHMMSS.log`에 저장됨
+- Added banner display at startup showing app version
+- 시작 시 앱 버전을 표시하는 배너 추가
+- All output goes to both console (with colors) and log file (without colors)
+- 모든 출력은 콘솔(색상 포함)과 로그 파일(색상 제외) 모두에 기록됨
+
+### Benefits / 장점
+
+- Consistent logging pattern across all examples (random, logging, mysql, redis)
+- 모든 예제에서 일관된 로깅 패턴 (random, logging, mysql, redis)
+- Better traceability with timestamped log files
+- 타임스탬프가 찍힌 로그 파일로 더 나은 추적성
+- Professional output format with structured logging
+- 구조화된 로깅으로 전문적인 출력 형식
+
+### Updated Files / 업데이트된 파일
+
+- `examples/random_string/main.go` - Complete rewrite with logging integration
+
+### Notes / 참고사항
+
+- Random examples now follow same pattern as MySQL and Redis examples
+- Random 예제는 이제 MySQL 및 Redis 예제와 동일한 패턴 사용
+- Results directory automatically created if not exists
+- Results 디렉토리가 없으면 자동으로 생성됨
+- Current version: v1.4.019
+- 현재 버전: v1.4.019
+
+---
+
 ## [v1.4.018] - 2025-10-14
 
 ### Fixed / 수정
