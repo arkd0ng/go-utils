@@ -3,5 +3,5 @@
 
 app:
   name: go-utils
-  version: v1.7.011
+  version: v1.7.012
   description: A collection of frequently used utility functions for Golang development
