@@ -292,14 +292,18 @@ Extreme simplicity string utilities - reduce 20 lines of string manipulation cod
 
 극도로 간단한 문자열 유틸리티 - 20줄의 문자열 처리 코드를 단 1줄로 줄입니다.
 
-**Core Features**: Unicode-safe operations, zero dependencies, 37 functions across 5 categories / 유니코드 안전 작업, 제로 의존성, 5개 카테고리에 걸쳐 37개 함수
+**Core Features**: Unicode-safe operations, 53 functions across 9 categories / 유니코드 안전 작업, 9개 카테고리에 걸쳐 53개 함수
 
 **Categories / 카테고리**:
-- **Case Conversion (5)**: ToSnakeCase, ToCamelCase, ToKebabCase, ToPascalCase, ToScreamingSnakeCase / 케이스 변환
-- **String Manipulation (9)**: Truncate, Reverse, Capitalize, Clean, RemoveDuplicates / 문자열 조작
+- **Case Conversion (9)**: ToSnakeCase, ToCamelCase, ToTitle, Slugify, Quote, Unquote / 케이스 변환
+- **String Manipulation (17)**: Truncate, Reverse, Substring, Insert, SwapCase, Repeat / 문자열 조작
 - **Validation (8)**: IsEmail, IsURL, IsAlphanumeric, IsNumeric, IsBlank / 유효성 검사
+- **Comparison (3)**: EqualFold, HasPrefix, HasSuffix / 비교
 - **Search & Replace (6)**: ContainsAny, ContainsAll, ReplaceAll, ReplaceIgnoreCase / 검색 및 치환
-- **Utilities (9)**: CountWords, Lines, Words, Map, Filter, PadLeft, PadRight / 유틸리티
+- **Unicode Operations (3)**: RuneCount, Width, Normalize / 유니코드 작업
+- **Collection Utilities (5)**: CountWords, Map, Filter, Join / 컬렉션 유틸리티
+- **String Generation (2)**: PadLeft, PadRight / 문자열 생성
+- **String Parsing (2)**: Lines, Words / 문자열 파싱
 
 ```go
 import "github.com/arkd0ng/go-utils/stringutil"
@@ -307,21 +311,27 @@ import "github.com/arkd0ng/go-utils/stringutil"
 // Case conversion / 케이스 변환
 snake := stringutil.ToSnakeCase("HelloWorld")  // "hello_world"
 camel := stringutil.ToCamelCase("hello_world") // "helloWorld"
-kebab := stringutil.ToKebabCase("HelloWorld")  // "hello-world"
+title := stringutil.ToTitle("hello world")     // "Hello World"
+slug := stringutil.Slugify("Hello World!")     // "hello-world"
 
 // String manipulation / 문자열 조작
-short := stringutil.Truncate("Long text here", 10)           // "Long text..."
-reversed := stringutil.Reverse("Hello")                       // "olleH"
-cleaned := stringutil.Clean("  hello   world  ")            // "hello world"
+short := stringutil.Truncate("Long text here", 10)     // "Long text..."
+sub := stringutil.Substring("hello world", 0, 5)       // "hello"
+inserted := stringutil.Insert("hello world", 5, ",")   // "hello, world"
+swapped := stringutil.SwapCase("Hello World")          // "hELLO wORLD"
 
-// Validation / 유효성 검사
+// Validation & Comparison / 유효성 검사 및 비교
 if stringutil.IsEmail("user@example.com") {
     // Valid email / 유효한 이메일
 }
+if stringutil.EqualFold("hello", "HELLO") {
+    // Case-insensitive match / 대소문자 구분 없이 일치
+}
 
-// Unicode-safe (works with Korean, emoji, etc.) / 유니코드 안전 (한글, 이모지 등 지원)
-truncated := stringutil.Truncate("안녕하세요 반갑습니다", 5)  // "안녕하세요..."
-reversed := stringutil.Reverse("안녕")                        // "녕안"
+// Unicode operations / 유니코드 작업
+count := stringutil.RuneCount("안녕하세요")     // 5 (not 15 bytes)
+width := stringutil.Width("hello世界")         // 9 (5 + 4)
+normalized := stringutil.Normalize("café", "NFC") // "café"
 
 // Functional programming (Map/Filter) / 함수형 프로그래밍
 names := []string{"alice", "bob", "charlie"}

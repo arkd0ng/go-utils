@@ -8,6 +8,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.018] - 2025-10-14 17:35
+
+### Changed / 변경
+- **DOCS**: Updated documentation for stringutil package completion
+- **DOCS**: Updated stringutil/README.md with all 53 functions
+- **DOCS**: Updated root README.md with comprehensive examples
+
+### Documentation Updates / 문서 업데이트
+- Updated function count: 37 → 53 functions
+- Added 9 categories (was 5 categories)
+- Added Unicode operations examples
+- Added new Quick Start examples
+- Updated all function listings
+
+### Notes / 참고사항
+- All 53 functions fully documented
+- All tests passing (100+ test cases)
+- All examples working
+- Version: v1.5.018
+- stringutil package complete! ✅
+
+---
+
 ## [v1.5.017] - 2025-10-14 17:30
 
 ### Added / 추가
