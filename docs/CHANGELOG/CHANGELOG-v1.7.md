@@ -8,6 +8,66 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.7.008] - 2025-10-15
+
+### Added / 추가
+
+- **AGGREGATION FUNCTIONS**: Implemented 7 aggregation functions / 7개 집계 함수 구현
+  - `Reduce[T, R any](slice []T, initial R, reducer func(R, T) R) R` - Accumulate values / 값 누적
+  - `Sum[T constraints.Integer | constraints.Float](slice []T) T` - Calculate sum / 합계 계산
+  - `Min[T constraints.Ordered](slice []T) (T, error)` - Find minimum / 최소값 찾기
+  - `Max[T constraints.Ordered](slice []T) (T, error)` - Find maximum / 최대값 찾기
+  - `Average[T constraints.Integer | constraints.Float](slice []T) float64` - Calculate average / 평균 계산
+  - `GroupBy[T any, K comparable](slice []T, keyFunc func(T) K) map[K][]T` - Group by key / 키로 그룹화
+  - `Partition[T any](slice []T, predicate func(T) bool) ([]T, []T)` - Split by predicate / 조건으로 분할
+
+- **TESTS**: Comprehensive tests for aggregation functions / 집계 함수에 대한 포괄적인 테스트
+  - 7 test functions with 29 test cases total / 총 29개 테스트 케이스가 있는 7개 테스트 함수
+  - Edge cases covered (empty, single element, negatives) / 엣지 케이스 커버 (비어있음, 단일 요소, 음수)
+  - Error handling tests (Min/Max with empty slices) / 에러 처리 테스트 (비어있는 슬라이스로 Min/Max)
+  - 7 benchmark functions / 7개 벤치마크 함수
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.008 / `cfg/app.yaml` 버전을 v1.7.008로 업데이트
+- Updated `sliceutil/sliceutil.go` Version constant to "1.7.008" / `sliceutil/sliceutil.go` 버전 상수를 "1.7.008"로 업데이트
+- Updated `docs/sliceutil/WORK_PLAN.md` progress tracking / `docs/sliceutil/WORK_PLAN.md` 진행 상황 추적 업데이트
+
+### Dependencies / 의존성
+
+- Added `golang.org/x/exp` for constraints package / constraints 패키지를 위해 `golang.org/x/exp` 추가
+  - Required for `constraints.Integer`, `constraints.Float`, `constraints.Ordered`
+
+### Files Created / 생성된 파일
+
+- `sliceutil/aggregate.go` - Aggregation functions implementation (~190 lines) / 집계 함수 구현 (~190줄)
+- `sliceutil/aggregate_test.go` - Comprehensive tests (~530 lines) / 포괄적인 테스트 (~530줄)
+
+### Test Results / 테스트 결과
+
+- ✅ All tests passing (29 test cases) / 모든 테스트 통과 (29개 테스트 케이스)
+- ✅ TestReduce: 5 subtests / TestReduce: 5개 하위 테스트
+- ✅ TestSum: 5 subtests / TestSum: 5개 하위 테스트
+- ✅ TestMin: 5 subtests / TestMin: 5개 하위 테스트
+- ✅ TestMax: 5 subtests / TestMax: 5개 하위 테스트
+- ✅ TestAverage: 5 subtests / TestAverage: 5개 하위 테스트
+- ✅ TestGroupBy: 4 subtests / TestGroupBy: 4개 하위 테스트
+- ✅ TestPartition: 5 subtests / TestPartition: 5개 하위 테스트
+
+### Progress / 진행 상황
+
+- **Functions Implemented / 구현된 함수**: 25/60 (42%)
+- **All 7 aggregation functions complete! / 모든 7개 집계 함수 완료!**
+- **Work Units Completed / 완료된 작업 단위**: 8/18 (44%)
+- **Current Phase / 현재 단계**: Phase 2 - Core Features / 2단계 - 핵심 기능
+
+### Next Steps / 다음 단계
+
+- **v1.7.009**: Slicing Functions - 7 functions / 슬라이싱 함수 - 7개 함수
+  - Chunk, Take, TakeLast, Drop, DropLast, Slice, Sample
+
+---
+
 ## [v1.7.007] - 2025-10-15
 
 ### Added / 추가

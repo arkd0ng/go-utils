@@ -169,8 +169,8 @@ sliceutil/
 ### v1.7.008 - Aggregation Functions / 집계 함수
 
 **Tasks / 작업**:
-- [ ] Create sliceutil/aggregate.go / sliceutil/aggregate.go 생성
-- [ ] Implement 7 functions:
+- [x] Create sliceutil/aggregate.go / sliceutil/aggregate.go 생성
+- [x] Implement 7 functions:
   - Reduce[T, U any](slice []T, initial U, reducer func(U, T) U) U
   - Sum[T constraints.Integer | constraints.Float](slice []T) T
   - Min[T constraints.Ordered](slice []T) (T, error)
@@ -178,13 +178,14 @@ sliceutil/
   - Average[T constraints.Integer | constraints.Float](slice []T) float64
   - GroupBy[T any, K comparable](slice []T, keyFunc func(T) K) map[K][]T
   - Partition[T any](slice []T, predicate func(T) bool) ([]T, []T)
-- [ ] Write tests for all 7 functions / 모든 7개 함수에 대한 테스트 작성
-- [ ] Write benchmarks / 벤치마크 작성
-- [ ] Update cfg/app.yaml to v1.7.008 / cfg/app.yaml를 v1.7.008로 업데이트
-- [ ] Update CHANGELOG / CHANGELOG 업데이트
+- [x] Write tests for all 7 functions / 모든 7개 함수에 대한 테스트 작성
+- [x] Write benchmarks / 벤치마크 작성
+- [x] Update cfg/app.yaml to v1.7.008 / cfg/app.yaml를 v1.7.008로 업데이트
+- [x] Update CHANGELOG / CHANGELOG 업데이트
+- [x] Add golang.org/x/exp dependency / golang.org/x/exp 의존성 추가
 
 **Deliverables / 결과물**:
-- All 7 aggregation functions complete
+- ✅ All 7 aggregation functions complete
 
 ---
 
@@ -572,12 +573,12 @@ sliceutil/
 
 ## Status Tracking / 상태 추적
 
-**Current Version / 현재 버전**: v1.7.007
+**Current Version / 현재 버전**: v1.7.008
 **Current Phase / 현재 단계**: Phase 2 - Core Features / 2단계 - 핵심 기능
-**Next Task / 다음 작업**: v1.7.008 - Aggregation Functions (7 functions)
+**Next Task / 다음 작업**: v1.7.009 - Slicing Functions (7 functions)
 
-**Overall Progress / 전체 진행률**: 7/18 units (39%)
-**Functions Implemented / 구현된 함수**: 18/60 functions (30%)
+**Overall Progress / 전체 진행률**: 8/18 units (44%)
+**Functions Implemented / 구현된 함수**: 25/60 functions (42%)
 
 ---
 

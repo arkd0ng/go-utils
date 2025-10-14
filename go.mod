@@ -8,6 +8,7 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/redis/go-redis/v9 v9.14.0 // indirect
+	golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b // indirect
 	golang.org/x/text v0.30.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
