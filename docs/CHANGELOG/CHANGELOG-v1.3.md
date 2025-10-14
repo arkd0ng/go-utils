@@ -6,6 +6,90 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
+## [v1.3.010] - 2025-10-14 (MySQL Advanced Features)
+
+### Added / 추가
+- **Query Statistics Tracking** / 쿼리 통계 추적:
+  - `stats.go`: Query execution statistics with `QueryStats` struct
+  - `GetQueryStats()`: Returns comprehensive statistics (total, success, failed queries, durations)
+  - `ResetQueryStats()`: Reset all statistics
+  - `EnableSlowQueryLog()`: Configure slow query logging with custom threshold and handler
+  - `GetSlowQueries()`: Retrieve recent slow queries
+  - `EnableQueryStats()` / `DisableQueryStats()`: Control stats tracking
+  - Stats tracking integrated into Query() and Exec() methods
+
+- **Connection Pool Metrics** / 연결 풀 메트릭:
+  - `metrics.go`: Comprehensive connection pool monitoring
+  - `GetPoolMetrics()`: Returns detailed pool statistics (connections, utilization, wait stats)
+  - `GetPoolHealthInfo()`: Health check for all connection pools
+  - `GetConnectionUtilization()`: Per-pool utilization percentages
+  - `GetWaitStatistics()`: Wait counts and average wait times per pool
+  - `GetCurrentConnectionIndex()` / `GetRotationIndex()`: Pool status inspection
+
+- **Schema Inspector** / 스키마 검사:
+  - `schema.go`: Database schema inspection utilities
+  - `GetTables()`: List all tables with metadata (engine, row count, comment)
+  - `GetColumns()`: Retrieve column information (type, nullable, default, key, extra)
+  - `GetIndexes()`: Index information (name, columns, unique, type)
+  - `TableExists()`: Check table existence
+  - `GetTableSchema()`: Get CREATE TABLE statement
+  - `GetPrimaryKey()`: Retrieve primary key columns
+  - `GetForeignKeys()`: Foreign key relationships
+  - `GetTableSize()` / `GetDatabaseSize()`: Size information in bytes
+  - `InspectTable()`: Comprehensive table analysis with `TableInspection` struct
+
+- **Migration Helpers** / 마이그레이션 도우미:
+  - `migration.go`: Schema migration utilities
+  - `CreateTable()` / `CreateTableIfNotExists()`: Table creation with schema
+  - `DropTable()`: Table deletion with optional IF EXISTS
+  - `TruncateTable()`: Remove all rows from table
+  - `AddColumn()` / `DropColumn()` / `ModifyColumn()` / `RenameColumn()`: Column operations
+  - `AddIndex()` / `DropIndex()`: Index management (supports unique indexes)
+  - `RenameTable()`: Rename tables
+  - `AddForeignKey()` / `DropForeignKey()`: Foreign key constraints with ON DELETE/UPDATE
+  - `CopyTable()`: Table duplication (structure only or with data)
+  - `AlterTableEngine()`: Change storage engine
+  - `AlterTableCharset()`: Update character set and collation
+
+- **CSV Export/Import** / CSV 내보내기/가져오기:
+  - `export.go`: CSV data exchange utilities
+  - `ExportTableToCSV()`: Export table data to CSV file with options (headers, delimiter, where clause, columns)
+  - `ImportFromCSV()`: Import CSV data to table with batch insert (supports headers, skip rows, duplicate handling)
+  - `ExportQueryToCSV()`: Export custom query results to CSV
+  - `CSVExportOptions` / `CSVImportOptions`: Flexible configuration structs
+  - Support for NULL value handling, custom delimiters, batch sizes
+
+### Changed / 변경
+- **Config** (`config.go`):
+  - Added `enableStats` field for query statistics tracking configuration
+
+- **Client** (`client.go`):
+  - Added `statsTracker` field to store query statistics
+  - Integrated stats recording into Query() and Exec() methods
+  - Stats tracking enabled when `WithQueryStats(true)` option is used
+
+- **Options** (`options.go`):
+  - Added `WithQueryStats()` option to enable/disable query statistics tracking
+
+- **Bug Fixes** / 버그 수정:
+  - Fixed duplicate `IsHealthy()` method (removed from metrics.go, kept in connection.go)
+  - Fixed `pagination.go` CountContext call to properly pass variadic arguments
+
+### Files Created / 생성된 파일
+- `database/mysql/stats.go` (~280 lines)
+- `database/mysql/metrics.go` (~280 lines)
+- `database/mysql/schema.go` (~530 lines)
+- `database/mysql/migration.go` (~500 lines)
+- `database/mysql/export.go` (~420 lines)
+
+### Verification / 확인
+- ✅ Build successful: `go build ./database/mysql`
+- ✅ All tests passing: `go test ./database/mysql/... -v`
+- ✅ All code follows dual-language comment standard (English/Korean)
+- ✅ All methods include comprehensive usage examples
+
+---
+
 ## [v1.3.008] - 2025-10-10 (Documentation Update)
 
 ### Changed / 변경

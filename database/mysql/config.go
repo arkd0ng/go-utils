@@ -43,6 +43,9 @@ type config struct {
 	enableHealthCheck   bool
 	healthCheckInterval time.Duration
 
+	// Query statistics settings / 쿼리 통계 설정
+	enableStats bool
+
 	// Security settings / 보안 설정
 	enableTLS bool
 	tlsConfig *tls.Config
@@ -76,6 +79,9 @@ func defaultConfig() *config {
 		// Health check defaults / 헬스 체크 기본값
 		enableHealthCheck:   true,           // Enable by default / 기본적으로 활성화
 		healthCheckInterval: 30 * time.Second, // Every 30 seconds / 30초마다
+
+		// Query statistics defaults / 쿼리 통계 기본값
+		enableStats: false, // Disabled by default for performance / 성능을 위해 기본적으로 비활성화
 
 		// Security defaults / 보안 기본값
 		enableTLS: false,

@@ -22,6 +22,9 @@ type Client struct {
 	// Configuration / 설정
 	config *config
 
+	// Query statistics / 쿼리 통계
+	statsTracker *queryStatsTracker
+
 	// Background tasks / 백그라운드 작업
 	stopChan        chan struct{} // Stop signal / 종료 신호
 	healthCheckStop chan struct{} // Health check stop / 헬스 체크 중지
@@ -73,9 +76,15 @@ func New(opts ...Option) (*Client, error) {
 	client := &Client{
 		config:          cfg,
 		connections:     make([]*sql.DB, 0, cfg.poolCount),
+		statsTracker:    newQueryStatsTracker(),
 		stopChan:        make(chan struct{}),
 		healthCheckStop: make(chan struct{}),
 		rotationStop:    make(chan struct{}),
+	}
+
+	// Enable stats tracking if configured / 설정된 경우 통계 추적 활성화
+	if cfg.enableStats {
+		client.statsTracker.enabled = true
 	}
 
 	// Initialize connections / 연결 초기화
@@ -243,6 +252,9 @@ func (c *Client) Query(ctx context.Context, query string, args ...interface{}) (
 	rows, err := db.QueryContext(ctx, query, args...)
 	duration := time.Since(start)
 
+	// Record stats / 통계 기록
+	c.statsTracker.recordQuery(query, args, duration, err)
+
 	// Log query / 쿼리 로깅
 	c.logQuery(query, args, duration, err)
 
@@ -282,6 +294,9 @@ func (c *Client) Exec(ctx context.Context, query string, args ...interface{}) (s
 
 	result, err := db.ExecContext(ctx, query, args...)
 	duration := time.Since(start)
+
+	// Record stats / 통계 기록
+	c.statsTracker.recordQuery(query, args, duration, err)
 
 	// Log query / 쿼리 로깅
 	c.logQuery(query, args, duration, err)

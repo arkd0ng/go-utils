@@ -233,6 +233,19 @@ func WithHealthCheckInterval(d time.Duration) Option {
 	}
 }
 
+// WithQueryStats enables or disables query statistics tracking
+// WithQueryStats는 쿼리 통계 추적을 활성화하거나 비활성화합니다
+//
+// Example / 예제:
+//
+//	mysql.WithQueryStats(true)
+func WithQueryStats(enable bool) Option {
+	return func(c *config) error {
+		c.enableStats = enable
+		return nil
+	}
+}
+
 // WithTLS enables TLS with the provided configuration
 // WithTLS는 제공된 설정으로 TLS를 활성화합니다
 //
