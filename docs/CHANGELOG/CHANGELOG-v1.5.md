@@ -8,6 +8,56 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.003] - 2025-10-14 15:46
+
+### Added / 추가
+
+- **FEAT**: Implemented all core stringutil functions (Phase 2 complete)
+- **기능**: 모든 핵심 stringutil 함수 구현 완료 (Phase 2 완료)
+- **Case Conversion** (5 functions): ToSnakeCase, ToCamelCase, ToKebabCase, ToPascalCase, ToScreamingSnakeCase
+- **케이스 변환** (5개 함수): ToSnakeCase, ToCamelCase, ToKebabCase, ToPascalCase, ToScreamingSnakeCase
+- **String Manipulation** (9 functions): Truncate, TruncateWithSuffix, Reverse, Capitalize, CapitalizeFirst, RemoveDuplicates, RemoveSpaces, RemoveSpecialChars, Clean
+- **문자열 조작** (9개 함수): Truncate, TruncateWithSuffix, Reverse, Capitalize, CapitalizeFirst, RemoveDuplicates, RemoveSpaces, RemoveSpecialChars, Clean
+- **Validation** (8 functions): IsEmail, IsURL, IsAlphanumeric, IsNumeric, IsAlpha, IsBlank, IsLower, IsUpper
+- **유효성 검사** (8개 함수): IsEmail, IsURL, IsAlphanumeric, IsNumeric, IsAlpha, IsBlank, IsLower, IsUpper
+- **Search & Replace** (6 functions): ContainsAny, ContainsAll, StartsWithAny, EndsWithAny, ReplaceAll, ReplaceIgnoreCase
+- **검색 및 치환** (6개 함수): ContainsAny, ContainsAll, StartsWithAny, EndsWithAny, ReplaceAll, ReplaceIgnoreCase
+- **Utilities** (9 functions): CountWords, CountOccurrences, Join, Map, Filter, PadLeft, PadRight, Lines, Words
+- **유틸리티** (9개 함수): CountWords, CountOccurrences, Join, Map, Filter, PadLeft, PadRight, Lines, Words
+
+### Implementation Details / 구현 세부사항
+
+- All functions are Unicode-safe (using rune, not byte)
+- 모든 함수는 유니코드 안전 (byte 대신 rune 사용)
+- Zero external dependencies (standard library only)
+- 외부 의존성 제로 (표준 라이브러리만)
+- Bilingual documentation for all functions
+- 모든 함수에 이중 언어 문서
+- Smart case conversion handles multiple input formats
+- 스마트 케이스 변환은 여러 입력 형식 처리
+- Practical email/URL validation (99% use cases)
+- 실용적인 이메일/URL 검증 (99% 사용 사례)
+
+### Files Created / 생성된 파일
+
+- `stringutil/stringutil.go` - Package documentation
+- `stringutil/case.go` - Case conversion (163 lines)
+- `stringutil/manipulation.go` - String manipulation (139 lines)
+- `stringutil/validation.go` - Validation (170 lines)
+- `stringutil/search.go` - Search and replace (114 lines)
+- `stringutil/utils.go` - Utility functions (128 lines)
+
+### Notes / 참고사항
+
+- Phase 2 complete: 37 functions implemented
+- Phase 2 완료: 37개 함수 구현됨
+- Next: Phase 4 - Testing (skip Phase 3 Builder for now)
+- 다음: Phase 4 - 테스팅 (Phase 3 Builder는 일단 건너뜀)
+- Current version: v1.5.003
+- 현재 버전: v1.5.003
+
+---
+
 ## [v1.5.002] - 2025-10-14 15:41
 
 ### Added / 추가
