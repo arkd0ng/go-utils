@@ -8,6 +8,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.6.003] - 2025-10-14
+
+### Changed / 변경
+
+- **EXAMPLES**: Completely rewrote examples/timeutil/main.go (112 lines → 587 lines) / examples/timeutil/main.go 완전 재작성 (112줄 → 587줄)
+  - Added logging package integration with file output / 파일 출력이 있는 logging 패키지 통합 추가
+  - Demonstrated ALL 93 functions across 10 categories / 10개 카테고리에 걸쳐 모든 93개 함수 시연
+  - Detailed structured logging for each function call / 각 함수 호출에 대한 상세한 구조화된 로깅
+  - Summary section listing all categories and function counts / 모든 카테고리와 함수 수를 나열하는 요약 섹션
+
+### Example Coverage / 예제 커버리지
+
+**All 10 Categories Demonstrated / 모든 10개 카테고리 시연**:
+1. Time Difference Functions (8 functions) / 시간 차이 함수 (8개 함수)
+2. Timezone Operations (10 functions) / 타임존 작업 (10개 함수)
+3. Date Arithmetic (16 functions) / 날짜 연산 (16개 함수)
+4. Date Formatting (8 functions) / 날짜 포맷팅 (8개 함수)
+5. Time Parsing (6 functions) / 시간 파싱 (6개 함수)
+6. Time Comparisons (18 functions) / 시간 비교 (18개 함수)
+7. Age Calculations (4 functions) / 나이 계산 (4개 함수)
+8. Relative Time (4 functions) / 상대 시간 (4개 함수)
+9. Unix Timestamp (12 functions) / Unix 타임스탬프 (12개 함수)
+10. Business Days (7 functions) / 영업일 (7개 함수)
+
+**Total Functions**: 93 functions fully demonstrated / 93개 함수 완전 시연
+
+### Logging Output / 로깅 출력
+
+- Log file: `./logs/timeutil-example.log` / 로그 파일: `./logs/timeutil-example.log`
+- Detailed input/output for each function / 각 함수의 상세한 입력/출력
+- Structured key-value logging / 구조화된 키-값 로깅
+- Banner with version information / 버전 정보가 있는 배너
+- Summary with total function count / 전체 함수 수가 있는 요약
+
+---
+
 ## [v1.6.002] - 2025-10-14
 
 ### Added / 추가
