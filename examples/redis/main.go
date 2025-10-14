@@ -10,7 +10,6 @@ import (
 
 	"github.com/arkd0ng/go-utils/database/redis"
 	"github.com/arkd0ng/go-utils/logging"
-	goredis "github.com/redis/go-redis/v9"
 	"gopkg.in/yaml.v3"
 )
 
@@ -31,8 +30,11 @@ type DatabaseConfig struct {
 }
 
 func main() {
-	// Create results directories / 결과 디렉토리 생성
-	os.MkdirAll("./results/logs", 0755)
+	// Create results directories if they don't exist / 결과 디렉토리가 없다면 새롭게 생성
+	if err := os.MkdirAll("./results/logs", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to create logs directory: %v\n", err)
+		os.Exit(1)
+	}
 
 	// Initialize logger / 로거 초기화
 	logger, err := logging.New(
@@ -519,7 +521,7 @@ func pipelineOperations(ctx context.Context, rdb *redis.Client, logger *logging.
 	logger.Info("파이프라인에서 여러 명령 실행 중...")
 
 	// Execute pipeline / 파이프라인 실행
-	err := rdb.Pipeline(ctx, func(pipe goredis.Pipeliner) error {
+	err := rdb.Pipeline(ctx, func(pipe redis.Pipeliner) error {
 		pipe.Set(ctx, "batch:1", "value1", 0)
 		pipe.Set(ctx, "batch:2", "value2", 0)
 		pipe.Set(ctx, "batch:3", "value3", 0)
@@ -570,7 +572,7 @@ func transactionOperations(ctx context.Context, rdb *redis.Client, logger *loggi
 		logger.Info("Current counter value", "value", val)
 
 		// Execute commands atomically / 명령을 원자적으로 실행
-		return tx.Exec(ctx, func(pipe goredis.Pipeliner) error {
+		return tx.Exec(ctx, func(pipe redis.Pipeliner) error {
 			pipe.Incr(ctx, "tx:counter")
 			pipe.Set(ctx, "tx:last_update", time.Now().Unix(), 0)
 			return nil

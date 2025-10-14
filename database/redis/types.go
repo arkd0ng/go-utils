@@ -1,9 +1,6 @@
 package redis
 
 import (
-	"context"
-	"time"
-
 	"github.com/redis/go-redis/v9"
 )
 
@@ -15,14 +12,11 @@ type Client struct {
 	done   chan struct{}
 }
 
-// Pipeliner is an interface for pipeline operations
-// Pipeliner는 파이프라인 작업을 위한 인터페이스입니다
-type Pipeliner interface {
-	Set(ctx context.Context, key string, value interface{}, expiration time.Duration) *redis.StatusCmd
-	Get(ctx context.Context, key string) *redis.StringCmd
-	Del(ctx context.Context, keys ...string) *redis.IntCmd
-	Exec(ctx context.Context) ([]redis.Cmder, error)
-}
+// Pipeliner is a type alias for redis.Pipeliner
+// This allows users to use pipeline operations without importing redis/go-redis directly
+// Pipeliner는 redis.Pipeliner의 타입 별칭입니다
+// 사용자가 redis/go-redis를 직접 import하지 않고 파이프라인 작업을 사용할 수 있게 합니다
+type Pipeliner = redis.Pipeliner
 
 // Tx is a Redis transaction wrapper
 // Tx는 Redis 트랜잭션 래퍼입니다

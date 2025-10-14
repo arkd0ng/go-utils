@@ -8,6 +8,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.009] - 2025-10-14
+
+### Changed / 변경
+- **FIX**: Remove unnecessary go-redis import dependency from examples
+- **수정**: 예제에서 불필요한 go-redis import 의존성 제거
+- Exported `Pipeliner` type as type alias in database/redis package
+- database/redis 패키지에서 `Pipeliner` 타입을 타입 별칭으로 export
+- Users no longer need to import `github.com/redis/go-redis/v9` directly
+- 사용자는 더 이상 `github.com/redis/go-redis/v9`를 직접 import할 필요 없음
+- Updated Pipeline() and TxPipeline() to use redis.Pipeliner instead of go-redis.Pipeliner
+- Pipeline() 및 TxPipeline()을 go-redis.Pipeliner 대신 redis.Pipeliner 사용하도록 업데이트
+- Updated Transaction Exec() to use redis.Pipeliner
+- Transaction Exec()을 redis.Pipeliner 사용하도록 업데이트
+
+### Updated Files / 업데이트된 파일
+- `database/redis/types.go`: Added Pipeliner type alias
+- `database/redis/pipeline.go`: Updated to use Pipeliner type, removed redis import
+- `database/redis/transaction.go`: Updated Exec() to use Pipeliner type
+- `examples/redis/main.go`: Removed go-redis import, use redis.Pipeliner
+
+### Benefits / 장점
+- Cleaner API - users only need to import our package
+- 더 깨끗한 API - 사용자는 우리 패키지만 import하면 됨
+- Reduced dependency exposure
+- 의존성 노출 감소
+- Simpler example code
+- 더 간단한 예제 코드
+
+### Notes / 참고사항
+- This is a non-breaking change as Pipeliner is a type alias
+- Pipeliner가 타입 별칭이므로 중단되지 않는 변경사항
+- Current version: v1.4.009
+- 현재 버전: v1.4.009
+
+---
+
 ## [v1.4.008] - 2025-10-14
 
 ### Changed / 변경

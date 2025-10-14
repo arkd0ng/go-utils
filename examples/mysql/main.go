@@ -35,9 +35,15 @@ type MySQLConfig struct {
 }
 
 func main() {
-	// Create results directories / 결과 디렉토리 생성
-	os.MkdirAll("./results/logs", 0755)
-	os.MkdirAll("./results/mysql_export", 0755)
+	// Create results directories if they don't exist / 결과 디렉토리가 없다면 새롭게 생성
+	if err := os.MkdirAll("./results/logs", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to create logs directory: %v\n", err)
+		os.Exit(1)
+	}
+	if err := os.MkdirAll("./results/mysql_export", 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to create mysql_export directory: %v\n", err)
+		os.Exit(1)
+	}
 
 	// Initialize logger / 로거 초기화
 	logger, err := logging.New(

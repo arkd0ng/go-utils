@@ -22,7 +22,7 @@ func (c *Client) Transaction(ctx context.Context, fn func(tx *Tx) error, keys ..
 
 // Exec executes a transaction
 // Exec은 트랜잭션을 실행합니다
-func (tx *Tx) Exec(ctx context.Context, fn func(pipe redis.Pipeliner) error) error {
+func (tx *Tx) Exec(ctx context.Context, fn func(pipe Pipeliner) error) error {
 	pipe := tx.tx.TxPipeline()
 	if err := fn(pipe); err != nil {
 		return err
@@ -46,12 +46,12 @@ func (tx *Tx) Get(ctx context.Context, key string) (string, error) {
 
 // Set sets a value within a transaction pipeline
 // Set은 트랜잭션 파이프라인 내에서 값을 설정합니다
-func (tx *Tx) Set(ctx context.Context, pipe redis.Pipeliner, key string, value interface{}) error {
+func (tx *Tx) Set(ctx context.Context, pipe Pipeliner, key string, value interface{}) error {
 	return pipe.Set(ctx, key, value, 0).Err()
 }
 
 // Del deletes keys within a transaction pipeline
 // Del은 트랜잭션 파이프라인 내에서 키를 삭제합니다
-func (tx *Tx) Del(ctx context.Context, pipe redis.Pipeliner, keys ...string) error {
+func (tx *Tx) Del(ctx context.Context, pipe Pipeliner, keys ...string) error {
 	return pipe.Del(ctx, keys...).Err()
 }
