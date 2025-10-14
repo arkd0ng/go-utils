@@ -8,6 +8,67 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.7.009] - 2025-10-15
+
+### Added / 추가
+
+- **SLICING FUNCTIONS**: Implemented 7 slicing functions / 7개 슬라이싱 함수 구현
+  - `Chunk[T any](slice []T, size int) [][]T` - Split into chunks / 청크로 분할
+  - `Take[T any](slice []T, n int) []T` - Take first n elements / 첫 n개 요소 가져오기
+  - `TakeLast[T any](slice []T, n int) []T` - Take last n elements / 마지막 n개 요소 가져오기
+  - `Drop[T any](slice []T, n int) []T` - Drop first n elements / 첫 n개 요소 제거
+  - `DropLast[T any](slice []T, n int) []T` - Drop last n elements / 마지막 n개 요소 제거
+  - `Slice[T any](slice []T, start, end int) []T` - Slice with negative indices support / 음수 인덱스 지원 슬라이싱
+  - `Sample[T any](slice []T, n int) []T` - Random sampling without replacement / 복원 없는 랜덤 샘플링
+
+- **TESTS**: Comprehensive tests for slicing functions / 슬라이싱 함수에 대한 포괄적인 테스트
+  - 7 test functions with 33 test cases total / 총 33개 테스트 케이스가 있는 7개 테스트 함수
+  - Edge cases covered (empty, zero, negative, beyond bounds) / 엣지 케이스 커버 (비어있음, 0, 음수, 범위 초과)
+  - Negative index support tests (Slice function) / 음수 인덱스 지원 테스트 (Slice 함수)
+  - Random sampling uniqueness tests / 랜덤 샘플링 고유성 테스트
+  - 7 benchmark functions / 7개 벤치마크 함수
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.009 / `cfg/app.yaml` 버전을 v1.7.009로 업데이트
+- Updated `sliceutil/sliceutil.go` Version constant to "1.7.009" / `sliceutil/sliceutil.go` 버전 상수를 "1.7.009"로 업데이트
+- Updated `docs/sliceutil/WORK_PLAN.md` progress tracking / `docs/sliceutil/WORK_PLAN.md` 진행 상황 추적 업데이트
+
+### Files Created / 생성된 파일
+
+- `sliceutil/slice.go` - Slicing functions implementation (~230 lines) / 슬라이싱 함수 구현 (~230줄)
+- `sliceutil/slice_test.go` - Comprehensive tests (~450 lines) / 포괄적인 테스트 (~450줄)
+
+### Test Results / 테스트 결과
+
+- ✅ All tests passing (33 test cases) / 모든 테스트 통과 (33개 테스트 케이스)
+- ✅ TestChunk: 7 subtests / TestChunk: 7개 하위 테스트
+- ✅ TestTake: 5 subtests / TestTake: 5개 하위 테스트
+- ✅ TestTakeLast: 4 subtests / TestTakeLast: 4개 하위 테스트
+- ✅ TestDrop: 5 subtests / TestDrop: 5개 하위 테스트
+- ✅ TestDropLast: 4 subtests / TestDropLast: 4개 하위 테스트
+- ✅ TestSlice: 6 subtests / TestSlice: 6개 하위 테스트
+- ✅ TestSample: 5 subtests / TestSample: 5개 하위 테스트
+
+### Progress / 진행 상황
+
+- **Functions Implemented / 구현된 함수**: 32/60 (53%) - **과반수 돌파!**
+- **All 7 slicing functions complete! / 모든 7개 슬라이싱 함수 완료!**
+- **Work Units Completed / 완료된 작업 단위**: 9/18 (50%) - **절반 완료!**
+- **Current Phase / 현재 단계**: Phase 2 - Core Features / 2단계 - 핵심 기능
+
+### Milestones / 마일스톤
+
+🎉 **50% Work Units Complete!** / **50% 작업 단위 완료!**
+🎉 **53% Functions Complete!** / **53% 함수 완료!**
+
+### Next Steps / 다음 단계
+
+- **v1.7.010**: Set Operations - 6 functions / 집합 작업 - 6개 함수
+  - Union, Intersection, Difference, SymmetricDifference, IsSubset, IsSuperset
+
+---
+
 ## [v1.7.008] - 2025-10-15
 
 ### Added / 추가
