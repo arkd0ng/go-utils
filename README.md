@@ -41,6 +41,7 @@ go-utils/
 │   ├── mysql/       # Extreme simplicity MySQL client / 극도로 간단한 MySQL 클라이언트
 │   └── redis/       # Extreme simplicity Redis client / 극도로 간단한 Redis 클라이언트
 ├── stringutil/      # String manipulation utilities / 문자열 처리 유틸리티
+├── timeutil/        # Time and date utilities / 시간 및 날짜 유틸리티
 ├── sliceutil/       # Slice helpers (coming soon) / 슬라이스 헬퍼 (예정)
 ├── maputil/         # Map utilities (coming soon) / 맵 유틸리티 (예정)
 └── ...
@@ -348,13 +349,88 @@ filtered := stringutil.Filter(names, func(s string) bool {
 
 ---
 
+### ✅ [timeutil](./timeutil/) - Time and Date Utilities
+
+Extreme simplicity time utilities - reduce 20 lines of time manipulation code to just 1 line with KST (GMT+9) as default timezone.
+
+극도로 간단한 시간 유틸리티 - 20줄의 시간 처리 코드를 단 1줄로 줄이며, KST (GMT+9)를 기본 타임존으로 사용합니다.
+
+**Core Features**: 80+ functions, KST default timezone, custom format tokens, business day support / 80개 이상 함수, KST 기본 타임존, 커스텀 포맷 토큰, 영업일 지원
+
+**Categories / 카테고리**:
+- **Time Difference (8)**: SubTime, DiffInSeconds, DiffInMinutes, DiffInHours, DiffInDays / 시간 차이
+- **Timezone Operations (10)**: ConvertTimezone, ToKST, NowKST, SetDefaultTimezone / 타임존 작업
+- **Date Arithmetic (16)**: AddDays, AddWeeks, StartOfDay, EndOfMonth, StartOfYear / 날짜 연산
+- **Date Formatting (8)**: FormatISO8601, FormatKorean, Format (YYYY-MM-DD) / 날짜 포맷팅
+- **Time Parsing (6)**: ParseDate, ParseDateTime, Parse (auto-detect format) / 시간 파싱
+- **Time Comparisons (18)**: IsToday, IsWeekend, IsBetween, IsThisMonth / 시간 비교
+- **Age Calculations (4)**: AgeInYears, Age (years/months/days) / 나이 계산
+- **Relative Time (3)**: RelativeTime ("2 hours ago"), TimeAgo / 상대 시간
+- **Unix Timestamp (12)**: Now, NowMilli, FromUnix, ToUnix / Unix 타임스탬프
+- **Business Days (7)**: IsBusinessDay, AddBusinessDays, AddKoreanHolidays / 영업일
+
+```go
+import "github.com/arkd0ng/go-utils/timeutil"
+
+// Time difference with human-readable output / 사람이 읽기 쉬운 시간 차이
+start := time.Date(2025, 1, 1, 9, 0, 0, 0, time.UTC)
+end := time.Date(2025, 1, 3, 15, 30, 0, 0, time.UTC)
+diff := timeutil.SubTime(start, end)
+fmt.Println(diff.String()) // "2 days 6 hours 30 minutes"
+
+// Timezone operations with KST default / KST 기본 타임존 작업
+kstNow := timeutil.NowKST()
+nyTime, _ := timeutil.ConvertTimezone(time.Now(), "America/New_York")
+
+// Custom format tokens (YYYY-MM-DD instead of 2006-01-02) / 커스텀 포맷 토큰
+formatted := timeutil.Format(time.Now(), "YYYY-MM-DD HH:mm:ss") // "2025-10-14 15:04:05"
+korean := timeutil.FormatKorean(time.Now()) // "2025년 10월 14일 15시 04분 05초"
+
+// Business days with Korean holidays / 한국 공휴일을 포함한 영업일
+timeutil.AddKoreanHolidays(2025)
+nextBizDay := timeutil.AddBusinessDays(time.Now(), 5)
+isHoliday := timeutil.IsHoliday(time.Date(2025, 1, 1, 0, 0, 0, 0, timeutil.KST))
+
+// Relative time / 상대 시간
+past := time.Now().Add(-2 * time.Hour)
+fmt.Println(timeutil.RelativeTime(past)) // "2 hours ago"
+
+// Age calculation / 나이 계산
+birthDate := time.Date(1990, 5, 15, 0, 0, 0, 0, time.UTC)
+age := timeutil.Age(birthDate)
+fmt.Println(age.String()) // "35 years 4 months 29 days"
+```
+
+**Before vs After**:
+```go
+// ❌ Before: 20+ lines with standard time package
+start := time.Date(2025, 1, 1, 9, 0, 0, 0, time.UTC)
+end := time.Date(2025, 1, 3, 15, 30, 0, 0, time.UTC)
+duration := end.Sub(start)
+hours := duration.Hours()
+days := hours / 24
+if days > 0 {
+    fmt.Printf("%d days %d hours", int(days), int(hours)%24)
+} else if hours > 0 {
+    fmt.Printf("%d hours %d minutes", int(hours), int(duration.Minutes())%60)
+}
+// ... 더 많은 코드
+
+// ✅ After: 1-2 lines with this package
+diff := timeutil.SubTime(start, end)
+fmt.Println(diff.String()) // "2 days 6 hours 30 minutes"
+```
+
+**[→ View full documentation / 전체 문서 보기](./timeutil/README.md)**
+
+---
+
 ### 🔜 Coming Soon / 개발 예정
 
 - **sliceutil** - Slice/Array helpers / 슬라이스/배열 헬퍼
 - **maputil** - Map utilities / 맵 유틸리티
 - **fileutil** - File/Path utilities / 파일/경로 유틸리티
 - **httputil** - HTTP helpers / HTTP 헬퍼
-- **timeutil** - Time/Date utilities / 시간/날짜 유틸리티
 - **validation** - Validation utilities / 검증 유틸리티
 - **errorutil** - Error handling helpers / 에러 처리 헬퍼
 
@@ -437,7 +513,17 @@ For detailed version history, see:
 - [CHANGELOG.md](./CHANGELOG.md) - Major/Minor 버전 개요
 - [docs/CHANGELOG/](./docs/CHANGELOG/) - 상세한 패치별 변경사항
 
-### v1.5.x (Current / 현재)
+### v1.6.x (Current / 현재)
+
+- **NEW**: `timeutil` package - Time and date utilities / 시간 및 날짜 유틸리티
+  - 20 lines → 1 line code reduction / 20줄 → 1줄 코드 감소
+  - 80+ functions across 10 categories / 10개 카테고리에 걸쳐 80개 이상 함수
+  - KST (GMT+9) as default timezone / KST (GMT+9)를 기본 타임존으로 설정
+  - Custom format tokens (YYYY-MM-DD) / 커스텀 포맷 토큰
+  - Business day support with Korean holidays / 한국 공휴일을 포함한 영업일 지원
+  - Thread-safe timezone caching / 스레드 안전 타임존 캐싱
+
+### v1.5.x
 
 - **NEW**: `stringutil` package - String manipulation utilities / 문자열 처리 유틸리티
   - 20 lines → 1 line code reduction / 20줄 → 1줄 코드 감소

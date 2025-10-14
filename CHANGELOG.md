@@ -18,7 +18,32 @@ This file contains a high-level overview of major and minor versions. For detail
 
 ---
 
-## [v1.5.x] - String Utilities Package / 문자열 유틸리티 패키지 (현재 / Current)
+## [v1.6.x] - Time Utilities Package / 시간 유틸리티 패키지 (현재 / Current)
+
+**Focus / 초점**: Extreme simplicity time and date utilities with KST default timezone / KST 기본 타임존을 갖춘 극도로 간단한 시간 및 날짜 유틸리티
+
+**Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.6.md](docs/CHANGELOG/CHANGELOG-v1.6.md)
+
+### Highlights / 주요 사항
+- **Complete timeutil package**: 20 lines → 1 line of code / 완전한 timeutil 패키지: 20줄 → 1줄 코드
+- **80+ functions**: Time difference, timezone, arithmetic, formatting, parsing, comparison, age, relative time, unix timestamp, business days / 80개 이상 함수
+- **KST default timezone**: Asia/Seoul (GMT+9) as package-wide default / KST 기본 타임존: Asia/Seoul (GMT+9)를 패키지 전체 기본값으로
+- **Custom format tokens**: YYYY-MM-DD instead of Go's 2006-01-02 / 커스텀 포맷 토큰: Go의 2006-01-02 대신 YYYY-MM-DD
+- **Business day support**: Weekend and holiday-aware date calculations / 영업일 지원: 주말 및 공휴일을 고려한 날짜 계산
+- **Korean localization**: Korean format and holiday support / 한국어 지역화: 한국 형식 및 공휴일 지원
+- **Thread-safe**: Timezone caching with sync.RWMutex / 스레드 안전: sync.RWMutex를 사용한 타임존 캐싱
+- **Zero dependencies**: Standard library only / 제로 의존성: 표준 라이브러리만
+
+**Key Design Principles / 주요 설계 원칙**:
+- Extreme Simplicity: 20 lines → 1 line / 극도의 간결함: 20줄 → 1줄
+- Human-Readable: Intuitive function names / 사람이 읽기 쉬움: 직관적인 함수 이름
+- Zero Configuration: No setup required / 제로 설정: 설정 불필요
+
+**Latest Version / 최신 버전**: v1.6.001 (2025-10-14)
+
+---
+
+## [v1.5.x] - String Utilities Package / 문자열 유틸리티 패키지
 
 **Focus / 초점**: Extreme simplicity string manipulation utilities / 극도로 간단한 문자열 처리 유틸리티
 
