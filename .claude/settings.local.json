@@ -6,7 +6,14 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(go test:*)",
-      "Bash(go build:*)"
+      "Bash(go build:*)",
+      "Bash(brew services info:*)",
+      "Read(//opt/homebrew/var/mysql/**)",
+      "Bash(brew list:*)",
+      "Bash(brew reinstall:*)",
+      "Bash(brew services start:*)",
+      "Bash(mysql:*)",
+      "Bash(go run:*)"
     ],
     "deny": [],
     "ask": []
