@@ -8,6 +8,64 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.013] - 2025-10-14
+
+### Added / 추가
+
+- **FEAT**: Added substring extraction functions (Group 1: 3 functions)
+- **기능**: 부분 문자열 추출 함수 추가 (그룹 1: 3개 함수)
+
+### New Functions / 새로운 함수
+
+1. **Substring(s string, start, end int) string**
+   - Extracts substring from start to end index / start부터 end 인덱스까지 부분 문자열 추출
+   - Auto-adjusts out-of-bounds indices / 범위 초과 인덱스 자동 조정
+   - Unicode-safe with rune-based indexing / rune 기반 인덱싱으로 유니코드 안전
+   - Examples: `Substring("hello world", 0, 5)` → "hello"
+
+2. **Left(s string, n int) string**
+   - Returns leftmost n characters / 가장 왼쪽 n개 문자 반환
+   - Returns entire string if n > length / n > 길이면 전체 문자열 반환
+   - Unicode-safe / 유니코드 안전
+   - Examples: `Left("hello world", 5)` → "hello"
+
+3. **Right(s string, n int) string**
+   - Returns rightmost n characters / 가장 오른쪽 n개 문자 반환
+   - Returns entire string if n > length / n > 길이면 전체 문자열 반환
+   - Unicode-safe / 유니코드 안전
+   - Examples: `Right("hello world", 5)` → "world"
+
+### Testing / 테스트
+
+- `TestSubstring`: 8 test cases (basic, unicode, emoji, edge cases)
+- `TestLeft`: 6 test cases
+- `TestRight`: 6 test cases
+- Total: 20 test cases, all passing / 총 20개 테스트 케이스, 모두 통과
+
+### Documentation / 문서
+
+- Added comprehensive function documentation / 포괄적인 함수 문서 추가
+- Added examples to example file / 예제 파일에 예제 추가
+- Bilingual comments (English/Korean) / 이중 언어 주석
+
+### Files Modified / 수정된 파일
+
+- `stringutil/manipulation.go`: Added 3 functions (~90 lines)
+- `stringutil/manipulation_test.go`: Added 20 test cases
+- `examples/stringutil/main.go`: Added 4 examples
+- `cfg/app.yaml`: Updated version to v1.5.013
+
+### Notes / 참고사항
+
+- Function count: 38 → 41 (4/16 new functions complete)
+- 함수 개수: 38 → 41 (16개 중 4개 완료)
+- All substring operations are Unicode-safe
+- 모든 부분 문자열 작업은 유니코드 안전
+- Current version: v1.5.013
+- 현재 버전: v1.5.013
+
+---
+
 ## [v1.5.012] - 2025-10-14
 
 ### Added / 추가

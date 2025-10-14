@@ -154,3 +154,92 @@ func Repeat(s string, count int) string {
 	}
 	return strings.Repeat(s, count)
 }
+
+// Substring extracts a substring from start to end index (Unicode-safe).
+// Substring은 start부터 end 인덱스까지 부분 문자열을 추출합니다 (유니코드 안전).
+//
+// Parameters:
+// - start: starting index (inclusive)
+// - end: ending index (exclusive)
+//
+// If indices are out of bounds, they are adjusted to valid range.
+// 인덱스가 범위를 벗어나면 유효한 범위로 조정됩니다.
+//
+// Example:
+//
+//	Substring("hello world", 0, 5)   // "hello"
+//	Substring("hello world", 6, 11)  // "world"
+//	Substring("안녕하세요", 0, 2)       // "안녕"
+//	Substring("hello", 0, 100)       // "hello" (auto-adjusted)
+func Substring(s string, start, end int) string {
+	runes := []rune(s)
+	length := len(runes)
+
+	// Adjust negative indices / 음수 인덱스 조정
+	if start < 0 {
+		start = 0
+	}
+	if end < 0 {
+		end = 0
+	}
+
+	// Adjust out-of-bounds indices / 범위 초과 인덱스 조정
+	if start > length {
+		start = length
+	}
+	if end > length {
+		end = length
+	}
+
+	// Ensure start <= end / start <= end 보장
+	if start > end {
+		start, end = end, start
+	}
+
+	return string(runes[start:end])
+}
+
+// Left returns the leftmost n characters of a string (Unicode-safe).
+// Left는 문자열의 가장 왼쪽 n개 문자를 반환합니다 (유니코드 안전).
+//
+// If n is greater than string length, returns the entire string.
+// n이 문자열 길이보다 크면 전체 문자열을 반환합니다.
+//
+// Example:
+//
+//	Left("hello world", 5)  // "hello"
+//	Left("안녕하세요", 2)      // "안녕"
+//	Left("hello", 10)       // "hello"
+func Left(s string, n int) string {
+	if n <= 0 {
+		return ""
+	}
+	runes := []rune(s)
+	if n >= len(runes) {
+		return s
+	}
+	return string(runes[:n])
+}
+
+// Right returns the rightmost n characters of a string (Unicode-safe).
+// Right는 문자열의 가장 오른쪽 n개 문자를 반환합니다 (유니코드 안전).
+//
+// If n is greater than string length, returns the entire string.
+// n이 문자열 길이보다 크면 전체 문자열을 반환합니다.
+//
+// Example:
+//
+//	Right("hello world", 5)  // "world"
+//	Right("안녕하세요", 2)       // "세요"
+//	Right("hello", 10)       // "hello"
+func Right(s string, n int) string {
+	if n <= 0 {
+		return ""
+	}
+	runes := []rune(s)
+	length := len(runes)
+	if n >= length {
+		return s
+	}
+	return string(runes[length-n:])
+}

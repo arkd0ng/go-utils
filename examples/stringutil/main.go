@@ -58,6 +58,10 @@ func main() {
 	logger.Info(fmt.Sprintf("RemoveSpaces('h e l l o'): %s", stringutil.RemoveSpaces("h e l l o")))
 	logger.Info(fmt.Sprintf("Repeat('*', 5): %s", stringutil.Repeat("*", 5)))
 	logger.Info(fmt.Sprintf("Repeat('안녕', 3): %s", stringutil.Repeat("안녕", 3)))
+	logger.Info(fmt.Sprintf("Substring('hello world', 0, 5): %s", stringutil.Substring("hello world", 0, 5)))
+	logger.Info(fmt.Sprintf("Substring('안녕하세요', 0, 2): %s", stringutil.Substring("안녕하세요", 0, 2)))
+	logger.Info(fmt.Sprintf("Left('hello world', 5): %s", stringutil.Left("hello world", 5)))
+	logger.Info(fmt.Sprintf("Right('hello world', 5): %s", stringutil.Right("hello world", 5)))
 	logger.Info("")
 
 	// Validation Examples / 유효성 검사 예제
