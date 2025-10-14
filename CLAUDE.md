@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 `go-utils`는 Golang 개발을 위한 모듈화된 유틸리티 패키지 모음입니다. 라이브러리는 서브패키지 구조로 설계되어 사용자가 전체 라이브러리가 아닌 특정 유틸리티만 import할 수 있습니다.
 
 **GitHub 저장소**: `github.com/arkd0ng/go-utils`
-**현재 버전**: v1.3.010 (from cfg/app.yaml)
+**현재 버전**: v1.4.005 (from cfg/app.yaml)
 **Go 버전**: 1.24.6
 **라이선스**: MIT
 
@@ -28,17 +28,30 @@ go-utils/
 │   ├── options.go      # 함수형 옵션 패턴
 │   └── README.md       # 패키지별 문서 (이중 언어: 영문/한글)
 ├── database/
-│   └── mysql/          # 극도로 간단한 MySQL/MariaDB 클라이언트
+│   ├── mysql/          # 극도로 간단한 MySQL/MariaDB 클라이언트
+│   │   ├── client.go   # 클라이언트 핵심 로직
+│   │   ├── simple.go   # 간단한 CRUD API (7개 메서드)
+│   │   ├── builder.go  # Query Builder (Fluent API)
+│   │   ├── transaction.go  # 트랜잭션 지원
+│   │   ├── rotation.go # 자격 증명 순환 로직
+│   │   └── README.md   # 패키지별 문서 (이중 언어: 영문/한글)
+│   └── redis/          # 극도로 간단한 Redis 클라이언트
 │       ├── client.go   # 클라이언트 핵심 로직
-│       ├── simple.go   # 간단한 CRUD API (7개 메서드)
-│       ├── builder.go  # Query Builder (Fluent API)
-│       ├── transaction.go  # 트랜잭션 지원
-│       ├── rotation.go # 자격 증명 순환 로직
+│       ├── string.go   # String 작업 (11개 메서드)
+│       ├── hash.go     # Hash 작업 (10개 메서드)
+│       ├── list.go     # List 작업 (9개 메서드)
+│       ├── set.go      # Set 작업 (10개 메서드)
+│       ├── zset.go     # Sorted Set 작업 (10개 메서드)
+│       ├── key.go      # Key 작업 (11개 메서드)
+│       ├── pipeline.go # Pipeline 지원
+│       ├── transaction.go # Transaction 지원
+│       ├── pubsub.go   # Pub/Sub 지원
 │       └── README.md   # 패키지별 문서 (이중 언어: 영문/한글)
 ├── examples/
 │   ├── random_string/  # 모든 14개 random 메서드 시연
 │   ├── logging/        # 로깅 기능 및 설정 시연
-│   └── mysql/          # MySQL 패키지의 17개 예제 시연
+│   ├── mysql/          # MySQL 패키지의 17개 예제 시연
+│   └── redis/          # Redis 패키지의 8개 예제 시연
 └── (향후 패키지)        # stringutil, sliceutil, maputil, fileutil 등
 ```
 
@@ -200,6 +213,123 @@ go-utils/
 - `migration.go`: 마이그레이션 헬퍼
 - `export.go`: CSV 내보내기/가져오기
 
+### Redis 패키지 아키텍처
+
+`database/redis` 패키지는 극도로 간단한 Redis 클라이언트를 제공합니다:
+- **20줄 → 2줄 코드 감소**: Redis 작업을 위한 보일러플레이트 코드 대폭 제거
+- **자동 연결 관리**: 연결, 재시도, 재연결, 리소스 정리 모두 자동
+- **Options Pattern**: 함수형 옵션으로 유연한 설정
+- **60개 이상 메서드**: 6가지 데이터 타입 지원 + 고급 기능
+- **타입 안전**: Generic 메서드로 타입 안전 작업 (`GetAs[T]`, `HGetAllAs[T]`)
+
+**6가지 데이터 타입 작업**:
+
+1. **String Operations (string.go - 11개 메서드)**:
+   - 기본: `Set`, `Get`, `MGet`, `MSet`, `Append`, `GetRange`
+   - 타입 안전: `GetAs[T]` (제네릭 메서드)
+   - 숫자: `Incr`, `IncrBy`, `Decr`, `DecrBy`
+   - 조건부: `SetNX` (Not Exists), `SetEX` (Expiration)
+
+2. **Hash Operations (hash.go - 10개 메서드)**:
+   - 기본: `HSet`, `HSetMap`, `HGet`, `HGetAll`, `HDel`
+   - 타입 안전: `HGetAllAs[T]` (제네릭 메서드)
+   - 유틸리티: `HExists`, `HLen`, `HKeys`, `HVals`
+   - 숫자: `HIncrBy`, `HIncrByFloat`
+
+3. **List Operations (list.go - 9개 메서드)**:
+   - 추가: `LPush`, `RPush`
+   - 제거: `LPop`, `RPop`, `LRem`, `LTrim`
+   - 조회: `LRange`, `LIndex`, `LLen`
+   - 수정: `LSet`
+
+4. **Set Operations (set.go - 10개 메서드)**:
+   - 기본: `SAdd`, `SRem`, `SMembers`, `SIsMember`, `SCard`
+   - 집합 연산: `SUnion`, `SInter`, `SDiff`
+   - 랜덤: `SPop`, `SRandMember`
+
+5. **Sorted Set Operations (zset.go - 10개 메서드)**:
+   - 기본: `ZAdd`, `ZAddMultiple`, `ZRem`, `ZCard`, `ZScore`
+   - 범위 조회: `ZRange`, `ZRevRange`, `ZRangeByScore`
+   - 순위: `ZRank`, `ZRevRank`
+   - 증가: `ZIncrBy`
+
+6. **Key Operations (key.go - 11개 메서드)**:
+   - 기본: `Del`, `Exists`, `Type`, `Rename`, `RenameNX`
+   - 만료: `Expire`, `ExpireAt`, `TTL`, `Persist`
+   - 검색: `Keys`, `Scan`
+
+**고급 기능**:
+
+1. **Pipeline (pipeline.go)**:
+   - `Pipeline()`: 배치 명령 실행
+   - `TxPipeline()`: 트랜잭션 파이프라인
+   - 네트워크 왕복 최소화
+
+2. **Transaction (transaction.go)**:
+   - `Transaction()`: WATCH/MULTI/EXEC 지원
+   - 낙관적 잠금 (Optimistic Locking)
+   - 자동 재시도 로직
+
+3. **Pub/Sub (pubsub.go)**:
+   - `Publish`: 메시지 발행
+   - `Subscribe`: 채널 구독
+   - `PSubscribe`: 패턴 구독
+   - Channel 기반 메시지 수신
+
+**핵심 기능**:
+- **자동 재시도**: 네트워크 오류 시 exponential backoff 재시도
+- **헬스 체크**: 백그라운드에서 연결 상태 모니터링
+- **Connection Pooling**: go-redis 내장 연결 풀 활용
+- **Context 지원**: 모든 메서드에서 context 지원 (취소 및 타임아웃)
+- **타입 변환**: Generic 메서드로 자동 타입 변환
+- **에러 처리**: 재시도 가능 에러 자동 감지 및 처리
+
+**설계 철학** - "극도의 간결함 (Extreme Simplicity)":
+- **Before**: 20줄 이상의 연결 관리, 에러 처리, 재시도 코드
+  ```go
+  // 20+ lines of code
+  rdb := redis.NewClient(&redis.Options{
+      Addr:     "localhost:6379",
+      Password: "",
+      DB:       0,
+  })
+  ctx := context.Background()
+  err := rdb.Set(ctx, "key", "value", 0).Err()
+  if err != nil {
+      // retry logic
+      // error handling
+  }
+  val, err := rdb.Get(ctx, "key").Result()
+  if err != nil {
+      // error handling
+  }
+  // More boilerplate...
+  ```
+
+- **After**: 2줄로 모든 작업 완료
+  ```go
+  client, _ := redis.New(redis.WithAddr("localhost:6379"))
+  client.Set(context.Background(), "key", "value", 0)
+  ```
+
+**파일 구조**:
+- `client.go`: 클라이언트 핵심 로직 및 New() 생성자
+- `string.go`: String 작업 (11개 메서드)
+- `hash.go`: Hash 작업 (10개 메서드)
+- `list.go`: List 작업 (9개 메서드)
+- `set.go`: Set 작업 (10개 메서드)
+- `zset.go`: Sorted Set 작업 (10개 메서드)
+- `key.go`: Key 작업 (11개 메서드)
+- `pipeline.go`: Pipeline 지원
+- `transaction.go`: Transaction 지원
+- `pubsub.go`: Pub/Sub 지원
+- `connection.go`: 연결 관리 및 헬스 체크
+- `retry.go`: 재시도 로직 (exponential backoff)
+- `errors.go`: 에러 타입 정의
+- `config.go`: 설정 구조체
+- `options.go`: 함수형 옵션 패턴
+- `types.go`: 타입 정의
+
 ## 버전 관리 및 CHANGELOG 규칙
 
 ### 버전 관리
@@ -215,14 +345,16 @@ go-utils/
 - **v1.0.x**: Random package 개발
 - **v1.1.x**: Logging package 개발
 - **v1.2.x**: Random 및 Logging 패키지 종합 문서화 (USER_MANUAL, DEVELOPER_GUIDE)
-- **v1.3.x** (현재): MySQL package 개발 및 문서화
+- **v1.3.x**: MySQL package 개발 및 문서화
+- **v1.4.x** (현재): Redis package 개발 및 문서화
 
 ### 외부 의존성
 
 프로젝트에서 사용하는 외부 라이브러리:
 - **github.com/go-sql-driver/mysql**: MySQL 드라이버 (database/mysql 패키지)
+- **github.com/redis/go-redis/v9**: Redis 클라이언트 (database/redis 패키지)
 - **gopkg.in/natefinch/lumberjack.v2**: 파일 로테이션 (logging 패키지)
-- **gopkg.in/yaml.v3**: YAML 설정 파일 파싱 (cfg/app.yaml, cfg/database.yaml)
+- **gopkg.in/yaml.v3**: YAML 설정 파일 파싱 (cfg/app.yaml, cfg/database.yaml, cfg/redis.yaml)
 
 ### CHANGELOG 관리
 
@@ -235,7 +367,8 @@ go-utils/
         ├── CHANGELOG-v1.0.md        # v1.0.x 상세 변경사항
         ├── CHANGELOG-v1.1.md        # v1.1.x 상세 변경사항
         ├── CHANGELOG-v1.2.md        # v1.2.x 상세 변경사항
-        └── CHANGELOG-v1.3.md        # v1.3.x 상세 변경사항
+        ├── CHANGELOG-v1.3.md        # v1.3.x 상세 변경사항
+        └── CHANGELOG-v1.4.md        # v1.4.x 상세 변경사항
 ```
 
 **CHANGELOG 규칙**:
@@ -389,7 +522,8 @@ go-utils/
 │   │   ├── CHANGELOG-v1.0.md
 │   │   ├── CHANGELOG-v1.1.md
 │   │   ├── CHANGELOG-v1.2.md
-│   │   └── CHANGELOG-v1.3.md
+│   │   ├── CHANGELOG-v1.3.md
+│   │   └── CHANGELOG-v1.4.md
 │   ├── random/
 │   │   ├── USER_MANUAL.md      # ~600 lines, 완전한 사용자 가이드
 │   │   └── DEVELOPER_GUIDE.md  # ~700 lines, 완전한 개발자 가이드
@@ -397,9 +531,14 @@ go-utils/
 │   │   ├── USER_MANUAL.md      # ~1000 lines, 완전한 사용자 가이드
 │   │   └── DEVELOPER_GUIDE.md  # ~900 lines, 완전한 개발자 가이드
 │   └── database/
-│       └── mysql/
-│           ├── USER_MANUAL.md      # 완전한 사용자 가이드
-│           ├── DEVELOPER_GUIDE.md  # 완전한 개발자 가이드
+│       ├── mysql/
+│       │   ├── USER_MANUAL.md      # 완전한 사용자 가이드
+│       │   ├── DEVELOPER_GUIDE.md  # 완전한 개발자 가이드
+│       │   ├── DESIGN_PLAN.md      # 설계 계획 문서
+│       │   └── WORK_PLAN.md        # 작업 계획 문서
+│       └── redis/
+│           ├── USER_MANUAL.md      # 완전한 사용자 가이드 (예정)
+│           ├── DEVELOPER_GUIDE.md  # 완전한 개발자 가이드 (예정)
 │           ├── DESIGN_PLAN.md      # 설계 계획 문서
 │           └── WORK_PLAN.md        # 작업 계획 문서
 ```
@@ -445,10 +584,12 @@ go test ./... -v
 go test ./random -v
 go test ./logging -v
 go test ./database/mysql -v
+go test ./database/redis -v
 
 # 단일 테스트 실행
 go test ./random -v -run TestLetters
 go test ./database/mysql -v -run TestSelectAll
+go test ./database/redis -v -run TestStringOperations
 
 # 벤치마크 실행
 go test ./... -bench=.
@@ -472,10 +613,14 @@ go run examples/logging/main.go
 # MySQL 예제 실행 (MySQL 서버 필요)
 go run examples/mysql/main.go
 
+# Redis 예제 실행 (Redis 서버 필요)
+go run examples/redis/main.go
+
 # 예제 바이너리 빌드
 go build -o bin/random_example examples/random_string/main.go
 go build -o bin/logging_example examples/logging/main.go
 go build -o bin/mysql_example examples/mysql/main.go
+go build -o bin/redis_example examples/redis/main.go
 ```
 
 **예제 디렉토리 구조**:
@@ -488,33 +633,68 @@ go build -o bin/mysql_example examples/mysql/main.go
   - SelectColumn, SelectColumns
   - Transaction
   - Raw SQL
+- `examples/redis/main.go`: Redis 패키지의 8개 예제 시연
+  - String Operations (Set, Get, GetAs, Incr, Decr)
+  - Hash Operations (HSet, HGet, HGetAll, HGetAllAs)
+  - List Operations (LPush, RPush, LPop, RPop, LRange)
+  - Set Operations (SAdd, SMembers, SUnion, SInter)
+  - Sorted Set Operations (ZAdd, ZRange, ZRangeByScore)
+  - Key Operations (Del, Exists, Expire, TTL, Keys)
+  - Pipeline (배치 명령 실행)
+  - Pub/Sub (메시지 발행 및 구독)
 
 **MySQL 예제 실행 요구사항**:
-- MySQL 서버 실행 중이어야 함 (또는 예제가 자동으로 brew services start mysql 실행)
+- MySQL 서버 실행 중이어야 함 (Docker: `./scripts/docker-mysql-start.sh`)
 - `cfg/database.yaml` 설정 파일 필요
 - 테스트 데이터베이스 및 테이블 (예제가 자동으로 설정)
 
-### MySQL 개발 워크플로우
+**Redis 예제 실행 요구사항**:
+- Redis 서버 실행 중이어야 함 (Docker: `./scripts/docker-redis-start.sh`)
+- `cfg/redis.yaml` 설정 파일 필요
+- 예제가 자동으로 데이터 생성 및 정리
+
+### Docker 개발 워크플로우
+
+**MySQL**:
 
 ```bash
-# MySQL 서비스 상태 확인
-brew services info mysql
+# Docker MySQL 시작
+./scripts/docker-mysql-start.sh
 
-# MySQL 서비스 시작
-brew services start mysql
+# Docker MySQL 중지
+./scripts/docker-mysql-stop.sh
 
-# MySQL 서비스 중지
-brew services stop mysql
-
-# MySQL 재설치 (필요시)
-brew reinstall mysql
+# Docker MySQL 로그 확인
+./scripts/docker-mysql-logs.sh
 
 # MySQL 클라이언트로 접속
-mysql -h localhost -P 3306 -u root -p
+docker exec -it go-utils-mysql mysql -u root -prootpassword
 
-# 테스트 데이터베이스 및 테이블 생성 (예제 실행 전)
-# mysql 디렉토리에서 스크립트 실행
-mysql -u root -p < mysql/setup.sql
+# Docker Compose로 직접 제어
+docker compose up -d mysql
+docker compose down mysql
+```
+
+**Redis**:
+
+```bash
+# Docker Redis 시작
+./scripts/docker-redis-start.sh
+
+# Docker Redis 중지
+./scripts/docker-redis-stop.sh
+
+# Docker Redis 로그 확인
+./scripts/docker-redis-logs.sh
+
+# Redis CLI로 접속
+./scripts/docker-redis-cli.sh
+# 또는
+docker exec -it go-utils-redis redis-cli
+
+# Docker Compose로 직접 제어
+docker compose up -d redis
+docker compose down redis
 ```
 
 **MySQL 패키지 테스트**:
@@ -530,6 +710,22 @@ go test ./database/mysql -v -run TestTransaction
 # 커버리지 확인
 go test ./database/mysql -cover
 go test ./database/mysql -coverprofile=coverage.out
+go tool cover -html=coverage.out
+```
+
+**Redis 패키지 테스트**:
+
+```bash
+# Redis 패키지만 테스트
+go test ./database/redis -v
+
+# 특정 테스트 실행
+go test ./database/redis -v -run TestStringOperations
+go test ./database/redis -v -run TestPipeline
+
+# 커버리지 확인
+go test ./database/redis -cover
+go test ./database/redis -coverprofile=coverage.out
 go tool cover -html=coverage.out
 ```
 
@@ -562,6 +758,26 @@ go tool cover -html=coverage.out
 5. `database/mysql/client_test.go`에 테스트 추가
 6. `examples/mysql/main.go`에 예제 추가
 7. `database/mysql/README.md` 업데이트
+
+**`redis` 패키지에 새로운 메서드를 추가할 때**:
+
+1. 적절한 파일 선택:
+   - String 작업 → `string.go`
+   - Hash 작업 → `hash.go`
+   - List 작업 → `list.go`
+   - Set 작업 → `set.go`
+   - Sorted Set 작업 → `zset.go`
+   - Key 작업 → `key.go`
+   - Pipeline → `pipeline.go`
+   - Transaction → `transaction.go`
+   - Pub/Sub → `pubsub.go`
+2. Context 지원 필수 (모든 메서드에서)
+3. 이중 언어 문서 포함 (영문/한글)
+4. 재시도 로직이 필요한 경우 `executeWithRetry()` 사용
+5. `database/redis/client_test.go`에 테스트 추가
+6. `examples/redis/main.go`에 예제 추가
+7. `database/redis/README.md` 업데이트
+8. Generic 타입이 필요한 경우 `GetAs[T]`, `HGetAllAs[T]` 패턴 사용
 
 ### 새로운 유틸리티 패키지 생성
 
@@ -642,12 +858,20 @@ if err != nil {
 - **v1.0.x**: Random package 안정화 및 테스트 강화
 - **v1.1.x**: Logging package 추가 (파일 로테이션, 구조화 로깅)
 - **v1.2.x**: Random 및 Logging 패키지 종합 문서화 (USER_MANUAL, DEVELOPER_GUIDE)
-- **v1.3.x** (현재): MySQL package 추가
+- **v1.3.x**: MySQL package 추가
   - 극도로 간단한 MySQL/MariaDB 클라이언트 (30줄 → 2줄)
   - 3가지 API 레벨: Simple API, Query Builder, SelectWhere API
   - 무중단 자격 증명 순환 기능
   - 자동 연결 관리, 재시도, 리소스 정리
   - 종합 문서화 (USER_MANUAL, DEVELOPER_GUIDE)
+- **v1.4.x** (현재): Redis package 추가
+  - 극도로 간단한 Redis 클라이언트 (20줄 → 2줄)
+  - 60개 이상 메서드: String, Hash, List, Set, Sorted Set, Key 작업
+  - 고급 기능: Pipeline, Transaction, Pub/Sub
+  - 타입 안전: Generic 메서드 (`GetAs[T]`, `HGetAllAs[T]`)
+  - 자동 재시도, 연결 풀링, 헬스 체크
+  - Docker 기반 개발 환경 (MySQL, Redis 통합)
+  - 설계 문서 (DESIGN_PLAN, WORK_PLAN)
 
 ## 향후 로드맵
 

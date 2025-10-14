@@ -8,6 +8,54 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.006] - 2025-10-14
+
+### Changed / 변경
+- **DOCS**: Updated CLAUDE.md with comprehensive Redis package architecture
+- **문서**: Redis 패키지 아키텍처를 포함하여 CLAUDE.md 업데이트
+- Added Redis package to subpackage structure section
+- 서브패키지 구조 섹션에 Redis 패키지 추가
+- Added complete Redis package architecture documentation (similar to MySQL section)
+- MySQL 섹션과 유사한 완전한 Redis 패키지 아키텍처 문서화 추가
+- Documented all 6 data types: String, Hash, List, Set, Sorted Set, Key operations
+- 6가지 데이터 타입 문서화: String, Hash, List, Set, Sorted Set, Key 작업
+- Documented advanced features: Pipeline, Transaction, Pub/Sub
+- 고급 기능 문서화: Pipeline, Transaction, Pub/Sub
+- Added design philosophy with Before/After code examples (20+ lines → 2 lines)
+- Before/After 코드 예제를 포함한 설계 철학 추가 (20줄 이상 → 2줄)
+- Updated version history to v1.4.x as current version
+- 버전 히스토리를 v1.4.x로 현재 버전 업데이트
+- Updated external dependencies to include redis/go-redis/v9
+- redis/go-redis/v9를 포함하도록 외부 의존성 업데이트
+- Updated CHANGELOG file structure to include CHANGELOG-v1.4.md
+- CHANGELOG-v1.4.md를 포함하도록 CHANGELOG 파일 구조 업데이트
+- Updated documentation directory structure with redis package docs
+- redis 패키지 문서를 포함하도록 문서 디렉토리 구조 업데이트
+- Updated build and test commands to include redis package
+- redis 패키지를 포함하도록 빌드 및 테스트 명령 업데이트
+- Updated example execution section with Redis examples
+- Redis 예제를 포함하도록 예제 실행 섹션 업데이트
+- Renamed "MySQL 개발 워크플로우" to "Docker 개발 워크플로우"
+- "MySQL 개발 워크플로우"를 "Docker 개발 워크플로우"로 변경
+- Added Docker Redis workflow with management scripts
+- 관리 스크립트를 포함한 Docker Redis 워크플로우 추가
+- Added Redis package testing guidelines
+- Redis 패키지 테스트 가이드라인 추가
+- Added Redis package development guidelines with file selection guide
+- 파일 선택 가이드를 포함한 Redis 패키지 개발 가이드라인 추가
+- Updated version history context to include v1.4.x details
+- v1.4.x 세부 정보를 포함하도록 버전 히스토리 컨텍스트 업데이트
+
+### Notes / 참고사항
+- CLAUDE.md now has complete documentation for all 4 major packages
+- CLAUDE.md에 이제 4개 주요 패키지 모두에 대한 완전한 문서 포함
+- Redis package section follows same format as MySQL package for consistency
+- Redis 패키지 섹션은 일관성을 위해 MySQL 패키지와 동일한 형식 사용
+- Current version: v1.4.006
+- 현재 버전: v1.4.006
+
+---
+
 ## [v1.4.005] - 2025-10-14
 
 ### Added / 추가
