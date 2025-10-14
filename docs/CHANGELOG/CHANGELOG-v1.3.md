@@ -6,6 +6,37 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
+## [v1.3.014] - 2025-10-14 (Bug Fixes: Soft Delete Schema & MySQL 8.0+ Compatibility)
+
+### Fixed / 수정
+- **Soft Delete Schema Preparation** / 소프트 삭제 스키마 준비:
+  - Added Example 24.5 to automatically create `deleted_at` column before soft delete examples
+  - Prevents "Unknown column 'deleted_at'" error when running examples
+  - Checks if column exists and skips migration if already present
+  - Verifies table structure after column addition
+
+- **MySQL 8.0+ Compatibility** / MySQL 8.0+ 호환성:
+  - Fixed `schema.go` to handle MySQL 8.0+ `SHOW INDEX` output (15 columns vs 14)
+  - Added `expression` field to handle Expression column introduced in MySQL 8.0
+  - Fixes "sql: expected 15 destination arguments in Scan, not 14" error
+
+### Changed / 변경
+- **examples/mysql/main.go**:
+  - Added `example24_5PrepareForSoftDelete()` function (~60 lines)
+  - Automatically prepares users table with deleted_at column
+  - Integrated between Example 24 and Example 25
+
+- **database/mysql/schema.go**:
+  - Updated `GetIndexes()` method to scan 15 columns for MySQL 8.0+ compatibility
+  - Added `expression sql.NullString` variable for Expression column
+
+### Testing / 테스트
+- All 35 examples now run successfully without errors
+- Soft delete examples (25-27) work correctly after schema preparation
+- Schema inspection (Example 32) works with MySQL 8.0+
+
+---
+
 ## [v1.3.013] - 2025-10-14 (MySQL Documentation Update)
 
 ### Changed / 변경

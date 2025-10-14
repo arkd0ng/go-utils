@@ -190,6 +190,7 @@ func (c *Client) GetIndexes(ctx context.Context, table string) ([]IndexInfo, err
 			comment      string
 			indexComment string
 			visible      string
+			expression   sql.NullString // MySQL 8.0+ includes Expression column
 		)
 
 		err := rows.Scan(
@@ -207,6 +208,7 @@ func (c *Client) GetIndexes(ctx context.Context, table string) ([]IndexInfo, err
 			&comment,
 			&indexComment,
 			&visible,
+			&expression, // MySQL 8.0+ Expression column
 		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan index info: %w", err)

@@ -342,6 +342,11 @@ func runExamples(dsn string, cfg MySQLConfig, logger *logging.Logger) error {
 		return err
 	}
 
+	// Example 24.5: Prepare table for soft delete - Add deleted_at column / 소프트 삭제를 위한 테이블 준비 - deleted_at 컬럼 추가
+	if err := example24_5PrepareForSoftDelete(ctx, db, logger); err != nil {
+		return err
+	}
+
 	// Example 25: SoftDelete - Soft delete user / 사용자 소프트 삭제
 	if err := example25SoftDelete(ctx, db, logger); err != nil {
 		return err
@@ -1208,6 +1213,64 @@ func example24PaginationWithOptions(ctx context.Context, db *mysql.Client, logge
 	logger.Info(fmt.Sprintf("페이지 %d/%d (전체: %d명)", result.Page, result.TotalPages, result.TotalRows))
 	for i, user := range result.Data {
 		logger.Info(fmt.Sprintf("  %d. %s (age: %v)", i+1, user["name"], user["age"]))
+	}
+
+	logger.Info("")
+	return nil
+}
+
+// example24_5PrepareForSoftDelete prepares the users table for soft delete by adding deleted_at column
+// example24_5PrepareForSoftDelete는 deleted_at 컬럼을 추가하여 users 테이블을 소프트 삭제를 위해 준비합니다
+func example24_5PrepareForSoftDelete(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 24.5: Prepare for SoftDelete - Add deleted_at column")
+	logger.Info("예제 24.5: SoftDelete 준비 - deleted_at 컬럼 추가")
+	logger.Info("========================================")
+
+	// Check if deleted_at column already exists / deleted_at 컬럼이 이미 존재하는지 확인
+	columns, err := db.GetColumns(ctx, "users")
+	if err != nil {
+		return fmt.Errorf("GetColumns failed: %w", err)
+	}
+
+	hasDeletedAt := false
+	for _, col := range columns {
+		if col.Name == "deleted_at" {
+			hasDeletedAt = true
+			break
+		}
+	}
+
+	if hasDeletedAt {
+		logger.Info("✅ deleted_at column already exists, skipping migration")
+		logger.Info("✅ deleted_at 컬럼이 이미 존재하므로 마이그레이션을 건너뜁니다")
+		logger.Info("")
+		return nil
+	}
+
+	// Add deleted_at column for soft delete / 소프트 삭제를 위한 deleted_at 컬럼 추가
+	logger.Info("Adding deleted_at column to users table...")
+	logger.Info("users 테이블에 deleted_at 컬럼 추가 중...")
+
+	err = db.AddColumn(ctx, "users", "deleted_at", "TIMESTAMP NULL DEFAULT NULL")
+	if err != nil {
+		return fmt.Errorf("AddColumn failed: %w", err)
+	}
+
+	logger.Info("✅ Successfully added deleted_at column")
+	logger.Info("✅ deleted_at 컬럼을 성공적으로 추가했습니다")
+
+	// Verify the column was added / 컬럼이 추가되었는지 확인
+	columns, err = db.GetColumns(ctx, "users")
+	if err != nil {
+		return fmt.Errorf("GetColumns verification failed: %w", err)
+	}
+
+	logger.Info("")
+	logger.Info("Current table structure:")
+	logger.Info("현재 테이블 구조:")
+	for _, col := range columns {
+		logger.Info(fmt.Sprintf("  - %s (%s)", col.Name, col.Type))
 	}
 
 	logger.Info("")
