@@ -8,6 +8,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.7.007] - 2025-10-15
+
+### Added / 추가
+
+- **TRANSFORMATION FUNCTIONS (Part 2)**: Implemented 4 more transformation functions / 4개 추가 변환 함수 구현
+  - `Unique[T comparable](slice []T) []T` - Remove duplicates / 중복 제거
+  - `UniqueBy[T any, K comparable](slice []T, keyFunc func(T) K) []T` - Remove duplicates by key / 키로 중복 제거
+  - `Compact[T comparable](slice []T) []T` - Remove consecutive duplicates / 연속 중복 제거
+  - `Reverse[T any](slice []T) []T` - Reverse order / 역순 정렬
+
+- **TESTS**: Comprehensive tests for new transformation functions / 새 변환 함수에 대한 포괄적인 테스트
+  - 4 test functions with 26 test cases total / 총 26개 테스트 케이스가 있는 4개 테스트 함수
+  - Edge cases covered (nil, empty, various scenarios) / 엣지 케이스 커버 (nil, 비어있음, 다양한 시나리오)
+  - 4 benchmark functions / 4개 벤치마크 함수
+  - Special tests: non-consecutive duplicates, immutability / 특수 테스트: 비연속 중복, 불변성
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.007 / `cfg/app.yaml` 버전을 v1.7.007로 업데이트
+- Updated `sliceutil/sliceutil.go` Version constant to "1.7.007" / `sliceutil/sliceutil.go` 버전 상수를 "1.7.007"로 업데이트
+- Updated `sliceutil/transform.go` with 4 new functions (~110 lines added) / 4개 새 함수로 `sliceutil/transform.go` 업데이트 (~110줄 추가)
+- Updated `sliceutil/transform_test.go` with comprehensive tests (~330 lines added) / 포괄적인 테스트로 `sliceutil/transform_test.go` 업데이트 (~330줄 추가)
+- Updated `docs/sliceutil/WORK_PLAN.md` progress tracking / `docs/sliceutil/WORK_PLAN.md` 진행 상황 추적 업데이트
+
+### Test Results / 테스트 결과
+
+- ✅ All tests passing (26 test cases) / 모든 테스트 통과 (26개 테스트 케이스)
+- ✅ TestUnique: 6 subtests / TestUnique: 6개 하위 테스트
+- ✅ TestUniqueBy: 5 subtests / TestUniqueBy: 5개 하위 테스트
+- ✅ TestCompact: 7 subtests / TestCompact: 7개 하위 테스트
+- ✅ TestReverse: 8 subtests / TestReverse: 8개 하위 테스트
+
+### Progress / 진행 상황
+
+- **Functions Implemented / 구현된 함수**: 18/60 (30%)
+- **All 8 transformation functions complete! / 모든 8개 변환 함수 완료!**
+- **Work Units Completed / 완료된 작업 단위**: 7/18 (39%)
+- **Current Phase / 현재 단계**: Phase 2 - Core Features / 2단계 - 핵심 기능
+
+### Next Steps / 다음 단계
+
+- **v1.7.008**: Aggregation Functions - 7 functions / 집계 함수 - 7개 함수
+  - Reduce, Sum, Min, Max, Average, GroupBy, Partition
+
+---
+
 ## [v1.7.006] - 2025-10-15
 
 ### Added / 추가

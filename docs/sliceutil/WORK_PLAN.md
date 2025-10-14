@@ -151,18 +151,18 @@ sliceutil/
 ### v1.7.007 - Transformation Functions (Part 2) / 변환 함수 (2부)
 
 **Tasks / 작업**:
-- [ ] Implement 4 more transformation functions:
+- [x] Implement 4 more transformation functions:
   - Unique[T comparable](slice []T) []T
   - UniqueBy[T any, K comparable](slice []T, keyFunc func(T) K) []T
   - Compact[T comparable](slice []T) []T
   - Reverse[T any](slice []T) []T
-- [ ] Write tests for all 4 functions / 모든 4개 함수에 대한 테스트 작성
-- [ ] Write benchmarks / 벤치마크 작성
-- [ ] Update cfg/app.yaml to v1.7.007 / cfg/app.yaml를 v1.7.007로 업데이트
-- [ ] Update CHANGELOG / CHANGELOG 업데이트
+- [x] Write tests for all 4 functions / 모든 4개 함수에 대한 테스트 작성
+- [x] Write benchmarks / 벤치마크 작성
+- [x] Update cfg/app.yaml to v1.7.007 / cfg/app.yaml를 v1.7.007로 업데이트
+- [x] Update CHANGELOG / CHANGELOG 업데이트
 
 **Deliverables / 결과물**:
-- All 8 transformation functions complete
+- ✅ All 8 transformation functions complete
 
 ---
 
@@ -572,12 +572,12 @@ sliceutil/
 
 ## Status Tracking / 상태 추적
 
-**Current Version / 현재 버전**: v1.7.006 (in progress / 진행 중)
+**Current Version / 현재 버전**: v1.7.007
 **Current Phase / 현재 단계**: Phase 2 - Core Features / 2단계 - 핵심 기능
-**Next Task / 다음 작업**: Complete v1.7.006 tests, then v1.7.007 - Transformation Functions (Part 2)
+**Next Task / 다음 작업**: v1.7.008 - Aggregation Functions (7 functions)
 
-**Overall Progress / 전체 진행률**: 5.5/18 units (31%)
-**Functions Implemented / 구현된 함수**: 14/60 functions (23%)
+**Overall Progress / 전체 진행률**: 7/18 units (39%)
+**Functions Implemented / 구현된 함수**: 18/60 functions (30%)
 
 ---
 
