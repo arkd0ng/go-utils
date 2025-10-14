@@ -8,6 +8,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.6.005] - 2025-10-14
+
+### Changed / 변경
+
+- **EXAMPLES**: Updated timeutil and stringutil examples with verified function counts / timeutil 및 stringutil 예제를 검증된 함수 개수로 업데이트
+  - timeutil: Updated to show all 97 functions (was showing "80+") / timeutil: 모든 97개 함수 표시 (기존 "80+" 표시)
+  - stringutil: Updated to show all 79 functions / stringutil: 모든 79개 함수 표시
+  - Both examples already include all implemented functions / 두 예제 모두 이미 구현된 모든 함수 포함
+  - Updated version references to v1.6.005 / 버전 참조를 v1.6.005로 업데이트
+
+### Example Status / 예제 상태
+
+**Timeutil Package / Timeutil 패키지**:
+- ✅ All 97 functions demonstrated / 모든 97개 함수 시연 완료
+- ✅ 10 categories fully covered / 10개 카테고리 완전 커버
+- ✅ Detailed bilingual logging / 상세한 이중 언어 로깅
+- ✅ 587 lines of comprehensive examples / 587줄의 포괄적인 예제
+
+**Stringutil Package / Stringutil 패키지**:
+- ✅ All 79 functions demonstrated / 모든 79개 함수 시연 완료
+- ✅ 10 categories fully covered / 10개 카테고리 완전 커버
+- ✅ Detailed bilingual logging / 상세한 이중 언어 로깅
+- ✅ 850+ lines of comprehensive examples / 850줄 이상의 포괄적인 예제
+- ✅ Includes Builder pattern examples / 빌더 패턴 예제 포함
+- ✅ Real-world usage scenarios / 실제 사용 시나리오 포함
+
+---
+
 ## [v1.6.004] - 2025-10-14
 
 ### Added / 추가

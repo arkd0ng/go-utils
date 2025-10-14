@@ -21,9 +21,9 @@ func main() {
 	defer logger.Close()
 
 	// Print banner / 배너 출력
-	logger.Banner("Timeutil Package Examples", "v1.6.003")
-	logger.Info("Starting comprehensive timeutil examples with all 80+ functions")
-	logger.Info("시작: 80개 이상의 모든 함수를 포함한 포괄적인 timeutil 예제")
+	logger.Banner("Timeutil Package Examples", "v1.6.005")
+	logger.Info("Starting comprehensive timeutil examples with all 97 functions")
+	logger.Info("시작: 모든 97개 함수를 포함한 포괄적인 timeutil 예제")
 
 	// ============================================================
 	// 1. Time Difference Functions (8 functions)
@@ -552,8 +552,8 @@ func main() {
 	logger.Info("Summary / 요약")
 	logger.Info("=" + repeat("=", 60))
 
-	logger.Info("All 80+ timeutil functions demonstrated successfully!")
-	logger.Info("모든 80개 이상의 timeutil 함수를 성공적으로 시연했습니다!")
+	logger.Info("All 97 timeutil functions demonstrated successfully!")
+	logger.Info("모든 97개 timeutil 함수를 성공적으로 시연했습니다!")
 	logger.Info("")
 	logger.Info("Categories covered / 다뤄진 카테고리:")
 	logger.Info("  1. Time Difference (8 functions) / 시간 차이 (8개 함수)")

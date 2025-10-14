@@ -30,10 +30,10 @@ func main() {
 	defer logger.Close()
 
 	// Print banner / 배너 출력
-	logger.Banner("Stringutil Package Examples - All 53 Functions", "go-utils/stringutil")
+	logger.Banner("Stringutil Package Examples - All 79 Functions", "go-utils/stringutil")
 	logger.Info("")
-	logger.Info("This example demonstrates ALL 53 functions in the stringutil package")
-	logger.Info("본 예제는 stringutil 패키지의 모든 53개 함수를 시연합니다")
+	logger.Info("This example demonstrates ALL 79 functions in the stringutil package")
+	logger.Info("본 예제는 stringutil 패키지의 모든 79개 함수를 시연합니다")
 	logger.Info("")
 
 	// ========================================
@@ -611,7 +611,7 @@ func main() {
 	logger.Info(fmt.Sprintf("     FormatBytes(1048576) = '%s'", stringutil.FormatBytes(1048576)))
 	logger.Info("")
 
-	// 10.3 FormatWithCount (Pluralize)
+	// 10.3 FormatWithCount
 	logger.Info("10.3 FormatWithCount - Formats string with count and plural form")
 	logger.Info("     개수와 복수형으로 문자열을 포맷합니다")
 	logger.Info(fmt.Sprintf("     FormatWithCount(1, 'item', 'items') = '%s'",
@@ -620,58 +620,67 @@ func main() {
 		stringutil.FormatWithCount(5, "item", "items")))
 	logger.Info("")
 
-	// 10.4 Ellipsis
-	logger.Info("10.4 Ellipsis - Truncates string with ellipsis in middle")
+	// 10.4 Pluralize
+	logger.Info("10.4 Pluralize - Returns plural form if count is not 1")
+	logger.Info("     개수가 1이 아니면 복수형을 반환합니다")
+	logger.Info(fmt.Sprintf("     Pluralize(1, 'item', 'items') = '%s'",
+		stringutil.Pluralize(1, "item", "items")))
+	logger.Info(fmt.Sprintf("     Pluralize(5, 'item', 'items') = '%s'",
+		stringutil.Pluralize(5, "item", "items")))
+	logger.Info("")
+
+	// 10.5 Ellipsis
+	logger.Info("10.5 Ellipsis - Truncates string with ellipsis in middle")
 	logger.Info("     문자열을 중간에 ellipsis를 넣어 자릅니다")
 	longFilename := "verylongfilename.txt"
 	logger.Info(fmt.Sprintf("     Ellipsis('%s', 15) = '%s'",
 		longFilename, stringutil.Ellipsis(longFilename, 15)))
 	logger.Info("")
 
-	// 10.5 Mask
-	logger.Info("10.5 Mask - Masks characters except for first and last n characters")
+	// 10.6 Mask
+	logger.Info("10.6 Mask - Masks characters except for first and last n characters")
 	logger.Info("     처음과 마지막 n개 문자를 제외하고 마스킹합니다")
 	logger.Info(fmt.Sprintf("     Mask('1234567890', 2, 2, '*') = '%s'",
 		stringutil.Mask("1234567890", 2, 2, "*")))
 	logger.Info("")
 
-	// 10.6 MaskEmail
-	logger.Info("10.6 MaskEmail - Masks email address")
+	// 10.7 MaskEmail
+	logger.Info("10.7 MaskEmail - Masks email address")
 	logger.Info("     이메일 주소를 마스킹합니다")
 	logger.Info(fmt.Sprintf("     MaskEmail('john.doe@example.com') = '%s'",
 		stringutil.MaskEmail("john.doe@example.com")))
 	logger.Info("")
 
-	// 10.7 MaskCreditCard
-	logger.Info("10.7 MaskCreditCard - Masks credit card number")
+	// 10.8 MaskCreditCard
+	logger.Info("10.8 MaskCreditCard - Masks credit card number")
 	logger.Info("     신용카드 번호를 마스킹합니다")
 	logger.Info(fmt.Sprintf("     MaskCreditCard('1234567890123456') = '%s'",
 		stringutil.MaskCreditCard("1234567890123456")))
 	logger.Info("")
 
-	// 10.8 AddLineNumbers
-	logger.Info("10.8 AddLineNumbers - Adds line numbers to multi-line text")
+	// 10.9 AddLineNumbers
+	logger.Info("10.9 AddLineNumbers - Adds line numbers to multi-line text")
 	logger.Info("     여러 줄 텍스트에 줄 번호를 추가합니다")
 	multiLineText := "line 1\nline 2\nline 3"
 	logger.Info(fmt.Sprintf("     AddLineNumbers:\n%s", stringutil.AddLineNumbers(multiLineText)))
 	logger.Info("")
 
-	// 10.9 Indent
-	logger.Info("10.9 Indent - Adds indentation to each line")
+	// 10.10 Indent
+	logger.Info("10.10 Indent - Adds indentation to each line")
 	logger.Info("     각 줄에 들여쓰기를 추가합니다")
 	codeSnippet := "func main() {\n  fmt.Println(\"hello\")\n}"
 	logger.Info(fmt.Sprintf("     Indent (2 spaces):\n%s", stringutil.Indent(codeSnippet, "  ")))
 	logger.Info("")
 
-	// 10.10 Dedent
-	logger.Info("10.10 Dedent - Removes common leading whitespace")
+	// 10.11 Dedent
+	logger.Info("10.11 Dedent - Removes common leading whitespace")
 	logger.Info("      공통 앞 공백을 제거합니다")
 	indentedCode := "    func main() {\n      fmt.Println(\"hello\")\n    }"
 	logger.Info(fmt.Sprintf("      Dedent:\n%s", stringutil.Dedent(indentedCode)))
 	logger.Info("")
 
-	// 10.11 WrapText (bonus)
-	logger.Info("10.11 WrapText - Wraps text to specified width")
+	// 10.12 WrapText (bonus)
+	logger.Info("10.12 WrapText - Wraps text to specified width")
 	logger.Info("      텍스트를 지정된 너비로 줄바꿈합니다")
 	longText := "The quick brown fox jumps over the lazy dog"
 	logger.Info(fmt.Sprintf("      WrapText (width 20):\n%s", stringutil.WrapText(longText, 20)))
