@@ -425,6 +425,89 @@ fmt.Println(diff.String()) // "2 days 6 hours 30 minutes"
 
 ---
 
+### ✅ [sliceutil](./sliceutil/) - Slice Utilities
+
+Extreme simplicity slice utilities - reduce 20 lines of repetitive slice manipulation code to just 1 line with 60 type-safe functions.
+
+극도로 간단한 슬라이스 유틸리티 - 20줄의 반복적인 슬라이스 조작 코드를 단 1줄로 줄이며, 60개의 타입 안전 함수를 제공합니다.
+
+**Core Features**: 60 functions across 8 categories, Go 1.18+ generics, functional programming style, immutable operations, zero dependencies / 8개 카테고리에 걸쳐 60개 함수, Go 1.18+ 제네릭, 함수형 프로그래밍 스타일, 불변 작업, 제로 의존성
+
+**Categories / 카테고리**:
+- **Basic Operations (10)**: Contains, IndexOf, Find, Count, First, Last / 기본 작업
+- **Transformation (8)**: Map, Filter, Unique, Reverse, Flatten, FlatMap / 변환
+- **Aggregation (7)**: Reduce, Sum, Min, Max, Average, GroupBy, Partition / 집계
+- **Slicing (7)**: Chunk, Take, Drop, Sample, Slice / 슬라이싱
+- **Set Operations (6)**: Union, Intersection, Difference, IsSubset / 집합 작업
+- **Sorting (5)**: Sort, SortBy, SortDesc, IsSorted / 정렬
+- **Predicates (6)**: All, Any, None, AllEqual, Equal / 조건자
+- **Utilities (11)**: ForEach, Join, Clone, Shuffle, Zip, Unzip / 유틸리티
+
+```go
+import "github.com/arkd0ng/go-utils/sliceutil"
+
+// Filter and Map pipeline / 필터 및 Map 파이프라인
+numbers := []int{1, 2, 3, 4, 5, 6}
+evens := sliceutil.Filter(numbers, func(n int) bool { return n%2 == 0 })
+doubled := sliceutil.Map(evens, func(n int) int { return n * 2 })
+// Result: [4 8 12]
+
+// GroupBy and aggregate / 그룹화 및 집계
+users := []User{
+    {Name: "Alice", City: "Seoul", Age: 28},
+    {Name: "Bob", City: "Busan", Age: 35},
+    {Name: "Charlie", City: "Seoul", Age: 42},
+}
+byCity := sliceutil.GroupBy(users, func(u User) string { return u.City })
+// Map[Seoul: [{Alice Seoul 28} {Charlie Seoul 42}], Busan: [{Bob Busan 35}]]
+
+// Set operations / 집합 작업
+set1 := []int{1, 2, 3, 4, 5}
+set2 := []int{4, 5, 6, 7, 8}
+union := sliceutil.Union(set1, set2)        // [1 2 3 4 5 6 7 8]
+intersection := sliceutil.Intersection(set1, set2) // [4 5]
+
+// Functional operations / 함수형 작업
+result := sliceutil.Reduce(numbers, 0, func(acc, n int) int {
+    return acc + n
+}) // 21
+
+// Batch processing / 배치 처리
+data := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+chunks := sliceutil.Chunk(data, 3)
+// Result: [[1 2 3] [4 5 6] [7 8 9] [10]]
+```
+
+**Before vs After**:
+```go
+// ❌ Before: 20+ lines with standard Go
+numbers := []int{1, 2, 3, 4, 5, 6}
+var evens []int
+for _, n := range numbers {
+    if n%2 == 0 {
+        evens = append(evens, n)
+    }
+}
+var doubled []int
+for _, n := range evens {
+    doubled = append(doubled, n*2)
+}
+// ... 더 많은 코드
+
+// ✅ After: 2 lines with this package
+evens := sliceutil.Filter(numbers, func(n int) bool { return n%2 == 0 })
+doubled := sliceutil.Map(evens, func(n int) int { return n * 2 })
+```
+
+**Documentation / 문서**:
+- [Package README](./sliceutil/README.md) - Quick start and examples / 빠른 시작 및 예제
+- [User Manual](./docs/sliceutil/USER_MANUAL.md) - Comprehensive user guide (~1,800 lines) / 포괄적인 사용자 가이드 (~1,800줄)
+- [Developer Guide](./docs/sliceutil/DEVELOPER_GUIDE.md) - Technical documentation (~1,500 lines) / 기술 문서 (~1,500줄)
+
+**[→ View full documentation / 전체 문서 보기](./sliceutil/README.md)**
+
+---
+
 ### 🔜 Coming Soon / 개발 예정
 
 - **sliceutil** - Slice/Array helpers / 슬라이스/배열 헬퍼

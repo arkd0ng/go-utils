@@ -18,7 +18,33 @@ This file contains a high-level overview of major and minor versions. For detail
 
 ---
 
-## [v1.6.x] - Time Utilities Package / 시간 유틸리티 패키지 (현재 / Current)
+## [v1.7.x] - Slice Utilities Package / 슬라이스 유틸리티 패키지 (현재 / Current)
+
+**Focus / 초점**: Extreme simplicity slice utilities with Go 1.18+ generics / Go 1.18+ 제네릭을 사용한 극도로 간단한 슬라이스 유틸리티
+
+**Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.7.md](docs/CHANGELOG/CHANGELOG-v1.7.md)
+
+### Highlights / 주요 사항
+- **Complete sliceutil package**: 20 lines → 1 line of code / 완전한 sliceutil 패키지: 20줄 → 1줄 코드
+- **60 functions**: Basic operations, transformation, aggregation, slicing, set operations, sorting, predicates, utilities / 60개 함수
+- **Go 1.18+ generics**: Type-safe slice operations with generic type parameters / Go 1.18+ 제네릭: 제네릭 타입 파라미터를 사용한 타입 안전 슬라이스 작업
+- **Functional programming**: Map, Filter, Reduce, and more functional-style operations / 함수형 프로그래밍: Map, Filter, Reduce 등 함수형 스타일 작업
+- **Immutable operations**: All functions return new slices (no mutation) / 불변 작업: 모든 함수는 새 슬라이스를 반환 (변경 없음)
+- **Zero dependencies**: Standard library only / 제로 의존성: 표준 라이브러리만
+- **99.5% test coverage**: 260+ test cases with comprehensive edge case coverage / 99.5% 테스트 커버리지: 포괄적인 엣지 케이스 커버를 갖춘 260개 이상 테스트 케이스
+- **Comprehensive documentation**: USER_MANUAL (~1,800 lines) and DEVELOPER_GUIDE (~1,500 lines) / 포괄적인 문서화
+
+**Key Design Principles / 주요 설계 원칙**:
+- Extreme Simplicity: 20 lines → 1 line / 극도의 간결함: 20줄 → 1줄
+- Type Safety: Generic type parameters for compile-time safety / 타입 안전: 컴파일 타임 안전을 위한 제네릭 타입 파라미터
+- Functional Style: Inspired by JavaScript, Python, Ruby array methods / 함수형 스타일: JavaScript, Python, Ruby 배열 메서드에서 영감
+- Zero Configuration: No setup required / 제로 설정: 설정 불필요
+
+**Latest Version / 최신 버전**: v1.7.018 (2025-10-15)
+
+---
+
+## [v1.6.x] - Time Utilities Package / 시간 유틸리티 패키지
 
 **Focus / 초점**: Extreme simplicity time and date utilities with KST default timezone / KST 기본 타임존을 갖춘 극도로 간단한 시간 및 날짜 유틸리티
 

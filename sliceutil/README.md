@@ -1,6 +1,6 @@
 # sliceutil - Slice Utilities / 슬라이스 유틸리티
 
-**v1.7.002** - Extreme Simplicity for Slice Operations! 🎉
+**v1.7.018** - Extreme Simplicity for Slice Operations! 🎉
 
 Extreme simplicity slice utility functions for Go - reduce 10-20 lines of slice manipulation code to just 1 line.
 
