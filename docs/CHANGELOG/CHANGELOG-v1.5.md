@@ -8,6 +8,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.015] - 2025-10-14 17:20
+
+### Added / 추가
+- **FEAT**: Added comparison functions (Group 3: 3 functions)
+
+### New Functions / 새로운 함수
+1. **EqualFold(s1, s2 string) bool** - Case-insensitive comparison
+2. **HasPrefix(s, prefix string) bool** - Check string prefix
+3. **HasSuffix(s, suffix string) bool** - Check string suffix
+
+### Testing / 테스트
+- 18 test cases, all passing
+
+### Notes / 참고사항
+- Function count: 43 → 46 (9/16 complete)
+- Current version: v1.5.015
+
+---
+
 ## [v1.5.014] - 2025-10-14
 
 ### Added / 추가

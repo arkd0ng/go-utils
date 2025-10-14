@@ -114,3 +114,13 @@ func main() {
 	logger.Info("=== All examples completed successfully! ===")
 	logger.Info("=== 모든 예제가 성공적으로 완료되었습니다! ===")
 }
+
+	// Comparison Examples / 비교 예제
+	logger.Info("=== Comparison Examples ===")
+	logger.Info("=== 비교 예제 ===")
+	logger.Info("")
+
+	logger.Info(fmt.Sprintf("EqualFold('hello', 'HELLO'): %v", stringutil.EqualFold("hello", "HELLO")))
+	logger.Info(fmt.Sprintf("HasPrefix('hello world', 'hello'): %v", stringutil.HasPrefix("hello world", "hello")))
+	logger.Info(fmt.Sprintf("HasSuffix('hello world', 'world'): %v", stringutil.HasSuffix("hello world", "world")))
+	logger.Info("")
