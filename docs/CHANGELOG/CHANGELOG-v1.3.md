@@ -6,6 +6,49 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
+## [v1.3.013] - 2025-10-14 (MySQL Comprehensive Test Suite)
+
+### Added / 추가
+- **Comprehensive Test Files for MySQL Advanced Features** / MySQL 고급 기능을 위한 종합 테스트 파일:
+  - `database/mysql/batch_test.go`: Batch operations tests (insert, update, delete, select by IDs)
+  - `database/mysql/upsert_test.go`: Upsert and replace operations tests
+  - `database/mysql/pagination_test.go`: Pagination functionality tests with metadata validation
+  - `database/mysql/softdelete_test.go`: Soft delete workflow tests (delete, restore, query trashed)
+  - `database/mysql/stats_test.go`: Query statistics and slow query logging tests
+  - `database/mysql/metrics_test.go`: Pool metrics and health monitoring tests
+  - `database/mysql/schema_test.go`: Schema inspection tests (tables, columns, indexes)
+  - `database/mysql/migration_test.go`: Database migration tests (DDL operations)
+  - `database/mysql/export_test.go`: CSV export/import functionality tests
+
+### Features / 기능
+- **Test Coverage** / 테스트 커버리지:
+  - Table-driven testing for comprehensive coverage
+  - Edge case testing (empty data, invalid inputs, boundary conditions)
+  - Dual-language comments (English/Korean) in all tests
+  - Benchmark tests for performance-critical operations
+  - Structure validation tests for data types
+  - Skip markers for tests requiring actual database connection
+
+### Files Added / 추가된 파일
+- `database/mysql/batch_test.go` (228 lines)
+- `database/mysql/upsert_test.go` (263 lines)
+- `database/mysql/pagination_test.go` (321 lines)
+- `database/mysql/softdelete_test.go` (306 lines)
+- `database/mysql/stats_test.go` (384 lines)
+- `database/mysql/metrics_test.go` (308 lines)
+- `database/mysql/schema_test.go` (251 lines)
+- `database/mysql/migration_test.go` (340 lines)
+- `database/mysql/export_test.go` (333 lines)
+
+### Testing / 테스트
+- All test files follow existing test patterns from `client_test.go`
+- Tests are designed to work without actual database where possible
+- Validation errors are tested without database connection
+- Database-dependent tests are properly skipped with descriptive messages
+- Benchmark tests included for performance monitoring
+
+---
+
 ## [v1.3.012] - 2025-10-14 (MySQL Advanced Features Examples)
 
 ### Added / 추가
