@@ -8,6 +8,89 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.6.008] - 2025-10-14
+
+### Added / 추가
+
+- **MAJOR FEATURE**: String Parameter Support - Parse any time format automatically!
+  - **New Parse Functions** (parse.go):
+    - `ParseAny(s)` - Automatically detects and parses 40+ time formats (including Korean!)
+    - `ParseWithLayout(s, layout)` - Parse with custom layout
+    - `ParseMillis(s)` - Parse datetime with milliseconds (YYYY-MM-DD HH:mm:ss.SSS)
+    - `ParseMicros(s)` - Parse datetime with microseconds (YYYY-MM-DD HH:mm:ss.SSSSSS)
+
+  - **String Versions of All Major Functions** (string.go - 50+ functions):
+    - Time Difference: `SubTimeString`, `DiffInDaysString`, `DiffInHoursString`, `DiffInMinutesString`
+    - Age Calculation: `AgeString`, `AgeInYearsString`
+    - Relative Time: `RelativeTimeString`
+    - Business Days: `IsBusinessDayString`, `IsWeekendString`
+    - Date Arithmetic: `AddDaysString`, `AddHoursString`, `AddMinutesString`, `SubDaysString`, `SubHoursString`, `SubMinutesString`
+    - Formatting: `FormatString`, `FormatDateString`, `FormatDateTimeString`, `FormatISO8601String`
+    - Timezone: `ConvertTimezoneString`
+    - Time Boundaries: `StartOfDayString`, `EndOfDayString`, `StartOfWeekString`, `EndOfWeekString`, `StartOfMonthString`, `EndOfMonthString`, `StartOfYearString`, `EndOfYearString`
+    - Weekdays: `WeekdayString`, `WeekdayKoreanString`, `WeekdayShortString`, `WeekdayShortKoreanString`, `WeekdayNumberString`
+    - Week/Month Info: `WeekOfYearString`, `WeekOfMonthString`, `DaysInMonthString`, `DaysInYearString`
+    - Month Info: `MonthKoreanString`, `MonthNameString`, `MonthNameShortString`, `QuarterString`
+    - Leap Year: `IsLeapYearString`
+    - Comparisons: `IsSameDayString`, `IsBeforeString`, `IsAfterString`, `IsBetweenString`
+
+### Enhanced / 개선
+
+- **ParseAny supports 40+ formats**:
+  - Database formats: MySQL, PostgreSQL, SQLite timestamps with milliseconds/microseconds
+  - Standard formats: ISO8601, RFC3339, ANSIC, UnixDate, RubyDate
+  - Date formats: YYYY-MM-DD, YYYY/MM/DD, MM/DD/YYYY, DD-MM-YYYY, DD.MM.YYYY
+  - Month names: "Oct 04, 2024", "October 04, 2024", "04-Oct-2024"
+  - Time with sub-seconds: Milliseconds (.000), Microseconds (.999999), Nanoseconds (.999999999)
+  - **Korean formats** (NEW!): "2024년 10월 04일 15시 30분 45초", "2024년 1월 4일", "오전 9시", "오후 3시"
+
+- **Automatic Format Detection**: No need to specify layout - ParseAny tries all common formats
+- **Database-Friendly**: Perfect for parsing timestamps from MySQL, PostgreSQL, SQLite, Redis
+- **API-Friendly**: Handles ISO8601, RFC3339, and other common API formats
+
+### Testing / 테스트
+
+- Added `parse_test.go` with comprehensive tests for new parse functions
+  - 4 test functions + 6 benchmarks
+  - Tests for ParseWithLayout, ParseMillis, ParseMicros, ParseAny
+  - Special tests for database timestamp formats
+
+- Added `string_test.go` with comprehensive tests for String functions
+  - 15+ test functions + 4 benchmarks
+  - Tests for all major String versions (SubTimeString, DiffInDaysString, etc.)
+  - Tests for format conversion, date comparisons, time boundaries
+
+### Examples / 예제
+
+- Updated `examples/timeutil/main.go` with comprehensive String function examples
+  - Section 13: String Parameter Functions (NEW!)
+  - Demonstrates ParseAny with 5 different formats
+  - Shows SubTimeString, DiffInDaysString, AgeString, RelativeTimeString
+  - Format conversion examples (FormatString, FormatDateString, FormatISO8601String)
+  - Date comparison examples (IsSameDayString, IsBeforeString, IsBetweenString)
+
+### Use Cases / 사용 사례
+
+Perfect for scenarios where time data comes as strings:
+- **Database queries**: Parse timestamps from MySQL, PostgreSQL, SQLite
+- **API responses**: Handle JSON timestamps in various formats
+- **File parsing**: Read dates from CSV, logs, configuration files
+- **User input**: Accept flexible date/time input formats
+
+Example:
+```go
+// Before (v1.6.007 and earlier)
+layout := "2006-01-02 15:04:05.000"
+t1, err := time.ParseInLocation(layout, "2024-10-04 08:34:42.324", timeutil.KST)
+t2, err := time.ParseInLocation(layout, "2024-10-14 14:56:23.789", timeutil.KST)
+diff := timeutil.SubTime(t1, t2)
+
+// After (v1.6.008) - Much simpler!
+diff, err := timeutil.SubTimeString("2024-10-04 08:34:42.324", "2024-10-14 14:56:23.789")
+```
+
+---
+
 ## [v1.6.007] - 2025-10-14
 
 ### Added / 추가

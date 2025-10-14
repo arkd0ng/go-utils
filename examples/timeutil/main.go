@@ -597,8 +597,163 @@ func main() {
 	logger.Info("  8. Relative Time (4 functions) / 상대 시간 (4개 함수)")
 	logger.Info("  9. Unix Timestamp (12 functions) / Unix 타임스탬프 (12개 함수)")
 	logger.Info("  10. Business Days (7 functions) / 영업일 (7개 함수)")
+	// ============================================================
+	// 13. String Parameter Functions (New in v1.6.008!)
+	// 13. 문자열 매개변수 함수 (v1.6.008 신규!)
+	// ============================================================
 	logger.Info("")
-	logger.Info("Total: 102 functions demonstrated / 총 102개 함수 시연 완료")
+	logger.Info("=" + repeat("=", 60))
+	logger.Info("13. String Parameter Functions / 문자열 매개변수 함수")
+	logger.Info("    (NEW in v1.6.008 - Parse any format automatically!)")
+	logger.Info("    (v1.6.008 신규 - 모든 포맷 자동 파싱!)")
+	logger.Info("=" + repeat("=", 60))
+
+	// ParseAny - Automatically detect and parse any time format / 모든 시간 포맷 자동 감지 및 파싱
+	logger.Info("")
+	logger.Info("--- ParseAny: Automatic Format Detection ---")
+	logger.Info("--- ParseAny: 자동 포맷 감지 ---")
+
+	formats := []string{
+		"2024-10-04 08:34:42.324",      // MySQL with milliseconds
+		"2024-10-04T08:34:42+09:00",    // ISO8601
+		"2024/10/04",                    // Date with slashes
+		"Oct 04, 2024",                  // Month name
+		"2024-10-04 08:34:42",          // Standard DateTime
+	}
+
+	for _, f := range formats {
+		parsed, err := timeutil.ParseAny(f)
+		if err == nil {
+			logger.Info("ParseAny", "input", f, "result", parsed.Format("2006-01-02 15:04:05"))
+		}
+	}
+
+	// SubTimeString - Calculate difference between two time strings / 두 시간 문자열 사이의 차이 계산
+	logger.Info("")
+	logger.Info("--- SubTimeString: String to TimeDiff ---")
+	logger.Info("--- SubTimeString: 문자열을 TimeDiff로 ---")
+
+	diffStr, err := timeutil.SubTimeString("2024-10-04 08:34:42", "2024-10-14 14:56:23")
+	if err == nil {
+		logger.Info("SubTimeString",
+			"from", "2024-10-04 08:34:42",
+			"to", "2024-10-14 14:56:23",
+			"result", diffStr.String(),
+			"humanized", diffStr.Humanize())
+	}
+
+	// DiffInDaysString - Days between two date strings / 두 날짜 문자열 사이의 일수
+	logger.Info("")
+	logger.Info("--- Date Difference Functions (String versions) ---")
+	logger.Info("--- 날짜 차이 함수 (문자열 버전) ---")
+
+	daysStr, _ := timeutil.DiffInDaysString("2024-10-04", "Oct 14, 2024")
+	logger.Info("DiffInDaysString", "from", "2024-10-04", "to", "Oct 14, 2024", "days", fmt.Sprintf("%.2f", daysStr))
+
+	hoursStr, _ := timeutil.DiffInHoursString("2024-10-04 08:00", "2024-10-04 14:30")
+	logger.Info("DiffInHoursString", "from", "08:00", "to", "14:30", "hours", fmt.Sprintf("%.2f", hoursStr))
+
+	// AgeInYearsString - Calculate age from birth date string / 생년월일 문자열로부터 나이 계산
+	logger.Info("")
+	logger.Info("--- Age Calculation (String version) ---")
+	logger.Info("--- 나이 계산 (문자열 버전) ---")
+
+	ageYears, errAge := timeutil.AgeInYearsString("1990-01-15")
+	if errAge == nil {
+		logger.Info("AgeInYearsString", "birthDate", "1990-01-15", "age", ageYears)
+	}
+
+	ageDetail, errAge2 := timeutil.AgeString("Jan 15, 1990")
+	if errAge2 == nil {
+		logger.Info("AgeString", "birthDate", "Jan 15, 1990",
+			"years", ageDetail.Years,
+			"months", ageDetail.Months,
+			"days", ageDetail.Days)
+	}
+
+	// RelativeTimeString - Human-readable relative time / 사람이 읽기 쉬운 상대 시간
+	logger.Info("")
+	logger.Info("--- Relative Time (String version) ---")
+	logger.Info("--- 상대 시간 (문자열 버전) ---")
+
+	relStr, _ := timeutil.RelativeTimeString("2024-10-13 15:30:00")
+	logger.Info("RelativeTimeString", "time", "2024-10-13 15:30:00", "relative", relStr)
+
+	// IsBusinessDayString - Check if date is business day / 영업일 확인
+	logger.Info("")
+	logger.Info("--- Business Day Check (String version) ---")
+	logger.Info("--- 영업일 확인 (문자열 버전) ---")
+
+	isBizDay, _ := timeutil.IsBusinessDayString("2024-10-14") // Monday
+	logger.Info("IsBusinessDayString", "date", "2024-10-14 (Monday)", "isBusinessDay", isBizDay)
+
+	isWeekend, _ := timeutil.IsWeekendString("2024-10-12") // Saturday
+	logger.Info("IsWeekendString", "date", "2024-10-12 (Saturday)", "isWeekend", isWeekend)
+
+	// AddDaysString - Add days to date string / 날짜 문자열에 일수 더하기
+	logger.Info("")
+	logger.Info("--- Date Arithmetic (String versions) ---")
+	logger.Info("--- 날짜 연산 (문자열 버전) ---")
+
+	futureDate, _ := timeutil.AddDaysString("2024-10-04", 7)
+	logger.Info("AddDaysString", "date", "2024-10-04", "add", "7 days", "result", timeutil.FormatDate(futureDate))
+
+	pastDate, _ := timeutil.SubDaysString("2024-10-14", 7)
+	logger.Info("SubDaysString", "date", "2024-10-14", "subtract", "7 days", "result", timeutil.FormatDate(pastDate))
+
+	// FormatString - Convert between different formats / 다른 포맷으로 변환
+	logger.Info("")
+	logger.Info("--- Format Conversion (String versions) ---")
+	logger.Info("--- 포맷 변환 (문자열 버전) ---")
+
+	formattedStr, _ := timeutil.FormatString("Oct 04, 2024", "2006-01-02")
+	logger.Info("FormatString", "input", "Oct 04, 2024", "format", "2006-01-02", "result", formattedStr)
+
+	dateOnlyStr, _ := timeutil.FormatDateString("2024-10-04 15:30:00")
+	logger.Info("FormatDateString", "input", "2024-10-04 15:30:00", "result", dateOnlyStr)
+
+	iso8601String, _ := timeutil.FormatISO8601String("Oct 04, 2024")
+	logger.Info("FormatISO8601String", "input", "Oct 04, 2024", "result", iso8601String)
+
+	// WeekdayKoreanString - Get Korean weekday name / 한글 요일 이름 가져오기
+	logger.Info("")
+	logger.Info("--- Weekday Names (String versions) ---")
+	logger.Info("--- 요일 이름 (문자열 버전) ---")
+
+	weekdayKor, _ := timeutil.WeekdayKoreanString("2024-10-14") // Monday
+	logger.Info("WeekdayKoreanString", "date", "2024-10-14", "weekday", weekdayKor)
+
+	weekdayShortKor, _ := timeutil.WeekdayShortKoreanString("Oct 14, 2024")
+	logger.Info("WeekdayShortKoreanString", "date", "Oct 14, 2024", "weekday", weekdayShortKor)
+
+	// StartOfDayString / EndOfDayString - Get start/end of day / 하루의 시작/끝 가져오기
+	logger.Info("")
+	logger.Info("--- Time Boundaries (String versions) ---")
+	logger.Info("--- 시간 경계 (문자열 버전) ---")
+
+	startOfDayStr, _ := timeutil.StartOfDayString("2024-10-04 15:30:45")
+	logger.Info("StartOfDayString", "input", "2024-10-04 15:30:45", "result", timeutil.FormatDateTime(startOfDayStr))
+
+	endOfDayStr, _ := timeutil.EndOfDayString("2024-10-04")
+	logger.Info("EndOfDayString", "input", "2024-10-04", "result", timeutil.FormatDateTime(endOfDayStr))
+
+	// IsSameDayString / IsBeforeString / IsAfterString - Date comparisons / 날짜 비교
+	logger.Info("")
+	logger.Info("--- Date Comparisons (String versions) ---")
+	logger.Info("--- 날짜 비교 (문자열 버전) ---")
+
+	sameDay, _ := timeutil.IsSameDayString("2024-10-04 08:00", "Oct 04, 2024")
+	logger.Info("IsSameDayString", "date1", "2024-10-04 08:00", "date2", "Oct 04, 2024", "same", sameDay)
+
+	isBefore, _ := timeutil.IsBeforeString("2024-10-04", "2024-10-14")
+	logger.Info("IsBeforeString", "date1", "2024-10-04", "date2", "2024-10-14", "before", isBefore)
+
+	isBetween, _ := timeutil.IsBetweenString("2024-10-10", "2024-10-04", "2024-10-14")
+	logger.Info("IsBetweenString", "date", "2024-10-10", "start", "2024-10-04", "end", "2024-10-14", "between", isBetween)
+
+	logger.Info("")
+	logger.Info("Total: 102+ functions demonstrated (including new String versions!)")
+	logger.Info("총 102개 이상 함수 시연 완료 (새로운 String 버전 포함!)")
 	logger.Info("")
 	logger.Info("Check the log file at ./logs/timeutil-example.log for detailed output")
 	logger.Info("상세한 출력은 ./logs/timeutil-example.log 파일을 확인하세요")
