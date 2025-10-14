@@ -8,6 +8,67 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.006] - 2025-10-14 15:51
+
+### Fixed / 수정
+
+- **FIX**: Fixed MySQL example initialization to ensure sample data exists
+- **수정**: 샘플 데이터가 존재하도록 MySQL 예제 초기화를 수정
+- **ENHANCEMENT**: Added `initializeDatabaseIfNeeded()` function to automatically:
+- **개선**: `initializeDatabaseIfNeeded()` 함수를 추가하여 자동으로:
+  - Check if `users` table exists and create it if needed
+  - users 테이블이 존재하는지 확인하고 필요시 생성
+  - Verify sample data by checking for known user (john@example.com)
+  - 알려진 사용자(john@example.com)를 확인하여 샘플 데이터 검증
+  - Truncate and reinitialize table if sample data is missing or incomplete
+  - 샘플 데이터가 없거나 불완전한 경우 테이블을 비우고 재초기화
+  - Insert 11 sample users for consistent example execution
+  - 일관된 예제 실행을 위해 11명의 샘플 사용자 삽입
+
+### Problem Solved / 해결된 문제
+
+- MySQL Docker volumes persist between container restarts
+- MySQL Docker 볼륨이 컨테이너 재시작 간에 유지됨
+- Init scripts in `/docker-entrypoint-initdb.d` only run on first initialization
+- `/docker-entrypoint-initdb.d`의 초기화 스크립트는 첫 초기화 시에만 실행됨
+- Previous test runs left incomplete or incorrect data in the database
+- 이전 테스트 실행이 데이터베이스에 불완전하거나 잘못된 데이터를 남김
+- Examples failed with "no rows in result set" error
+- 예제가 "no rows in result set" 오류로 실패
+
+### Files Changed / 변경된 파일
+
+- `examples/mysql/main.go`:
+  - Added `initializeDatabaseIfNeeded()` function (~90 lines)
+  - Call initialization before running examples
+  - Smart detection of sample data presence
+  - Automatic table creation and data population
+
+### Test Results / 테스트 결과
+
+```
+✅ All 35 MySQL examples completed successfully
+✅ 모든 35개 MySQL 예제가 성공적으로 완료되었습니다
+- Example 1-8: Basic operations (SelectAll, SelectOne, Insert, Update, Count, Exists, Transaction, Delete)
+- Example 9-17: Query operations (Raw SQL, Query Builder, SelectWhere, SelectColumn, SelectColumns)
+- Example 18-24: Advanced operations (Batch, Upsert, Pagination, Soft Delete)
+- Example 25-30: Monitoring (QueryStats, SlowQueryLog, PoolMetrics)
+- Example 31-35: Schema operations (GetTables, InspectTable, Migration, ExportCSV)
+```
+
+### Notes / 참고사항
+
+- MySQL example now works reliably regardless of previous test runs
+- MySQL 예제가 이전 테스트 실행에 관계없이 안정적으로 작동
+- Initialization happens automatically and is idempotent
+- 초기화가 자동으로 발생하며 멱등성을 가짐
+- Sample data includes 11 users across 7 Korean cities
+- 샘플 데이터는 7개 한국 도시에 걸쳐 11명의 사용자 포함
+- Current version: v1.5.006
+- 현재 버전: v1.5.006
+
+---
+
 ## [v1.5.004] - 2025-10-14 15:48
 
 ### Added / 추가

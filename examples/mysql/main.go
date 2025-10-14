@@ -131,6 +131,12 @@ func main() {
 	logger.Info(strings.Repeat("=", 70))
 	logger.Info("")
 
+	// Initialize database with sample data if needed / 필요한 경우 샘플 데이터로 데이터베이스 초기화
+	if err := initializeDatabaseIfNeeded(dsn, logger); err != nil {
+		logger.Error("Failed to initialize database", "error", err)
+		os.Exit(1)
+	}
+
 	// Run all examples / 모든 예제 실행
 	if err := runExamples(dsn, config.MySQL, logger); err != nil {
 		logger.Error("Examples failed", "error", err)
@@ -212,7 +218,7 @@ func startDockerMySQL() error {
 	if err != nil {
 		return fmt.Errorf("failed to get working directory: %w", err)
 	}
-	projectRoot := filepath.Join(wd, "..", "..")
+	projectRoot := filepath.Join(wd, "..", "..", ".docker")
 
 	// Start Docker Compose / Docker Compose 시작
 	cmd := exec.Command("docker", "compose", "up", "-d")
@@ -265,6 +271,97 @@ func stopDockerMySQL() error {
 	if err != nil {
 		return fmt.Errorf("failed to stop docker compose: %w (output: %s)", err, string(output))
 	}
+	return nil
+}
+
+// initializeDatabaseIfNeeded checks if the database has sample data and initializes it if needed
+// initializeDatabaseIfNeeded는 데이터베이스에 샘플 데이터가 있는지 확인하고 필요한 경우 초기화합니다
+func initializeDatabaseIfNeeded(dsn string, logger *logging.Logger) error {
+	// Create a temporary client to check and initialize database
+	// 데이터베이스 확인 및 초기화를 위한 임시 클라이언트 생성
+	db, err := mysql.New(mysql.WithDSN(dsn))
+	if err != nil {
+		return fmt.Errorf("failed to create temporary client: %w", err)
+	}
+	defer db.Close()
+
+	ctx := context.Background()
+
+	// Check if users table exists / users 테이블 존재 확인
+	tableExists, err := db.TableExists(ctx, "users")
+	if err != nil {
+		return fmt.Errorf("failed to check if users table exists: %w", err)
+	}
+
+	if !tableExists {
+		logger.Info("users table does not exist, creating...")
+		logger.Info("users 테이블이 존재하지 않습니다. 생성 중...")
+
+		// Create users table / users 테이블 생성
+		createTableSQL := `
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			name VARCHAR(100) NOT NULL,
+			email VARCHAR(100) NOT NULL UNIQUE,
+			age INT NOT NULL,
+			city VARCHAR(100),
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			deleted_at TIMESTAMP NULL DEFAULT NULL,
+			INDEX idx_email (email),
+			INDEX idx_city (city),
+			INDEX idx_age (age)
+		`
+		if err := db.CreateTable(ctx, "users", createTableSQL); err != nil {
+			return fmt.Errorf("failed to create users table: %w", err)
+		}
+		logger.Info("✅ users table created successfully")
+		logger.Info("✅ users 테이블이 성공적으로 생성되었습니다")
+	}
+
+	// Check if sample data exists by looking for a known sample user / 알려진 샘플 사용자를 찾아 샘플 데이터 존재 확인
+	exists, err := db.Exists("users", "email = ?", "john@example.com")
+	if err != nil {
+		return fmt.Errorf("failed to check for sample data: %w", err)
+	}
+
+	if !exists {
+		// Clear any existing data and insert fresh sample data / 기존 데이터를 지우고 새 샘플 데이터 삽입
+		logger.Info("Sample data not found or incomplete, resetting users table...")
+		logger.Info("샘플 데이터가 없거나 불완전합니다. users 테이블을 재설정합니다...")
+
+		// Truncate table to remove any leftover data / 테이블을 비워 남은 데이터 제거
+		if err := db.TruncateTable(ctx, "users"); err != nil {
+			return fmt.Errorf("failed to truncate users table: %w", err)
+		}
+
+		// Insert sample data / 샘플 데이터 삽입
+		sampleUsers := []map[string]interface{}{
+			{"name": "John Doe", "email": "john@example.com", "age": 30, "city": "Seoul"},
+			{"name": "Jane Smith", "email": "jane@example.com", "age": 25, "city": "Seoul"},
+			{"name": "Bob Johnson", "email": "bob@example.com", "age": 35, "city": "Seoul"},
+			{"name": "Alice Williams", "email": "alice@example.com", "age": 28, "city": "Incheon"},
+			{"name": "Emily Park", "email": "emily@example.com", "age": 27, "city": "Gwangju"},
+			{"name": "Frank Lee", "email": "frank@example.com", "age": 32, "city": "Daegu"},
+			{"name": "Grace Kim", "email": "grace@example.com", "age": 29, "city": "Busan"},
+			{"name": "Henry Choi", "email": "henry@example.com", "age": 31, "city": "Ulsan"},
+			{"name": "Iris Jung", "email": "iris@example.com", "age": 26, "city": "Daejeon"},
+			{"name": "Jack Yoon", "email": "jack@example.com", "age": 33, "city": "Gwangju"},
+			{"name": "Charlie Brown", "email": "charlie@example.com", "age": 40, "city": "Seoul"},
+		}
+
+		_, err := db.BatchInsert(ctx, "users", sampleUsers)
+		if err != nil {
+			return fmt.Errorf("failed to insert sample data: %w", err)
+		}
+
+		logger.Info(fmt.Sprintf("✅ Inserted %d sample users", len(sampleUsers)))
+		logger.Info(fmt.Sprintf("✅ %d명의 샘플 사용자를 삽입했습니다", len(sampleUsers)))
+	} else {
+		count, _ := db.Count("users")
+		logger.Info(fmt.Sprintf("Sample data already exists (%d users), skipping initialization", count))
+		logger.Info(fmt.Sprintf("샘플 데이터가 이미 존재합니다 (%d명의 사용자). 초기화를 건너뜁니다", count))
+	}
+
+	logger.Info("")
 	return nil
 }
 
@@ -1788,4 +1885,3 @@ func min(a, b int) int {
 	}
 	return b
 }
-
