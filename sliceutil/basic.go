@@ -103,3 +103,95 @@ func Find[T any](slice []T, predicate func(T) bool) (T, bool) {
 	var zero T
 	return zero, false
 }
+
+// FindIndex returns the index of the first item that satisfies the predicate.
+// Returns -1 if no item is found.
+//
+// FindIndex는 조건을 만족하는 첫 번째 항목의 인덱스를 반환합니다.
+// 항목을 찾을 수 없으면 -1을 반환합니다.
+//
+// Example / 예제:
+//
+//	numbers := []int{1, 2, 3, 4, 5}
+//	index := sliceutil.FindIndex(numbers, func(n int) bool {
+//	    return n%2 == 0
+//	}) // 1 (index of 2)
+func FindIndex[T any](slice []T, predicate func(T) bool) int {
+	for i, v := range slice {
+		if predicate(v) {
+			return i
+		}
+	}
+	return -1
+}
+
+// Count returns the number of items that satisfy the predicate.
+// Count는 조건을 만족하는 항목의 개수를 반환합니다.
+//
+// Example / 예제:
+//
+//	numbers := []int{1, 2, 3, 4, 5, 6}
+//	evenCount := sliceutil.Count(numbers, func(n int) bool {
+//	    return n%2 == 0
+//	}) // 3 (2, 4, 6)
+func Count[T any](slice []T, predicate func(T) bool) int {
+	count := 0
+	for _, v := range slice {
+		if predicate(v) {
+			count++
+		}
+	}
+	return count
+}
+
+// IsEmpty checks if the slice is empty or nil.
+// IsEmpty는 슬라이스가 비어있거나 nil인지 확인합니다.
+//
+// Example / 예제:
+//
+//	empty := []int{}
+//	sliceutil.IsEmpty(empty) // true
+//	sliceutil.IsEmpty(nil)   // true
+//
+//	nonEmpty := []int{1, 2, 3}
+//	sliceutil.IsEmpty(nonEmpty) // false
+func IsEmpty[T any](slice []T) bool {
+	return len(slice) == 0
+}
+
+// IsNotEmpty checks if the slice has at least one item.
+// IsNotEmpty는 슬라이스에 최소한 하나의 항목이 있는지 확인합니다.
+//
+// Example / 예제:
+//
+//	empty := []int{}
+//	sliceutil.IsNotEmpty(empty) // false
+//
+//	nonEmpty := []int{1, 2, 3}
+//	sliceutil.IsNotEmpty(nonEmpty) // true
+func IsNotEmpty[T any](slice []T) bool {
+	return len(slice) > 0
+}
+
+// Equal checks if two slices are equal (same length and same elements in same order).
+// Equal은 두 슬라이스가 같은지 확인합니다 (같은 길이와 같은 순서의 같은 요소).
+//
+// Example / 예제:
+//
+//	a := []int{1, 2, 3}
+//	b := []int{1, 2, 3}
+//	c := []int{1, 2, 4}
+//
+//	sliceutil.Equal(a, b) // true
+//	sliceutil.Equal(a, c) // false
+func Equal[T comparable](a, b []T) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
