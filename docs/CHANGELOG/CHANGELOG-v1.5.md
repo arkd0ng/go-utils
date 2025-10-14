@@ -8,6 +8,75 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.005] - 2025-10-14 15:57
+
+### Added / 추가
+
+- **DOCS**: Created comprehensive USER_MANUAL.md for stringutil package
+- **문서**: stringutil 패키지에 대한 포괄적인 USER_MANUAL.md 생성
+- **CONTENT**: ~1,850 lines of detailed user documentation
+- **내용**: 약 1,850줄의 상세한 사용자 문서
+
+### Documentation Structure / 문서 구조
+
+- **Table of Contents**: 9 major sections with subsections
+- **목차**: 하위 섹션이 있는 9개 주요 섹션
+- **Introduction**: Package overview, key features, use cases
+- **소개**: 패키지 개요, 주요 기능, 사용 사례
+- **Installation**: Prerequisites, package installation, verification
+- **설치**: 전제 조건, 패키지 설치, 확인
+- **Quick Start**: 5 quick examples covering all categories
+- **빠른 시작**: 모든 카테고리를 다루는 5개의 빠른 예제
+- **Configuration Reference**: Complete API documentation for all 37 functions
+- **설정 참조**: 모든 37개 함수에 대한 완전한 API 문서
+  - Case Conversion (5 functions)
+  - String Manipulation (9 functions)
+  - Validation (8 functions)
+  - Search & Replace (6 functions)
+  - Utilities (9 functions)
+- **Usage Patterns**: 10 common patterns with complete code examples
+- **사용 패턴**: 완전한 코드 예제가 있는 10개의 일반적인 패턴
+- **Common Use Cases**: 10 real-world scenarios with full implementations
+- **일반적인 사용 사례**: 전체 구현이 있는 10개의 실제 시나리오
+- **Best Practices**: 15 practical recommendations
+- **모범 사례**: 15개의 실용적인 권장 사항
+- **Troubleshooting**: 10 common problems and solutions
+- **문제 해결**: 10개의 일반적인 문제 및 해결책
+- **FAQ**: 15 frequently asked questions
+- **FAQ**: 15개의 자주 묻는 질문
+- **Appendix**: Function reference table
+- **부록**: 함수 참조 표
+
+### Key Features Documented / 문서화된 주요 기능
+
+- Unicode safety explanation and examples
+- 유니코드 안전 설명 및 예제
+- Practical validation approach (vs RFC compliance)
+- 실용적인 검증 접근 방식 (RFC 준수 대비)
+- Smart case conversion handling
+- 스마트 케이스 변환 처리
+- Map/Filter functional programming patterns
+- Map/Filter 함수형 프로그래밍 패턴
+- Multi-pattern search and replace
+- 다중 패턴 검색 및 치환
+
+### Files Created / 생성된 파일
+
+- `docs/stringutil/USER_MANUAL.md` (~1,850 lines)
+- All sections in bilingual format (English/Korean)
+- 모든 섹션은 이중 언어 형식 (영문/한글)
+
+### Notes / 참고사항
+
+- Comprehensive user-facing documentation complete
+- 포괄적인 사용자 대상 문서 완성
+- Next: DEVELOPER_GUIDE.md
+- 다음: DEVELOPER_GUIDE.md
+- Current version: v1.5.005
+- 현재 버전: v1.5.005
+
+---
+
 ## [v1.5.006] - 2025-10-14 15:51
 
 ### Fixed / 수정
