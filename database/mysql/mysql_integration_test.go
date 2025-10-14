@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 )
 
 func TestClientCreation(t *testing.T) {
@@ -238,7 +237,7 @@ func TestPagination(t *testing.T) {
 	}
 }
 
-func TestSoftDeleteWorkflow(t *testing.T) {
+func TestSoftDeleteWorkflowIntegration(t *testing.T) {
 	client := newTestClient(t)
 	resetTable(t, "users")
 
@@ -315,42 +314,5 @@ func TestExportToCSV(t *testing.T) {
 	}
 	if info.Size() == 0 {
 		t.Fatal("expected non-empty export file")
-	}
-}
-
-func uniqueEmail(prefix string) string {
-	return fmt.Sprintf("%s_%d@test.example.com", prefix, time.Now().UnixNano())
-}
-
-func assertEqual(t *testing.T, got, want interface{}) {
-	t.Helper()
-	if got != want {
-		t.Fatalf("got %v (%T), want %v (%T)", got, got, want, want)
-	}
-}
-
-func toInt(value interface{}) int {
-	switch v := value.(type) {
-	case int:
-		return v
-	case int32:
-		return int(v)
-	case int64:
-		return int(v)
-	default:
-		panic(fmt.Sprintf("unexpected int type %T", value))
-	}
-}
-
-func toInt64(value interface{}) int64 {
-	switch v := value.(type) {
-	case int:
-		return int64(v)
-	case int32:
-		return int64(v)
-	case int64:
-		return v
-	default:
-		panic(fmt.Sprintf("unexpected int64 type %T", value))
 	}
 }
