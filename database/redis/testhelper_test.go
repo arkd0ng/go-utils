@@ -121,8 +121,10 @@ func startDockerRedis() error {
 		return err
 	}
 
+	// docker-compose.yml is now in .docker/ directory
+	dockerDir := filepath.Join(root, ".docker")
 	cmd := exec.Command("docker", "compose", "up", "-d", "redis")
-	cmd.Dir = root
+	cmd.Dir = dockerDir
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("%w (output: %s)", err, string(output))
@@ -148,14 +150,17 @@ func stopDockerRedis() error {
 		return err
 	}
 
+	// docker-compose.yml is now in .docker/ directory
+	dockerDir := filepath.Join(root, ".docker")
+
 	cmd := exec.Command("docker", "compose", "stop", "redis")
-	cmd.Dir = root
+	cmd.Dir = dockerDir
 	if output, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("%w (output: %s)", err, string(output))
 	}
 
 	cmd = exec.Command("docker", "compose", "rm", "-f", "redis")
-	cmd.Dir = root
+	cmd.Dir = dockerDir
 	if output, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("%w (output: %s)", err, string(output))
 	}

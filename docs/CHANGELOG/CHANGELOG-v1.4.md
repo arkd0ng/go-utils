@@ -8,6 +8,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.017] - 2025-10-14
+
+### Fixed / 수정
+
+- **FIX**: Updated Redis test helper to use new `.docker/` directory path
+- **수정**: 새 `.docker/` 디렉토리 경로를 사용하도록 Redis 테스트 헬퍼 업데이트
+- Fixed `startDockerRedis()` to run docker compose from `.docker/` directory
+- `.docker/` 디렉토리에서 docker compose를 실행하도록 `startDockerRedis()` 수정
+- Fixed `stopDockerRedis()` to run docker compose from `.docker/` directory
+- `.docker/` 디렉토리에서 docker compose를 실행하도록 `stopDockerRedis()` 수정
+- Test helper now correctly locates docker-compose.yml in new location
+- 테스트 헬퍼가 이제 새 위치에서 docker-compose.yml을 올바르게 찾음
+
+### Verified / 검증
+
+- All Redis package tests pass (18 tests) ✅
+- 모든 Redis 패키지 테스트 통과 (18개 테스트) ✅
+- All MySQL package tests pass ✅
+- 모든 MySQL 패키지 테스트 통과 ✅
+- Redis examples run successfully with new paths ✅
+- Redis 예제가 새 경로에서 성공적으로 실행 ✅
+- Docker auto-start/stop works correctly from test suite ✅
+- 테스트 스위트에서 Docker 자동 시작/중지 정상 작동 ✅
+
+### Updated Files / 업데이트된 파일
+
+- `database/redis/testhelper_test.go` - Updated docker compose directory paths
+
+### Notes / 참고사항
+
+- All tests and examples verified after directory reorganization
+- 디렉토리 재구성 후 모든 테스트 및 예제 검증 완료
+- No breaking changes to public API
+- 공개 API에 대한 중단 변경 없음
+- Current version: v1.4.017
+- 현재 버전: v1.4.017
+
+---
+
 ## [v1.4.016] - 2025-10-14
 
 ### Changed / 변경
