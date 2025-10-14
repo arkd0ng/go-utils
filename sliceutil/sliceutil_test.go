@@ -11,7 +11,7 @@ func TestPackageVersion(t *testing.T) {
 		t.Error("Version constant should not be empty")
 	}
 
-	expected := "1.7.014"
+	expected := "1.7.015"
 	if Version != expected {
 		t.Errorf("Version = %v, want %v", Version, expected)
 	}
