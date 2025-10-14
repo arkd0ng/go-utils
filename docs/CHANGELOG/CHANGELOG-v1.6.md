@@ -8,6 +8,82 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.6.006] - 2025-10-14
+
+### Added / 추가
+
+- **FEATURE**: Added Korean weekday support functions to timeutil package / timeutil 패키지에 한글 요일 지원 함수 추가
+  - `WeekdayKorean(t)` - Returns full Korean weekday name (일요일, 월요일, etc.) / 완전한 한글 요일 이름 반환
+  - `WeekdayKoreanShort(t)` - Returns short Korean weekday name (일, 월, etc.) / 짧은 한글 요일 이름 반환
+  - `FormatKoreanDateTime(t)` - Formats date/time with Korean weekday / 한글 요일을 포함한 날짜/시간 포맷
+  - `FormatKoreanDateWithWeekday(t)` - Formats date with full Korean weekday / 완전한 한글 요일을 포함한 날짜 포맷
+  - `FormatKoreanDateShort(t)` - Formats date with short Korean weekday / 짧은 한글 요일을 포함한 날짜 포맷
+
+### New Functions / 새로운 함수 (5개)
+
+1. **WeekdayKorean(t time.Time) string**
+   - Returns: "일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"
+   - Usage: `timeutil.WeekdayKorean(time.Now())`
+
+2. **WeekdayKoreanShort(t time.Time) string**
+   - Returns: "일", "월", "화", "수", "목", "금", "토"
+   - Usage: `timeutil.WeekdayKoreanShort(time.Now())`
+
+3. **FormatKoreanDateTime(t time.Time) string**
+   - Format: "YYYY년 MM월 DD일 (요일) HH시 mm분 ss초"
+   - Example: "2025년 10월 14일 (화요일) 15시 30분 00초"
+
+4. **FormatKoreanDateWithWeekday(t time.Time) string**
+   - Format: "YYYY년 MM월 DD일 (요일)"
+   - Example: "2025년 10월 14일 (화요일)"
+
+5. **FormatKoreanDateShort(t time.Time) string**
+   - Format: "YYYY년 MM월 DD일 (요일)"
+   - Example: "2025년 10월 14일 (화)"
+
+### Testing / 테스트
+
+- **Added**: `timeutil/format_korean_test.go` - Comprehensive tests for all Korean weekday functions
+  - 14 test cases covering all 7 days of the week
+  - Tests for both full and short format functions
+  - 3 benchmark tests
+  - All tests passing ✅
+
+### Usage Examples / 사용 예제
+
+```go
+package main
+
+import (
+    "fmt"
+    "time"
+
+    "github.com/arkd0ng/go-utils/timeutil"
+)
+
+func main() {
+    t := time.Now()
+
+    // Get Korean weekday / 한글 요일 가져오기
+    fmt.Println(timeutil.WeekdayKorean(t))        // Output: 화요일
+    fmt.Println(timeutil.WeekdayKoreanShort(t))   // Output: 화
+
+    // Format with Korean weekday / 한글 요일 포함 포맷
+    fmt.Println(timeutil.FormatKoreanDateTime(t))          // 2025년 10월 14일 (화요일) 15시 30분 00초
+    fmt.Println(timeutil.FormatKoreanDateWithWeekday(t))   // 2025년 10월 14일 (화요일)
+    fmt.Println(timeutil.FormatKoreanDateShort(t))         // 2025년 10월 14일 (화)
+}
+```
+
+### Summary / 요약
+
+이제 timeutil 패키지는 영문 요일뿐만 아니라 한글 요일도 완벽하게 지원합니다!
+The timeutil package now fully supports Korean weekdays in addition to English!
+
+**Total timeutil functions**: 102 functions (97 → 102, +5 new Korean functions)
+
+---
+
 ## [v1.6.005] - 2025-10-14
 
 ### Changed / 변경
