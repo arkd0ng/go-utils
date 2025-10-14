@@ -8,6 +8,173 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.7.006] - 2025-10-15
+
+### Added / 추가
+
+- **TRANSFORMATION FUNCTIONS (Part 1)**: Implemented 4 transformation functions / 4개 변환 함수 구현
+  - `Map[T, R any](slice []T, fn func(T) R) []R` - Transform each element / 각 요소 변환
+  - `Filter[T any](slice []T, predicate func(T) bool) []T` - Filter by predicate / 조건으로 필터링
+  - `FlatMap[T, R any](slice []T, fn func(T) []R) []R` - Map and flatten / 맵 및 평탄화
+  - `Flatten[T any](slice [][]T) []T` - Flatten nested slices / 중첩 슬라이스 평탄화
+
+- **TESTS**: Comprehensive tests for transformation functions / 변환 함수에 대한 포괄적인 테스트
+  - 4 test functions with multiple scenarios / 여러 시나리오가 있는 4개 테스트 함수
+  - Edge cases covered (nil, empty, various types) / 엣지 케이스 커버 (nil, 비어있음, 다양한 타입)
+  - 4 benchmark functions / 4개 벤치마크 함수
+
+### Files Created / 생성된 파일
+
+- `sliceutil/transform.go` - Transformation functions implementation / 변환 함수 구현
+- `sliceutil/transform_test.go` - Comprehensive tests (~340 lines) / 포괄적인 테스트 (~340줄)
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.006 / `cfg/app.yaml` 버전을 v1.7.006으로 업데이트
+- Updated `sliceutil/sliceutil.go` Version constant to "1.7.006" / `sliceutil/sliceutil.go` 버전 상수를 "1.7.006"으로 업데이트
+- Updated `docs/sliceutil/WORK_PLAN.md` progress tracking / `docs/sliceutil/WORK_PLAN.md` 진행 상황 추적 업데이트
+
+### Test Results / 테스트 결과
+
+- ✅ All tests passing (20 test cases) / 모든 테스트 통과 (20개 테스트 케이스)
+- ✅ TestMap: 5 subtests / TestMap: 5개 하위 테스트
+- ✅ TestFilter: 6 subtests / TestFilter: 6개 하위 테스트
+- ✅ TestFlatMap: 5 subtests / TestFlatMap: 5개 하위 테스트
+- ✅ TestFlatten: 7 subtests / TestFlatten: 7개 하위 테스트
+
+### Progress / 진행 상황
+
+- **Functions Implemented / 구현된 함수**: 14/60 (23%)
+- **Work Units Completed / 완료된 작업 단위**: 6/18 (33%)
+- **Current Phase / 현재 단계**: Phase 2 - Core Features / 2단계 - 핵심 기능
+
+### Next Steps / 다음 단계
+
+- **v1.7.007**: Transformation Functions (Part 2) - 4 more functions / 변환 함수 (2부) - 4개 추가 함수
+  - Unique, UniqueBy, Compact, Reverse
+
+---
+
+## [v1.7.005] - 2025-10-15
+
+### Added / 추가
+
+- **BASIC OPERATIONS (Part 2)**: Implemented 5 more basic operations / 5개 추가 기본 작업 구현
+  - `FindIndex[T any](slice []T, predicate func(T) bool) int` - Find index by predicate / 조건으로 인덱스 찾기
+  - `Count[T any](slice []T, predicate func(T) bool) int` - Count matching items / 일치하는 항목 수 세기
+  - `IsEmpty[T any](slice []T) bool` - Check if slice is empty / 슬라이스가 비어있는지 확인
+  - `IsNotEmpty[T any](slice []T) bool` - Check if slice is not empty / 슬라이스가 비어있지 않은지 확인
+  - `Equal[T comparable](a, b []T) bool` - Compare two slices / 두 슬라이스 비교
+
+- **TESTS**: Comprehensive tests added to `basic_test.go` / `basic_test.go`에 포괄적인 테스트 추가
+  - 5 test functions with multiple scenarios / 여러 시나리오가 있는 5개 테스트 함수
+  - Edge cases covered (nil, empty, different types) / 엣지 케이스 커버 (nil, 비어있음, 다양한 타입)
+  - 5 benchmark functions / 5개 벤치마크 함수
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.005 / `cfg/app.yaml` 버전을 v1.7.005로 업데이트
+- Updated `sliceutil/sliceutil.go` Version constant to "1.7.005" / `sliceutil/sliceutil.go` 버전 상수를 "1.7.005"로 업데이트
+
+### Test Results / 테스트 결과
+
+- ✅ All tests passing / 모든 테스트 통과
+- ✅ All 10 basic operations now complete / 모든 10개 기본 작업 완료
+
+### Progress / 진행 상황
+
+- **Functions Implemented / 구현된 함수**: 10/60 (17%)
+- **Work Units Completed / 완료된 작업 단위**: 5/18 (28%)
+- **Current Phase / 현재 단계**: Phase 2 - Core Features / 2단계 - 핵심 기능
+
+### Next Steps / 다음 단계
+
+- **v1.7.006**: Transformation Functions (Part 1) - Map, Filter, FlatMap, Flatten
+
+---
+
+## [v1.7.004] - 2025-10-15
+
+### Added / 추가
+
+- **BASIC OPERATIONS (Part 1)**: Implemented first 5 basic operations / 첫 5개 기본 작업 구현
+  - `Contains[T comparable](slice []T, item T) bool` - Check if item exists / 항목 존재 확인
+  - `ContainsFunc[T any](slice []T, predicate func(T) bool) bool` - Check with predicate / 조건으로 확인
+  - `IndexOf[T comparable](slice []T, item T) int` - Find first index / 첫 번째 인덱스 찾기
+  - `LastIndexOf[T comparable](slice []T, item T) int` - Find last index / 마지막 인덱스 찾기
+  - `Find[T any](slice []T, predicate func(T) bool) (T, bool)` - Find first matching item / 첫 번째 일치 항목 찾기
+
+- **TESTS**: Comprehensive test suite for basic operations / 기본 작업에 대한 포괄적인 테스트 스위트
+  - Created `sliceutil/basic_test.go` with 5 test functions / 5개 테스트 함수가 있는 `sliceutil/basic_test.go` 생성
+  - Multiple test scenarios per function / 함수당 여러 테스트 시나리오
+  - Edge cases covered (nil slices, empty slices, duplicates) / 엣지 케이스 커버 (nil 슬라이스, 빈 슬라이스, 중복)
+  - 5 benchmark functions / 5개 벤치마크 함수
+
+### Files Created / 생성된 파일
+
+- `sliceutil/basic.go` - Basic operations implementation / 기본 작업 구현
+- `sliceutil/basic_test.go` - Comprehensive tests (~300 lines) / 포괄적인 테스트 (~300줄)
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.004 / `cfg/app.yaml` 버전을 v1.7.004로 업데이트
+- Updated `sliceutil/sliceutil.go` Version constant to "1.7.004" / `sliceutil/sliceutil.go` 버전 상수를 "1.7.004"로 업데이트
+
+### Test Results / 테스트 결과
+
+- ✅ All tests passing / 모든 테스트 통과
+- ✅ TestContains with multiple scenarios / 여러 시나리오가 있는 TestContains
+- ✅ TestContainsFunc with predicate tests / 조건 테스트가 있는 TestContainsFunc
+- ✅ TestIndexOf with edge cases / 엣지 케이스가 있는 TestIndexOf
+- ✅ TestLastIndexOf with duplicates / 중복이 있는 TestLastIndexOf
+- ✅ TestFind with various types / 다양한 타입이 있는 TestFind
+
+### Progress / 진행 상황
+
+- **Functions Implemented / 구현된 함수**: 5/60 (8%)
+- **Work Units Completed / 완료된 작업 단위**: 4/18 (22%)
+- **Current Phase / 현재 단계**: Phase 2 - Core Features / 2단계 - 핵심 기능
+
+### Next Steps / 다음 단계
+
+- **v1.7.005**: Basic Operations (Part 2) - 5 more basic functions / 기본 작업 (2부) - 5개 추가 기본 함수
+
+---
+
+## [v1.7.003] - 2025-10-14
+
+### Added / 추가
+
+- **CORE TYPES**: Defined core types and constraints / 핵심 타입 및 제약조건 정의
+  - Generic type constraints ready for all 60 functions / 모든 60개 함수에 대한 제네릭 타입 제약조건 준비
+  - Version constant added to package / 패키지에 버전 상수 추가
+
+- **TESTS**: Basic package tests / 기본 패키지 테스트
+  - Created `sliceutil/sliceutil_test.go` / `sliceutil/sliceutil_test.go` 생성
+  - Package version test / 패키지 버전 테스트
+  - Package import test / 패키지 임포트 테스트
+
+### Files Created / 생성된 파일
+
+- `sliceutil/sliceutil_test.go` - Basic package tests / 기본 패키지 테스트
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.003 / `cfg/app.yaml` 버전을 v1.7.003로 업데이트
+- Updated `sliceutil/sliceutil.go` with Version constant / `sliceutil/sliceutil.go`에 버전 상수 추가
+
+### Progress / 진행 상황
+
+- **Functions Implemented / 구현된 함수**: 0/60 (0%)
+- **Work Units Completed / 완료된 작업 단위**: 3/18 (17%)
+- **Current Phase / 현재 단계**: Phase 1 - Foundation / 1단계 - 기초
+
+### Next Steps / 다음 단계
+
+- **v1.7.004**: Basic Operations (Part 1) - First 5 basic functions / 기본 작업 (1부) - 첫 5개 기본 함수
+
+---
+
 ## [v1.7.002] - 2025-10-14
 
 ### Added / 추가
