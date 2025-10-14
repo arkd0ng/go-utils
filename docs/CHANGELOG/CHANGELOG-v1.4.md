@@ -8,6 +8,54 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.005] - 2025-10-14
+
+### Added / 추가
+- **COMPLETE**: Implemented full database/redis package with all core features
+- **완료**: 모든 핵심 기능을 갖춘 database/redis 패키지 완전 구현
+- Core client with connection management, retry logic, and health check
+- 연결 관리, 재시도 로직, 헬스 체크를 갖춘 핵심 클라이언트
+- String operations: Set, Get, MGet, MSet, Incr, Decr, Append, SetNX, SetEX
+- 문자열 작업: Set, Get, MGet, MSet, Incr, Decr, Append, SetNX, SetEX
+- Hash operations: HSet, HGet, HGetAll, HSetMap, HDel, HExists, HLen, HIncrBy
+- 해시 작업: HSet, HGet, HGetAll, HSetMap, HDel, HExists, HLen, HIncrBy
+- List operations: LPush, RPush, LPop, RPop, LRange, LLen, LIndex, LSet, LRem
+- 리스트 작업: LPush, RPush, LPop, RPop, LRange, LLen, LIndex, LSet, LRem
+- Set operations: SAdd, SRem, SMembers, SIsMember, SCard, SUnion, SInter, SDiff
+- 집합 작업: SAdd, SRem, SMembers, SIsMember, SCard, SUnion, SInter, SDiff
+- Sorted set operations: ZAdd, ZRange, ZRangeByScore, ZRem, ZScore, ZIncrBy
+- 정렬 집합 작업: ZAdd, ZRange, ZRangeByScore, ZRem, ZScore, ZIncrBy
+- Key operations: Del, Exists, Expire, TTL, Keys, Scan, Rename, Type
+- 키 작업: Del, Exists, Expire, TTL, Keys, Scan, Rename, Type
+- Pipeline support for batch operations
+- 배치 작업을 위한 파이프라인 지원
+- Transaction support with optimistic locking (WATCH/MULTI/EXEC)
+- 낙관적 잠금을 사용한 트랜잭션 지원 (WATCH/MULTI/EXEC)
+- Pub/Sub support for message publishing and subscribing
+- 메시지 발행 및 구독을 위한 Pub/Sub 지원
+- Type-safe generic methods: GetAs[T], HGetAllAs[T]
+- 타입 안전 제네릭 메서드: GetAs[T], HGetAllAs[T]
+- Comprehensive test suite with 8 test cases
+- 8개 테스트 케이스를 포함한 종합 테스트 스위트
+- Complete examples demonstrating all features (8 example functions)
+- 모든 기능을 시연하는 완전한 예제 (8개 예제 함수)
+- Comprehensive README with API reference and usage examples
+- API 참조 및 사용 예제가 포함된 종합 README
+
+### Features / 기능
+- Auto-retry with exponential backoff for network errors
+- 네트워크 에러에 대한 지수 백오프를 사용한 자동 재시도
+- Connection pooling for high performance
+- 고성능을 위한 연결 풀링
+- Background health checking
+- 백그라운드 헬스 체크
+- Context support for cancellation and timeout
+- 취소 및 타임아웃을 위한 Context 지원
+- Options pattern for flexible configuration
+- 유연한 설정을 위한 옵션 패턴
+
+---
+
 ## [v1.4.004] - 2025-10-14
 
 ### Added / 추가
