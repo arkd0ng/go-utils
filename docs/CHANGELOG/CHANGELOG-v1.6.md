@@ -10,6 +10,93 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [v1.6.004] - 2025-10-14
 
+### Added / 추가
+
+- **TESTS**: Created comprehensive test suite with 95 test functions / 95개의 테스트 함수를 포함한 포괄적인 테스트 스위트 생성
+  - New file: `timeutil/timeutil_comprehensive_test.go` (1,270+ lines) / 새 파일: `timeutil/timeutil_comprehensive_test.go` (1,270줄 이상)
+  - 100% function coverage - ALL 93 functions tested / 100% 함수 커버리지 - 모든 93개 함수 테스트
+  - Organized into 10 test categories matching function categories / 함수 카테고리와 일치하는 10개의 테스트 카테고리로 구성
+  - Individual test for each function with proper assertions / 적절한 검증이 있는 각 함수에 대한 개별 테스트
+  - Edge case testing (invalid inputs, zero values, boundary conditions) / 엣지 케이스 테스트 (잘못된 입력, 0 값, 경계 조건)
+
+### Test Coverage / 테스트 커버리지
+
+**All 10 Categories Tested / 모든 10개 카테고리 테스트**:
+1. **Time Difference Functions (8 tests)** / 시간 차이 함수 (8개 테스트)
+   - TestSubTime, TestDiffInSeconds, TestDiffInMinutes, TestDiffInHours
+   - TestDiffInDays, TestDiffInWeeks, TestDiffInMonths, TestDiffInYears
+
+2. **Timezone Operations (10 tests)** / 타임존 작업 (10개 테스트)
+   - TestGetDefaultTimezone, TestNowKST, TestConvertTimezone, TestToUTC
+   - TestToKST, TestGetTimezoneOffset, TestGetLocalTimezone, TestIsValidTimezone
+   - TestListTimezones (+ invalid timezone edge cases)
+
+3. **Date Arithmetic Functions (16 tests)** / 날짜 연산 함수 (16개 테스트)
+   - TestAddSeconds, TestAddMinutes, TestAddHours, TestAddDays, TestAddWeeks
+   - TestAddMonths, TestAddYears, TestStartOfDay, TestEndOfDay, TestStartOfWeek
+   - TestEndOfWeek, TestStartOfMonth, TestEndOfMonth, TestStartOfYear, TestEndOfYear
+   - TestStartOfQuarter
+
+4. **Date Formatting Functions (8 tests)** / 날짜 포맷팅 함수 (8개 테스트)
+   - TestFormatISO8601, TestFormatRFC3339, TestFormatDate, TestFormatDateTime
+   - TestFormatTime, TestFormat, TestFormatKorean, TestFormatWithTimezone
+
+5. **Time Parsing Functions (6 tests)** / 시간 파싱 함수 (6개 테스트)
+   - TestParseISO8601, TestParseRFC3339, TestParseDate, TestParseDateTime
+   - TestParse, TestParseWithTimezone (+ invalid format edge cases)
+
+6. **Time Comparison Functions (18 tests)** / 시간 비교 함수 (18개 테스트)
+   - TestIsBefore, TestIsAfter, TestIsBetween, TestIsToday, TestIsYesterday
+   - TestIsTomorrow, TestIsWeekend, TestIsWeekday, TestIsThisWeek, TestIsThisMonth
+   - TestIsThisYear, TestIsSameDay, TestIsSameWeek, TestIsSameMonth, TestIsSameYear
+   - TestIsLeapYear, TestIsPast, TestIsFuture
+
+7. **Age Calculation Functions (4 tests)** / 나이 계산 함수 (4개 테스트)
+   - TestAgeInYears, TestAgeInMonths, TestAgeInDays, TestAge
+
+8. **Relative Time Functions (4 tests)** / 상대 시간 함수 (4개 테스트)
+   - TestRelativeTime, TestRelativeTimeShort, TestTimeAgo, TestHumanizeDuration
+
+9. **Unix Timestamp Functions (12 tests)** / Unix 타임스탬프 함수 (12개 테스트)
+   - TestNow, TestNowMilli, TestNowMicro, TestNowNano
+   - TestFromUnix, TestFromUnixMilli, TestFromUnixMicro, TestFromUnixNano
+   - TestToUnix, TestToUnixMilli, TestToUnixMicro, TestToUnixNano
+
+10. **Business Day Functions (10 tests)** / 영업일 함수 (10개 테스트)
+    - TestIsBusinessDay, TestAddKoreanHolidays, TestIsHoliday, TestAddBusinessDays
+    - TestNextBusinessDay, TestPreviousBusinessDay, TestCountBusinessDays
+    - TestGetHolidays, TestSetHolidays, TestClearHolidays
+
+**Total Tests**: 95 test functions for 93 functions (100% coverage) / 93개 함수에 대한 95개 테스트 함수 (100% 커버리지)
+
+### Test Quality / 테스트 품질
+
+- **Comprehensive assertions**: Each test verifies expected behavior / 포괄적인 검증: 각 테스트는 예상되는 동작을 확인
+- **Edge case coverage**: Invalid inputs, zero values, boundary conditions / 엣지 케이스 커버리지: 잘못된 입력, 0 값, 경계 조건
+- **Bilingual comments**: English/Korean for all test descriptions / 이중 언어 주석: 모든 테스트 설명에 대한 영문/한글
+- **Clear naming**: Test function names clearly indicate what is being tested / 명확한 명명: 테스트 함수 이름이 무엇을 테스트하는지 명확히 나타냄
+- **Organized structure**: Tests grouped by category with section headers / 구조화된 구성: 섹션 헤더로 카테고리별로 그룹화된 테스트
+
+### Files Changed / 변경된 파일
+
+- **Added**: `timeutil/timeutil_comprehensive_test.go` (1,270+ lines) / 추가
+- **Removed**: `timeutil/timeutil_test.go` (replaced with comprehensive version) / 제거 (포괄적인 버전으로 대체)
+- **Updated**: `cfg/app.yaml` - Version to v1.6.004 / 업데이트
+- **Updated**: `docs/CHANGELOG/CHANGELOG-v1.6.md` - This entry / 업데이트
+
+### Test Results / 테스트 결과
+
+```
+PASS
+ok  	github.com/arkd0ng/go-utils/timeutil	0.710s
+```
+
+All 95 tests passing successfully! / 모든 95개 테스트가 성공적으로 통과!
+
+---
+
+## [v1.6.003] - 2025-10-14
+
 ### Changed / 변경
 
 - **EXAMPLES**: Enhanced examples/stringutil/main.go to include ALL 53 functions / examples/stringutil/main.go를 모든 53개 함수 포함하도록 개선
