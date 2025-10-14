@@ -179,16 +179,16 @@ Demonstrates transaction with optimistic locking:
 
 ```bash
 # Start Redis using Docker / Docker를 사용하여 Redis 시작
-./scripts/docker-redis-start.sh
+./.docker/scripts/docker-redis-start.sh
 
 # Stop Redis / Redis 중지
-./scripts/docker-redis-stop.sh
+./.docker/scripts/docker-redis-stop.sh
 
 # View logs / 로그 보기
-./scripts/docker-redis-logs.sh
+./.docker/scripts/docker-redis-logs.sh
 
 # Connect to Redis CLI / Redis CLI에 연결
-./scripts/docker-redis-cli.sh
+./.docker/scripts/docker-redis-cli.sh
 ```
 
 ### Option 2: Local Redis / 옵션 2: 로컬 Redis
@@ -278,7 +278,7 @@ However, if you want to flush all Redis data manually:
 
 ```bash
 # Connect to Redis CLI / Redis CLI에 연결
-./scripts/docker-redis-cli.sh
+./.docker/scripts/docker-redis-cli.sh
 
 # Flush current database / 현재 데이터베이스 플러시
 > FLUSHDB
@@ -306,7 +306,7 @@ However, if you want to flush all Redis data manually:
 2. Start Redis if not running / 실행 중이 아니면 Redis 시작
    ```bash
    # For Docker
-   ./scripts/docker-redis-start.sh
+   ./.docker/scripts/docker-redis-start.sh
 
    # For local Redis
    brew services start redis

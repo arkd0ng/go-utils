@@ -8,6 +8,68 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.016] - 2025-10-14
+
+### Changed / 변경
+
+- **REFACTOR**: Reorganized Docker files into `.docker/` directory
+- **리팩터링**: Docker 파일을 `.docker/` 디렉토리로 재구성
+- Moved `mysql/` → `.docker/mysql/` (MySQL configuration and init scripts)
+- `mysql/`를 `.docker/mysql/`로 이동 (MySQL 설정 및 초기화 스크립트)
+- Moved `redis/` → `.docker/redis/` (Redis configuration)
+- `redis/`를 `.docker/redis/`로 이동 (Redis 설정)
+- Moved `scripts/` → `.docker/scripts/` (Docker management scripts)
+- `scripts/`를 `.docker/scripts/`로 이동 (Docker 관리 스크립트)
+- Moved `docker-compose.yml` → `.docker/docker-compose.yml`
+- `docker-compose.yml`을 `.docker/docker-compose.yml`로 이동
+- Updated all script references throughout codebase
+- 코드베이스 전체의 모든 스크립트 참조 업데이트
+- All scripts now referenced as `./.docker/scripts/docker-*`
+- 모든 스크립트는 이제 `./.docker/scripts/docker-*`로 참조됨
+
+### Added / 추가
+
+- **GITIGNORE**: Added `.claude/` and `CLAUDE.md` to .gitignore
+- **GITIGNORE**: `.claude/` 및 `CLAUDE.md`를 .gitignore에 추가
+- Personal Claude Code configuration files no longer tracked by git
+- 개인 Claude Code 설정 파일은 더 이상 git에서 추적되지 않음
+- Local files preserved, only removed from remote repository
+- 로컬 파일은 유지되고 원격 저장소에서만 제거됨
+
+### Updated Files / 업데이트된 파일
+
+- `.gitignore` - Added Claude Code exclusions
+- `CLAUDE.md` - Updated all Docker script paths
+- `database/redis/README.md` - Updated script paths
+- `docs/CHANGELOG/CHANGELOG-v1.3.md` - Updated script paths
+- `docs/database/redis/DEVELOPER_GUIDE.md` - Updated script paths
+- `docs/database/redis/USER_MANUAL.md` - Updated script paths
+- `docs/database/redis/WORK_PLAN.md` - Updated script paths
+- `examples/redis/README.md` - Updated script paths
+- `examples/redis/main.go` - Updated script paths
+
+### Benefits / 장점
+
+- Cleaner project root directory
+- 더 깨끗한 프로젝트 루트 디렉토리
+- All Docker-related files organized in one place
+- 모든 Docker 관련 파일이 한 곳에 정리됨
+- Easier to find and manage Docker configurations
+- Docker 설정을 찾고 관리하기 더 쉬움
+- Personal settings not shared in repository
+- 개인 설정이 저장소에 공유되지 않음
+
+### Notes / 참고사항
+
+- Scripts maintain same functionality with new paths
+- 스크립트는 새 경로에서 동일한 기능 유지
+- Docker containers still named `go-utils-mysql` and `go-utils-redis`
+- Docker 컨테이너는 여전히 `go-utils-mysql` 및 `go-utils-redis`로 명명됨
+- Current version: v1.4.016
+- 현재 버전: v1.4.016
+
+---
+
 ## [v1.4.015] - 2025-10-14
 
 ### Fixed / 수정

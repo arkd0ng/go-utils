@@ -354,7 +354,7 @@ if err != nil {
 Start Docker Redis:
 
 ```bash
-./scripts/docker-redis-start.sh
+./.docker/scripts/docker-redis-start.sh
 ```
 
 Run tests:
@@ -366,7 +366,7 @@ go test ./database/redis -v
 Stop Docker Redis:
 
 ```bash
-./scripts/docker-redis-stop.sh
+./.docker/scripts/docker-redis-stop.sh
 ```
 
 ## Examples / 예제

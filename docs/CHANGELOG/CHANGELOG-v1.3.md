@@ -159,7 +159,7 @@ examples/mysql/
 
 3. Start Docker MySQL:
    ```bash
-   ./scripts/docker-mysql-start.sh
+   ./.docker/scripts/docker-mysql-start.sh
    ```
 
 4. (Optional) Remove Homebrew MySQL:

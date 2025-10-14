@@ -95,7 +95,7 @@ import "github.com/arkd0ng/go-utils/database/redis"
 docker compose up -d redis
 
 # Or using helper script / 또는 헬퍼 스크립트 사용
-./scripts/docker-redis-start.sh
+./.docker/scripts/docker-redis-start.sh
 ```
 
 #### Option 2: Local Installation / 옵션 2: 로컬 설치

@@ -155,7 +155,7 @@ Redis 테스팅을 위한 Docker Compose 설정 및 설정 스크립트를 생�
 **Acceptance Criteria / 수용 기준**:
 - [ ] Docker Compose configuration updated / Docker Compose 설정 업데이트됨
 - [ ] All setup scripts created and executable / 모든 설정 스크립트 생성되고 실행 가능
-- [ ] Redis starts successfully with `./scripts/docker-redis-start.sh` / 스크립트로 Redis 성공적으로 시작
+- [ ] Redis starts successfully with `./.docker/scripts/docker-redis-start.sh` / 스크립트로 Redis 성공적으로 시작
 - [ ] Redis CLI connection works / Redis CLI 연결 작동
 
 **Estimated Effort / 예상 소요 시간**: 1 work unit

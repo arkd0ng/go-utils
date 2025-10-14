@@ -644,12 +644,12 @@ go build -o bin/redis_example examples/redis/main.go
   - Pub/Sub (메시지 발행 및 구독)
 
 **MySQL 예제 실행 요구사항**:
-- MySQL 서버 실행 중이어야 함 (Docker: `./scripts/docker-mysql-start.sh`)
+- MySQL 서버 실행 중이어야 함 (Docker: `./.docker/scripts/docker-mysql-start.sh`)
 - `cfg/database-mysql.yaml` 설정 파일 필요
 - 테스트 데이터베이스 및 테이블 (예제가 자동으로 설정)
 
 **Redis 예제 실행 요구사항**:
-- Redis 서버 실행 중이어야 함 (Docker: `./scripts/docker-redis-start.sh`)
+- Redis 서버 실행 중이어야 함 (Docker: `./.docker/scripts/docker-redis-start.sh`)
 - `cfg/database-redis.yaml` 설정 파일 필요
 - 예제가 자동으로 데이터 생성 및 정리
 
@@ -659,13 +659,13 @@ go build -o bin/redis_example examples/redis/main.go
 
 ```bash
 # Docker MySQL 시작
-./scripts/docker-mysql-start.sh
+./.docker/scripts/docker-mysql-start.sh
 
 # Docker MySQL 중지
-./scripts/docker-mysql-stop.sh
+./.docker/scripts/docker-mysql-stop.sh
 
 # Docker MySQL 로그 확인
-./scripts/docker-mysql-logs.sh
+./.docker/scripts/docker-mysql-logs.sh
 
 # MySQL 클라이언트로 접속
 docker exec -it go-utils-mysql mysql -u root -prootpassword
@@ -679,16 +679,16 @@ docker compose down mysql
 
 ```bash
 # Docker Redis 시작
-./scripts/docker-redis-start.sh
+./.docker/scripts/docker-redis-start.sh
 
 # Docker Redis 중지
-./scripts/docker-redis-stop.sh
+./.docker/scripts/docker-redis-stop.sh
 
 # Docker Redis 로그 확인
-./scripts/docker-redis-logs.sh
+./.docker/scripts/docker-redis-logs.sh
 
 # Redis CLI로 접속
-./scripts/docker-redis-cli.sh
+./.docker/scripts/docker-redis-cli.sh
 # 또는
 docker exec -it go-utils-redis redis-cli
 

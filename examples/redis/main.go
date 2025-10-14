@@ -78,7 +78,7 @@ func main() {
 			logger.Info("Docker가 설치되어 실행 중인지 확인하세요:")
 			logger.Info("  1. Install Docker Desktop: https://www.docker.com/products/docker-desktop")
 			logger.Info("  2. Start Docker Desktop")
-			logger.Info("  3. Run: ./scripts/docker-redis-start.sh")
+			logger.Info("  3. Run: ./.docker/scripts/docker-redis-start.sh")
 			os.Exit(1)
 		}
 
@@ -640,7 +640,7 @@ func isDockerRedisRunning() bool {
 // startDockerRedis는 Docker Redis 컨테이너를 시작합니다
 func startDockerRedis() error {
 	// Try using the start script first / 먼저 시작 스크립트 사용 시도
-	cmd := exec.Command("../../scripts/docker-redis-start.sh")
+	cmd := exec.Command("../../.docker/scripts/docker-redis-start.sh")
 	if err := cmd.Run(); err == nil {
 		return nil
 	}
@@ -655,7 +655,7 @@ func startDockerRedis() error {
 // stopDockerRedis는 Docker Redis 컨테이너를 중지합니다
 func stopDockerRedis() {
 	// Try using the stop script first / 먼저 중지 스크립트 사용 시도
-	cmd := exec.Command("../../scripts/docker-redis-stop.sh")
+	cmd := exec.Command("../../.docker/scripts/docker-redis-stop.sh")
 	if err := cmd.Run(); err == nil {
 		return
 	}

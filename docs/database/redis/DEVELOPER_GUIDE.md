@@ -1046,13 +1046,13 @@ docker compose down
 
 ```bash
 # Start Redis / Redis 시작
-./scripts/docker-redis-start.sh
+./.docker/scripts/docker-redis-start.sh
 
 # Run tests / 테스트 실행
 go test ./database/redis -v
 
 # Stop Redis / Redis 중지
-./scripts/docker-redis-stop.sh
+./.docker/scripts/docker-redis-stop.sh
 ```
 
 ---

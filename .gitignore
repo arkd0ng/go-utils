@@ -36,6 +36,12 @@ test_logs/
 
 # Example results directory
 examples/mysql/results/
+examples/redis/results/
+results/
 
 # Backup files
 *.backup
+
+# Claude Code configuration (personal settings)
+.claude/
+CLAUDE.md
