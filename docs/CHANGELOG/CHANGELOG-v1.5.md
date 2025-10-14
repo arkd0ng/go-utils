@@ -8,6 +8,76 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.004] - 2025-10-14 15:48
+
+### Added / 추가
+
+- **TEST**: Created comprehensive test suite for stringutil package
+- **테스트**: stringutil 패키지에 대한 포괄적인 테스트 스위트 생성
+- **DOCS**: Created README.md with complete API documentation
+- **문서**: 완전한 API 문서가 포함된 README.md 생성
+- **EXAMPLES**: Created working examples with logging integration
+- **예제**: 로깅 통합이 포함된 작동 예제 생성
+
+### Test Files / 테스트 파일
+
+- `stringutil/case_test.go` - 3 test functions (ToSnakeCase, ToCamelCase, ToPascalCase)
+- `stringutil/manipulation_test.go` - 3 test functions (Truncate, Reverse, Clean)
+- `stringutil/validation_test.go` - 3 test functions (IsEmail, IsURL, IsAlphanumeric)
+- All 9 tests passing with Unicode validation
+- 모든 9개 테스트 통과 (유니코드 검증 포함)
+
+### Documentation / 문서
+
+- `stringutil/README.md` - Comprehensive package documentation with:
+  - Installation instructions
+  - Quick start examples
+  - Complete API reference for all 37 functions
+  - 5 categories with detailed tables
+  - Usage examples for each function
+- All documentation in bilingual format (English/Korean)
+- 모든 문서는 이중 언어 형식 (영문/한글)
+
+### Examples / 예제
+
+- `examples/stringutil/main.go` - Complete working example demonstrating:
+  - All 5 categories of functions
+  - Logging integration with file and stdout output
+  - Banner display with version info
+  - Practical use cases for each category
+- Example tested and runs successfully
+- 예제 테스트 완료 및 성공적으로 실행됨
+
+### Test Results / 테스트 결과
+
+```
+PASS: TestToSnakeCase
+PASS: TestToCamelCase
+PASS: TestToPascalCase
+PASS: TestTruncate (with Unicode "안녕하세요")
+PASS: TestReverse (with Unicode "안녕")
+PASS: TestClean
+PASS: TestIsEmail
+PASS: TestIsURL
+PASS: TestIsAlphanumeric
+ok  github.com/arkd0ng/go-utils/stringutil  0.697s
+```
+
+### Notes / 참고사항
+
+- Phase 4 testing complete: 9 tests passing
+- Phase 4 테스팅 완료: 9개 테스트 통과
+- Basic documentation complete (README)
+- 기본 문서화 완료 (README)
+- Package ready for basic use
+- 패키지 기본 사용 준비 완료
+- Next: Comprehensive documentation (USER_MANUAL, DEVELOPER_GUIDE)
+- 다음: 포괄적인 문서화 (USER_MANUAL, DEVELOPER_GUIDE)
+- Current version: v1.5.004
+- 현재 버전: v1.5.004
+
+---
+
 ## [v1.5.003] - 2025-10-14 15:46
 
 ### Added / 추가
