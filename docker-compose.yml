@@ -1,8 +1,6 @@
 # Docker Compose configuration for go-utils development
 # go-utils 개발을 위한 Docker Compose 설정
 
-version: '3.8'
-
 services:
   mysql:
     image: mysql:8.1
