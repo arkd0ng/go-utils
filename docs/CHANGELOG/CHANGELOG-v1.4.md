@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.003] - 2025-10-14
+
+### Added / 추가
+- Created WORK_PLAN.md for Redis package with comprehensive implementation roadmap
+- Redis 패키지에 대한 포괄적인 구현 로드맵이 포함된 WORK_PLAN.md 생성
+- Defined 5 phases: Foundation, Core Features, Advanced Features, Testing & Documentation, Release
+- 5단계 정의: 기초, 핵심 기능, 고급 기능, 테스팅 및 문서화, 릴리스
+- Planned 20+ tasks with clear acceptance criteria and dependencies
+- 명확한 수용 기준 및 의존성이 있는 20개 이상의 작업 계획
+- Quality checklist for code, testing, documentation, performance, and Docker
+- 코드, 테스팅, 문서화, 성능, Docker에 대한 품질 체크리스트
+
+---
+
 ## [v1.4.002] - 2025-10-14
 
 ### Added / 추가
