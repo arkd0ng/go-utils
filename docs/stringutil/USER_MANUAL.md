@@ -1,20 +1,21 @@
 # Stringutil Package - User Manual
 # Stringutil 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.5.018+
+**Version / 버전**: v1.5.021
 **Package / 패키지**: `github.com/arkd0ng/go-utils/stringutil`
 **Design Philosophy / 설계 철학**: "20 lines → 1 line" (Extreme Simplicity / 극도의 간결함)
-**Function Count / 함수 개수**: 53 functions across 9 categories / 9개 카테고리에 걸친 53개 함수
+**Function Count / 함수 개수**: 108+ functions across 13 categories / 13개 카테고리에 걸친 108개 이상의 함수
 
-> **Note**: This manual was initially written for v1.5.x (37 functions). The package has been expanded to 53 functions with additional categories:
-> - Comparison (3 functions): EqualFold, HasPrefix, HasSuffix
-> - Extended Manipulation (8 functions): Repeat, Substring, Left, Right, Insert, SwapCase, ToTitle, Slugify
-> - Quote/Unquote (2 functions): Quote, Unquote
-> - Unicode Operations (3 functions): RuneCount, Width, Normalize
+> **Note**: This manual covers all 108+ functions across 13 categories including:
+> - Core Functions (53 functions): Case Conversion, Manipulation, Validation, Search & Replace, Utilities, Comparison, Unicode Operations
+> - Builder Pattern (30+ methods): Fluent API for chaining string operations
+> - Encoding & Decoding (8 functions): Base64, URL, HTML
+> - Distance & Similarity (4 functions): Levenshtein, Hamming, Jaro-Winkler
+> - Formatting (13 functions): Number, bytes, pluralization, masking, indentation
 >
 > For complete API reference, see [stringutil/README.md](../../stringutil/README.md)
 >
-> **참고**: 이 매뉴얼은 처음에 v1.5.x (37개 함수)용으로 작성되었습니다. 패키지는 추가 카테고리와 함께 53개 함수로 확장되었습니다.
+> **참고**: 이 매뉴얼은 13개 카테고리에 걸친 108개 이상의 모든 함수를 다룹니다.
 > 전체 API 참조는 [stringutil/README.md](../../stringutil/README.md)를 참조하세요.
 
 ---
@@ -25,11 +26,18 @@
 2. [Installation / 설치](#installation--설치)
 3. [Quick Start / 빠른 시작](#quick-start--빠른-시작)
 4. [Configuration Reference / 설정 참조](#configuration-reference--설정-참조)
-   - [Case Conversion / 케이스 변환](#case-conversion--케이스-변환)
-   - [String Manipulation / 문자열 조작](#string-manipulation--문자열-조작)
-   - [Validation / 유효성 검사](#validation--유효성-검사)
-   - [Search & Replace / 검색 및 치환](#search--replace--검색-및-치환)
-   - [Utilities / 유틸리티](#utilities--유틸리티)
+   - [Core Functions / 핵심 함수](#core-functions--핵심-함수)
+     - [Case Conversion / 케이스 변환](#case-conversion--케이스-변환)
+     - [String Manipulation / 문자열 조작](#string-manipulation--문자열-조작)
+     - [Validation / 유효성 검사](#validation--유효성-검사)
+     - [Search & Replace / 검색 및 치환](#search--replace--검색-및-치환)
+     - [Utilities / 유틸리티](#utilities--유틸리티)
+     - [Comparison / 비교](#comparison--비교)
+     - [Unicode Operations / 유니코드 작업](#unicode-operations--유니코드-작업)
+   - [Builder Pattern / Builder 패턴](#builder-pattern--builder-패턴)
+   - [Encoding & Decoding / 인코딩 및 디코딩](#encoding--decoding--인코딩-및-디코딩)
+   - [Distance & Similarity / 거리 및 유사도](#distance--similarity--거리-및-유사도)
+   - [Formatting / 포맷팅](#formatting--포맷팅)
 5. [Usage Patterns / 사용 패턴](#usage-patterns--사용-패턴)
 6. [Common Use Cases / 일반적인 사용 사례](#common-use-cases--일반적인-사용-사례)
 7. [Best Practices / 모범 사례](#best-practices--모범-사례)
@@ -48,12 +56,16 @@ The `stringutil` package provides extreme simplicity string utility functions fo
 
 ### Key Features / 주요 기능
 
-- **37 utility functions** across 5 categories / 5개 카테고리에 걸친 **37개 유틸리티 함수**
+- **108+ utility functions** across 13 categories / 13개 카테고리에 걸친 **108개 이상의 유틸리티 함수**
+- **Builder Pattern** - Fluent API with 30+ chainable methods / **Builder 패턴** - 30개 이상의 체이닝 가능한 메서드를 가진 유창한 API
 - **Unicode-safe** - All functions use `[]rune` instead of byte operations / **유니코드 안전** - 모든 함수는 바이트 작업 대신 `[]rune` 사용
-- **Zero external dependencies** - Standard library only / **외부 의존성 제로** - 표준 라이브러리만 사용
+- **Minimal dependencies** - Standard library + golang.org/x/text / **최소 의존성** - 표준 라이브러리 + golang.org/x/text
 - **Bilingual documentation** - English and Korean / **이중 언어 문서** - 영문 및 한글
 - **Practical validation** - Email/URL validation that works for 99% of use cases / **실용적인 검증** - 99%의 사용 사례에서 작동하는 이메일/URL 검증
 - **Smart case conversion** - Handles PascalCase, camelCase, snake_case, kebab-case, SCREAMING_SNAKE_CASE / **스마트 케이스 변환** - PascalCase, camelCase, snake_case, kebab-case, SCREAMING_SNAKE_CASE 처리
+- **String Distance Algorithms** - Levenshtein, Hamming, Jaro-Winkler for fuzzy search / **문자열 거리 알고리즘** - 퍼지 검색을 위한 Levenshtein, Hamming, Jaro-Winkler
+- **Encoding/Decoding** - Base64, URL, HTML encoding and decoding / **인코딩/디코딩** - Base64, URL, HTML 인코딩 및 디코딩
+- **Advanced Formatting** - Number, bytes, pluralization, masking, indentation / **고급 포맷팅** - 숫자, 바이트, 복수형화, 마스킹, 들여쓰기
 
 ### Use Cases / 사용 사례
 
@@ -63,22 +75,32 @@ stringutil이 뛰어난 일반적인 시나리오:
 
 1. **API Development** - Convert between different naming conventions (JSON camelCase ↔ Database snake_case)
 2. **Data Validation** - Quick email, URL, alphanumeric validation
-3. **Text Processing** - Truncate, clean, and manipulate user input
+3. **Text Processing** - Truncate, clean, and manipulate user input with fluent Builder API
 4. **String Transformation** - Map/filter operations on string slices
 5. **Search & Replace** - Multi-pattern search and replacement
+6. **Fuzzy Search** - Find similar strings using Levenshtein distance and similarity algorithms
+7. **Data Masking** - Mask sensitive information (email, credit cards) in logs
+8. **Encoding/Decoding** - Base64, URL, HTML encoding for data transmission
+9. **Text Formatting** - Format numbers, bytes, pluralization for user-friendly display
+10. **Typo Correction** - Detect and suggest corrections using string similarity
 
 1. **API 개발** - 다양한 명명 규칙 간 변환 (JSON camelCase ↔ 데이터베이스 snake_case)
 2. **데이터 검증** - 빠른 이메일, URL, 영숫자 검증
-3. **텍스트 처리** - 사용자 입력 자르기, 정리, 조작
+3. **텍스트 처리** - 유창한 Builder API로 사용자 입력 자르기, 정리, 조작
 4. **문자열 변환** - 문자열 슬라이스에 대한 Map/Filter 작업
 5. **검색 및 치환** - 다중 패턴 검색 및 치환
+6. **퍼지 검색** - Levenshtein 거리 및 유사도 알고리즘을 사용한 유사 문자열 찾기
+7. **데이터 마스킹** - 로그에서 민감한 정보(이메일, 신용카드) 마스킹
+8. **인코딩/디코딩** - 데이터 전송을 위한 Base64, URL, HTML 인코딩
+9. **텍스트 포맷팅** - 사용자 친화적인 표시를 위한 숫자, 바이트, 복수형화 포맷
+10. **오타 수정** - 문자열 유사도를 사용한 오타 감지 및 수정 제안
 
 ### Package Statistics / 패키지 통계
 
-- **Total Functions / 전체 함수**: 37
-- **Code Lines / 코드 라인**: ~714 lines
-- **Test Coverage / 테스트 커버리지**: 9 tests (more coming)
-- **External Dependencies / 외부 의존성**: 0
+- **Total Functions / 전체 함수**: 108+ (53 core functions + 30+ builder methods + 25 advanced functions)
+- **Code Lines / 코드 라인**: ~3,000+ lines
+- **Test Coverage / 테스트 커버리지**: 100+ test cases across 13 test files
+- **External Dependencies / 외부 의존성**: 1 (golang.org/x/text for Unicode normalization)
 - **Supported Go Versions / 지원 Go 버전**: 1.18+
 
 ---
@@ -1214,6 +1236,578 @@ fmt.Println(words2)  // [hello world]
 ```
 
 **Note / 참고**: Uses `strings.Fields()` which splits on whitespace / 공백으로 분할하는 `strings.Fields()` 사용
+
+---
+
+### Builder Pattern / Builder 패턴
+
+The Builder pattern provides a fluent API for chaining string operations. This dramatically reduces code verbosity and improves readability.
+
+Builder 패턴은 문자열 작업을 체이닝하기 위한 유창한 API를 제공합니다. 이는 코드 장황함을 극적으로 줄이고 가독성을 향상시킵니다.
+
+#### Constructor Functions / 생성자 함수
+
+**NewBuilder() *StringBuilder**
+
+Creates a new empty StringBuilder / 새로운 빈 StringBuilder 생성
+
+```go
+builder := stringutil.NewBuilder()
+result := builder.Append("hello").ToUpper().Build()
+// result: "HELLO"
+```
+
+**NewBuilderWithString(s string) *StringBuilder**
+
+Creates a StringBuilder initialized with a string / 문자열로 초기화된 StringBuilder 생성
+
+```go
+builder := stringutil.NewBuilderWithString("Hello World")
+result := builder.ToSnakeCase().Build()
+// result: "hello_world"
+```
+
+#### Case Conversion Methods / 케이스 변환 메서드
+
+- `ToSnakeCase() *StringBuilder` - Convert to snake_case / snake_case로 변환
+- `ToCamelCase() *StringBuilder` - Convert to camelCase / camelCase로 변환
+- `ToKebabCase() *StringBuilder` - Convert to kebab-case / kebab-case로 변환
+- `ToPascalCase() *StringBuilder` - Convert to PascalCase / PascalCase로 변환
+- `ToTitle() *StringBuilder` - Convert to Title Case / Title Case로 변환
+- `ToUpper() *StringBuilder` - Convert to UPPERCASE / 대문자로 변환
+- `ToLower() *StringBuilder` - Convert to lowercase / 소문자로 변환
+
+```go
+result := stringutil.NewBuilder().
+    Append("user profile data").
+    ToSnakeCase().
+    Build()
+// result: "user_profile_data"
+```
+
+#### Manipulation Methods / 조작 메서드
+
+- `Append(s string) *StringBuilder` - Append string / 문자열 추가
+- `AppendLine(s string) *StringBuilder` - Append string with newline / 줄바꿈과 함께 문자열 추가
+- `Capitalize() *StringBuilder` - Capitalize each word / 각 단어 대문자화
+- `Reverse() *StringBuilder` - Reverse string / 문자열 뒤집기
+- `Trim() *StringBuilder` - Trim leading/trailing whitespace / 앞뒤 공백 제거
+- `Clean() *StringBuilder` - Trim and deduplicate spaces / 공백 제거 및 중복 제거
+- `RemoveSpaces() *StringBuilder` - Remove all whitespace / 모든 공백 제거
+- `RemoveSpecialChars() *StringBuilder` - Keep only alphanumeric / 영숫자만 유지
+
+```go
+result := stringutil.NewBuilder().
+    Append("  hello   world  ").
+    Clean().
+    Capitalize().
+    Build()
+// result: "Hello World"
+```
+
+#### Truncation Methods / 잘라내기 메서드
+
+- `Truncate(length int) *StringBuilder` - Truncate with "..." / "..."로 자르기
+- `TruncateWithSuffix(length int, suffix string) *StringBuilder` - Truncate with custom suffix / 사용자 정의 접미사로 자르기
+
+```go
+result := stringutil.NewBuilder().
+    Append("Hello World").
+    Truncate(8).
+    Build()
+// result: "Hello Wo..."
+```
+
+#### Formatting Methods / 포맷팅 메서드
+
+- `Slugify() *StringBuilder` - Convert to URL-friendly slug / URL 친화적 슬러그로 변환
+- `Quote() *StringBuilder` - Wrap in double quotes / 큰따옴표로 감싸기
+- `Unquote() *StringBuilder` - Remove quotes / 따옴표 제거
+- `PadLeft(length int, pad string) *StringBuilder` - Pad left / 왼쪽 패딩
+- `PadRight(length int, pad string) *StringBuilder` - Pad right / 오른쪽 패딩
+
+```go
+result := stringutil.NewBuilder().
+    Append("Hello World!").
+    Slugify().
+    Build()
+// result: "hello-world"
+```
+
+#### Transformation Methods / 변환 메서드
+
+- `Replace(old, new string) *StringBuilder` - Replace all occurrences / 모든 발생 치환
+- `Repeat(count int) *StringBuilder` - Repeat string / 문자열 반복
+
+```go
+result := stringutil.NewBuilder().
+    Append("*").
+    Repeat(5).
+    Build()
+// result: "*****"
+```
+
+#### Utility Methods / 유틸리티 메서드
+
+- `Build() string` - Build final string / 최종 문자열 빌드
+- `String() string` - Alias for Build() / Build()의 별칭
+- `Len() int` - Get current length / 현재 길이 가져오기
+- `Reset()` - Reset to empty / 비우기
+
+```go
+builder := stringutil.NewBuilder()
+builder.Append("hello")
+fmt.Println(builder.Len())  // 5
+builder.Reset()
+fmt.Println(builder.Len())  // 0
+```
+
+#### Real-world Example / 실제 예제
+
+```go
+// Clean and format user input for database
+// 데이터베이스용 사용자 입력 정리 및 포맷
+rawInput := "  John DOE  "
+formatted := stringutil.NewBuilder().
+    Append(rawInput).
+    Clean().
+    ToTitle().
+    Build()
+// formatted: "John Doe"
+
+// Generate URL slug
+// URL 슬러그 생성
+title := "My Blog Post Title!"
+slug := stringutil.NewBuilderWithString(title).
+    Slugify().
+    Build()
+// slug: "my-blog-post-title"
+```
+
+---
+
+### Encoding & Decoding / 인코딩 및 디코딩
+
+Functions for encoding and decoding strings in various formats.
+
+다양한 형식으로 문자열을 인코딩하고 디코딩하는 함수.
+
+#### Base64 Encoding / Base64 인코딩
+
+**Base64Encode(s string) string**
+
+Encodes string to standard Base64 / 문자열을 표준 Base64로 인코딩
+
+```go
+encoded := stringutil.Base64Encode("hello")
+fmt.Println(encoded)  // "aGVsbG8="
+```
+
+**Base64Decode(s string) (string, error)**
+
+Decodes standard Base64 string / 표준 Base64 문자열 디코딩
+
+```go
+decoded, err := stringutil.Base64Decode("aGVsbG8=")
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Println(decoded)  // "hello"
+```
+
+#### Base64 URL Encoding / Base64 URL 인코딩
+
+**Base64URLEncode(s string) string**
+
+Encodes string to URL-safe Base64 (no padding) / 문자열을 URL 안전 Base64로 인코딩 (패딩 없음)
+
+```go
+encoded := stringutil.Base64URLEncode("hello world")
+fmt.Println(encoded)  // "aGVsbG8gd29ybGQ"
+```
+
+**Base64URLDecode(s string) (string, error)**
+
+Decodes URL-safe Base64 string / URL 안전 Base64 문자열 디코딩
+
+```go
+decoded, err := stringutil.Base64URLDecode("aGVsbG8gd29ybGQ")
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Println(decoded)  // "hello world"
+```
+
+#### URL Encoding / URL 인코딩
+
+**URLEncode(s string) string**
+
+Encodes string for URL query parameters / URL 쿼리 파라미터용 문자열 인코딩
+
+```go
+encoded := stringutil.URLEncode("hello world")
+fmt.Println(encoded)  // "hello+world"
+```
+
+**URLDecode(s string) (string, error)**
+
+Decodes URL-encoded string / URL 인코딩된 문자열 디코딩
+
+```go
+decoded, err := stringutil.URLDecode("hello+world")
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Println(decoded)  // "hello world"
+```
+
+#### HTML Encoding / HTML 인코딩
+
+**HTMLEscape(s string) string**
+
+Escapes HTML special characters / HTML 특수 문자 이스케이프
+
+```go
+escaped := stringutil.HTMLEscape("<script>alert('xss')</script>")
+fmt.Println(escaped)  // "&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;"
+```
+
+**HTMLUnescape(s string) string**
+
+Unescapes HTML entities / HTML 엔티티 언이스케이프
+
+```go
+unescaped := stringutil.HTMLUnescape("&lt;div&gt;")
+fmt.Println(unescaped)  // "<div>"
+```
+
+#### Use Cases / 사용 사례
+
+```go
+// API token encoding
+// API 토큰 인코딩
+token := stringutil.Base64Encode("user:password")
+
+// URL parameter encoding
+// URL 파라미터 인코딩
+query := stringutil.URLEncode("search query with spaces")
+
+// Safe HTML rendering
+// 안전한 HTML 렌더링
+safeHTML := stringutil.HTMLEscape(userInput)
+```
+
+---
+
+### Distance & Similarity / 거리 및 유사도
+
+String distance and similarity algorithms for fuzzy matching and typo correction.
+
+퍼지 매칭 및 오타 수정을 위한 문자열 거리 및 유사도 알고리즘.
+
+#### Levenshtein Distance / Levenshtein 거리
+
+**LevenshteinDistance(a, b string) int**
+
+Calculates edit distance between two strings (insertions, deletions, substitutions) / 두 문자열 간 편집 거리 계산 (삽입, 삭제, 치환)
+
+```go
+distance := stringutil.LevenshteinDistance("kitten", "sitting")
+fmt.Println(distance)  // 3
+// kitten → sitten (substitute k→s)
+// sitten → sittin (substitute e→i)
+// sittin → sitting (insert g)
+```
+
+#### Similarity Score / 유사도 점수
+
+**Similarity(a, b string) float64**
+
+Returns similarity score (0.0-1.0) based on Levenshtein distance / Levenshtein 거리 기반 유사도 점수 반환 (0.0-1.0)
+
+```go
+similarity := stringutil.Similarity("hello", "hallo")
+fmt.Println(similarity)  // 0.8 (80% similar)
+```
+
+#### Hamming Distance / Hamming 거리
+
+**HammingDistance(a, b string) int**
+
+Counts differing positions (requires equal-length strings) / 다른 위치 개수 세기 (동일 길이 문자열 필요)
+
+```go
+distance := stringutil.HammingDistance("karolin", "kathrin")
+fmt.Println(distance)  // 3 (positions 1, 3, 4 differ)
+```
+
+#### Jaro-Winkler Similarity / Jaro-Winkler 유사도
+
+**JaroWinklerSimilarity(a, b string) float64**
+
+Calculates Jaro-Winkler similarity (0.0-1.0), better for short strings / Jaro-Winkler 유사도 계산 (0.0-1.0), 짧은 문자열에 더 좋음
+
+```go
+similarity := stringutil.JaroWinklerSimilarity("martha", "marhta")
+fmt.Println(similarity)  // ~0.96 (very similar)
+```
+
+#### Practical Examples / 실용적인 예제
+
+**Fuzzy Search / 퍼지 검색**
+
+```go
+// Find similar strings in a list
+// 목록에서 유사한 문자열 찾기
+query := "helllo"  // typo
+candidates := []string{"hello", "world", "help", "shell"}
+
+bestMatch := ""
+bestSimilarity := 0.0
+
+for _, candidate := range candidates {
+    sim := stringutil.Similarity(query, candidate)
+    if sim > bestSimilarity {
+        bestSimilarity = sim
+        bestMatch = candidate
+    }
+}
+
+fmt.Printf("Did you mean '%s'? (%.0f%% similar)\n", bestMatch, bestSimilarity*100)
+// Output: Did you mean 'hello'? (83% similar)
+```
+
+**Typo Correction / 오타 수정**
+
+```go
+// Suggest corrections for misspelled words
+// 철자가 틀린 단어에 대한 수정 제안
+userInput := "gogle"
+dictionary := []string{"google", "goggle", "giggle", "google"}
+
+threshold := 0.7  // 70% similarity threshold
+suggestions := []string{}
+
+for _, word := range dictionary {
+    if stringutil.Similarity(userInput, word) >= threshold {
+        suggestions = append(suggestions, word)
+    }
+}
+
+fmt.Println("Suggestions:", suggestions)
+// Output: Suggestions: [google goggle]
+```
+
+**Duplicate Detection / 중복 감지**
+
+```go
+// Detect near-duplicate entries
+// 거의 중복인 항목 감지
+entries := []string{
+    "John Doe",
+    "John  Doe",  // extra space
+    "Jon Doe",    // typo
+    "Jane Smith",
+}
+
+for i := 0; i < len(entries); i++ {
+    for j := i + 1; j < len(entries); j++ {
+        sim := stringutil.Similarity(entries[i], entries[j])
+        if sim > 0.85 {
+            fmt.Printf("Possible duplicate: '%s' and '%s' (%.0f%% similar)\n",
+                entries[i], entries[j], sim*100)
+        }
+    }
+}
+// Output:
+// Possible duplicate: 'John Doe' and 'John  Doe' (100% similar)
+// Possible duplicate: 'John Doe' and 'Jon Doe' (88% similar)
+```
+
+---
+
+### Formatting / 포맷팅
+
+Advanced string formatting functions for numbers, bytes, pluralization, masking, and text manipulation.
+
+숫자, 바이트, 복수형화, 마스킹 및 텍스트 조작을 위한 고급 문자열 포맷팅 함수.
+
+#### Number Formatting / 숫자 포맷팅
+
+**FormatNumber(n int, separator string) string**
+
+Formats numbers with thousand separators / 천 단위 구분 기호로 숫자 포맷
+
+```go
+formatted := stringutil.FormatNumber(1000000, ",")
+fmt.Println(formatted)  // "1,000,000"
+
+formatted2 := stringutil.FormatNumber(1234567, ".")
+fmt.Println(formatted2)  // "1.234.567"
+```
+
+**FormatBytes(bytes int64) string**
+
+Formats byte sizes in human-readable format / 바이트 크기를 사람이 읽기 쉬운 형식으로 포맷
+
+```go
+fmt.Println(stringutil.FormatBytes(1024))      // "1.0 KB"
+fmt.Println(stringutil.FormatBytes(1536))      // "1.5 KB"
+fmt.Println(stringutil.FormatBytes(1048576))   // "1.0 MB"
+fmt.Println(stringutil.FormatBytes(1073741824)) // "1.0 GB"
+```
+
+#### Pluralization / 복수형화
+
+**Pluralize(count int, singular, plural string) string**
+
+Returns singular or plural form based on count / 개수에 따라 단수 또는 복수 형태 반환
+
+```go
+fmt.Println(stringutil.Pluralize(1, "item", "items"))  // "item"
+fmt.Println(stringutil.Pluralize(5, "item", "items"))  // "items"
+fmt.Println(stringutil.Pluralize(0, "item", "items"))  // "items"
+```
+
+**FormatWithCount(count int, singular, plural string) string**
+
+Formats count with pluralized noun / 복수형화된 명사와 함께 개수 포맷
+
+```go
+fmt.Println(stringutil.FormatWithCount(1, "file", "files"))  // "1 file"
+fmt.Println(stringutil.FormatWithCount(5, "file", "files"))  // "5 files"
+```
+
+#### Text Truncation / 텍스트 잘라내기
+
+**Ellipsis(s string, maxLen int) string**
+
+Truncates string with ellipsis in the middle / 중간에 말줄임표로 문자열 자르기
+
+```go
+fmt.Println(stringutil.Ellipsis("Hello World", 8))  // "Hel...ld"
+fmt.Println(stringutil.Ellipsis("Short", 10))       // "Short"
+```
+
+#### Data Masking / 데이터 마스킹
+
+**Mask(s string, first, last int, maskChar string) string**
+
+Masks middle characters, showing only first and last n characters / 중간 문자 마스킹, 처음과 마지막 n개 문자만 표시
+
+```go
+fmt.Println(stringutil.Mask("1234567890", 2, 2, "*"))  // "12******90"
+fmt.Println(stringutil.Mask("password", 1, 1, "#"))    // "p######d"
+```
+
+**MaskEmail(email string) string**
+
+Masks email address / 이메일 주소 마스킹
+
+```go
+fmt.Println(stringutil.MaskEmail("john.doe@example.com"))
+// "j******e@example.com"
+
+fmt.Println(stringutil.MaskEmail("user@test.com"))
+// "u**r@test.com"
+```
+
+**MaskCreditCard(card string) string**
+
+Masks credit card number (shows last 4 digits) / 신용카드 번호 마스킹 (마지막 4자리 표시)
+
+```go
+fmt.Println(stringutil.MaskCreditCard("1234-5678-9012-3456"))
+// "****-****-****-3456"
+
+fmt.Println(stringutil.MaskCreditCard("1234567890123456"))
+// "************3456"
+```
+
+#### Text Formatting / 텍스트 포맷팅
+
+**AddLineNumbers(s string) string**
+
+Adds line numbers to each line / 각 줄에 줄 번호 추가
+
+```go
+text := "line1\nline2\nline3"
+numbered := stringutil.AddLineNumbers(text)
+fmt.Println(numbered)
+// 1: line1
+// 2: line2
+// 3: line3
+```
+
+**Indent(s string, prefix string) string**
+
+Indents each line with a prefix / 각 줄에 접두사로 들여쓰기
+
+```go
+text := "line1\nline2\nline3"
+indented := stringutil.Indent(text, "  ")
+fmt.Println(indented)
+//   line1
+//   line2
+//   line3
+```
+
+**Dedent(s string) string**
+
+Removes common leading whitespace from all lines / 모든 줄에서 공통 앞 공백 제거
+
+```go
+text := "  line1\n  line2\n  line3"
+dedented := stringutil.Dedent(text)
+fmt.Println(dedented)
+// line1
+// line2
+// line3
+```
+
+**WrapText(s string, width int) string**
+
+Wraps text to specified width / 지정된 너비로 텍스트 래핑
+
+```go
+text := "This is a long sentence that needs to be wrapped"
+wrapped := stringutil.WrapText(text, 20)
+fmt.Println(wrapped)
+// This is a long
+// sentence that needs
+// to be wrapped
+```
+
+#### Real-world Examples / 실제 예제
+
+**API Response Formatting / API 응답 포맷팅**
+
+```go
+// Format file upload response
+// 파일 업로드 응답 포맷
+fileCount := 5
+fileSize := int64(1536000)  // 1.5 MB
+
+message := fmt.Sprintf("Uploaded %s (%s)",
+    stringutil.FormatWithCount(fileCount, "file", "files"),
+    stringutil.FormatBytes(fileSize))
+
+fmt.Println(message)
+// "Uploaded 5 files (1.5 MB)"
+```
+
+**Log Masking / 로그 마스킹**
+
+```go
+// Mask sensitive data in logs
+// 로그에서 민감한 데이터 마스킹
+logEntry := fmt.Sprintf("User %s paid with card %s",
+    stringutil.MaskEmail("john.doe@example.com"),
+    stringutil.MaskCreditCard("1234-5678-9012-3456"))
+
+fmt.Println(logEntry)
+// "User j******e@example.com paid with card ****-****-****-3456"
+```
 
 ---
 

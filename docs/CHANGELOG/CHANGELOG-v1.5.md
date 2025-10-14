@@ -8,6 +8,69 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.021] - 2025-10-14
+
+### Changed / 변경
+
+- **DOCS**: Comprehensive documentation update for all new features
+- **문서**: 모든 새로운 기능에 대한 포괄적인 문서 업데이트
+
+### Documentation Updates / 문서 업데이트
+
+**USER_MANUAL.md** (~2,400 lines total):
+- Updated header: 53 → 108+ functions, 9 → 13 categories
+- Updated Key Features with new capabilities (Builder, Distance, Encoding, Formatting)
+- Expanded Use Cases from 5 to 10 scenarios
+- Updated Package Statistics (100+ test cases, 3,000+ lines of code)
+- Added complete Configuration Reference sections (~570 new lines):
+  - **Builder Pattern**: 30+ methods with examples and real-world use cases
+  - **Encoding & Decoding**: 8 functions with Base64, URL, HTML encoding
+  - **Distance & Similarity**: 4 algorithms with fuzzy search examples
+  - **Formatting**: 13 functions with number, bytes, masking, indentation examples
+- All new sections include:
+  - Bilingual documentation (English/Korean)
+  - Complete function signatures
+  - Practical code examples
+  - Real-world use cases (fuzzy search, typo correction, log masking, etc.)
+
+**DEVELOPER_GUIDE.md**:
+- Updated version: v1.5.018+ → v1.5.021
+- Updated function count: 53 → 108+ functions
+- Updated note section with complete 13-category breakdown
+- Added new key principles (Fluent API, Type Safety)
+- Updated file structure references (builder.go, encoding.go, distance.go, formatting.go)
+
+### Files Modified / 수정된 파일
+
+- `cfg/app.yaml` - Updated version to v1.5.021
+- `docs/stringutil/USER_MANUAL.md` - Added ~570 lines of comprehensive documentation
+- `docs/stringutil/DEVELOPER_GUIDE.md` - Updated header and key principles
+- `docs/CHANGELOG/CHANGELOG-v1.5.md` - Added this entry
+
+### Summary / 요약
+
+- Complete documentation coverage for all 108+ functions
+- 모든 108개 이상의 함수에 대한 완전한 문서 커버리지
+- Builder Pattern, Encoding, Distance, and Formatting features fully documented
+- Builder 패턴, 인코딩, 거리, 포맷팅 기능 완전 문서화
+- Real-world examples for practical usage
+- 실용적인 사용을 위한 실제 예제
+- Bilingual documentation (English/Korean) for all new content
+- 모든 새로운 내용에 대한 이중 언어 문서 (영문/한글)
+
+### Notes / 참고사항
+
+- All new features (v1.5.020) are now fully documented
+- v1.5.020의 모든 새로운 기능이 이제 완전히 문서화됨
+- USER_MANUAL.md provides comprehensive guide for end users
+- USER_MANUAL.md는 최종 사용자를 위한 포괄적인 가이드 제공
+- DEVELOPER_GUIDE.md updated with latest architecture information
+- DEVELOPER_GUIDE.md가 최신 아키텍처 정보로 업데이트됨
+- Current version: v1.5.021
+- 현재 버전: v1.5.021
+
+---
+
 ## [v1.5.020] - 2025-10-14
 
 ### Added / 추가

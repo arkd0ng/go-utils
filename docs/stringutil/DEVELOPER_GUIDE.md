@@ -1,21 +1,22 @@
 # Stringutil Package - Developer Guide
 # Stringutil 패키지 - 개발자 가이드
 
-**Version / 버전**: v1.5.018+
+**Version / 버전**: v1.5.021
 **Package / 패키지**: `github.com/arkd0ng/go-utils/stringutil`
 **Design Philosophy / 설계 철학**: "20 lines → 1 line" (Extreme Simplicity / 극도의 간결함)
-**Function Count / 함수 개수**: 53 functions across 9 categories / 9개 카테고리에 걸친 53개 함수
+**Function Count / 함수 개수**: 108+ functions across 13 categories / 13개 카테고리에 걸친 108개 이상의 함수
 
-> **Note**: This guide was initially written for v1.5.x (37 functions). The package has been expanded to 53 functions with additional files:
-> - `comparison.go` (NEW, 3 functions): EqualFold, HasPrefix, HasSuffix
-> - `manipulation.go` (extended, 6 functions): Repeat, Substring, Left, Right, Insert, SwapCase
-> - `case.go` (extended, 4 functions): ToTitle, Slugify, Quote, Unquote
-> - `unicode.go` (NEW, 3 functions): RuneCount, Width, Normalize
+> **Note**: This guide covers the complete stringutil package with 108+ functions across 13 categories:
+> - **Core Functions** (53 functions): Case conversion, manipulation, validation, search & replace, utilities, comparison, Unicode operations
+> - **Builder Pattern** (30+ methods): `builder.go` - Fluent API for chaining string operations
+> - **Encoding & Decoding** (8 functions): `encoding.go` - Base64, URL, HTML encoding/decoding
+> - **Distance & Similarity** (4 functions): `distance.go` - Levenshtein, Hamming, Jaro-Winkler algorithms
+> - **Formatting** (13 functions): `formatting.go` - Number, bytes, pluralization, masking, indentation
 >
-> For complete API reference, see [stringutil/README.md](../../stringutil/README.md)
+> For complete API reference, see [stringutil/README.md](../../stringutil/README.md) and [USER_MANUAL.md](USER_MANUAL.md)
 >
-> **참고**: 이 가이드는 처음에 v1.5.x (37개 함수)용으로 작성되었습니다. 패키지는 추가 파일과 함께 53개 함수로 확장되었습니다.
-> 전체 API 참조는 [stringutil/README.md](../../stringutil/README.md)를 참조하세요.
+> **참고**: 이 가이드는 13개 카테고리에 걸친 108개 이상의 함수를 가진 완전한 stringutil 패키지를 다룹니다.
+> 전체 API 참조는 [stringutil/README.md](../../stringutil/README.md) 및 [USER_MANUAL.md](USER_MANUAL.md)를 참조하세요.
 
 ---
 
@@ -46,8 +47,10 @@ stringutil 패키지는 **"20줄 → 1줄"** 원칙을 따릅니다 - 일반적�
 
 1. **Extreme Simplicity / 극도의 간결함**: Every function should be as simple as possible
 2. **Unicode Safety / 유니코드 안전**: All functions use `[]rune` for proper Unicode handling
-3. **Zero Dependencies / 제로 의존성**: Only standard library, no external dependencies
+3. **Minimal Dependencies / 최소 의존성**: Standard library + golang.org/x/text (Unicode normalization only)
 4. **Practical over Perfect / 완벽보다 실용성**: 99% coverage is better than 100% complexity
+5. **Fluent API / 유창한 API**: Builder pattern provides chainable methods for complex operations
+6. **Type Safety / 타입 안전**: Generic algorithms for reusable patterns
 5. **Composability / 조합 가능성**: Functions can be combined for complex operations
 
 1. **극도의 간결함**: 모든 함수는 최대한 간단해야 합니다
