@@ -8,6 +8,125 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.020] - 2025-10-14
+
+### Added / 추가
+
+- **FEAT**: Added Builder pattern with 30+ chainable methods
+- **기능**: 30개 이상의 체이닝 가능한 메서드를 가진 Builder 패턴 추가
+- **FEAT**: Added Encoding/Decoding functions (8 functions)
+- **기능**: 인코딩/디코딩 함수 추가 (8개 함수)
+- **FEAT**: Added Distance & Similarity algorithms (4 functions)
+- **기능**: 거리 및 유사도 알고리즘 추가 (4개 함수)
+- **FEAT**: Added Formatting functions (13 functions)
+- **기능**: 포맷팅 함수 추가 (13개 함수)
+
+### New Features / 새로운 기능
+
+**1. Builder Pattern (builder.go - 30+ methods)**:
+- Fluent API for chaining string operations
+- 문자열 작업을 체이닝하기 위한 유창한 API
+- Methods include: case conversion, manipulation, truncation, formatting, transformation
+- 메서드 포함: 케이스 변환, 조작, 잘라내기, 포맷팅, 변환
+- Example: `NewBuilder().Append("text").Clean().ToSnakeCase().Build()`
+
+**2. Encoding & Decoding (encoding.go - 8 functions)**:
+- `Base64Encode`, `Base64Decode` - Standard Base64 encoding/decoding
+- `Base64URLEncode`, `Base64URLDecode` - URL-safe Base64
+- `URLEncode`, `URLDecode` - URL query string encoding
+- `HTMLEscape`, `HTMLUnescape` - HTML entity escaping
+
+**3. Distance & Similarity (distance.go - 4 functions)**:
+- `LevenshteinDistance` - Edit distance algorithm
+- `Similarity` - Similarity score (0.0-1.0)
+- `HammingDistance` - Positional differences
+- `JaroWinklerSimilarity` - Jaro-Winkler algorithm
+- Use cases: fuzzy search, typo correction, duplicate detection
+- 사용 사례: 퍼지 검색, 오타 수정, 중복 감지
+
+**4. Formatting (formatting.go - 13 functions)**:
+- Number formatting: `FormatNumber`, `FormatBytes`
+- Pluralization: `Pluralize`, `FormatWithCount`
+- Masking: `Mask`, `MaskEmail`, `MaskCreditCard`
+- Text formatting: `Ellipsis`, `AddLineNumbers`, `Indent`, `Dedent`, `WrapText`
+
+### Testing / 테스트
+
+- Added comprehensive test files for all new features
+- 모든 새로운 기능에 대한 포괄적인 테스트 파일 추가
+- `builder_test.go` - 280+ lines with 20+ test cases
+- `encoding_test.go` - 250+ lines with round-trip tests
+- `distance_test.go` - 200+ lines with symmetry and triangle inequality tests
+- `formatting_test.go` - 200+ lines with edge case tests
+- All tests passing (100% success rate)
+- 모든 테스트 통과 (100% 성공률)
+
+### Examples / 예제
+
+- Extended `examples/stringutil/main.go` from 163 to 380 lines
+- `examples/stringutil/main.go`를 163줄에서 380줄로 확장
+- Added comprehensive examples for all new features:
+- 모든 새로운 기능에 대한 포괄적인 예제 추가:
+  - Builder pattern with multiple chaining scenarios
+  - Encoding/Decoding demonstrations (Base64, URL, HTML)
+  - Distance/Similarity with practical search use case
+  - Formatting with numbers, bytes, pluralization, masking, indentation
+  - 5 real-world scenarios (clean input, slugs, API responses, masking, fuzzy search)
+
+### Documentation / 문서
+
+- Updated `stringutil/README.md` with new features
+- 새로운 기능으로 `stringutil/README.md` 업데이트
+- Function count: 53 → 108+ functions
+- 함수 개수: 53 → 108개 이상
+- Categories: 9 → 13 categories
+- 카테고리: 9 → 13개
+- Added Quick Start examples for new features
+- 새로운 기능에 대한 빠른 시작 예제 추가
+- Updated API reference with detailed tables
+- 상세 표로 API 참조 업데이트
+
+### Files Created / 생성된 파일
+
+- `stringutil/builder.go` (342 lines)
+- `stringutil/builder_test.go` (395 lines)
+- `stringutil/encoding.go` (100+ lines)
+- `stringutil/encoding_test.go` (250+ lines)
+- `stringutil/distance.go` (150+ lines)
+- `stringutil/distance_test.go` (200+ lines)
+- `stringutil/formatting.go` (344 lines)
+- `stringutil/formatting_test.go` (273 lines)
+
+### Files Modified / 수정된 파일
+
+- `cfg/app.yaml` - Updated version to v1.5.020
+- `CLAUDE.md` - Updated stringutil architecture section
+- `stringutil/README.md` - Added new categories and examples
+- `examples/stringutil/main.go` - Extended with comprehensive examples
+- `docs/CHANGELOG/CHANGELOG-v1.5.md` - Added this entry
+
+### Bug Fixes / 버그 수정
+
+- Fixed `Ellipsis` function logic for `maxLen <= 3` case
+- `maxLen <= 3` 경우에 대한 `Ellipsis` 함수 로직 수정
+- Fixed `Mask` function boundary condition (`first+last > length`)
+- `Mask` 함수 경계 조건 수정 (`first+last > length`)
+- Fixed test expectations in `TestBuilderComplexChaining` and `TestBuilderTruncation`
+- `TestBuilderComplexChaining` 및 `TestBuilderTruncation`의 테스트 기대값 수정
+
+### Notes / 참고사항
+
+- Stringutil package now has 108+ functions across 13 categories
+- Stringutil 패키지가 이제 13개 카테고리에 걸쳐 108개 이상의 함수 보유
+- All functions are Unicode-safe with comprehensive tests
+- 모든 함수는 포괄적인 테스트와 함께 유니코드 안전
+- Real-world scenarios demonstrate practical usage
+- 실제 시나리오가 실용적인 사용법 시연
+- Current version: v1.5.020
+- 현재 버전: v1.5.020
+
+---
+
 ## [v1.5.019] - 2025-10-14 17:40
 
 ### Changed / 변경

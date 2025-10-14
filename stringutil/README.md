@@ -11,7 +11,7 @@ Go를 위한 극도로 간단한 문자열 유틸리티 함수. 10-20줄의 반�
 
 ## Features / 기능
 
-✨ **53 utility functions** across 9 categories / 9개 카테고리에 걸쳐 53개 유틸리티 함수
+✨ **108+ utility functions** across 13 categories / 13개 카테고리에 걸쳐 108개 이상 유틸리티 함수
 
 🚀 **Minimal dependencies** - standard library + golang.org/x/text / 최소 의존성
 
@@ -19,7 +19,9 @@ Go를 위한 극도로 간단한 문자열 유틸리티 함수. 10-20줄의 반�
 
 📝 **Bilingual docs** - English/Korean / 이중 언어 문서
 
-🎯 **Comprehensive** - string manipulation, validation, case conversion, Unicode operations / 포괄적
+🎯 **Comprehensive** - string manipulation, validation, case conversion, Unicode operations, Builder pattern, encoding, distance algorithms, formatting / 포괄적
+
+🔗 **Fluent API** - Builder pattern with 30+ chainable methods / 30개 이상의 체이닝 가능한 메서드를 가진 Builder 패턴
 
 ## Installation / 설치
 
@@ -31,6 +33,14 @@ go get github.com/arkd0ng/go-utils/stringutil
 
 ```go
 import "github.com/arkd0ng/go-utils/stringutil"
+
+// Builder pattern - fluent API / Builder 패턴 - 유창한 API
+result := stringutil.NewBuilder().
+    Append("  user profile data  ").
+    Clean().
+    ToSnakeCase().
+    Truncate(15).
+    Build()  // "user_profile_da..."
 
 // Case conversion / 케이스 변환
 stringutil.ToSnakeCase("UserProfileData")  // "user_profile_data"
@@ -44,6 +54,20 @@ stringutil.Clean("  hello   world  ")      // "hello world"
 stringutil.Substring("hello world", 0, 5)  // "hello"
 stringutil.Insert("hello world", 5, ",")   // "hello, world"
 stringutil.SwapCase("Hello World")         // "hELLO wORLD"
+
+// Encoding/Decoding / 인코딩/디코딩
+stringutil.Base64Encode("hello")           // "aGVsbG8="
+stringutil.URLEncode("hello world")        // "hello+world"
+stringutil.HTMLEscape("<script>")          // "&lt;script&gt;"
+
+// Distance & Similarity / 거리 및 유사도
+stringutil.LevenshteinDistance("kitten", "sitting")  // 3
+stringutil.Similarity("hello", "hallo")              // 0.8
+
+// Formatting / 포맷팅
+stringutil.FormatNumber(1000000, ",")      // "1,000,000"
+stringutil.FormatBytes(1536)               // "1.5 KB"
+stringutil.MaskEmail("john.doe@example.com") // "j******e@example.com"
 
 // Validation / 유효성 검사
 stringutil.IsEmail("user@example.com")     // true
@@ -142,6 +166,72 @@ stringutil.Normalize("café", "NFC")        // "café" (composed)
 - `Join(strs []string, sep string) string`
 - `Map(strs []string, fn func(string) string) []string`
 - `Filter(strs []string, fn func(string) bool) []string`
+
+### 10. Builder Pattern / Builder 패턴 (30+ methods)
+
+Fluent API for chaining string operations / 문자열 작업을 체이닝하기 위한 유창한 API
+
+```go
+// Basic usage / 기본 사용법
+builder := stringutil.NewBuilder()
+result := builder.Append("hello").ToUpper().Build()  // "HELLO"
+
+// Complex chaining / 복잡한 체이닝
+result := stringutil.NewBuilder().
+    Append("  user profile data  ").
+    Clean().
+    ToSnakeCase().
+    Truncate(15).
+    Build()  // "user_profile_da..."
+```
+
+**Available methods / 사용 가능한 메서드**:
+- **Construction**: `NewBuilder()`, `NewBuilderWithString(s)`
+- **Case conversion**: `ToSnakeCase()`, `ToCamelCase()`, `ToKebabCase()`, `ToPascalCase()`, `ToTitle()`, `ToUpper()`, `ToLower()`
+- **Manipulation**: `Append(s)`, `AppendLine(s)`, `Capitalize()`, `Reverse()`, `Trim()`, `Clean()`, `RemoveSpaces()`, `RemoveSpecialChars()`
+- **Truncation**: `Truncate(length)`, `TruncateWithSuffix(length, suffix)`
+- **Formatting**: `Slugify()`, `Quote()`, `Unquote()`, `PadLeft(length, pad)`, `PadRight(length, pad)`
+- **Transformation**: `Replace(old, new)`, `Repeat(count)`
+- **Utility**: `Build()`, `String()`, `Len()`, `Reset()`
+
+### 11. Encoding & Decoding / 인코딩 및 디코딩 (8 functions)
+
+- `Base64Encode(s string) string` - Standard Base64 encoding
+- `Base64Decode(s string) (string, error)` - Standard Base64 decoding
+- `Base64URLEncode(s string) string` - URL-safe Base64 encoding
+- `Base64URLDecode(s string) (string, error)` - URL-safe Base64 decoding
+- `URLEncode(s string) string` - URL query string encoding
+- `URLDecode(s string) (string, error)` - URL query string decoding
+- `HTMLEscape(s string) string` - HTML entity escaping
+- `HTMLUnescape(s string) string` - HTML entity unescaping
+
+### 12. Distance & Similarity / 거리 및 유사도 (4 functions)
+
+- `LevenshteinDistance(a, b string) int` - Edit distance (insertions, deletions, substitutions)
+- `Similarity(a, b string) float64` - Similarity score (0.0-1.0) based on Levenshtein
+- `HammingDistance(a, b string) int` - Count of differing positions (equal-length strings)
+- `JaroWinklerSimilarity(a, b string) float64` - Jaro-Winkler similarity (0.0-1.0)
+
+**Use cases / 사용 사례**:
+- Fuzzy search / 퍼지 검색
+- Typo correction / 오타 수정
+- Duplicate detection / 중복 감지
+- String matching / 문자열 매칭
+
+### 13. Formatting / 포맷팅 (13 functions)
+
+- `FormatNumber(n int, separator string) string` - Format numbers with thousand separators
+- `FormatBytes(bytes int64) string` - Human-readable byte sizes (KB, MB, GB, etc.)
+- `Pluralize(count int, singular, plural string) string` - Singular/plural based on count
+- `FormatWithCount(count int, singular, plural string) string` - Count with pluralized noun
+- `Ellipsis(s string, maxLen int) string` - Truncate with ellipsis in middle
+- `Mask(s string, first, last int, maskChar string) string` - Mask middle characters
+- `MaskEmail(email string) string` - Mask email (show first/last + domain)
+- `MaskCreditCard(card string) string` - Mask credit card (show last 4 digits)
+- `AddLineNumbers(s string) string` - Add line numbers to text
+- `Indent(s string, prefix string) string` - Indent each line with prefix
+- `Dedent(s string) string` - Remove common leading whitespace
+- `WrapText(s string, width int) string` - Wrap text to specified width
 
 ## Examples / 예제
 
