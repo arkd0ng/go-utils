@@ -1,7 +1,7 @@
 # Redis Package - Developer Guide / 개발자 가이드
 
 **Package**: `github.com/arkd0ng/go-utils/database/redis`
-**Version**: v1.4.013
+**Version**: v1.4.014
 **Author**: arkd0ng
 **Last Updated**: 2025-10-14
 
@@ -1545,7 +1545,7 @@ if !errors.Is(err, redis.ErrKeyNotFound) {
 
 ---
 
-**Document Version / 문서 버전**: v1.4.013
+**Document Version / 문서 버전**: v1.4.014
 **Last Updated / 마지막 업데이트**: 2025-10-14
 **Maintained by / 관리자**: arkd0ng
 **License / 라이선스**: MIT

@@ -8,6 +8,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.014] - 2025-10-14
+
+### Added / 추가
+- **TESTS**: Replaced MySQL package tests with end-to-end coverage powered by Docker MySQL auto orchestration
+- **테스트**: Docker MySQL 자동 오케스트레이션을 활용한 MySQL 패키지 엔드투엔드 테스트로 교체
+- **INFRA**: `TestMain`-based helper that starts MySQL once for the suite and tears it down after completion
+- **인프라**: 테스트 전용 `TestMain` 헬퍼 추가로 MySQL을 한 번만 시작하고 종료 시 자동 정리
+- **DOCS**: Updated Redis manuals to v1.4.014 to reflect the latest release number
+- **문서**: 최신 릴리스를 반영하도록 Redis 매뉴얼 버전을 v1.4.014로 갱신
+
+### Changed / 변경
+- **REFACTOR**: Removed legacy MySQL unit tests that assumed missing databases and rewrote them as deterministic integration tests
+- **리팩터링**: 데이터베이스 부재를 가정했던 기존 MySQL 단위 테스트를 제거하고 결정적인 통합 테스트로 재작성
+- **CLEANUP**: Ensured MySQL test runs start from a clean schema using table truncation helpers
+- **정리**: 테이블 초기화 헬퍼로 MySQL 테스트가 항상 깨끗한 스키마에서 시작되도록 보장
+
+### Notes / 참고사항
+- Current version: v1.4.014
+- 현재 버전: v1.4.014
+
+---
+
 ## [v1.4.013] - 2025-10-14
 
 ### Added / 추가
