@@ -54,7 +54,7 @@ fi
 # Start Docker Compose / Docker Compose 시작
 echo -e "${GREEN}Starting Docker Compose...${NC}"
 echo -e "${GREEN}Docker Compose 시작 중...${NC}"
-docker-compose up -d
+docker compose up -d
 
 echo
 echo -e "${GREEN}Waiting for MySQL to be ready...${NC}"
@@ -91,5 +91,5 @@ echo -e "${RED}Error: MySQL failed to become ready${NC}"
 echo -e "${RED}오류: MySQL이 준비되지 않았습니다${NC}"
 echo
 echo "Check logs with / 로그 확인:"
-echo "  docker-compose logs mysql"
+echo "  docker compose logs mysql"
 exit 1

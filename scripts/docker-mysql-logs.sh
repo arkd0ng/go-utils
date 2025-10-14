@@ -22,4 +22,4 @@ PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${PROJECT_ROOT}"
 
 # View logs with follow / 로그 보기 (실시간)
-docker-compose logs -f mysql
+docker compose logs -f mysql

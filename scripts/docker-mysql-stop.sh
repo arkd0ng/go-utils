@@ -31,7 +31,7 @@ cd "${PROJECT_ROOT}"
 # Stop Docker Compose / Docker Compose 중지
 echo -e "${YELLOW}Stopping Docker Compose...${NC}"
 echo -e "${YELLOW}Docker Compose 중지 중...${NC}"
-docker-compose down
+docker compose down
 
 echo
 echo -e "${GREEN}✅ Docker MySQL stopped successfully${NC}"

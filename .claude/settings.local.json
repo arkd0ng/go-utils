@@ -21,7 +21,10 @@
       "Bash(brew services:*)",
       "Bash(docker:*)",
       "Bash(docker-compose:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(/dev/null)",
+      "Bash(./scripts/docker-mysql-start.sh:*)",
+      "Bash(brew uninstall:*)"
     ],
     "deny": [],
     "ask": []

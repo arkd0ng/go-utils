@@ -177,8 +177,8 @@ func isDockerMySQLRunning() bool {
 	return strings.TrimSpace(string(output)) == "go-utils-mysql"
 }
 
-// startDockerMySQL starts the Docker MySQL container using docker-compose
-// startDockerMySQL은 docker-compose를 사용하여 Docker MySQL 컨테이너를 시작합니다
+// startDockerMySQL starts the Docker MySQL container using docker compose
+// startDockerMySQL은 docker compose를 사용하여 Docker MySQL 컨테이너를 시작합니다
 func startDockerMySQL() error {
 	// Get project root directory / 프로젝트 루트 디렉토리 가져오기
 	wd, err := os.Getwd()
@@ -188,11 +188,11 @@ func startDockerMySQL() error {
 	projectRoot := filepath.Join(wd, "..", "..")
 
 	// Start Docker Compose / Docker Compose 시작
-	cmd := exec.Command("docker-compose", "up", "-d")
+	cmd := exec.Command("docker", "compose", "up", "-d")
 	cmd.Dir = projectRoot
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("failed to start docker-compose: %w (output: %s)", err, string(output))
+		return fmt.Errorf("failed to start docker compose: %w (output: %s)", err, string(output))
 	}
 	return nil
 }
@@ -232,11 +232,11 @@ func stopDockerMySQL() error {
 	projectRoot := filepath.Join(wd, "..", "..")
 
 	// Stop Docker Compose / Docker Compose 중지
-	cmd := exec.Command("docker-compose", "down")
+	cmd := exec.Command("docker", "compose", "down")
 	cmd.Dir = projectRoot
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("failed to stop docker-compose: %w (output: %s)", err, string(output))
+		return fmt.Errorf("failed to stop docker compose: %w (output: %s)", err, string(output))
 	}
 	return nil
 }
