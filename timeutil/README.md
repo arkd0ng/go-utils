@@ -1,5 +1,7 @@
 # timeutil - Time and Date Utilities / 시간 및 날짜 유틸리티
 
+**v1.6.008** - Now with String Parameter Support! 🎉
+
 Extreme simplicity time and date utility functions for Go - reduce 20 lines of time manipulation code to just 1 line.
 
 극도로 간단한 Go용 시간 및 날짜 유틸리티 함수 - 20줄의 시간 조작 코드를 단 1줄로 줄입니다.
@@ -7,11 +9,29 @@ Extreme simplicity time and date utility functions for Go - reduce 20 lines of t
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.16-blue)](https://golang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+## ⭐ NEW in v1.6.008!
+
+**String Parameter Support** - Parse any time format automatically!
+- 🚀 **40+ formats** automatically detected (including Korean!)
+- 🎯 **50+ String functions** - all major functions now accept strings
+- 💾 **Database-friendly** - perfect for MySQL, PostgreSQL, SQLite timestamps
+- 🌏 **한글 지원** - "2024년 10월 04일", "오전 9시", "오후 3시"
+
+```go
+// OLD WAY - 10+ lines of boilerplate
+layout := "2006-01-02 15:04:05.000"
+t1, err := time.ParseInLocation(layout, "2024-10-04 08:34:42.324", timeutil.KST)
+// ... more parsing code ...
+
+// NEW WAY - 1 line! 🎉
+diff, err := timeutil.SubTimeString("2024-10-04 08:34:42.324", "2024-10-14 14:56:23.789")
+```
+
 ## Overview / 개요
 
-The `timeutil` package provides ~80+ intuitive functions for common time and date operations in Go. Stop writing repetitive time manipulation code and start using human-readable function names.
+The `timeutil` package provides **150+ intuitive functions** for common time and date operations in Go. Stop writing repetitive time manipulation code and start using human-readable function names.
 
-`timeutil` 패키지는 Go에서 일반적인 시간 및 날짜 작업을 위한 약 80개 이상의 직관적인 함수를 제공합니다. 반복적인 시간 조작 코드 작성을 멈추고 사람이 읽기 쉬운 함수 이름을 사용하세요.
+`timeutil` 패키지는 Go에서 일반적인 시간 및 날짜 작업을 위한 **150개 이상의 직관적인 함수**를 제공합니다. 반복적인 시간 조작 코드 작성을 멈추고 사람이 읽기 쉬운 함수 이름을 사용하세요.
 
 ### Design Philosophy: "20 lines → 1 line" / 설계 철학: "20줄 → 1줄"
 
@@ -98,6 +118,23 @@ func main() {
     // Relative time / 상대 시간
     past := time.Now().Add(-2 * time.Hour)
     fmt.Println(timeutil.RelativeTime(past)) // "2 hours ago"
+
+    // ⭐ NEW! String Parameters - Parse any format automatically!
+    // 문자열 매개변수 - 모든 포맷 자동 파싱!
+
+    // Parse any time format
+    t1, _ := timeutil.ParseAny("2024-10-04 08:34:42.324")  // MySQL
+    t2, _ := timeutil.ParseAny("Oct 04, 2024")            // Month name
+    t3, _ := timeutil.ParseAny("2024년 10월 04일")          // Korean!
+
+    // Calculate difference from strings directly
+    diff2, _ := timeutil.SubTimeString("2024-10-04", "2024-10-14")
+
+    // Get age from string
+    age2, _ := timeutil.AgeInYearsString("1990-01-15")
+
+    // Format conversion
+    formatted, _ := timeutil.FormatString("Oct 04, 2024", "2006-01-02")
 
     // Unix timestamp / Unix 타임스탬프
     unix := timeutil.Now()

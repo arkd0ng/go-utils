@@ -1,6 +1,6 @@
 # Timeutil Package - User Manual / 사용자 매뉴얼
 
-**Version / 버전**: v1.6.006
+**Version / 버전**: v1.6.008
 **Package / 패키지**: `github.com/arkd0ng/go-utils/timeutil`
 **Go Version / Go 버전**: 1.16+
 
@@ -23,6 +23,7 @@
    - [Relative Time / 상대 시간](#relative-time--상대-시간)
    - [Unix Timestamp / Unix 타임스탬프](#unix-timestamp--unix-타임스탬프)
    - [Business Days / 영업일](#business-days--영업일)
+   - [**NEW! String Parameters** / 문자열 매개변수](#string-parameters--문자열-매개변수)
 6. [Common Use Cases / 일반적인 사용 사례](#common-use-cases--일반적인-사용-사례)
 7. [Best Practices / 모범 사례](#best-practices--모범-사례)
 8. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
@@ -38,7 +39,9 @@ The `timeutil` package provides an extremely simple and intuitive API for time a
 
 ### Key Features / 주요 기능
 
-- **102 functions** organized into 10 categories / 10개 카테고리로 구성된 102개 함수
+- **150+ functions** organized into 11 categories / 11개 카테고리로 구성된 150개 이상의 함수
+- **NEW in v1.6.008**: String parameter support - parse any format automatically! / 문자열 매개변수 지원 - 모든 포맷 자동 파싱!
+- **40+ time formats** automatically detected (including Korean!) / 40개 이상의 시간 포맷 자동 감지 (한글 포함!)
 - **KST (GMT+9) default timezone** for Korean users / 한국 사용자를 위한 KST (GMT+9) 기본 타임존
 - **Custom format tokens** like YYYY-MM-DD instead of Go's confusing 2006-01-02 / Go의 혼란스러운 2006-01-02 대신 YYYY-MM-DD 같은 커스텀 포맷 토큰
 - **Business day support** with Korean holiday calendar / 한국 공휴일 달력이 포함된 영업일 지원
@@ -2311,3 +2314,77 @@ For more information, see:
 
 **Version / 버전**: v1.6.006
 **Last Updated / 마지막 업데이트**: 2025-10-14
+
+
+---
+
+## String Parameters / 문자열 매개변수
+
+**NEW in v1.6.008!** / **v1.6.008 신규!**
+
+For comprehensive documentation on string parameter support, see:
+- [String Parameters Guide](./STRING_PARAMETERS.md) - Complete guide with 40+ format examples
+
+문자열 매개변수 지원에 대한 포괄적인 문서는 다음을 참조하세요:
+- [문자열 매개변수 가이드](./STRING_PARAMETERS.md) - 40개 이상의 포맷 예제가 포함된 완전한 가이드
+
+### Quick Overview / 빠른 개요
+
+```go
+// OLD WAY - Too much boilerplate
+layout := "2006-01-02 15:04:05.000"
+t1, err := time.ParseInLocation(layout, "2024-10-04 08:34:42.324", timeutil.KST)
+t2, err := time.ParseInLocation(layout, "2024-10-14 14:56:23.789", timeutil.KST)
+diff := timeutil.SubTime(t1, t2)
+
+// NEW WAY - So much simpler!
+diff, err := timeutil.SubTimeString("2024-10-04 08:34:42.324", "2024-10-14 14:56:23.789")
+```
+
+### ParseAny - The Magic Function / 마법의 함수
+
+Automatically detects and parses 40+ formats including:
+- Database formats (MySQL, PostgreSQL, SQLite)
+- ISO8601, RFC3339
+- Date formats (YYYY-MM-DD, MM/DD/YYYY, etc.)
+- Month names (Oct 04, 2024, October 04, 2024)
+- **Korean formats** (2024년 10월 04일, 오전 9시, 오후 3시)
+
+40개 이상의 포맷을 자동으로 감지하고 파싱합니다:
+- 데이터베이스 포맷 (MySQL, PostgreSQL, SQLite)
+- ISO8601, RFC3339
+- 날짜 포맷 (YYYY-MM-DD, MM/DD/YYYY 등)
+- 월 이름 (Oct 04, 2024, October 04, 2024)
+- **한글 포맷** (2024년 10월 04일, 오전 9시, 오후 3시)
+
+```go
+// Works with ANY format!
+t1, _ := timeutil.ParseAny("2024-10-04 08:34:42.324")
+t2, _ := timeutil.ParseAny("Oct 04, 2024")
+t3, _ := timeutil.ParseAny("2024년 10월 04일")
+t4, _ := timeutil.ParseAny("2024/10/04")
+```
+
+### 50+ String Functions / 50개 이상의 String 함수
+
+All major timeutil functions now accept strings:
+- `SubTimeString`, `DiffInDaysString`, `AgeString`
+- `AddDaysString`, `SubDaysString`, `FormatString`
+- `IsSameDayString`, `IsBeforeString`, `WeekdayKoreanString`
+- And 40+ more!
+
+모든 주요 timeutil 함수가 이제 문자열을 받습니다:
+- `SubTimeString`, `DiffInDaysString`, `AgeString`
+- `AddDaysString`, `SubDaysString`, `FormatString`
+- `IsSameDayString`, `IsBeforeString`, `WeekdayKoreanString`
+- 그리고 40개 이상!
+
+See [STRING_PARAMETERS.md](./STRING_PARAMETERS.md) for complete documentation.
+
+전체 문서는 [STRING_PARAMETERS.md](./STRING_PARAMETERS.md)를 참조하세요.
+
+---
+
+**Version / 버전**: v1.6.008
+**Last Updated / 마지막 업데이트**: 2025-10-14
+

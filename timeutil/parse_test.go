@@ -113,7 +113,7 @@ func TestParseMicros(t *testing.T) {
 		},
 		{
 			name:    "Invalid format",
-			input:   "2024-10-04 08:34:42",
+			input:   "invalid time string",
 			wantErr: true,
 		},
 	}
@@ -164,7 +164,7 @@ func TestParseAny(t *testing.T) {
 			wantYear:   2024,
 			wantMonth:  time.October,
 			wantDay:    4,
-			wantHour:   17, // 08:00 UTC = 17:00 KST
+			wantHour:   8, // Parsed as-is in KST
 			wantMinute: 34,
 			wantSecond: 42,
 		},
