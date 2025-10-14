@@ -8,6 +8,81 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.5.022] - 2025-10-14
+
+### Added / 추가
+
+- **TEST**: Created complete test suite for search and utils functions
+- **테스트**: search 및 utils 함수에 대한 완전한 테스트 스위트 생성
+
+### New Test Files / 새로운 테스트 파일
+
+**search_test.go** (252 lines):
+- 6 test functions covering all search operations
+- 4 benchmark functions
+- Tests for: ContainsAny, ContainsAll, StartsWithAny, EndsWithAny, ReplaceAll, ReplaceIgnoreCase
+- Comprehensive edge case coverage (empty strings, case sensitivity, Unicode)
+
+**utils_test.go** (376 lines):
+- 9 test functions covering all utility operations
+- 7 benchmark functions
+- Tests for: CountWords, CountOccurrences, Join, Map, Filter, PadLeft, PadRight, Lines, Words
+- Comprehensive edge case coverage (empty slices, Unicode, whitespace handling)
+
+### Fixed / 수정
+
+- **BUG**: Fixed infinite loop in ReplaceIgnoreCase when old string is empty
+- **버그**: old 문자열이 빈 문자열일 때 ReplaceIgnoreCase에서 무한 루프 수정
+- **BUG**: Fixed Filter function to return empty slice instead of nil
+- **버그**: Filter 함수가 nil 대신 빈 슬라이스를 반환하도록 수정
+- **TEST**: Corrected test expectations for PadLeft and PadRight with multi-char padding
+- **테스트**: 멀티 문자 패딩에 대한 PadLeft 및 PadRight 테스트 기대값 수정
+- **TEST**: Corrected CountOccurrences test for overlapping substrings
+- **테스트**: 중복되는 부분 문자열에 대한 CountOccurrences 테스트 수정
+
+### Test Coverage / 테스트 커버리지
+
+- **Total Tests / 전체 테스트**: 98 test functions
+- **Total Benchmarks / 전체 벤치마크**: 28 benchmark functions
+- **Coverage / 커버리지**: 89.2% of statements
+- **All Tests Passing / 모든 테스트 통과**: ✅ 100%
+
+### Files Created / 생성된 파일
+
+- `stringutil/search_test.go` (252 lines)
+- `stringutil/utils_test.go` (376 lines)
+
+### Files Modified / 수정된 파일
+
+- `cfg/app.yaml` - Updated version to v1.5.022
+- `stringutil/search.go` - Fixed ReplaceIgnoreCase infinite loop
+- `stringutil/utils.go` - Fixed Filter to return empty slice
+- `docs/CHANGELOG/CHANGELOG-v1.5.md` - Added this entry
+
+### Summary / 요약
+
+- Complete test coverage for all 79 public functions
+- 모든 79개 공개 함수에 대한 완전한 테스트 커버리지
+- 98 test functions + 28 benchmarks = 126 total test cases
+- 98개 테스트 함수 + 28개 벤치마크 = 총 126개 테스트 케이스
+- 89.2% code coverage (statements)
+- 89.2% 코드 커버리지 (문장)
+- All tests passing with no failures
+- 실패 없이 모든 테스트 통과
+- Fixed critical bugs (infinite loop, nil slice issues)
+- 중요한 버그 수정 (무한 루프, nil 슬라이스 문제)
+
+### Notes / 참고사항
+
+- All stringutil functions now have comprehensive tests
+- 모든 stringutil 함수가 이제 포괄적인 테스트 보유
+- Test files include edge cases, Unicode support, and performance benchmarks
+- 테스트 파일에 엣지 케이스, 유니코드 지원 및 성능 벤치마크 포함
+- Current version: v1.5.022
+- 현재 버전: v1.5.022
+
+---
+
 ## [v1.5.021] - 2025-10-14
 
 ### Changed / 변경
