@@ -8,6 +8,70 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.6.002] - 2025-10-14
+
+### Added / 추가
+
+- **DOCS**: Created comprehensive USER_MANUAL.md (~1,800 lines) / 포괄적인 USER_MANUAL.md 생성 (~1,800줄)
+  - Complete function reference with examples / 예제를 포함한 완전한 함수 참조
+  - 9 common use cases with full code / 전체 코드를 포함한 9개의 일반적인 사용 사례
+  - 12 best practices / 12개의 모범 사례
+  - Troubleshooting guide / 문제 해결 가이드
+  - FAQ (10 questions) / FAQ (10개 질문)
+
+- **DOCS**: Created comprehensive DEVELOPER_GUIDE.md (~1,600 lines) / 포괄적인 DEVELOPER_GUIDE.md 생성 (~1,600줄)
+  - Architecture overview with diagrams / 다이어그램이 있는 아키텍처 개요
+  - Core components detailed explanation / 핵심 컴포넌트 상세 설명
+  - 5 design patterns used / 사용된 5개의 디자인 패턴
+  - Internal implementation details / 내부 구현 세부사항
+  - Step-by-step guide for adding features / 기능 추가를 위한 단계별 가이드
+  - Testing guide with examples / 예제를 포함한 테스트 가이드
+  - Performance optimization strategies / 성능 최적화 전략
+  - Contributing guidelines / 기여 가이드라인
+  - Code style guide / 코드 스타일 가이드
+
+### Documentation Highlights / 문서 하이라이트
+
+**USER_MANUAL.md Sections / USER_MANUAL.md 섹션**:
+1. Introduction with key features / 주요 기능이 있는 소개
+2. Installation guide / 설치 가이드
+3. 5 quick start examples / 5개의 빠른 시작 예제
+4. Core concepts (KST default, custom tokens, types) / 핵심 개념
+5. Complete function reference (80+ functions) / 완전한 함수 참조 (80개 이상 함수)
+6. 8 common use cases with full implementations / 전체 구현이 있는 8개의 일반적인 사용 사례
+7. 12 best practices / 12개의 모범 사례
+8. Troubleshooting guide / 문제 해결 가이드
+9. FAQ with 10 questions / 10개 질문이 있는 FAQ
+
+**DEVELOPER_GUIDE.md Sections / DEVELOPER_GUIDE.md 섹션**:
+1. Architecture overview with ASCII diagrams / ASCII 다이어그램이 있는 아키텍처 개요
+2. Package structure (file organization) / 패키지 구조 (파일 구성)
+3. Core components (types, constants, caches) / 핵심 컴포넌트 (타입, 상수, 캐시)
+4. 5 design patterns (Singleton, Factory, Strategy, Decorator, Cache-Aside) / 5개 디자인 패턴
+5. Internal implementation for 5 key features / 5개 주요 기능의 내부 구현
+6. Step-by-step guide for adding new features / 새 기능 추가를 위한 단계별 가이드
+7. Testing guide (organization, running, coverage) / 테스트 가이드
+8. Performance tips and benchmark results / 성능 팁 및 벤치마크 결과
+9. Contributing process and checklist / 기여 프로세스 및 체크리스트
+10. Code style guide with examples / 예제가 있는 코드 스타일 가이드
+
+### Files Updated / 업데이트된 파일
+
+- `cfg/app.yaml`: Version updated to v1.6.002 / 버전을 v1.6.002로 업데이트
+- `docs/timeutil/USER_MANUAL.md`: New comprehensive user manual / 새로운 포괄적인 사용자 매뉴얼
+- `docs/timeutil/DEVELOPER_GUIDE.md`: New comprehensive developer guide / 새로운 포괄적인 개발자 가이드
+- `docs/CHANGELOG/CHANGELOG-v1.6.md`: This file / 이 파일
+
+### Documentation Statistics / 문서 통계
+
+| Document / 문서 | Lines / 줄 수 | Sections / 섹션 | Language / 언어 |
+|-----------------|---------------|----------------|-----------------|
+| USER_MANUAL.md | ~1,800 | 9 | Bilingual / 이중 언어 |
+| DEVELOPER_GUIDE.md | ~1,600 | 10 | Bilingual / 이중 언어 |
+| **Total / 합계** | **~3,400** | **19** | |
+
+---
+
 ## [v1.6.001] - 2025-10-14
 
 ### Added / 추가
