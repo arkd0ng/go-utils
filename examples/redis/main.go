@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -598,11 +599,24 @@ func transactionOperations(ctx context.Context, rdb *redis.Client, logger *loggi
 // loadRedisConfig loads Redis configuration from YAML file
 // loadRedisConfig는 YAML 파일에서 Redis 설정을 로드합니다
 func loadRedisConfig() (*DatabaseConfig, error) {
-	data, err := os.ReadFile("../../cfg/database-redis.yaml")
+	// Get project root directory / 프로젝트 루트 디렉토리 가져오기
+	wd, err := os.Getwd()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get working directory: %w", err)
+	}
+
+	// Navigate to project root (examples/redis -> go-utils)
+	// 프로젝트 루트로 이동
+	projectRoot := filepath.Join(wd, "..", "..")
+	configPath := filepath.Join(projectRoot, "cfg", "database-redis.yaml")
+
+	// Read YAML file / YAML 파일 읽기
+	data, err := os.ReadFile(configPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
 
+	// Parse YAML / YAML 파싱
 	var config DatabaseConfig
 	if err := yaml.Unmarshal(data, &config); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal config: %w", err)

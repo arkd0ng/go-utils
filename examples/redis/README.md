@@ -343,8 +343,8 @@ Redis는 메모리 내 속도를 위해 설계되었습니다. 느린 경우 확
 ## Additional Resources / 추가 리소스
 
 - [Redis Package Documentation](../../database/redis/README.md)
-- [Redis Package User Manual](../../docs/database/redis/USER_MANUAL.md) (Coming soon)
-- [Redis Package Developer Guide](../../docs/database/redis/DEVELOPER_GUIDE.md) (Coming soon)
+- [Redis Package User Manual](../../docs/database/redis/USER_MANUAL.md)
+- [Redis Package Developer Guide](../../docs/database/redis/DEVELOPER_GUIDE.md)
 - [Redis Official Documentation](https://redis.io/documentation)
 - [go-redis Documentation](https://redis.uptrace.dev/)
 

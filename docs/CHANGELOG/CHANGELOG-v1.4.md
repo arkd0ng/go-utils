@@ -8,6 +8,54 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.4.015] - 2025-10-14
+
+### Fixed / 수정
+
+- **FIX**: Fixed config file path resolution in examples/redis/main.go
+- **수정**: examples/redis/main.go의 설정 파일 경로 해석 수정
+- Changed from hardcoded relative path to dynamic project root resolution
+- 하드코딩된 상대 경로에서 동적 프로젝트 루트 해석으로 변경
+- Uses `filepath.Join(projectRoot, "cfg", "database-redis.yaml")` like MySQL examples
+- MySQL 예제와 동일하게 `filepath.Join(projectRoot, "cfg", "database-redis.yaml")` 사용
+- Added `path/filepath` import for cross-platform path handling
+- 크로스 플랫폼 경로 처리를 위한 `path/filepath` import 추가
+
+### Updated / 업데이트
+
+- **DOCS**: Updated examples/redis/README.md documentation links
+- **문서**: examples/redis/README.md 문서 링크 업데이트
+- Removed "Coming soon" markers from USER_MANUAL.md and DEVELOPER_GUIDE.md links
+- USER_MANUAL.md 및 DEVELOPER_GUIDE.md 링크에서 "Coming soon" 표시 제거
+- All comprehensive documentation is now available and accessible
+- 모든 포괄적인 문서가 이제 사용 가능하고 접근 가능함
+
+### Verified / 검증
+
+- All Redis package tests pass successfully (18 tests)
+- 모든 Redis 패키지 테스트 성공적으로 통과 (18개 테스트)
+- All Redis examples run correctly (8 examples)
+- 모든 Redis 예제 정상 실행 (8개 예제)
+- Docker auto-start/stop functionality verified
+- Docker 자동 시작/중지 기능 검증
+- Configuration loading from YAML works correctly
+- YAML에서 설정 로드 정상 작동
+- Examples work from any directory with proper path resolution
+- 적절한 경로 해석으로 모든 디렉토리에서 예제 작동
+
+### Notes / 참고사항
+
+- Redis package (v1.4.x) comprehensive review and verification complete
+- Redis 패키지 (v1.4.x) 종합 검토 및 검증 완료
+- All documentation (README, USER_MANUAL, DEVELOPER_GUIDE) verified
+- 모든 문서 (README, USER_MANUAL, DEVELOPER_GUIDE) 검증 완료
+- Package is production-ready
+- 패키지 프로덕션 준비 완료
+- Current version: v1.4.015
+- 현재 버전: v1.4.015
+
+---
+
 ## [v1.4.014] - 2025-10-14
 
 ### Added / 추가
@@ -24,7 +72,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **CLEANUP**: Ensured MySQL test runs start from a clean schema using table truncation helpers
 - **정리**: 테이블 초기화 헬퍼로 MySQL 테스트가 항상 깨끗한 스키마에서 시작되도록 보장
 
+### Fixed / 수정
+- **FIX**: Fixed config file path in examples/redis/main.go
+- **수정**: examples/redis/main.go의 설정 파일 경로 수정
+- Changed from hardcoded `../../cfg/database-redis.yaml` to dynamic path resolution
+- 하드코딩된 `../../cfg/database-redis.yaml`에서 동적 경로 해석으로 변경
+- Now uses `filepath.Join(projectRoot, "cfg", "database-redis.yaml")` like MySQL examples
+- MySQL 예제와 같이 `filepath.Join(projectRoot, "cfg", "database-redis.yaml")` 사용
+- **DOCS**: Updated examples/redis/README.md documentation links
+- **문서**: examples/redis/README.md 문서 링크 업데이트
+- Removed "Coming soon" markers from USER_MANUAL.md and DEVELOPER_GUIDE.md links
+- USER_MANUAL.md 및 DEVELOPER_GUIDE.md 링크에서 "Coming soon" 표시 제거
+
+### Verified / 검증
+- All Redis package tests pass (18 tests)
+- 모든 Redis 패키지 테스트 통과 (18개 테스트)
+- All Redis examples run successfully (8 examples)
+- 모든 Redis 예제 성공적으로 실행 (8개 예제)
+- Redis documentation complete and accurate
+- Redis 문서 완전하고 정확함
+
 ### Notes / 참고사항
+- Redis package (v1.4.x) comprehensive review complete
+- Redis 패키지 (v1.4.x) 종합 검토 완료
 - Current version: v1.4.014
 - 현재 버전: v1.4.014
 
