@@ -6,6 +6,52 @@ This document tracks all changes made in version 1.3.x of the go-utils library.
 
 ---
 
+## [v1.3.012] - 2025-10-14 (MySQL Advanced Features Examples)
+
+### Added / 추가
+- **Examples for 9 Advanced Features** / 9개 고급 기능 예제:
+  - Added 18 new example functions (example18-example35) in `examples/mysql/main.go`
+  - **Batch Operations** (3 examples):
+    - `example18BatchInsert`: Demonstrate BatchInsert with 4 users
+    - `example19BatchUpdate`: Demonstrate BatchUpdate in transaction
+    - `example20BatchDelete`: Demonstrate BatchDelete by IDs
+  - **Upsert** (2 examples):
+    - `example21Upsert`: Demonstrate Upsert with insert and update
+    - `example22UpsertBatch`: Demonstrate batch upsert operations
+  - **Pagination** (2 examples):
+    - `example23Pagination`: Demonstrate basic pagination with metadata
+    - `example24PaginationWithOptions`: Demonstrate pagination with WHERE and ORDER BY
+  - **Soft Delete** (3 examples):
+    - `example25SoftDelete`: Demonstrate soft delete operation
+    - `example26RestoreSoftDeleted`: Demonstrate restore operation
+    - `example27SelectTrashed`: Demonstrate querying trashed users
+  - **Query Statistics** (2 examples):
+    - `example28QueryStats`: Demonstrate GetQueryStats
+    - `example29SlowQueryLog`: Demonstrate slow query logging with threshold
+  - **Pool Metrics** (1 example):
+    - `example30PoolMetrics`: Demonstrate GetPoolMetrics and utilization
+  - **Schema Inspector** (2 examples):
+    - `example31GetTables`: Demonstrate GetTables to list all tables
+    - `example32InspectTable`: Demonstrate comprehensive table inspection
+  - **Migration** (2 examples):
+    - `example33CreateTable`: Demonstrate CreateTable with schema
+    - `example34AddColumn`: Demonstrate AddColumn, ModifyColumn, and AddIndex
+  - **CSV Export** (1 example):
+    - `example35ExportCSV`: Demonstrate ExportTableToCSV with options
+
+### Changed / 변경
+- **Example Updates** / 예제 업데이트:
+  - Updated `runExamples()` function to call all 35 examples (17 basic + 18 advanced)
+  - Added helper function `min()` for CSV line truncation
+  - All examples include dual-language comments (English/Korean)
+  - All examples include comprehensive error handling and logging
+
+### Files Updated / 업데이트된 파일
+- `examples/mysql/main.go` (Added 18 new example functions + helper function)
+- `cfg/app.yaml` (Version v1.3.012)
+
+---
+
 ## [v1.3.010] - 2025-10-14 (MySQL Advanced Features Documentation Update)
 
 ### Changed / 변경

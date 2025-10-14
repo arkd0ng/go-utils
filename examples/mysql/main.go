@@ -307,6 +307,96 @@ func runExamples(dsn string, cfg MySQLConfig, logger *logging.Logger) error {
 		return err
 	}
 
+	// Example 18: BatchInsert - Batch insert operations / 배치 삽입 작업
+	if err := example18BatchInsert(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 19: BatchUpdate - Batch update operations / 배치 업데이트 작업
+	if err := example19BatchUpdate(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 20: BatchDelete - Batch delete operations / 배치 삭제 작업
+	if err := example20BatchDelete(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 21: Upsert - Insert or update on duplicate / 중복 시 삽입 또는 업데이트
+	if err := example21Upsert(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 22: UpsertBatch - Batch upsert operations / 배치 upsert 작업
+	if err := example22UpsertBatch(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 23: Pagination - Basic pagination / 기본 페이지네이션
+	if err := example23Pagination(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 24: PaginationWithOptions - Pagination with options / 옵션이 있는 페이지네이션
+	if err := example24PaginationWithOptions(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 25: SoftDelete - Soft delete user / 사용자 소프트 삭제
+	if err := example25SoftDelete(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 26: RestoreSoftDeleted - Restore soft-deleted user / 소프트 삭제된 사용자 복구
+	if err := example26RestoreSoftDeleted(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 27: SelectTrashed - Query trashed users / 삭제된 사용자 조회
+	if err := example27SelectTrashed(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 28: QueryStats - Query execution statistics / 쿼리 실행 통계
+	if err := example28QueryStats(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 29: SlowQueryLog - Slow query logging / 느린 쿼리 로깅
+	if err := example29SlowQueryLog(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 30: PoolMetrics - Connection pool metrics / 연결 풀 메트릭
+	if err := example30PoolMetrics(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 31: GetTables - List all tables / 모든 테이블 나열
+	if err := example31GetTables(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 32: InspectTable - Inspect table structure / 테이블 구조 검사
+	if err := example32InspectTable(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 33: CreateTable - Create new table / 새 테이블 생성
+	if err := example33CreateTable(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 34: AddColumn - Migration operations / 마이그레이션 작업
+	if err := example34AddColumn(ctx, db, logger); err != nil {
+		return err
+	}
+
+	// Example 35: ExportCSV - Export table to CSV / 테이블을 CSV로 내보내기
+	if err := example35ExportCSV(ctx, db, logger); err != nil {
+		return err
+	}
+
 	logger.Info("========================================")
 	logger.Info("All examples completed successfully!")
 	logger.Info("모든 예제가 성공적으로 완료되었습니다!")
@@ -835,5 +925,735 @@ func example17SelectColumns(ctx context.Context, db *mysql.Client, logger *loggi
 
 	logger.Info("")
 	return nil
+}
+
+// example18BatchInsert demonstrates BatchInsert - multiple row insertion
+// example18BatchInsert는 BatchInsert를 시연합니다 - 여러 행 삽입
+func example18BatchInsert(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 18: BatchInsert - Insert multiple users in single query")
+	logger.Info("예제 18: BatchInsert - 단일 쿼리로 여러 사용자 삽입")
+	logger.Info("========================================")
+
+	// Generate unique emails with timestamp / 타임스탬프로 유니크한 이메일 생성
+	timestamp := time.Now().Unix()
+
+	// Prepare batch data / 배치 데이터 준비
+	data := []map[string]interface{}{
+		{
+			"name":  "Alice Johnson",
+			"email": fmt.Sprintf("alice.%d@example.com", timestamp),
+			"age":   28,
+			"city":  "Incheon",
+		},
+		{
+			"name":  "Bob Smith",
+			"email": fmt.Sprintf("bob.%d@example.com", timestamp),
+			"age":   35,
+			"city":  "Daejeon",
+		},
+		{
+			"name":  "Carol White",
+			"email": fmt.Sprintf("carol.%d@example.com", timestamp),
+			"age":   29,
+			"city":  "Busan",
+		},
+		{
+			"name":  "Dave Lee",
+			"email": fmt.Sprintf("dave.%d@example.com", timestamp),
+			"age":   42,
+			"city":  "Seoul",
+		},
+	}
+
+	logger.Info(fmt.Sprintf("Inserting %d users in a single batch operation...", len(data)))
+	logger.Info(fmt.Sprintf("배치 작업으로 %d명의 사용자를 삽입합니다...", len(data)))
+
+	result, err := db.BatchInsert(ctx, "users", data)
+	if err != nil {
+		return fmt.Errorf("BatchInsert failed: %w", err)
+	}
+
+	rows, _ := result.RowsAffected()
+	logger.Info(fmt.Sprintf("✅ Successfully inserted %d users", rows))
+	logger.Info(fmt.Sprintf("✅ %d명의 사용자를 성공적으로 삽입했습니다", rows))
+
+	logger.Info("")
+	return nil
+}
+
+// example19BatchUpdate demonstrates BatchUpdate - multiple row updates in transaction
+// example19BatchUpdate는 BatchUpdate를 시연합니다 - 트랜잭션에서 여러 행 업데이트
+func example19BatchUpdate(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 19: BatchUpdate - Update multiple users in transaction")
+	logger.Info("예제 19: BatchUpdate - 트랜잭션에서 여러 사용자 업데이트")
+	logger.Info("========================================")
+
+	// Prepare batch updates / 배치 업데이트 준비
+	updates := []mysql.BatchUpdateItem{
+		{
+			Data:             map[string]interface{}{"age": 31},
+			ConditionAndArgs: []interface{}{"email = ?", "john@example.com"},
+		},
+		{
+			Data:             map[string]interface{}{"age": 27, "city": "Seoul"},
+			ConditionAndArgs: []interface{}{"email = ?", "jane@example.com"},
+		},
+	}
+
+	logger.Info(fmt.Sprintf("Updating %d users in a transaction...", len(updates)))
+	logger.Info(fmt.Sprintf("트랜잭션에서 %d명의 사용자를 업데이트합니다...", len(updates)))
+
+	err := db.BatchUpdate(ctx, "users", updates)
+	if err != nil {
+		return fmt.Errorf("BatchUpdate failed: %w", err)
+	}
+
+	logger.Info("✅ Batch update completed successfully")
+	logger.Info("✅ 배치 업데이트가 성공적으로 완료되었습니다")
+
+	logger.Info("")
+	return nil
+}
+
+// example20BatchDelete demonstrates BatchDelete - delete multiple rows by IDs
+// example20BatchDelete는 BatchDelete를 시연합니다 - ID로 여러 행 삭제
+func example20BatchDelete(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 20: BatchDelete - Delete multiple users by IDs")
+	logger.Info("예제 20: BatchDelete - ID로 여러 사용자 삭제")
+	logger.Info("========================================")
+
+	// First, get some user IDs to delete / 먼저 삭제할 사용자 ID 가져오기
+	users, err := db.SelectWhere(ctx, "users", "city = ?", "Daejeon",
+		mysql.WithColumns("id"),
+		mysql.WithLimit(2))
+	if err != nil {
+		return fmt.Errorf("failed to get users: %w", err)
+	}
+
+	if len(users) == 0 {
+		logger.Info("No users found to delete")
+		logger.Info("삭제할 사용자가 없습니다")
+		logger.Info("")
+		return nil
+	}
+
+	// Collect IDs / ID 수집
+	ids := make([]interface{}, len(users))
+	for i, user := range users {
+		ids[i] = user["id"]
+	}
+
+	logger.Info(fmt.Sprintf("Deleting %d users with IDs: %v", len(ids), ids))
+	logger.Info(fmt.Sprintf("ID가 %v인 %d명의 사용자를 삭제합니다", ids, len(ids)))
+
+	result, err := db.BatchDelete(ctx, "users", "id", ids)
+	if err != nil {
+		return fmt.Errorf("BatchDelete failed: %w", err)
+	}
+
+	rows, _ := result.RowsAffected()
+	logger.Info(fmt.Sprintf("✅ Deleted %d users", rows))
+	logger.Info(fmt.Sprintf("✅ %d명의 사용자를 삭제했습니다", rows))
+
+	logger.Info("")
+	return nil
+}
+
+// example21Upsert demonstrates Upsert - insert or update on duplicate key
+// example21Upsert는 Upsert를 시연합니다 - 중복 키에서 삽입 또는 업데이트
+func example21Upsert(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 21: Upsert - Insert or update on duplicate key")
+	logger.Info("예제 21: Upsert - 중복 키에서 삽입 또는 업데이트")
+	logger.Info("========================================")
+
+	// First upsert - will insert / 첫 번째 upsert - 삽입됨
+	data := map[string]interface{}{
+		"email": "upsert.test@example.com",
+		"name":  "Upsert Test User",
+		"age":   30,
+		"city":  "Seoul",
+	}
+
+	logger.Info("First upsert (will insert new record)...")
+	logger.Info("첫 번째 upsert (새 레코드 삽입)...")
+
+	result, err := db.Upsert(ctx, "users", data, []string{"name", "age", "city"})
+	if err != nil {
+		return fmt.Errorf("Upsert failed: %w", err)
+	}
+
+	rows, _ := result.RowsAffected()
+	logger.Info(fmt.Sprintf("✅ Rows affected: %d (1 = insert, 2 = update)", rows))
+	logger.Info(fmt.Sprintf("✅ 영향받은 행: %d (1 = 삽입, 2 = 업데이트)", rows))
+
+	// Second upsert - will update / 두 번째 upsert - 업데이트됨
+	logger.Info("")
+	logger.Info("Second upsert with same email (will update)...")
+	logger.Info("같은 이메일로 두 번째 upsert (업데이트됨)...")
+
+	data["age"] = 31
+	data["city"] = "Busan"
+
+	result, err = db.Upsert(ctx, "users", data, []string{"name", "age", "city"})
+	if err != nil {
+		return fmt.Errorf("Upsert failed: %w", err)
+	}
+
+	rows, _ = result.RowsAffected()
+	logger.Info(fmt.Sprintf("✅ Rows affected: %d", rows))
+	logger.Info(fmt.Sprintf("✅ 영향받은 행: %d", rows))
+
+	logger.Info("")
+	return nil
+}
+
+// example22UpsertBatch demonstrates UpsertBatch - batch upsert operations
+// example22UpsertBatch는 UpsertBatch를 시연합니다 - 배치 upsert 작업
+func example22UpsertBatch(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 22: UpsertBatch - Batch upsert operations")
+	logger.Info("예제 22: UpsertBatch - 배치 upsert 작업")
+	logger.Info("========================================")
+
+	timestamp := time.Now().Unix()
+
+	data := []map[string]interface{}{
+		{
+			"email": fmt.Sprintf("batch.upsert1.%d@example.com", timestamp),
+			"name":  "Batch User 1",
+			"age":   25,
+			"city":  "Seoul",
+		},
+		{
+			"email": fmt.Sprintf("batch.upsert2.%d@example.com", timestamp),
+			"name":  "Batch User 2",
+			"age":   30,
+			"city":  "Busan",
+		},
+	}
+
+	logger.Info(fmt.Sprintf("Performing batch upsert for %d users...", len(data)))
+	logger.Info(fmt.Sprintf("%d명의 사용자에 대해 배치 upsert를 수행합니다...", len(data)))
+
+	result, err := db.UpsertBatch(ctx, "users", data, []string{"name", "age", "city"})
+	if err != nil {
+		return fmt.Errorf("UpsertBatch failed: %w", err)
+	}
+
+	rows, _ := result.RowsAffected()
+	logger.Info(fmt.Sprintf("✅ Rows affected: %d", rows))
+	logger.Info(fmt.Sprintf("✅ 영향받은 행: %d", rows))
+
+	logger.Info("")
+	return nil
+}
+
+// example23Pagination demonstrates Paginate - basic pagination
+// example23Pagination은 Paginate를 시연합니다 - 기본 페이지네이션
+func example23Pagination(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 23: Paginate - Basic pagination with metadata")
+	logger.Info("예제 23: Paginate - 메타데이터가 있는 기본 페이지네이션")
+	logger.Info("========================================")
+
+	// Get first page with 5 items / 5개 항목의 첫 페이지 가져오기
+	page := 1
+	pageSize := 5
+
+	logger.Info(fmt.Sprintf("Fetching page %d (size: %d)...", page, pageSize))
+	logger.Info(fmt.Sprintf("페이지 %d (크기: %d) 가져오는 중...", page, pageSize))
+
+	result, err := db.Paginate(ctx, "users", page, pageSize)
+	if err != nil {
+		return fmt.Errorf("Paginate failed: %w", err)
+	}
+
+	logger.Info(fmt.Sprintf("✅ Page: %d/%d", result.Page, result.TotalPages))
+	logger.Info(fmt.Sprintf("✅ Total rows: %d", result.TotalRows))
+	logger.Info(fmt.Sprintf("✅ Has next: %v, Has prev: %v", result.HasNext, result.HasPrev))
+	logger.Info("")
+	logger.Info("Page data:")
+	logger.Info("페이지 데이터:")
+	for i, user := range result.Data {
+		logger.Info(fmt.Sprintf("  %d. %s (%s)", i+1, user["name"], user["email"]))
+	}
+
+	logger.Info("")
+	return nil
+}
+
+// example24PaginationWithOptions demonstrates Paginate with WHERE and ORDER BY
+// example24PaginationWithOptions는 WHERE 및 ORDER BY를 사용한 Paginate를 시연합니다
+func example24PaginationWithOptions(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 24: Paginate - With WHERE and ORDER BY")
+	logger.Info("예제 24: Paginate - WHERE 및 ORDER BY 사용")
+	logger.Info("========================================")
+
+	// Get page 1 of users older than 25, ordered by age / 25세 이상 사용자의 1페이지, 나이순 정렬
+	result, err := db.Paginate(ctx, "users", 1, 3, "age > ?", 25,
+		mysql.WithOrderBy("age DESC"),
+		mysql.WithColumns("name", "email", "age"))
+	if err != nil {
+		return fmt.Errorf("Paginate with options failed: %w", err)
+	}
+
+	logger.Info("Users older than 25, ordered by age (descending):")
+	logger.Info("25세 이상 사용자, 나이 내림차순 정렬:")
+	logger.Info(fmt.Sprintf("Page %d/%d (Total: %d users)", result.Page, result.TotalPages, result.TotalRows))
+	logger.Info(fmt.Sprintf("페이지 %d/%d (전체: %d명)", result.Page, result.TotalPages, result.TotalRows))
+	for i, user := range result.Data {
+		logger.Info(fmt.Sprintf("  %d. %s (age: %v)", i+1, user["name"], user["age"]))
+	}
+
+	logger.Info("")
+	return nil
+}
+
+// example25SoftDelete demonstrates SoftDelete - mark row as deleted
+// example25SoftDelete는 SoftDelete를 시연합니다 - 행을 삭제로 표시
+func example25SoftDelete(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 25: SoftDelete - Mark user as deleted")
+	logger.Info("예제 25: SoftDelete - 사용자를 삭제로 표시")
+	logger.Info("========================================")
+
+	// Find a user to soft delete / 소프트 삭제할 사용자 찾기
+	users, err := db.SelectWhere(ctx, "users", "city = ?", "Seoul",
+		mysql.WithLimit(1))
+	if err != nil || len(users) == 0 {
+		logger.Info("No users found to soft delete")
+		logger.Info("소프트 삭제할 사용자가 없습니다")
+		logger.Info("")
+		return nil
+	}
+
+	userID := users[0]["id"]
+	userName := users[0]["name"]
+
+	logger.Info(fmt.Sprintf("Soft deleting user: %s (ID: %v)", userName, userID))
+	logger.Info(fmt.Sprintf("사용자 소프트 삭제 중: %s (ID: %v)", userName, userID))
+
+	result, err := db.SoftDelete(ctx, "users", "id = ?", userID)
+	if err != nil {
+		return fmt.Errorf("SoftDelete failed: %w", err)
+	}
+
+	rows, _ := result.RowsAffected()
+	logger.Info(fmt.Sprintf("✅ Soft deleted %d user(s)", rows))
+	logger.Info(fmt.Sprintf("✅ %d명의 사용자를 소프트 삭제했습니다", rows))
+
+	logger.Info("")
+	return nil
+}
+
+// example26RestoreSoftDeleted demonstrates Restore - restore soft-deleted rows
+// example26RestoreSoftDeleted는 Restore를 시연합니다 - 소프트 삭제된 행 복구
+func example26RestoreSoftDeleted(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 26: Restore - Restore soft-deleted user")
+	logger.Info("예제 26: Restore - 소프트 삭제된 사용자 복구")
+	logger.Info("========================================")
+
+	// Find a soft-deleted user / 소프트 삭제된 사용자 찾기
+	trashedUsers, err := db.SelectAllOnlyTrashed(ctx, "users", "", mysql.WithLimit(1))
+	if err != nil || len(trashedUsers) == 0 {
+		logger.Info("No soft-deleted users found to restore")
+		logger.Info("복구할 소프트 삭제된 사용자가 없습니다")
+		logger.Info("")
+		return nil
+	}
+
+	userID := trashedUsers[0]["id"]
+	userName := trashedUsers[0]["name"]
+
+	logger.Info(fmt.Sprintf("Restoring user: %s (ID: %v)", userName, userID))
+	logger.Info(fmt.Sprintf("사용자 복구 중: %s (ID: %v)", userName, userID))
+
+	result, err := db.Restore(ctx, "users", "id = ?", userID)
+	if err != nil {
+		return fmt.Errorf("Restore failed: %w", err)
+	}
+
+	rows, _ := result.RowsAffected()
+	logger.Info(fmt.Sprintf("✅ Restored %d user(s)", rows))
+	logger.Info(fmt.Sprintf("✅ %d명의 사용자를 복구했습니다", rows))
+
+	logger.Info("")
+	return nil
+}
+
+// example27SelectTrashed demonstrates SelectAllWithTrashed and SelectAllOnlyTrashed
+// example27SelectTrashed는 SelectAllWithTrashed 및 SelectAllOnlyTrashed를 시연합니다
+func example27SelectTrashed(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 27: SelectTrashed - Query trashed and all users")
+	logger.Info("예제 27: SelectTrashed - 삭제된 사용자와 전체 사용자 조회")
+	logger.Info("========================================")
+
+	// Count all users including trashed / 삭제된 사용자를 포함한 전체 사용자 수
+	totalCount, err := db.CountWithTrashed(ctx, "users")
+	if err != nil {
+		return fmt.Errorf("CountWithTrashed failed: %w", err)
+	}
+
+	// Count only trashed users / 삭제된 사용자만 계산
+	trashedCount, err := db.CountOnlyTrashed(ctx, "users")
+	if err != nil {
+		return fmt.Errorf("CountOnlyTrashed failed: %w", err)
+	}
+
+	activeCount := totalCount - trashedCount
+
+	logger.Info(fmt.Sprintf("Total users: %d", totalCount))
+	logger.Info(fmt.Sprintf("Active users: %d", activeCount))
+	logger.Info(fmt.Sprintf("Trashed users: %d", trashedCount))
+	logger.Info(fmt.Sprintf("전체 사용자: %d명, 활성: %d명, 삭제됨: %d명", totalCount, activeCount, trashedCount))
+
+	logger.Info("")
+	return nil
+}
+
+// example28QueryStats demonstrates GetQueryStats - query execution statistics
+// example28QueryStats는 GetQueryStats를 시연합니다 - 쿼리 실행 통계
+func example28QueryStats(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 28: QueryStats - Query execution statistics")
+	logger.Info("예제 28: QueryStats - 쿼리 실행 통계")
+	logger.Info("========================================")
+
+	// Enable query stats / 쿼리 통계 활성화
+	db.EnableQueryStats()
+	logger.Info("Query statistics enabled")
+	logger.Info("쿼리 통계가 활성화되었습니다")
+
+	// Perform some queries / 몇 가지 쿼리 수행
+	db.Count("users")
+	db.SelectAll("users", "city = ?", "Seoul")
+	db.SelectOne("users", "email = ?", "john@example.com")
+
+	// Get statistics / 통계 가져오기
+	stats := db.GetQueryStats()
+
+	logger.Info("Query Statistics:")
+	logger.Info("쿼리 통계:")
+	logger.Info(fmt.Sprintf("  Total queries: %d", stats.TotalQueries))
+	logger.Info(fmt.Sprintf("  Successful: %d", stats.SuccessQueries))
+	logger.Info(fmt.Sprintf("  Failed: %d", stats.FailedQueries))
+	logger.Info(fmt.Sprintf("  Average duration: %v", stats.AvgDuration))
+	logger.Info(fmt.Sprintf("  Slow queries: %d", stats.SlowQueries))
+
+	logger.Info("")
+	return nil
+}
+
+// example29SlowQueryLog demonstrates EnableSlowQueryLog - slow query logging
+// example29SlowQueryLog는 EnableSlowQueryLog를 시연합니다 - 느린 쿼리 로깅
+func example29SlowQueryLog(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 29: SlowQueryLog - Slow query detection")
+	logger.Info("예제 29: SlowQueryLog - 느린 쿼리 감지")
+	logger.Info("========================================")
+
+	// Enable slow query log (threshold: 100ms) / 느린 쿼리 로그 활성화 (임계값: 100ms)
+	db.EnableSlowQueryLog(100*time.Millisecond, func(info mysql.SlowQueryInfo) {
+		logger.Warn("Slow query detected",
+			"duration", info.Duration,
+			"query", info.Query[:min(50, len(info.Query))]+"...")
+	})
+
+	logger.Info("Slow query logging enabled (threshold: 100ms)")
+	logger.Info("느린 쿼리 로깅이 활성화되었습니다 (임계값: 100ms)")
+
+	// Perform some queries / 일부 쿼리 수행
+	db.SelectAll("users")
+	time.Sleep(150 * time.Millisecond) // Simulate slow query / 느린 쿼리 시뮬레이션
+
+	// Get slow queries / 느린 쿼리 가져오기
+	slowQueries := db.GetSlowQueries(5)
+	if len(slowQueries) > 0 {
+		logger.Info(fmt.Sprintf("Found %d slow queries:", len(slowQueries)))
+		logger.Info(fmt.Sprintf("%d개의 느린 쿼리를 찾았습니다:", len(slowQueries)))
+		for i, sq := range slowQueries {
+			logger.Info(fmt.Sprintf("  %d. Duration: %v", i+1, sq.Duration))
+		}
+	} else {
+		logger.Info("No slow queries detected")
+		logger.Info("느린 쿼리가 감지되지 않았습니다")
+	}
+
+	logger.Info("")
+	return nil
+}
+
+// example30PoolMetrics demonstrates GetPoolMetrics - connection pool metrics
+// example30PoolMetrics는 GetPoolMetrics를 시연합니다 - 연결 풀 메트릭
+func example30PoolMetrics(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 30: PoolMetrics - Connection pool metrics")
+	logger.Info("예제 30: PoolMetrics - 연결 풀 메트릭")
+	logger.Info("========================================")
+
+	// Get pool metrics / 풀 메트릭 가져오기
+	metrics := db.GetPoolMetrics()
+
+	logger.Info(fmt.Sprintf("Total connection pools: %d", metrics.PoolCount))
+	logger.Info(fmt.Sprintf("Total connections: %d", metrics.TotalConnections))
+	logger.Info(fmt.Sprintf("전체 연결 풀: %d개, 전체 연결: %d개", metrics.PoolCount, metrics.TotalConnections))
+
+	logger.Info("")
+	logger.Info("Pool statistics:")
+	logger.Info("풀 통계:")
+	for _, pool := range metrics.PoolStats {
+		logger.Info(fmt.Sprintf("  Pool %d:", pool.Index))
+		logger.Info(fmt.Sprintf("    Max open: %d", pool.MaxOpenConns))
+		logger.Info(fmt.Sprintf("    Open: %d", pool.OpenConnections))
+		logger.Info(fmt.Sprintf("    In use: %d", pool.InUse))
+		logger.Info(fmt.Sprintf("    Idle: %d", pool.Idle))
+		logger.Info(fmt.Sprintf("    Wait count: %d", pool.WaitCount))
+	}
+
+	// Get connection utilization / 연결 사용률 가져오기
+	utilization := db.GetConnectionUtilization()
+	logger.Info("")
+	logger.Info("Connection utilization:")
+	logger.Info("연결 사용률:")
+	for i, util := range utilization {
+		logger.Info(fmt.Sprintf("  Pool %d: %.2f%%", i, util))
+	}
+
+	logger.Info("")
+	return nil
+}
+
+// example31GetTables demonstrates GetTables - list all tables
+// example31GetTables는 GetTables를 시연합니다 - 모든 테이블 나열
+func example31GetTables(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 31: GetTables - List all tables in database")
+	logger.Info("예제 31: GetTables - 데이터베이스의 모든 테이블 나열")
+	logger.Info("========================================")
+
+	// Get all tables / 모든 테이블 가져오기
+	tables, err := db.GetTables(ctx)
+	if err != nil {
+		return fmt.Errorf("GetTables failed: %w", err)
+	}
+
+	logger.Info(fmt.Sprintf("Found %d tables:", len(tables)))
+	logger.Info(fmt.Sprintf("%d개의 테이블을 찾았습니다:", len(tables)))
+	for i, table := range tables {
+		logger.Info(fmt.Sprintf("  %d. %s (Engine: %s, Rows: %d)",
+			i+1, table.Name, table.Engine, table.Rows))
+	}
+
+	logger.Info("")
+	return nil
+}
+
+// example32InspectTable demonstrates InspectTable - comprehensive table inspection
+// example32InspectTable은 InspectTable을 시연합니다 - 포괄적인 테이블 검사
+func example32InspectTable(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 32: InspectTable - Comprehensive table inspection")
+	logger.Info("예제 32: InspectTable - 포괄적인 테이블 검사")
+	logger.Info("========================================")
+
+	// Inspect users table / users 테이블 검사
+	inspection, err := db.InspectTable(ctx, "users")
+	if err != nil {
+		return fmt.Errorf("InspectTable failed: %w", err)
+	}
+
+	logger.Info(fmt.Sprintf("Table: %s", inspection.Info.Name))
+	logger.Info(fmt.Sprintf("Engine: %s", inspection.Info.Engine))
+	logger.Info(fmt.Sprintf("Rows: %d", inspection.Info.Rows))
+	logger.Info(fmt.Sprintf("Size: %.2f KB", float64(inspection.Size)/1024))
+	logger.Info("")
+
+	logger.Info(fmt.Sprintf("Columns (%d):", len(inspection.Columns)))
+	logger.Info(fmt.Sprintf("컬럼 (%d개):", len(inspection.Columns)))
+	for i, col := range inspection.Columns {
+		if i >= 5 {
+			logger.Info(fmt.Sprintf("  ... and %d more columns", len(inspection.Columns)-5))
+			break
+		}
+		nullable := "NOT NULL"
+		if col.Nullable {
+			nullable = "NULL"
+		}
+		logger.Info(fmt.Sprintf("  - %s %s %s", col.Name, col.Type, nullable))
+	}
+
+	logger.Info("")
+	logger.Info(fmt.Sprintf("Indexes (%d):", len(inspection.Indexes)))
+	logger.Info(fmt.Sprintf("인덱스 (%d개):", len(inspection.Indexes)))
+	for _, idx := range inspection.Indexes {
+		uniqueStr := ""
+		if idx.Unique {
+			uniqueStr = "UNIQUE "
+		}
+		logger.Info(fmt.Sprintf("  - %s%s (%s)", uniqueStr, idx.Name, strings.Join(idx.Columns, ", ")))
+	}
+
+	logger.Info("")
+	return nil
+}
+
+// example33CreateTable demonstrates CreateTable - create new table
+// example33CreateTable은 CreateTable을 시연합니다 - 새 테이블 생성
+func example33CreateTable(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 33: CreateTable - Create new test table")
+	logger.Info("예제 33: CreateTable - 새 테스트 테이블 생성")
+	logger.Info("========================================")
+
+	// Drop table if exists / 테이블이 존재하면 삭제
+	db.DropTable(ctx, "test_migration", true)
+
+	// Create test table / 테스트 테이블 생성
+	schema := `
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		name VARCHAR(255) NOT NULL,
+		description TEXT,
+		status ENUM('active', 'inactive') DEFAULT 'active',
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	`
+
+	logger.Info("Creating test_migration table...")
+	logger.Info("test_migration 테이블 생성 중...")
+
+	err := db.CreateTable(ctx, "test_migration", schema)
+	if err != nil {
+		return fmt.Errorf("CreateTable failed: %w", err)
+	}
+
+	logger.Info("✅ Table created successfully")
+	logger.Info("✅ 테이블이 성공적으로 생성되었습니다")
+
+	// Verify table exists / 테이블 존재 확인
+	exists, _ := db.TableExists(ctx, "test_migration")
+	logger.Info(fmt.Sprintf("Table exists: %v", exists))
+	logger.Info(fmt.Sprintf("테이블 존재: %v", exists))
+
+	logger.Info("")
+	return nil
+}
+
+// example34AddColumn demonstrates AddColumn and other migration operations
+// example34AddColumn은 AddColumn 및 기타 마이그레이션 작업을 시연합니다
+func example34AddColumn(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 34: Migration Operations - Add/Modify/Drop columns")
+	logger.Info("예제 34: 마이그레이션 작업 - 컬럼 추가/수정/삭제")
+	logger.Info("========================================")
+
+	// Add column / 컬럼 추가
+	logger.Info("Adding 'email' column...")
+	logger.Info("'email' 컬럼 추가 중...")
+
+	err := db.AddColumn(ctx, "test_migration", "email", "VARCHAR(255)")
+	if err != nil {
+		return fmt.Errorf("AddColumn failed: %w", err)
+	}
+
+	logger.Info("✅ Column added")
+	logger.Info("✅ 컬럼이 추가되었습니다")
+
+	// Modify column / 컬럼 수정
+	logger.Info("")
+	logger.Info("Modifying 'email' column to add UNIQUE constraint...")
+	logger.Info("'email' 컬럼에 UNIQUE 제약 조건 추가 중...")
+
+	err = db.ModifyColumn(ctx, "test_migration", "email", "VARCHAR(255) UNIQUE")
+	if err != nil {
+		return fmt.Errorf("ModifyColumn failed: %w", err)
+	}
+
+	logger.Info("✅ Column modified")
+	logger.Info("✅ 컬럼이 수정되었습니다")
+
+	// Add index / 인덱스 추가
+	logger.Info("")
+	logger.Info("Adding index on 'name' column...")
+	logger.Info("'name' 컬럼에 인덱스 추가 중...")
+
+	err = db.AddIndex(ctx, "test_migration", "idx_name", []string{"name"}, false)
+	if err != nil {
+		return fmt.Errorf("AddIndex failed: %w", err)
+	}
+
+	logger.Info("✅ Index added")
+	logger.Info("✅ 인덱스가 추가되었습니다")
+
+	logger.Info("")
+	return nil
+}
+
+// example35ExportCSV demonstrates ExportTableToCSV - export table to CSV
+// example35ExportCSV는 ExportTableToCSV를 시연합니다 - 테이블을 CSV로 내보내기
+func example35ExportCSV(ctx context.Context, db *mysql.Client, logger *logging.Logger) error {
+	logger.Info("========================================")
+	logger.Info("Example 35: ExportCSV - Export table to CSV file")
+	logger.Info("예제 35: ExportCSV - 테이블을 CSV 파일로 내보내기")
+	logger.Info("========================================")
+
+	// Create temporary directory / 임시 디렉토리 생성
+	tmpDir := fmt.Sprintf("./mysql_export_%d", time.Now().Unix())
+	os.MkdirAll(tmpDir, 0755)
+
+	csvPath := fmt.Sprintf("%s/users_export.csv", tmpDir)
+
+	// Configure export options / 내보내기 옵션 설정
+	opts := mysql.DefaultCSVExportOptions()
+	opts.Columns = []string{"id", "name", "email", "age", "city"}
+	opts.Where = "age > ?"
+	opts.WhereArgs = []interface{}{25}
+	opts.OrderBy = "age DESC"
+	opts.Limit = 10
+
+	logger.Info(fmt.Sprintf("Exporting users (age > 25) to: %s", csvPath))
+	logger.Info(fmt.Sprintf("사용자 (나이 > 25)를 다음으로 내보내는 중: %s", csvPath))
+
+	err := db.ExportTableToCSV(ctx, "users", csvPath, opts)
+	if err != nil {
+		return fmt.Errorf("ExportTableToCSV failed: %w", err)
+	}
+
+	logger.Info("✅ Export completed successfully")
+	logger.Info("✅ 내보내기가 성공적으로 완료되었습니다")
+
+	// Read and display first few lines / 처음 몇 줄 읽어서 표시
+	content, err := os.ReadFile(csvPath)
+	if err == nil {
+		lines := strings.Split(string(content), "\n")
+		logger.Info("")
+		logger.Info("First 3 lines of CSV:")
+		logger.Info("CSV의 처음 3줄:")
+		for i := 0; i < min(3, len(lines)); i++ {
+			if lines[i] != "" {
+				logger.Info(fmt.Sprintf("  %s", lines[i]))
+			}
+		}
+	}
+
+	logger.Info("")
+	logger.Info(fmt.Sprintf("Note: CSV file saved to %s", csvPath))
+	logger.Info(fmt.Sprintf("참고: CSV 파일이 %s에 저장되었습니다", csvPath))
+
+	logger.Info("")
+	return nil
+}
+
+// Helper function for min / min을 위한 헬퍼 함수
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
