@@ -54,9 +54,27 @@
 // 더 많은 예제와 상세한 문서는 패키지 README와 USER_MANUAL을 참조하세요.
 package maputil
 
+import "github.com/arkd0ng/go-utils/logging"
+
 // Version is the current version of the maputil package.
 // Version은 maputil 패키지의 현재 버전입니다.
-const Version = "v1.8.002"
+//
+// The version is automatically loaded from cfg/app.yaml.
+// If the file cannot be loaded, it returns "unknown".
+//
+// 버전은 cfg/app.yaml에서 자동으로 로드됩니다.
+// 파일을 로드할 수 없으면 "unknown"을 반환합니다.
+var Version = getVersion()
+
+// getVersion loads the version from cfg/app.yaml
+// getVersion은 cfg/app.yaml에서 버전을 로드합니다
+func getVersion() string {
+	version := logging.TryLoadAppVersion()
+	if version == "" {
+		return "unknown"
+	}
+	return version
+}
 
 // Entry represents a key-value pair in a map.
 // Entry는 맵의 키-값 쌍을 나타냅니다.
