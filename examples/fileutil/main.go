@@ -13,7 +13,7 @@ import (
 func main() {
 	// Initialize logger / 로거 초기화
 	logger, err := logging.New(
-		logging.WithFilePath(fmt.Sprintf("logs/fileutil-examples-%s.log", time.Now().Format("20060102-150405"))),
+		logging.WithFilePath(fmt.Sprintf("logs/fileutil-example-%s.log", time.Now().Format("20060102-150405"))),
 		logging.WithLevel(logging.INFO),
 		logging.WithStdout(true),
 	)

@@ -13,7 +13,7 @@ func main() {
 	// Initialize logger / 로거 초기화
 	logger, err := logging.New(
 		logging.WithLevel(logging.DEBUG),
-		logging.WithFilePath(fmt.Sprintf("logs/maputil-example-%s.log", time.Now().Format("20060102_150405"))),
+		logging.WithFilePath(fmt.Sprintf("logs/maputil-example-%s.log", time.Now().Format("20060102-150405"))),
 		logging.WithStdout(true),
 	)
 	if err != nil {

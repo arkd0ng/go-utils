@@ -6,6 +6,58 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.005] - 2025-10-15
+
+### Changed / 변경됨
+
+#### Unified Log File Path and Naming Convention / 통합된 로그 파일 경로 및 명명 규칙
+
+**Problem / 문제:**
+- Log files were scattered across different directories and had inconsistent naming conventions / 로그 파일이 여러 디렉토리에 분산되어 있고 일관성 없는 명명 규칙을 사용함
+- Some examples used `logs/`, others used `./logs/` / 일부 예제는 `logs/`를, 다른 예제는 `./logs/`를 사용
+- Filename formats varied: `package_example_`, `package-example-`, different timestamp formats / 파일명 형식이 다양함: `package_example_`, `package-example-`, 다양한 타임스탬프 형식
+
+**Solution / 해결책:**
+- Unified all example log files to repository root `logs/` directory / 모든 예제 로그 파일을 레포지토리 루트 `logs/` 디렉토리로 통합
+- Standardized filename format: `<package>-example-<timestamp>.log` / 파일명 형식 표준화: `<package>-example-<timestamp>.log`
+- Standardized timestamp format: `20060102-150405` (YYYYMMDD-HHMMSS) / 타임스탬프 형식 표준화: `20060102-150405` (YYYYMMDD-HHMMSS)
+- Exception: logging package examples keep original filenames (but use unified `logs/` directory) / 예외: logging 패키지 예제는 원래 파일명 유지 (하지만 통합된 `logs/` 디렉토리 사용)
+
+**Updated Files / 업데이트된 파일:**
+1. `examples/fileutil/main.go` - `fileutil-examples-` → `fileutil-example-`
+2. `examples/maputil/main.go` - Timestamp format: `20060102_150405` → `20060102-150405`
+3. `examples/mysql/main.go` - `mysql_example_` + `20060102_150405` → `mysql-example-` + `20060102-150405`
+4. `examples/random_string/main.go` - `random_example_` + `20060102_150405` → `random-example-` + `20060102-150405`
+5. `examples/redis/main.go` - `redis_example_` + `20060102_150405` → `redis-example-` + `20060102-150405`
+6. `examples/sliceutil/main.go` - `sliceutil_example_` + `20060102_150405` → `sliceutil-example-` + `20060102-150405`
+7. `examples/stringutil/main.go` - `stringutil_example_` + `20060102_150405` → `stringutil-example-` + `20060102-150405`
+8. `examples/timeutil/main.go` - `timeutil-example.log` (static) → `timeutil-example-<timestamp>.log` (timestamped)
+9. `examples/logging/main.go` - All `./logs/` → `logs/` (filenames unchanged: `custom.log`, `app.log`, etc.)
+
+**New Unified Format / 새로운 통합 형식:**
+```
+logs/fileutil-example-20251015-200641.log
+logs/maputil-example-20251015-143022.log
+logs/mysql-example-20251015-143022.log
+logs/random-example-20251015-143022.log
+logs/redis-example-20251015-143022.log
+logs/sliceutil-example-20251015-143022.log
+logs/stringutil-example-20251015-143022.log
+logs/timeutil-example-20251015-143022.log
+logs/custom.log          (logging example - filename preserved)
+logs/app.log             (logging example - filename preserved)
+logs/database.log        (logging example - filename preserved)
+```
+
+**Benefits / 이점:**
+- Centralized log management in single `logs/` directory / 단일 `logs/` 디렉토리에서 중앙 집중식 로그 관리
+- Consistent naming convention across all examples / 모든 예제에서 일관된 명명 규칙
+- Easier log file discovery and organization / 로그 파일 검색 및 정리가 더 쉬움
+- Predictable log file locations for CI/CD and automation / CI/CD 및 자동화를 위한 예측 가능한 로그 파일 위치
+- Timestamp in filename enables chronological sorting / 파일명의 타임스탬프로 시간순 정렬 가능
+
+---
+
 ## [v1.9.004] - 2025-10-15
 
 ### Enhanced / 보강됨

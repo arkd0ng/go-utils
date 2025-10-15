@@ -11,7 +11,7 @@ import (
 func main() {
 	// Initialize logger / 로거 초기화
 	logger, err := logging.New(
-		logging.WithFilePath("./logs/timeutil-example.log"),
+		logging.WithFilePath(fmt.Sprintf("logs/timeutil-example-%s.log", time.Now().Format("20060102-150405"))),
 		logging.WithLevel(logging.DEBUG),
 		logging.WithStdout(true),
 	)
@@ -614,11 +614,11 @@ func main() {
 	logger.Info("--- ParseAny: 자동 포맷 감지 ---")
 
 	formats := []string{
-		"2024-10-04 08:34:42.324",      // MySQL with milliseconds
-		"2024-10-04T08:34:42+09:00",    // ISO8601
-		"2024/10/04",                    // Date with slashes
-		"Oct 04, 2024",                  // Month name
-		"2024-10-04 08:34:42",          // Standard DateTime
+		"2024-10-04 08:34:42.324",   // MySQL with milliseconds
+		"2024-10-04T08:34:42+09:00", // ISO8601
+		"2024/10/04",                // Date with slashes
+		"Oct 04, 2024",              // Month name
+		"2024-10-04 08:34:42",       // Standard DateTime
 	}
 
 	for _, f := range formats {
