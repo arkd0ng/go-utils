@@ -140,3 +140,75 @@ func DeleteContext(ctx context.Context, url string, result interface{}, opts ...
 func SetDefaultClient(client *Client) {
 	defaultClient = client
 }
+
+// DownloadFile downloads a file using the default client.
+// DownloadFile은 기본 클라이언트를 사용하여 파일을 다운로드합니다.
+func DownloadFile(url, filepath string, opts ...Option) error {
+	return defaultClient.DownloadFile(url, filepath, opts...)
+}
+
+// DownloadFileContext downloads a file with context using the default client.
+// DownloadFileContext는 기본 클라이언트를 사용하여 context와 함께 파일을 다운로드합니다.
+func DownloadFileContext(ctx context.Context, url, filepath string, progress ProgressFunc, opts ...Option) error {
+	return defaultClient.DownloadFileContext(ctx, url, filepath, progress, opts...)
+}
+
+// Download downloads data using the default client.
+// Download는 기본 클라이언트를 사용하여 데이터를 다운로드합니다.
+func Download(url string, opts ...Option) ([]byte, error) {
+	return defaultClient.Download(url, opts...)
+}
+
+// DownloadContext downloads data with context using the default client.
+// DownloadContext는 기본 클라이언트를 사용하여 context와 함께 데이터를 다운로드합니다.
+func DownloadContext(ctx context.Context, url string, opts ...Option) ([]byte, error) {
+	return defaultClient.DownloadContext(ctx, url, opts...)
+}
+
+// UploadFile uploads a file using the default client.
+// UploadFile은 기본 클라이언트를 사용하여 파일을 업로드합니다.
+func UploadFile(url, fieldName, filepath string, result interface{}, opts ...Option) error {
+	return defaultClient.UploadFile(url, fieldName, filepath, result, opts...)
+}
+
+// UploadFileContext uploads a file with context using the default client.
+// UploadFileContext는 기본 클라이언트를 사용하여 context와 함께 파일을 업로드합니다.
+func UploadFileContext(ctx context.Context, url, fieldName, filepath string, result interface{}, progress ProgressFunc, opts ...Option) error {
+	return defaultClient.UploadFileContext(ctx, url, fieldName, filepath, result, progress, opts...)
+}
+
+// UploadFiles uploads multiple files using the default client.
+// UploadFiles는 기본 클라이언트를 사용하여 여러 파일을 업로드합니다.
+func UploadFiles(url string, files map[string]string, result interface{}, opts ...Option) error {
+	return defaultClient.UploadFiles(url, files, result, opts...)
+}
+
+// UploadFilesContext uploads multiple files with context using the default client.
+// UploadFilesContext는 기본 클라이언트를 사용하여 context와 함께 여러 파일을 업로드합니다.
+func UploadFilesContext(ctx context.Context, url string, files map[string]string, result interface{}, opts ...Option) error {
+	return defaultClient.UploadFilesContext(ctx, url, files, result, opts...)
+}
+
+// PostForm performs a POST request with form data using the default client.
+// PostForm은 기본 클라이언트를 사용하여 폼 데이터와 함께 POST 요청을 수행합니다.
+func PostForm(url string, data map[string]string, result interface{}, opts ...Option) error {
+	return defaultClient.PostForm(url, data, result, opts...)
+}
+
+// PostFormContext performs a POST request with form data and context using the default client.
+// PostFormContext는 기본 클라이언트를 사용하여 context 및 폼 데이터와 함께 POST 요청을 수행합니다.
+func PostFormContext(ctx context.Context, url string, data map[string]string, result interface{}, opts ...Option) error {
+	return defaultClient.PostFormContext(ctx, url, data, result, opts...)
+}
+
+// DoRaw performs an HTTP request and returns the raw response using the default client.
+// DoRaw는 기본 클라이언트를 사용하여 HTTP 요청을 수행하고 원시 응답을 반환합니다.
+func DoRaw(method, url string, body interface{}, opts ...Option) (*Response, error) {
+	return defaultClient.DoRaw(method, url, body, opts...)
+}
+
+// DoRawContext performs an HTTP request with context and returns the raw response using the default client.
+// DoRawContext는 기본 클라이언트를 사용하여 context와 함께 HTTP 요청을 수행하고 원시 응답을 반환합니다.
+func DoRawContext(ctx context.Context, method, url string, body interface{}, opts ...Option) (*Response, error) {
+	return defaultClient.DoRawContext(ctx, method, url, body, opts...)
+}

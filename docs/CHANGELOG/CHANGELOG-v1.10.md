@@ -6,6 +6,82 @@ This file contains detailed change logs for the v1.10.x releases of go-utils, fo
 
 ---
 
+## [v1.10.002] - 2025-10-15
+
+### Added / 추가됨
+
+#### Phase 2-4 Features / Phase 2-4 기능
+
+**Phase 2: Response Helpers (response.go)** / **Phase 2: 응답 헬퍼**:
+- `Response` struct wrapping http.Response with additional methods
+- `DoRaw/DoRawContext` methods returning raw response
+- Response body methods: `Body()`, `String()`, `JSON()`
+- Status check methods: `IsSuccess()`, `IsError()`, `IsClientError()`, `IsServerError()`
+- Specific status checks: `IsOK()`, `IsCreated()`, `IsNotFound()`, `IsUnauthorized()` etc.
+- Header helpers: `Header()`, `Headers()`, `ContentType()`, `ContentLength()`
+- Response 구조체로 http.Response 래핑 및 추가 메서드
+- 원시 응답 반환하는 DoRaw/DoRawContext 메서드
+- 응답 본문 메서드
+- 상태 확인 메서드
+- 헤더 헬퍼
+
+**Phase 3: File Download/Upload (file.go)** / **Phase 3: 파일 다운로드/업로드**:
+- `DownloadFile/DownloadFileContext` - Download file with progress callback
+- `Download/DownloadContext` - Download data as bytes
+- `UploadFile/UploadFileContext` - Upload single file with multipart/form-data
+- `UploadFiles/UploadFilesContext` - Upload multiple files
+- `ProgressFunc` callback for tracking upload/download progress
+- 진행 상황 콜백과 함께 파일 다운로드
+- 바이트로 데이터 다운로드
+- multipart/form-data로 단일 파일 업로드
+- 여러 파일 업로드
+- 업로드/다운로드 진행 상황 추적 콜백
+
+**Phase 4: URL and Form Utilities (url.go, form.go)** / **Phase 4: URL 및 폼 유틸리티**:
+- `URLBuilder` - Fluent API for building URLs
+- URL utilities: `JoinURL()`, `AddQueryParams()`, `ParseURL()`, `GetQueryParam()`
+- URL helpers: `GetDomain()`, `GetScheme()`, `GetPath()`, `IsAbsoluteURL()`, `NormalizeURL()`
+- `FormBuilder` - Fluent API for building form data
+- `PostForm/PostFormContext` - POST with application/x-www-form-urlencoded
+- Form utilities: `ParseForm()`, `EncodeForm()`
+- URLBuilder로 URL 구축을 위한 Fluent API
+- URL 유틸리티 함수들
+- FormBuilder로 폼 데이터 구축을 위한 Fluent API
+- application/x-www-form-urlencoded로 POST
+- 폼 유틸리티
+
+**Package Updates / 패키지 업데이트**:
+- Extended `simple.go` with package-level functions for all new features
+- All new methods available on both Client and package level
+- Maintained zero external dependencies principle
+- All tests passing
+- 모든 새 기능에 대한 패키지 레벨 함수로 simple.go 확장
+- Client 및 패키지 레벨 모두에서 사용 가능한 모든 새 메서드
+- 외부 의존성 제로 원칙 유지
+- 모든 테스트 통과
+
+**New Files / 새 파일**:
+- `response.go` - 280 lines, response helper methods
+- `file.go` - 340 lines, file upload/download with progress
+- `url.go` - 180 lines, URL builder and utilities
+- `form.go` - 200 lines, form builder and utilities
+
+**Statistics / 통계**:
+- Total new code: ~1,000 lines
+- New methods: 50+ functions/methods
+- Test coverage: All core functionality tested
+- 총 새 코드: 약 1,000줄
+- 새 메서드: 50개 이상 함수/메서드
+- 테스트 커버리지: 모든 핵심 기능 테스트됨
+
+### Changed / 변경됨
+- None / 없음
+
+### Fixed / 수정됨
+- None / 없음
+
+---
+
 ## [v1.10.001] - 2025-10-15
 
 ### Added / 추가됨
