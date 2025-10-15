@@ -8,6 +8,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.7.024] - 2025-10-15
+
+### Fixed / 수정
+
+- **CRITICAL**: Fixed package documentation in `sliceutil.go` (60 functions → 95 functions, 8 categories → 14 categories) / `sliceutil.go`의 패키지 문서 수정 (60개 함수 → 95개 함수, 8개 카테고리 → 14개 카테고리)
+- **IMPORTANT**: Fixed `Permutations` function immutability issue - now creates a copy of input slice before generating permutations / `Permutations` 함수 불변성 문제 수정 - 이제 순열 생성 전에 입력 슬라이스의 복사본 생성
+- **IMPORTANT**: Fixed random seed issue in `Sample` and `Shuffle` functions - now uses shared global random source with mutex for thread-safe operations / `Sample` 및 `Shuffle` 함수의 랜덤 시드 문제 수정 - 이제 스레드 안전 작업을 위해 뮤텍스를 사용한 공유 전역 랜덤 소스 사용
+- **IMPORTANT**: Enhanced `Unzip` function documentation with type safety warnings and usage examples / `Unzip` 함수 문서에 타입 안전성 경고 및 사용 예제 추가
+- Updated `USER_MANUAL.md` to reflect 95 functions across 14 categories (was 60 functions, 8 categories) / `USER_MANUAL.md`를 95개 함수, 14개 카테고리로 업데이트 (이전 60개 함수, 8개 카테고리)
+
+### Added / 추가
+
+- Added global random number generator (`rng`) with mutex lock for thread-safe random operations in `sliceutil.go` / 스레드 안전 랜덤 작업을 위해 뮤텍스 잠금이 있는 전역 랜덤 번호 생성기(`rng`)를 `sliceutil.go`에 추가
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.024 / `cfg/app.yaml` 버전을 v1.7.024로 업데이트
+- Updated `sliceutil/sliceutil.go` Version constant to "1.7.024" / `sliceutil/sliceutil.go` 버전 상수를 "1.7.024"로 업데이트
+- Updated `sliceutil/sliceutil_test.go` expected version to "1.7.024" / `sliceutil/sliceutil_test.go` 예상 버전을 "1.7.024"로 업데이트
+- Removed duplicate imports (`math/rand`, `time`) from `slice.go` and `util.go` / `slice.go` 및 `util.go`에서 중복 import(`math/rand`, `time`) 제거
+
+### Summary / 요약
+
+v1.7.024 fixes critical documentation and code issues found during comprehensive review:
+- Fixed misleading package documentation (critical for user discovery)
+- Fixed immutability violation in Permutations
+- Fixed non-thread-safe random seed usage in Sample/Shuffle
+- Enhanced type safety documentation for Unzip
+- All tests pass with race detector
+
+v1.7.024는 종합 검토 중 발견된 중요한 문서 및 코드 문제를 수정합니다:
+- 오해를 불러일으키는 패키지 문서 수정 (사용자 발견에 중요)
+- Permutations의 불변성 위반 수정
+- Sample/Shuffle의 스레드 안전하지 않은 랜덤 시드 사용 수정
+- Unzip의 타입 안전성 문서 강화
+- 모든 테스트가 race detector로 통과
+
+---
+
 ## [v1.7.023] - 2025-10-15
 
 ### Added / 추가

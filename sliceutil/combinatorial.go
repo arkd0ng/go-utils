@@ -29,8 +29,13 @@ func Permutations[T any](slice []T) [][]T {
 		return [][]T{{}}
 	}
 
+	// Create a copy to avoid modifying the original slice
+	// 원본 슬라이스 수정을 방지하기 위해 복사본 생성
+	sliceCopy := make([]T, len(slice))
+	copy(sliceCopy, slice)
+
 	result := [][]T{}
-	permute(slice, 0, &result)
+	permute(sliceCopy, 0, &result)
 	return result
 }
 

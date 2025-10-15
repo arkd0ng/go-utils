@@ -8,18 +8,24 @@
 //
 // # Overview / 개요
 //
-// This package provides 60 functions across 8 categories for common slice operations:
+// This package provides 95 functions across 14 categories for common slice operations:
 //
-// 이 패키지는 일반적인 슬라이스 작업을 위한 8개 카테고리에 걸쳐 60개의 함수를 제공합니다:
+// 이 패키지는 일반적인 슬라이스 작업을 위한 14개 카테고리에 걸쳐 95개의 함수를 제공합니다:
 //
-//  1. Basic Operations (10 functions) - Contains, IndexOf, Find, etc.
-//  2. Transformation (8 functions) - Map, Filter, Unique, Reverse, etc.
-//  3. Aggregation (7 functions) - Reduce, Sum, Min, Max, GroupBy, etc.
-//  4. Slicing (7 functions) - Chunk, Take, Drop, Sample, etc.
-//  5. Set Operations (6 functions) - Union, Intersection, Difference, etc.
-//  6. Sorting (5 functions) - Sort, SortBy, IsSorted, etc.
-//  7. Predicates (6 functions) - All, Any, None, AllEqual, etc.
-//  8. Utilities (11 functions) - ForEach, Join, Clone, Shuffle, Zip, etc.
+//  1. Basic Operations (11 functions) - Contains, IndexOf, Find, FindLast, Count, etc.
+//  2. Transformation (8 functions) - Map, Filter, Unique, Reverse, Flatten, FlatMap, etc.
+//  3. Aggregation (11 functions) - Reduce, ReduceRight, Sum, Min, Max, MinBy, MaxBy, Average, GroupBy, CountBy, Partition
+//  4. Slicing (10 functions) - Chunk, Take, TakeLast, Drop, DropLast, TakeWhile, DropWhile, Slice, Sample, Interleave
+//  5. Set Operations (6 functions) - Union, Intersection, Difference, SymmetricDifference, IsSubset, IsSuperset
+//  6. Sorting (6 functions) - Sort, SortDesc, SortBy, SortByMulti, IsSorted, IsSortedDesc
+//  7. Predicates (6 functions) - All, Any, None, AllEqual, ContainsAll, IsSortedBy
+//  8. Utilities (13 functions) - ForEach, ForEachIndexed, Join, Clone, Fill, Insert, Remove, RemoveAll, Shuffle, Zip, Unzip, Window, Tap
+//  9. Combinatorial (2 functions) - Permutations, Combinations
+// 10. Statistics (8 functions) - Median, Mode, Frequencies, Percentile, StandardDeviation, Variance, MostCommon, LeastCommon
+// 11. Diff/Comparison (4 functions) - Diff, DiffBy, EqualUnordered, HasDuplicates
+// 12. Index-based (3 functions) - FindIndices, AtIndices, RemoveIndices
+// 13. Conditional (3 functions) - ReplaceIf, ReplaceAll, UpdateWhere
+// 14. Advanced (4 functions) - Scan, ZipWith, RotateLeft, RotateRight
 //
 // # Key Features / 주요 기능
 //
@@ -93,6 +99,19 @@
 //   - Developer Guide: https://github.com/arkd0ng/go-utils/tree/main/docs/sliceutil/DEVELOPER_GUIDE.md
 package sliceutil
 
+import (
+	"math/rand"
+	"sync"
+	"time"
+)
+
 // Version is the current package version.
 // Version은 현재 패키지 버전입니다.
-const Version = "1.7.023"
+const Version = "1.7.024"
+
+// Global random number generator for thread-safe random operations
+// 스레드 안전 랜덤 작업을 위한 전역 랜덤 번호 생성기
+var (
+	rng     = rand.New(rand.NewSource(time.Now().UnixNano()))
+	rngLock sync.Mutex
+)

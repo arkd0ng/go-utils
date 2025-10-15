@@ -2,9 +2,7 @@ package sliceutil
 
 import (
 	"fmt"
-	"math/rand"
 	"strings"
-	"time"
 )
 
 // ForEach executes a function for each element in the slice.
@@ -236,11 +234,12 @@ func Shuffle[T any](slice []T) []T {
 	}
 
 	result := Clone(slice)
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	rngLock.Lock()
+	defer rngLock.Unlock()
 
 	// Fisher-Yates shuffle algorithm / Fisher-Yates 셔플 알고리즘
 	for i := len(result) - 1; i > 0; i-- {
-		j := r.Intn(i + 1)
+		j := rng.Intn(i + 1)
 		result[i], result[j] = result[j], result[i]
 	}
 
@@ -282,15 +281,23 @@ func Zip[T, U any](a []T, b []U) [][2]any {
 // Returns two slices: one with first elements and one with second elements.
 // 두 개의 슬라이스를 반환합니다: 첫 번째 요소를 가진 슬라이스와 두 번째 요소를 가진 슬라이스.
 //
-// Type assertions are used to convert from any to T and U.
-// any에서 T와 U로 변환하기 위해 타입 단언이 사용됩니다.
+// IMPORTANT: Type assertions will panic if the slice contains elements
+// that are not of types T and U. Ensure all pairs are correctly typed before calling this function.
+//
+// 중요: 슬라이스에 T 및 U 타입이 아닌 요소가 포함되어 있으면 타입 단언이 패닉을 발생시킵니다.
+// 이 함수를 호출하기 전에 모든 쌍이 올바르게 타입이 지정되었는지 확인하세요.
 //
 // Example / 예제:
 //
+//	// ✅ CORRECT usage / 올바른 사용:
 //	zipped := [][2]any{{1, "one"}, {2, "two"}, {3, "three"}}
 //	numbers, words := sliceutil.Unzip[int, string](zipped)
 //	// numbers: [1, 2, 3]
 //	// words: ["one", "two", "three"]
+//
+//	// ❌ INCORRECT usage (will panic!) / 잘못된 사용 (패닉 발생!):
+//	badZipped := [][2]any{{1, "one"}, {"wrong", 2}} // Wrong types / 잘못된 타입
+//	nums, words := sliceutil.Unzip[int, string](badZipped) // PANIC!
 func Unzip[T, U any](slice [][2]any) ([]T, []U) {
 	if len(slice) == 0 {
 		return []T{}, []U{}

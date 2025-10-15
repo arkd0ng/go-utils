@@ -3864,9 +3864,9 @@ result := sliceutil.Map(
 
 ### Q10: How does Sliceutil compare to other libraries? / Sliceutil은 다른 라이브러리와 어떻게 비교되나요?
 
-**A**: Sliceutil focuses on extreme simplicity, type safety with generics, zero dependencies, and comprehensive coverage of 60 functions across 8 categories. It's designed specifically for Go 1.18+ with modern best practices.
+**A**: Sliceutil focuses on extreme simplicity, type safety with generics, zero dependencies, and comprehensive coverage of 95 functions across 14 categories. It's designed specifically for Go 1.18+ with modern best practices.
 
-**A**: Sliceutil은 극도의 간결함, 제네릭을 사용한 타입 안전성, 제로 의존성, 8개 카테고리에 걸쳐 60개 함수의 포괄적인 커버리지에 중점을 둡니다. Go 1.18+ 및 최신 모범 사례를 위해 특별히 설계되었습니다.
+**A**: Sliceutil은 극도의 간결함, 제네릭을 사용한 타입 안전성, 제로 의존성, 14개 카테고리에 걸쳐 95개 함수의 포괄적인 커버리지에 중점을 둡니다. Go 1.18+ 및 최신 모범 사례를 위해 특별히 설계되었습니다.
 
 ---
 

@@ -1,10 +1,5 @@
 package sliceutil
 
-import (
-	"math/rand"
-	"time"
-)
-
 // slice.go contains slicing operations for slices.
 // slice.go는 슬라이스 슬라이싱 작업을 포함합니다.
 
@@ -195,8 +190,9 @@ func Sample[T any](slice []T, n int) []T {
 	if n >= len(slice) {
 		// Return all elements in random order
 		result := append([]T{}, slice...)
-		r := rand.New(rand.NewSource(time.Now().UnixNano()))
-		r.Shuffle(len(result), func(i, j int) {
+		rngLock.Lock()
+		defer rngLock.Unlock()
+		rng.Shuffle(len(result), func(i, j int) {
 			result[i], result[j] = result[j], result[i]
 		})
 		return result
@@ -204,10 +200,11 @@ func Sample[T any](slice []T, n int) []T {
 
 	// Use Fisher-Yates shuffle variant for sampling
 	result := append([]T{}, slice...)
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	rngLock.Lock()
+	defer rngLock.Unlock()
 
 	for i := 0; i < n; i++ {
-		j := i + r.Intn(len(result)-i)
+		j := i + rng.Intn(len(result)-i)
 		result[i], result[j] = result[j], result[i]
 	}
 
