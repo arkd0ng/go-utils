@@ -201,9 +201,9 @@ All functions use only the standard library.
 
 ### 5. Comprehensive Coverage / 포괄적인 커버리지
 
-95 functions across 13 categories cover 99% of common slice operations.
+95 functions across 14 categories cover 99% of common slice operations.
 
-13개 카테고리의 95개 함수가 일반적인 슬라이스 작업의 99%를 커버합니다.
+14개 카테고리의 95개 함수가 일반적인 슬라이스 작업의 99%를 커버합니다.
 
 ## Function Categories / 함수 카테고리
 
