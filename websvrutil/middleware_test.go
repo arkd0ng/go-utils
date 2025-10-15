@@ -2,6 +2,7 @@ package websvrutil
 
 import (
 	"bytes"
+	"compress/gzip"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -702,6 +703,289 @@ func BenchmarkBasicAuth(b *testing.B) {
 
 	req := httptest.NewRequest("GET", "/test", nil)
 	req.SetBasicAuth("admin", "password")
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+	}
+}
+
+// TestRateLimiter tests the RateLimiter middleware.
+// TestRateLimiter는 RateLimiter 미들웨어를 테스트합니다.
+func TestRateLimiter(t *testing.T) {
+	middleware := RateLimiter(5, time.Minute)
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	// Make 5 requests (should all succeed)
+	// 5개 요청 (모두 성공해야 함)
+	for i := 0; i < 5; i++ {
+		req := httptest.NewRequest("GET", "/test", nil)
+		req.RemoteAddr = "127.0.0.1:12345"
+		rec := httptest.NewRecorder()
+
+		handler.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusOK {
+			t.Errorf("Request %d: expected status 200, got %d", i+1, rec.Code)
+		}
+
+		limit := rec.Header().Get("X-RateLimit-Limit")
+		if limit != "5" {
+			t.Errorf("Expected X-RateLimit-Limit '5', got '%s'", limit)
+		}
+	}
+
+	// 6th request should be rate limited
+	// 6번째 요청은 rate limited 되어야 함
+	req := httptest.NewRequest("GET", "/test", nil)
+	req.RemoteAddr = "127.0.0.1:12345"
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusTooManyRequests {
+		t.Errorf("Expected status 429, got %d", rec.Code)
+	}
+
+	remaining := rec.Header().Get("X-RateLimit-Remaining")
+	if remaining != "0" {
+		t.Errorf("Expected X-RateLimit-Remaining '0', got '%s'", remaining)
+	}
+}
+
+// TestRateLimiterWithConfig tests custom RateLimiter configuration.
+// TestRateLimiterWithConfig는 커스텀 RateLimiter 설정을 테스트합니다.
+func TestRateLimiterWithConfig(t *testing.T) {
+	middleware := RateLimiterWithConfig(RateLimiterConfig{
+		Requests: 2,
+		Window:   time.Second,
+		KeyFunc: func(r *http.Request) string {
+			return r.Header.Get("X-API-Key")
+		},
+	})
+
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	// Test with API key
+	// API 키로 테스트
+	for i := 0; i < 2; i++ {
+		req := httptest.NewRequest("GET", "/test", nil)
+		req.Header.Set("X-API-Key", "test-key")
+		rec := httptest.NewRecorder()
+
+		handler.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusOK {
+			t.Errorf("Request %d: expected status 200, got %d", i+1, rec.Code)
+		}
+	}
+
+	// 3rd request should be rate limited
+	// 3번째 요청은 rate limited 되어야 함
+	req := httptest.NewRequest("GET", "/test", nil)
+	req.Header.Set("X-API-Key", "test-key")
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusTooManyRequests {
+		t.Errorf("Expected status 429, got %d", rec.Code)
+	}
+}
+
+// TestCompression tests the Compression middleware.
+// TestCompression는 Compression 미들웨어를 테스트합니다.
+func TestCompression(t *testing.T) {
+	middleware := Compression()
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Hello, World! This is a test response that should be compressed."))
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	req.Header.Set("Accept-Encoding", "gzip")
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", rec.Code)
+	}
+
+	contentEncoding := rec.Header().Get("Content-Encoding")
+	if contentEncoding != "gzip" {
+		t.Errorf("Expected Content-Encoding 'gzip', got '%s'", contentEncoding)
+	}
+
+	// Response should be gzip compressed
+	// 응답이 gzip으로 압축되어야 함
+	if len(rec.Body.Bytes()) == 0 {
+		t.Error("Expected compressed response, got empty body")
+	}
+}
+
+// TestCompressionWithoutGzip tests that compression is skipped when client doesn't support gzip.
+// TestCompressionWithoutGzip는 클라이언트가 gzip을 지원하지 않을 때 압축을 건너뛰는지 테스트합니다.
+func TestCompressionWithoutGzip(t *testing.T) {
+	middleware := Compression()
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Hello, World!"))
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	// No Accept-Encoding header
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	contentEncoding := rec.Header().Get("Content-Encoding")
+	if contentEncoding != "" {
+		t.Errorf("Expected no Content-Encoding, got '%s'", contentEncoding)
+	}
+
+	body := rec.Body.String()
+	if body != "Hello, World!" {
+		t.Errorf("Expected uncompressed body, got '%s'", body)
+	}
+}
+
+// TestCompressionWithConfig tests custom Compression configuration.
+// TestCompressionWithConfig는 커스텀 Compression 설정을 테스트합니다.
+func TestCompressionWithConfig(t *testing.T) {
+	middleware := CompressionWithConfig(CompressionConfig{
+		Level:     gzip.BestCompression,
+		MinLength: 1024,
+	})
+
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Test"))
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	req.Header.Set("Accept-Encoding", "gzip")
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", rec.Code)
+	}
+}
+
+// TestSecureHeaders tests the SecureHeaders middleware.
+// TestSecureHeaders는 SecureHeaders 미들웨어를 테스트합니다.
+func TestSecureHeaders(t *testing.T) {
+	middleware := SecureHeaders()
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	// Check security headers
+	// 보안 헤더 확인
+	headers := []struct {
+		name     string
+		expected string
+	}{
+		{"X-Frame-Options", "SAMEORIGIN"},
+		{"X-Content-Type-Options", "nosniff"},
+		{"X-XSS-Protection", "1; mode=block"},
+		{"Referrer-Policy", "strict-origin-when-cross-origin"},
+	}
+
+	for _, h := range headers {
+		value := rec.Header().Get(h.name)
+		if value != h.expected {
+			t.Errorf("Expected %s '%s', got '%s'", h.name, h.expected, value)
+		}
+	}
+}
+
+// TestSecureHeadersWithConfig tests custom SecureHeaders configuration.
+// TestSecureHeadersWithConfig는 커스텀 SecureHeaders 설정을 테스트합니다.
+func TestSecureHeadersWithConfig(t *testing.T) {
+	middleware := SecureHeadersWithConfig(SecureHeadersConfig{
+		XFrameOptions:         "DENY",
+		ContentSecurityPolicy: "default-src 'self'",
+	})
+
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	xFrameOptions := rec.Header().Get("X-Frame-Options")
+	if xFrameOptions != "DENY" {
+		t.Errorf("Expected X-Frame-Options 'DENY', got '%s'", xFrameOptions)
+	}
+
+	csp := rec.Header().Get("Content-Security-Policy")
+	if csp != "default-src 'self'" {
+		t.Errorf("Expected CSP 'default-src 'self'', got '%s'", csp)
+	}
+}
+
+// BenchmarkRateLimiter benchmarks the RateLimiter middleware.
+// BenchmarkRateLimiter는 RateLimiter 미들웨어를 벤치마크합니다.
+func BenchmarkRateLimiter(b *testing.B) {
+	middleware := RateLimiter(1000, time.Minute)
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	req.RemoteAddr = "127.0.0.1:12345"
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+	}
+}
+
+// BenchmarkCompression benchmarks the Compression middleware.
+// BenchmarkCompression는 Compression 미들웨어를 벤치마크합니다.
+func BenchmarkCompression(b *testing.B) {
+	middleware := Compression()
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Hello, World! This is a test response."))
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	req.Header.Set("Accept-Encoding", "gzip")
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+	}
+}
+
+// BenchmarkSecureHeaders benchmarks the SecureHeaders middleware.
+// BenchmarkSecureHeaders는 SecureHeaders 미들웨어를 벤치마크합니다.
+func BenchmarkSecureHeaders(b *testing.B) {
+	middleware := SecureHeaders()
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {

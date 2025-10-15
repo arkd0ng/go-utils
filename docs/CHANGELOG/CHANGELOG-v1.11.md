@@ -5,6 +5,33 @@
 
 ---
 
+## [v1.11.008] - 2025-10-16
+
+### Added / 추가
+- Added 3 new advanced middleware to `middleware.go` / middleware.go에 3개의 새로운 고급 미들웨어 추가
+  - **RateLimiter Middleware**: IP-based rate limiting with token bucket algorithm
+  - **Compression Middleware**: Gzip compression for HTTP responses
+  - **SecureHeaders Middleware**: Security-related HTTP headers (X-Frame-Options, CSP, HSTS, etc.)
+- Created comprehensive tests in `middleware_test.go`: 7 tests + 3 benchmarks
+- Updated `README.md` with new middleware documentation
+- Total 9 middleware now available
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.008
+- Bumped version to v1.11.008 in `cfg/app.yaml`
+
+### Testing Coverage / 테스트 커버리지
+- **7 new tests + 3 benchmarks** for new middleware
+- **Total: 121+ test functions**, **Total: 26 benchmark functions**
+- **85.0% test coverage** - All tests passing ✅
+
+### Notes / 참고사항
+- Phase 2 (Middleware System) nearly complete!
+- Total 9 middleware available: Recovery, Logger, CORS, RequestID, Timeout, BasicAuth, RateLimiter, Compression, SecureHeaders
+- Next: v1.11.009-010 may add final middleware features or move to Phase 3 (Template System)
+
+---
+
 ## [v1.11.007] - 2025-10-16
 
 ### Added / 추가

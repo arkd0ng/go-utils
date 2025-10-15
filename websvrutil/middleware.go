@@ -1,14 +1,18 @@
 package websvrutil
 
 import (
+	"compress/gzip"
 	"context"
 	"crypto/rand"
 	"crypto/subtle"
 	"encoding/hex"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"runtime/debug"
+	"strings"
+	"sync"
 	"time"
 )
 
@@ -548,6 +552,366 @@ func BasicAuthWithConfig(config BasicAuthConfig) MiddlewareFunc {
 			// 나중에 사용하기 위해 컨텍스트에 사용자 이름 저장
 			ctx := context.WithValue(r.Context(), "auth_username", username)
 			r = r.WithContext(ctx)
+
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+// RateLimiter returns a middleware that limits the number of requests per client.
+// RateLimiter는 클라이언트당 요청 수를 제한하는 미들웨어를 반환합니다.
+//
+// Uses a simple token bucket algorithm with IP-based rate limiting.
+// IP 기반 rate limiting과 함께 간단한 토큰 버킷 알고리즘을 사용합니다.
+//
+// Example / 예제:
+//
+//	app := websvrutil.New()
+//	app.Use(websvrutil.RateLimiter(100, time.Minute)) // 100 requests per minute
+func RateLimiter(requests int, window time.Duration) MiddlewareFunc {
+	return RateLimiterWithConfig(RateLimiterConfig{
+		Requests: requests,
+		Window:   window,
+	})
+}
+
+// RateLimiterConfig defines the configuration for RateLimiter middleware.
+// RateLimiterConfig는 RateLimiter 미들웨어의 설정을 정의합니다.
+type RateLimiterConfig struct {
+	// Requests is the maximum number of requests allowed per window.
+	// Requests는 윈도우당 허용되는 최대 요청 수입니다.
+	// Default: 100
+	Requests int
+
+	// Window is the time window for rate limiting.
+	// Window는 rate limiting을 위한 시간 윈도우입니다.
+	// Default: 1 minute
+	Window time.Duration
+
+	// KeyFunc is the function to extract the rate limit key from the request.
+	// KeyFunc는 요청에서 rate limit 키를 추출하는 함수입니다.
+	// Default: uses client IP address
+	KeyFunc func(r *http.Request) string
+}
+
+// rateLimitEntry stores rate limit information for a client.
+// rateLimitEntry는 클라이언트의 rate limit 정보를 저장합니다.
+type rateLimitEntry struct {
+	count      int
+	resetTime  time.Time
+	mu         sync.Mutex
+}
+
+// RateLimiterWithConfig returns a RateLimiter middleware with custom configuration.
+// RateLimiterWithConfig는 커스텀 설정으로 RateLimiter 미들웨어를 반환합니다.
+//
+// Example / 예제:
+//
+//	app.Use(websvrutil.RateLimiterWithConfig(websvrutil.RateLimiterConfig{
+//	    Requests: 50,
+//	    Window: 30 * time.Second,
+//	    KeyFunc: func(r *http.Request) string {
+//	        return r.Header.Get("X-API-Key")
+//	    },
+//	}))
+func RateLimiterWithConfig(config RateLimiterConfig) MiddlewareFunc {
+	// Set defaults
+	// 기본값 설정
+	if config.Requests <= 0 {
+		config.Requests = 100
+	}
+	if config.Window <= 0 {
+		config.Window = time.Minute
+	}
+	if config.KeyFunc == nil {
+		config.KeyFunc = func(r *http.Request) string {
+			// Extract IP from RemoteAddr
+			// RemoteAddr에서 IP 추출
+			ip := r.RemoteAddr
+			if idx := strings.LastIndex(ip, ":"); idx != -1 {
+				ip = ip[:idx]
+			}
+			return ip
+		}
+	}
+
+	// Create rate limit store
+	// rate limit 저장소 생성
+	store := make(map[string]*rateLimitEntry)
+	var storeMu sync.RWMutex
+
+	// Cleanup goroutine to remove expired entries
+	// 만료된 항목을 제거하는 정리 고루틴
+	go func() {
+		ticker := time.NewTicker(config.Window)
+		defer ticker.Stop()
+		for range ticker.C {
+			storeMu.Lock()
+			now := time.Now()
+			for key, entry := range store {
+				entry.mu.Lock()
+				if now.After(entry.resetTime) {
+					delete(store, key)
+				}
+				entry.mu.Unlock()
+			}
+			storeMu.Unlock()
+		}
+	}()
+
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			key := config.KeyFunc(r)
+			now := time.Now()
+
+			// Get or create entry
+			// 항목 가져오기 또는 생성
+			storeMu.Lock()
+			entry, exists := store[key]
+			if !exists {
+				entry = &rateLimitEntry{
+					count:     0,
+					resetTime: now.Add(config.Window),
+				}
+				store[key] = entry
+			}
+			storeMu.Unlock()
+
+			// Check rate limit
+			// rate limit 확인
+			entry.mu.Lock()
+			if now.After(entry.resetTime) {
+				// Reset window
+				// 윈도우 리셋
+				entry.count = 0
+				entry.resetTime = now.Add(config.Window)
+			}
+
+			if entry.count >= config.Requests {
+				entry.mu.Unlock()
+				// Rate limit exceeded
+				// Rate limit 초과
+				w.Header().Set("X-RateLimit-Limit", fmt.Sprintf("%d", config.Requests))
+				w.Header().Set("X-RateLimit-Remaining", "0")
+				w.Header().Set("X-RateLimit-Reset", fmt.Sprintf("%d", entry.resetTime.Unix()))
+				http.Error(w, "Too Many Requests", http.StatusTooManyRequests)
+				return
+			}
+
+			entry.count++
+			remaining := config.Requests - entry.count
+			entry.mu.Unlock()
+
+			// Set rate limit headers
+			// rate limit 헤더 설정
+			w.Header().Set("X-RateLimit-Limit", fmt.Sprintf("%d", config.Requests))
+			w.Header().Set("X-RateLimit-Remaining", fmt.Sprintf("%d", remaining))
+			w.Header().Set("X-RateLimit-Reset", fmt.Sprintf("%d", entry.resetTime.Unix()))
+
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+// Compression returns a middleware that compresses HTTP responses using gzip.
+// Compression은 gzip을 사용하여 HTTP 응답을 압축하는 미들웨어를 반환합니다.
+//
+// Automatically compresses responses when client supports gzip (Accept-Encoding: gzip).
+// 클라이언트가 gzip을 지원할 때 자동으로 응답을 압축합니다 (Accept-Encoding: gzip).
+//
+// Example / 예제:
+//
+//	app := websvrutil.New()
+//	app.Use(websvrutil.Compression())
+func Compression() MiddlewareFunc {
+	return CompressionWithConfig(CompressionConfig{
+		Level: gzip.DefaultCompression,
+	})
+}
+
+// CompressionConfig defines the configuration for Compression middleware.
+// CompressionConfig는 Compression 미들웨어의 설정을 정의합니다.
+type CompressionConfig struct {
+	// Level is the gzip compression level.
+	// Level은 gzip 압축 레벨입니다.
+	// Valid values: -1 (default), 0 (no compression), 1 (best speed) to 9 (best compression)
+	// 유효한 값: -1 (기본), 0 (압축 없음), 1 (최고 속도) ~ 9 (최고 압축)
+	Level int
+
+	// MinLength is the minimum response size to compress (in bytes).
+	// MinLength는 압축할 최소 응답 크기입니다 (바이트).
+	// Default: 1024 (1KB)
+	MinLength int
+}
+
+// gzipResponseWriter wraps http.ResponseWriter to support gzip compression.
+// gzipResponseWriter는 gzip 압축을 지원하기 위해 http.ResponseWriter를 래핑합니다.
+type gzipResponseWriter struct {
+	io.Writer
+	http.ResponseWriter
+	statusCode int
+}
+
+func (w *gzipResponseWriter) WriteHeader(code int) {
+	w.statusCode = code
+	w.ResponseWriter.WriteHeader(code)
+}
+
+func (w *gzipResponseWriter) Write(b []byte) (int, error) {
+	return w.Writer.Write(b)
+}
+
+// CompressionWithConfig returns a Compression middleware with custom configuration.
+// CompressionWithConfig는 커스텀 설정으로 Compression 미들웨어를 반환합니다.
+//
+// Example / 예제:
+//
+//	app.Use(websvrutil.CompressionWithConfig(websvrutil.CompressionConfig{
+//	    Level: gzip.BestCompression,
+//	    MinLength: 2048, // 2KB
+//	}))
+func CompressionWithConfig(config CompressionConfig) MiddlewareFunc {
+	// Set defaults
+	// 기본값 설정
+	if config.Level == 0 {
+		config.Level = gzip.DefaultCompression
+	}
+	if config.MinLength <= 0 {
+		config.MinLength = 1024 // 1KB
+	}
+
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Check if client supports gzip
+			// 클라이언트가 gzip을 지원하는지 확인
+			if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// Create gzip writer
+			// gzip writer 생성
+			gz, err := gzip.NewWriterLevel(w, config.Level)
+			if err != nil {
+				next.ServeHTTP(w, r)
+				return
+			}
+			defer gz.Close()
+
+			// Set Content-Encoding header
+			// Content-Encoding 헤더 설정
+			w.Header().Set("Content-Encoding", "gzip")
+			w.Header().Del("Content-Length") // Content-Length is not accurate after compression
+
+			// Wrap response writer
+			// response writer 래핑
+			gzw := &gzipResponseWriter{
+				Writer:         gz,
+				ResponseWriter: w,
+				statusCode:     http.StatusOK,
+			}
+
+			next.ServeHTTP(gzw, r)
+		})
+	}
+}
+
+// SecureHeaders returns a middleware that adds security-related HTTP headers.
+// SecureHeaders는 보안 관련 HTTP 헤더를 추가하는 미들웨어를 반환합니다.
+//
+// Adds headers like X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, etc.
+// X-Frame-Options, X-Content-Type-Options, X-XSS-Protection 등의 헤더를 추가합니다.
+//
+// Example / 예제:
+//
+//	app := websvrutil.New()
+//	app.Use(websvrutil.SecureHeaders())
+func SecureHeaders() MiddlewareFunc {
+	return SecureHeadersWithConfig(SecureHeadersConfig{})
+}
+
+// SecureHeadersConfig defines the configuration for SecureHeaders middleware.
+// SecureHeadersConfig는 SecureHeaders 미들웨어의 설정을 정의합니다.
+type SecureHeadersConfig struct {
+	// XFrameOptions provides clickjacking protection.
+	// XFrameOptions는 클릭재킹 보호를 제공합니다.
+	// Default: "SAMEORIGIN"
+	XFrameOptions string
+
+	// XContentTypeOptions prevents MIME type sniffing.
+	// XContentTypeOptions는 MIME 타입 스니핑을 방지합니다.
+	// Default: "nosniff"
+	XContentTypeOptions string
+
+	// XXSSProtection enables XSS filter.
+	// XXSSProtection은 XSS 필터를 활성화합니다.
+	// Default: "1; mode=block"
+	XXSSProtection string
+
+	// ContentSecurityPolicy defines CSP policy.
+	// ContentSecurityPolicy는 CSP 정책을 정의합니다.
+	// Default: "" (not set)
+	ContentSecurityPolicy string
+
+	// StrictTransportSecurity enforces HTTPS.
+	// StrictTransportSecurity는 HTTPS를 강제합니다.
+	// Default: "max-age=31536000; includeSubDomains"
+	StrictTransportSecurity string
+
+	// ReferrerPolicy controls referrer information.
+	// ReferrerPolicy는 리퍼러 정보를 제어합니다.
+	// Default: "strict-origin-when-cross-origin"
+	ReferrerPolicy string
+}
+
+// SecureHeadersWithConfig returns a SecureHeaders middleware with custom configuration.
+// SecureHeadersWithConfig는 커스텀 설정으로 SecureHeaders 미들웨어를 반환합니다.
+//
+// Example / 예제:
+//
+//	app.Use(websvrutil.SecureHeadersWithConfig(websvrutil.SecureHeadersConfig{
+//	    XFrameOptions: "DENY",
+//	    ContentSecurityPolicy: "default-src 'self'",
+//	}))
+func SecureHeadersWithConfig(config SecureHeadersConfig) MiddlewareFunc {
+	// Set defaults
+	// 기본값 설정
+	if config.XFrameOptions == "" {
+		config.XFrameOptions = "SAMEORIGIN"
+	}
+	if config.XContentTypeOptions == "" {
+		config.XContentTypeOptions = "nosniff"
+	}
+	if config.XXSSProtection == "" {
+		config.XXSSProtection = "1; mode=block"
+	}
+	if config.StrictTransportSecurity == "" {
+		config.StrictTransportSecurity = "max-age=31536000; includeSubDomains"
+	}
+	if config.ReferrerPolicy == "" {
+		config.ReferrerPolicy = "strict-origin-when-cross-origin"
+	}
+
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Set security headers
+			// 보안 헤더 설정
+			w.Header().Set("X-Frame-Options", config.XFrameOptions)
+			w.Header().Set("X-Content-Type-Options", config.XContentTypeOptions)
+			w.Header().Set("X-XSS-Protection", config.XXSSProtection)
+			w.Header().Set("Referrer-Policy", config.ReferrerPolicy)
+
+			// Set HSTS only for HTTPS
+			// HTTPS에만 HSTS 설정
+			if r.TLS != nil {
+				w.Header().Set("Strict-Transport-Security", config.StrictTransportSecurity)
+			}
+
+			// Set CSP if configured
+			// 설정된 경우 CSP 설정
+			if config.ContentSecurityPolicy != "" {
+				w.Header().Set("Content-Security-Policy", config.ContentSecurityPolicy)
+			}
 
 			next.ServeHTTP(w, r)
 		})

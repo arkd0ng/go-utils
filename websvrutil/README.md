@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.007
+**Version / 버전**: v1.11.008
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.007) / 현재 기능
+## Current Features (v1.11.008) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -181,6 +181,32 @@ Built-in middleware for common use cases.
 - Constant-time password comparison / 상수 시간 비밀번호 비교
 - Customizable realm and validator function / 커스터마이즈 가능한 영역 및 검증자 함수
 - Stores username in context for later use / 나중에 사용하기 위해 컨텍스트에 사용자 이름 저장
+
+**RateLimiter Middleware / Rate Limiter 미들웨어**:
+- `RateLimiter(requests, window)` - IP-based rate limiting / IP 기반 rate limiting
+- `RateLimiterWithConfig(config)` - Custom rate limiter configuration / 커스텀 rate limiter 설정
+- Token bucket algorithm with sliding window / 슬라이딩 윈도우와 함께 토큰 버킷 알고리즘
+- Returns 429 Too Many Requests when limit exceeded / 제한 초과 시 429 Too Many Requests 반환
+- X-RateLimit headers (Limit, Remaining, Reset) / X-RateLimit 헤더 (제한, 남은 수, 리셋 시간)
+- Customizable key function (IP, API key, etc.) / 커스터마이즈 가능한 키 함수
+
+**Compression Middleware / 압축 미들웨어**:
+- `Compression()` - Gzip compression for responses / 응답에 대한 Gzip 압축
+- `CompressionWithConfig(config)` - Custom compression configuration / 커스텀 압축 설정
+- Automatic compression when client supports gzip / 클라이언트가 gzip을 지원할 때 자동 압축
+- Configurable compression level (1-9) / 설정 가능한 압축 레벨
+- Default minimum size: 1KB / 기본 최소 크기: 1KB
+- Sets Content-Encoding header / Content-Encoding 헤더 설정
+
+**SecureHeaders Middleware / 보안 헤더 미들웨어**:
+- `SecureHeaders()` - Adds security-related HTTP headers / 보안 관련 HTTP 헤더 추가
+- `SecureHeadersWithConfig(config)` - Custom secure headers configuration / 커스텀 보안 헤더 설정
+- X-Frame-Options (SAMEORIGIN) - Clickjacking protection / 클릭재킹 보호
+- X-Content-Type-Options (nosniff) - MIME sniffing protection / MIME 스니핑 보호
+- X-XSS-Protection (1; mode=block) - XSS protection / XSS 보호
+- Strict-Transport-Security (HSTS) - HTTPS enforcement / HTTPS 강제
+- Content-Security-Policy - CSP support / CSP 지원
+- Referrer-Policy - Referrer control / 리퍼러 제어
 
 ## Quick Start / 빠른 시작
 
@@ -506,6 +532,7 @@ The following features are planned for future releases:
 - ✅ v1.11.005: Response Helpers / 응답 헬퍼
 - ✅ v1.11.006: Middleware (Recovery, Logger, CORS) / 미들웨어 (복구, 로거, CORS)
 - ✅ v1.11.007: Additional Middleware (RequestID, Timeout, BasicAuth) / 추가 미들웨어 (요청 ID, 타임아웃, Basic 인증)
+- ✅ v1.11.008: Advanced Middleware (RateLimiter, Compression, SecureHeaders) / 고급 미들웨어 (Rate Limiter, 압축, 보안 헤더)
 
 ## Documentation / 문서
 
