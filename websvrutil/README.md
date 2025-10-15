@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.006
+**Version / 버전**: v1.11.007
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.006) / 현재 기능
+## Current Features (v1.11.007) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -160,6 +160,27 @@ Built-in middleware for common use cases.
 - Configurable origins, methods, headers / 설정 가능한 오리진, 메서드, 헤더
 - Automatic preflight request handling / 자동 프리플라이트 요청 처리
 - Credentials and max-age support / 자격 증명 및 max-age 지원
+
+**RequestID Middleware / 요청 ID 미들웨어**:
+- `RequestID()` - Adds unique request ID to each request / 각 요청에 고유한 요청 ID 추가
+- `RequestIDWithConfig(config)` - Custom RequestID configuration / 커스텀 요청 ID 설정
+- Stores ID in context and response headers / 컨텍스트 및 응답 헤더에 ID 저장
+- Customizable header name and ID generator / 커스터마이즈 가능한 헤더 이름 및 ID 생성기
+- Preserves existing request ID if present / 기존 요청 ID가 있으면 보존
+
+**Timeout Middleware / 타임아웃 미들웨어**:
+- `Timeout(duration)` - Enforces request timeout / 요청 타임아웃 적용
+- `TimeoutWithConfig(config)` - Custom timeout configuration / 커스텀 타임아웃 설정
+- Sends 503 Service Unavailable on timeout / 타임아웃 시 503 Service Unavailable 전송
+- Configurable timeout duration and message / 설정 가능한 타임아웃 기간 및 메시지
+- Default timeout: 30 seconds / 기본 타임아웃: 30초
+
+**BasicAuth Middleware / Basic 인증 미들웨어**:
+- `BasicAuth(username, password)` - HTTP Basic Authentication / HTTP Basic Authentication
+- `BasicAuthWithConfig(config)` - Custom BasicAuth configuration / 커스텀 Basic 인증 설정
+- Constant-time password comparison / 상수 시간 비밀번호 비교
+- Customizable realm and validator function / 커스터마이즈 가능한 영역 및 검증자 함수
+- Stores username in context for later use / 나중에 사용하기 위해 컨텍스트에 사용자 이름 저장
 
 ## Quick Start / 빠른 시작
 
@@ -484,6 +505,7 @@ The following features are planned for future releases:
 - ✅ v1.11.004: Context (Part 1) / 컨텍스트 (1부)
 - ✅ v1.11.005: Response Helpers / 응답 헬퍼
 - ✅ v1.11.006: Middleware (Recovery, Logger, CORS) / 미들웨어 (복구, 로거, CORS)
+- ✅ v1.11.007: Additional Middleware (RequestID, Timeout, BasicAuth) / 추가 미들웨어 (요청 ID, 타임아웃, Basic 인증)
 
 ## Documentation / 문서
 

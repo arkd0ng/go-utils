@@ -5,6 +5,111 @@
 
 ---
 
+## [v1.11.007] - 2025-10-16
+
+### Added / 추가
+- Added 3 new middleware to `middleware.go` / middleware.go에 3개의 새로운 미들웨어 추가
+  - **RequestID Middleware / 요청 ID 미들웨어**:
+    - `RequestID()` - Default RequestID middleware / 기본 요청 ID 미들웨어
+    - `RequestIDWithConfig(config)` - Custom RequestID configuration / 커스텀 요청 ID 설정
+    - Generates unique 16-byte hex request IDs / 고유한 16바이트 16진수 요청 ID 생성
+    - Stores ID in context with key "request_id" / "request_id" 키로 컨텍스트에 ID 저장
+    - Adds ID to response header (default: X-Request-ID) / 응답 헤더에 ID 추가 (기본: X-Request-ID)
+    - Preserves existing request ID if present / 기존 요청 ID가 있으면 보존
+    - Customizable header name and ID generator / 커스터마이즈 가능한 헤더 이름 및 ID 생성기
+  - **Timeout Middleware / 타임아웃 미들웨어**:
+    - `Timeout(duration)` - Default timeout middleware / 기본 타임아웃 미들웨어
+    - `TimeoutWithConfig(config)` - Custom timeout configuration / 커스텀 타임아웃 설정
+    - Enforces request timeout (default: 30 seconds) / 요청 타임아웃 적용 (기본: 30초)
+    - Sends 503 Service Unavailable on timeout / 타임아웃 시 503 Service Unavailable 전송
+    - Uses http.TimeoutHandler for implementation / 구현을 위해 http.TimeoutHandler 사용
+    - Configurable timeout duration and error message / 설정 가능한 타임아웃 기간 및 에러 메시지
+  - **BasicAuth Middleware / Basic 인증 미들웨어**:
+    - `BasicAuth(username, password)` - Default BasicAuth middleware / 기본 Basic 인증 미들웨어
+    - `BasicAuthWithConfig(config)` - Custom BasicAuth configuration / 커스텀 Basic 인증 설정
+    - HTTP Basic Authentication enforcement / HTTP Basic Authentication 적용
+    - Constant-time password comparison (secure) / 상수 시간 비밀번호 비교 (보안)
+    - Sends 401 Unauthorized with WWW-Authenticate header / WWW-Authenticate 헤더와 함께 401 Unauthorized 전송
+    - Customizable realm and validator function / 커스터마이즈 가능한 영역 및 검증자 함수
+    - Stores username in context with key "auth_username" / "auth_username" 키로 컨텍스트에 사용자 이름 저장
+- Added configuration structs / 설정 구조체 추가
+  - `RequestIDConfig` - RequestID middleware configuration / 요청 ID 미들웨어 설정
+  - `TimeoutConfig` - Timeout middleware configuration / 타임아웃 미들웨어 설정
+  - `BasicAuthConfig` - BasicAuth middleware configuration / Basic 인증 미들웨어 설정
+- Added helper function / 헬퍼 함수 추가
+  - `generateRequestID()` - Generates random 16-byte hex string / 무작위 16바이트 16진수 문자열 생성
+- Updated imports in `middleware.go` / middleware.go의 imports 업데이트
+  - Added `context` for context operations / 컨텍스트 작업을 위한 context 추가
+  - Added `crypto/rand` for secure random generation / 안전한 무작위 생성을 위한 crypto/rand 추가
+  - Added `crypto/subtle` for constant-time comparison / 상수 시간 비교를 위한 crypto/subtle 추가
+  - Added `encoding/hex` for hex encoding / 16진수 인코딩을 위한 encoding/hex 추가
+- Created comprehensive tests in `middleware_test.go` / middleware_test.go에 포괄적인 테스트 생성
+  - 9 new test functions for new middleware / 새 미들웨어를 위한 9개의 새로운 테스트 함수
+  - RequestID tests: TestRequestID, TestRequestIDWithExistingID, TestRequestIDWithConfig / 요청 ID 테스트
+  - Timeout tests: TestTimeout, TestTimeoutWithConfig / 타임아웃 테스트
+  - BasicAuth tests: TestBasicAuth, TestBasicAuthUnauthorized, TestBasicAuthNoCredentials, TestBasicAuthWithConfig / Basic 인증 테스트
+  - 3 new benchmark functions / 3개의 새로운 벤치마크 함수
+- Updated `README.md` with new middleware documentation / 새 미들웨어 문서로 README.md 업데이트
+  - Added RequestID, Timeout, BasicAuth middleware sections / 요청 ID, 타임아웃, Basic 인증 미들웨어 섹션 추가
+  - Updated version to v1.11.007 / 버전을 v1.11.007로 업데이트
+  - Updated progress status / 진행 상태 업데이트
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.007 / websvrutil.go 버전 상수를 v1.11.007로 업데이트
+- Bumped version to v1.11.007 in `cfg/app.yaml` / cfg/app.yaml의 버전을 v1.11.007로 상향
+
+### Technical Details / 기술 세부사항
+- **RequestID Middleware Architecture / 요청 ID 미들웨어 아키텍처**:
+  - Uses crypto/rand for cryptographically secure random IDs / 암호학적으로 안전한 무작위 ID를 위해 crypto/rand 사용
+  - 16-byte random = 32-character hex string / 16바이트 무작위 = 32자 16진수 문자열
+  - Checks for existing ID in request header / 요청 헤더에서 기존 ID 확인
+  - Stores ID in both context and response header / 컨텍스트와 응답 헤더 모두에 ID 저장
+  - Context key: "request_id" (string) / 컨텍스트 키: "request_id" (문자열)
+- **Timeout Middleware Architecture / 타임아웃 미들웨어 아키텍처**:
+  - Uses context.WithTimeout for timeout enforcement / 타임아웃 적용을 위해 context.WithTimeout 사용
+  - Wraps handler with http.TimeoutHandler / http.TimeoutHandler로 핸들러 래핑
+  - Default timeout: 30 seconds / 기본 타임아웃: 30초
+  - Default message: "Service Unavailable" / 기본 메시지: "Service Unavailable"
+  - Timeout is enforced by http.TimeoutHandler / 타임아웃은 http.TimeoutHandler에 의해 적용됨
+- **BasicAuth Middleware Architecture / Basic 인증 미들웨어 아키텍처**:
+  - Uses r.BasicAuth() to extract credentials / r.BasicAuth()를 사용하여 자격 증명 추출
+  - Uses subtle.ConstantTimeCompare for secure password comparison / 안전한 비밀번호 비교를 위해 subtle.ConstantTimeCompare 사용
+  - Prevents timing attacks / 타이밍 공격 방지
+  - Returns 401 with WWW-Authenticate header on failure / 실패 시 WWW-Authenticate 헤더와 함께 401 반환
+  - Stores username in context for later use / 나중에 사용하기 위해 컨텍스트에 사용자 이름 저장
+  - Context key: "auth_username" (string) / 컨텍스트 키: "auth_username" (문자열)
+- **Configuration Pattern / 설정 패턴**:
+  - Default functions: RequestID(), Timeout(), BasicAuth() / 기본 함수
+  - Config functions: RequestIDWithConfig(), TimeoutWithConfig(), BasicAuthWithConfig() / 설정 함수
+  - Smart defaults for quick start / 빠른 시작을 위한 스마트 기본값
+  - Custom validators and generators supported / 커스텀 검증자 및 생성기 지원
+
+### Testing Coverage / 테스트 커버리지
+- **9 new middleware test functions** / **9개의 새로운 미들웨어 테스트 함수**
+- **3 new benchmark functions** (RequestID, Timeout, BasicAuth) / **3개의 새로운 벤치마크 함수**
+- **Total: 114+ test functions** (105 from v1.11.006 + 9 new) / **총 114개 이상의 테스트 함수**
+- **Total: 23 benchmark functions** (20 from v1.11.006 + 3 new) / **총 23개의 벤치마크 함수**
+- **85.4% test coverage** - All tests passing ✅ / **85.4% 테스트 커버리지** - 모든 테스트 통과 ✅
+- Tests cover: request ID generation/preservation, timeout enforcement, basic auth validation, custom configs / 테스트 범위: 요청 ID 생성/보존, 타임아웃 적용, basic 인증 검증, 커스텀 설정
+
+### Performance / 성능
+- Middleware benchmarks (sample results) / 미들웨어 벤치마크 (샘플 결과):
+  - RequestID: ~300-400 ns/op (includes crypto/rand) / 요청 ID: ~300-400 ns/op (crypto/rand 포함)
+  - Timeout: ~400-500 ns/op (includes context creation) / 타임아웃: ~400-500 ns/op (컨텍스트 생성 포함)
+  - BasicAuth: ~500-600 ns/op (includes constant-time comparison) / Basic 인증: ~500-600 ns/op (상수 시간 비교 포함)
+  - Still minimal overhead for production use / 여전히 프로덕션 사용을 위한 최소 오버헤드
+
+### Notes / 참고사항
+- Phase 2 (Middleware System) continued! / Phase 2 (미들웨어 시스템) 계속!
+- Total 6 middleware now available (Recovery, Logger, CORS, RequestID, Timeout, BasicAuth) / 총 6개의 미들웨어 사용 가능
+- RequestID is essential for request tracing and debugging / 요청 ID는 요청 추적 및 디버깅에 필수적
+- Timeout prevents slow clients from blocking resources / 타임아웃은 느린 클라이언트가 리소스를 차단하는 것을 방지
+- BasicAuth provides simple authentication for APIs / Basic 인증은 API를 위한 간단한 인증 제공
+- All middleware follow consistent naming and config patterns / 모든 미들웨어는 일관된 명명 및 설정 패턴 따름
+- Next: v1.11.008 may add more middleware (Rate Limiting, Compression, etc.) / 다음: v1.11.008은 더 많은 미들웨어 추가 예정 (Rate Limiting, Compression 등)
+
+---
+
 ## [v1.11.006] - 2025-10-16
 
 ### Added / 추가

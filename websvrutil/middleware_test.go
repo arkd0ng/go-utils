@@ -415,3 +415,297 @@ func BenchmarkCORS(b *testing.B) {
 		handler.ServeHTTP(rec, req)
 	}
 }
+
+// TestRequestID tests the RequestID middleware.
+// TestRequestID는 RequestID 미들웨어를 테스트합니다.
+func TestRequestID(t *testing.T) {
+	middleware := RequestID()
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Check request ID in context
+		// 컨텍스트에서 요청 ID 확인
+		requestID := r.Context().Value("request_id")
+		if requestID == nil {
+			t.Error("Request ID not found in context")
+		}
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	// Check response header
+	// 응답 헤더 확인
+	requestID := rec.Header().Get("X-Request-ID")
+	if requestID == "" {
+		t.Error("X-Request-ID header not set")
+	}
+	if len(requestID) != 32 { // 16 bytes hex = 32 characters
+		t.Errorf("Expected request ID length 32, got %d", len(requestID))
+	}
+}
+
+// TestRequestIDWithExistingID tests that existing request ID is preserved.
+// TestRequestIDWithExistingID는 기존 요청 ID가 보존되는지 테스트합니다.
+func TestRequestIDWithExistingID(t *testing.T) {
+	middleware := RequestID()
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	req.Header.Set("X-Request-ID", "existing-id-12345")
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	// Check that existing ID is preserved
+	// 기존 ID가 보존되는지 확인
+	requestID := rec.Header().Get("X-Request-ID")
+	if requestID != "existing-id-12345" {
+		t.Errorf("Expected request ID 'existing-id-12345', got '%s'", requestID)
+	}
+}
+
+// TestRequestIDWithConfig tests custom configuration.
+// TestRequestIDWithConfig는 커스텀 설정을 테스트합니다.
+func TestRequestIDWithConfig(t *testing.T) {
+	called := false
+	middleware := RequestIDWithConfig(RequestIDConfig{
+		Header: "X-Custom-Request-ID",
+		Generator: func() string {
+			called = true
+			return "custom-id-67890"
+		},
+	})
+
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	if !called {
+		t.Error("Custom generator not called")
+	}
+
+	requestID := rec.Header().Get("X-Custom-Request-ID")
+	if requestID != "custom-id-67890" {
+		t.Errorf("Expected request ID 'custom-id-67890', got '%s'", requestID)
+	}
+}
+
+// TestTimeout tests the Timeout middleware.
+// TestTimeout는 Timeout 미들웨어를 테스트합니다.
+func TestTimeout(t *testing.T) {
+	middleware := Timeout(100 * time.Millisecond)
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Fast response, should not timeout
+		// 빠른 응답, 타임아웃 발생하지 않음
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", rec.Code)
+	}
+}
+
+// TestTimeoutWithConfig tests custom timeout configuration.
+// TestTimeoutWithConfig는 커스텀 타임아웃 설정을 테스트합니다.
+func TestTimeoutWithConfig(t *testing.T) {
+	middleware := TimeoutWithConfig(TimeoutConfig{
+		Timeout: 50 * time.Millisecond,
+		Message: "Request timed out",
+	})
+
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", rec.Code)
+	}
+}
+
+// TestBasicAuth tests the BasicAuth middleware with valid credentials.
+// TestBasicAuth는 유효한 자격 증명으로 BasicAuth 미들웨어를 테스트합니다.
+func TestBasicAuth(t *testing.T) {
+	middleware := BasicAuth("admin", "password")
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Check username in context
+		// 컨텍스트에서 사용자 이름 확인
+		username := r.Context().Value("auth_username")
+		if username != "admin" {
+			t.Errorf("Expected username 'admin', got '%v'", username)
+		}
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Authenticated"))
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	req.SetBasicAuth("admin", "password")
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", rec.Code)
+	}
+	if rec.Body.String() != "Authenticated" {
+		t.Errorf("Expected body 'Authenticated', got '%s'", rec.Body.String())
+	}
+}
+
+// TestBasicAuthUnauthorized tests BasicAuth with invalid credentials.
+// TestBasicAuthUnauthorized는 잘못된 자격 증명으로 BasicAuth를 테스트합니다.
+func TestBasicAuthUnauthorized(t *testing.T) {
+	middleware := BasicAuth("admin", "password")
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t.Error("Handler should not be called for unauthorized request")
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	req.SetBasicAuth("admin", "wrongpassword")
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Errorf("Expected status 401, got %d", rec.Code)
+	}
+
+	wwwAuth := rec.Header().Get("WWW-Authenticate")
+	if wwwAuth != `Basic realm="Restricted"` {
+		t.Errorf("Expected WWW-Authenticate header, got '%s'", wwwAuth)
+	}
+}
+
+// TestBasicAuthNoCredentials tests BasicAuth without credentials.
+// TestBasicAuthNoCredentials는 자격 증명 없이 BasicAuth를 테스트합니다.
+func TestBasicAuthNoCredentials(t *testing.T) {
+	middleware := BasicAuth("admin", "password")
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t.Error("Handler should not be called for request without credentials")
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Errorf("Expected status 401, got %d", rec.Code)
+	}
+}
+
+// TestBasicAuthWithConfig tests custom BasicAuth configuration.
+// TestBasicAuthWithConfig는 커스텀 BasicAuth 설정을 테스트합니다.
+func TestBasicAuthWithConfig(t *testing.T) {
+	middleware := BasicAuthWithConfig(BasicAuthConfig{
+		Validator: func(username, password string) bool {
+			return username == "user1" && password == "secret"
+		},
+		Realm: "Admin Area",
+	})
+
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	// Test valid credentials
+	// 유효한 자격 증명 테스트
+	req := httptest.NewRequest("GET", "/test", nil)
+	req.SetBasicAuth("user1", "secret")
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", rec.Code)
+	}
+
+	// Test invalid credentials
+	// 잘못된 자격 증명 테스트
+	req2 := httptest.NewRequest("GET", "/test", nil)
+	req2.SetBasicAuth("user1", "wrong")
+	rec2 := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec2, req2)
+
+	if rec2.Code != http.StatusUnauthorized {
+		t.Errorf("Expected status 401, got %d", rec2.Code)
+	}
+
+	wwwAuth := rec2.Header().Get("WWW-Authenticate")
+	if wwwAuth != `Basic realm="Admin Area"` {
+		t.Errorf("Expected custom realm in WWW-Authenticate, got '%s'", wwwAuth)
+	}
+}
+
+// BenchmarkRequestID benchmarks the RequestID middleware.
+// BenchmarkRequestID는 RequestID 미들웨어를 벤치마크합니다.
+func BenchmarkRequestID(b *testing.B) {
+	middleware := RequestID()
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+	}
+}
+
+// BenchmarkTimeout benchmarks the Timeout middleware.
+// BenchmarkTimeout는 Timeout 미들웨어를 벤치마크합니다.
+func BenchmarkTimeout(b *testing.B) {
+	middleware := Timeout(5 * time.Second)
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+	}
+}
+
+// BenchmarkBasicAuth benchmarks the BasicAuth middleware.
+// BenchmarkBasicAuth는 BasicAuth 미들웨어를 벤치마크합니다.
+func BenchmarkBasicAuth(b *testing.B) {
+	middleware := BasicAuth("admin", "password")
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	req.SetBasicAuth("admin", "password")
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+	}
+}
