@@ -6,6 +6,66 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.002] - 2025-10-15
+
+### Enhanced / 보강됨
+
+#### Comprehensive Test Suite / 포괄적인 테스트 스위트
+
+**Test Coverage / 테스트 커버리지:**
+- **87 test cases** across 9 test suites / 9개 테스트 스위트에 걸쳐 87개 테스트 케이스
+- **10 benchmark tests** for performance measurement / 성능 측정을 위한 10개 벤치마크 테스트
+- **55.2% code coverage** / 55.2% 코드 커버리지
+
+**Test Suites / 테스트 스위트:**
+1. **TestFileReading** (8 tests): ReadFile, ReadString, ReadLines, ReadJSON, ReadYAML, ReadCSV, ReadBytes, ReadChunk
+2. **TestFileWriting** (9 tests): WriteFile, WriteString, WriteLines, WriteJSON, WriteYAML, WriteCSV, WriteAtomic, AppendFile, AppendLines
+3. **TestPathOperations** (17 tests): Join, Split, Base, Dir, Ext, Abs, CleanPath, Normalize, ToSlash, FromSlash, IsAbs, IsValid, IsSafe, Match, WithoutExt, ChangeExt, HasExt
+4. **TestFileInformation** (11 tests): Exists, IsFile, IsDir, IsSymlink, Size, SizeHuman, Chmod, IsReadable, IsWritable, ModTime, Touch
+5. **TestCopyOperations** (4 tests): CopyFile, CopyFile_WithOverwrite, CopyFile_WithProgress, CopyDir
+6. **TestMoveOperations** (3 tests): MoveFile, Rename, RenameExt
+7. **TestDeleteOperations** (7 tests): DeleteFile, DeleteDir, DeleteRecursive, DeletePattern, DeleteFiles, Clean, RemoveEmpty
+8. **TestDirectoryOperations** (9 tests): MkdirAll, CreateTemp, CreateTempDir, IsEmpty, DirSize, ListFiles, ListDirs, ListAll, FindFiles
+9. **TestHashOperations** (10 tests): MD5, SHA1, SHA256, SHA512, Hash, HashBytes, CompareFiles, CompareHash, Checksum, VerifyChecksum
+
+**Benchmark Tests / 벤치마크 테스트:**
+1. `BenchmarkWriteFile` - File writing performance / 파일 쓰기 성능
+2. `BenchmarkReadFile` - File reading performance / 파일 읽기 성능
+3. `BenchmarkWriteString` - String writing performance / 문자열 쓰기 성능
+4. `BenchmarkReadString` - String reading performance / 문자열 읽기 성능
+5. `BenchmarkCopyFile` - File copying performance / 파일 복사 성능
+6. `BenchmarkSHA256` - SHA256 hashing performance / SHA256 해싱 성능
+7. `BenchmarkMD5` - MD5 hashing performance / MD5 해싱 성능
+8. `BenchmarkJSON/WriteJSON` - JSON writing performance / JSON 쓰기 성능
+9. `BenchmarkJSON/ReadJSON` - JSON reading performance / JSON 읽기 성능
+10. `BenchmarkYAML/WriteYAML` - YAML writing performance / YAML 쓰기 성능
+11. `BenchmarkYAML/ReadYAML` - YAML reading performance / YAML 읽기 성능
+12. `BenchmarkListFiles` - Directory listing performance / 디렉토리 나열 성능
+
+**Benchmark Results / 벤치마크 결과 (darwin/amd64):**
+- WriteFile: ~52,000 ns/op, 584 B/op, 6 allocs/op
+- ReadFile: ~12,000 ns/op, 920 B/op, 5 allocs/op
+- CopyFile (10KB): ~164,000 ns/op, 34KB/op, 22 allocs/op
+- SHA256 (10KB): ~56,000 ns/op, 33KB/op, 9 allocs/op
+- MD5 (10KB): ~42,000 ns/op, 33KB/op, 9 allocs/op
+- JSON Write: ~75,000 ns/op, 888 B/op, 14 allocs/op
+- JSON Read: ~23,000 ns/op, 1.7KB/op, 29 allocs/op
+- YAML Write: ~50,000 ns/op, 7.4KB/op, 33 allocs/op
+- YAML Read: ~22,000 ns/op, 8.7KB/op, 61 allocs/op
+- ListFiles (100 files): ~86,000 ns/op, 23KB/op, 244 allocs/op
+
+**Test Features / 테스트 기능:**
+- Comprehensive edge case coverage / 포괄적인 엣지 케이스 커버리지
+- Automatic cleanup with defer / defer를 사용한 자동 정리
+- Temporary directory usage for isolation / 격리를 위한 임시 디렉토리 사용
+- Error handling validation / 에러 처리 검증
+- Cross-platform path handling / 크로스 플랫폼 경로 처리
+- Progress callback testing / 진행 상황 콜백 테스트
+- Copy options testing (overwrite, progress, filter) / 복사 옵션 테스트
+- All hash algorithms tested / 모든 해시 알고리즘 테스트
+
+---
+
 ## [v1.9.001] - 2025-10-15
 
 ### Added / 추가됨

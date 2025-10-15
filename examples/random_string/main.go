@@ -11,14 +11,14 @@ import (
 
 func main() {
 	// Create results directories if they don't exist / 결과 디렉토리가 없다면 새롭게 생성
-	if err := os.MkdirAll("./results/logs", 0755); err != nil {
+	if err := os.MkdirAll("logs/", 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create logs directory: %v\n", err)
 		os.Exit(1)
 	}
 
 	// Initialize logger / 로거 초기화
 	logger, err := logging.New(
-		logging.WithFilePath(fmt.Sprintf("./results/logs/random_example_%s.log", time.Now().Format("20060102_150405"))),
+		logging.WithFilePath(fmt.Sprintf("logs/random_example_%s.log", time.Now().Format("20060102_150405"))),
 		logging.WithLevel(logging.DEBUG),
 		logging.WithStdout(true),
 	)

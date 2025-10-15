@@ -39,7 +39,7 @@ import (
 
 // Version is the current version of the fileutil package
 // Version은 fileutil 패키지의 현재 버전입니다
-const Version = "v1.9.001"
+const Version = "v1.9.002"
 
 // Default file and directory permissions / 기본 파일 및 디렉토리 권한
 const (
