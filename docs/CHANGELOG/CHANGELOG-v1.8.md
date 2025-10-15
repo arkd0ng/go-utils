@@ -6,6 +6,52 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.012] - 2025-10-15
+
+### Added / 추가
+- **New Functions** (3 functions): GetOrSet, SetDefault, Defaults / 새 함수 (3개): GetOrSet, SetDefault, Defaults
+  - Category: Default Functions / 기본값 함수
+  - **GetOrSet**: Retrieve value if exists, otherwise set and return default / 값이 존재하면 검색하고, 그렇지 않으면 기본값을 설정하고 반환
+    - Signature: `func GetOrSet[K comparable, V any](m map[K]V, key K, defaultValue V) V`
+    - Modifies map in-place if key doesn't exist / 키가 존재하지 않으면 맵을 제자리에서 수정
+    - Returns existing value or newly set default value / 기존 값 또는 새로 설정된 기본값 반환
+    - Time Complexity: O(1), Space Complexity: O(1)
+  - **SetDefault**: Set key to default only if key doesn't exist / 키가 존재하지 않는 경우에만 키를 기본값으로 설정
+    - Signature: `func SetDefault[K comparable, V any](m map[K]V, key K, defaultValue V) bool`
+    - Returns true if key was set, false if already existed / 키가 설정되었으면 true, 이미 존재했으면 false
+    - Does not overwrite existing values / 기존 값을 덮어쓰지 않음
+    - Time Complexity: O(1), Space Complexity: O(1)
+  - **Defaults**: Merge original map with default values / 원본 맵을 기본값과 병합
+    - Signature: `func Defaults[K comparable, V any](m, defaults map[K]V) map[K]V`
+    - Creates new map with original values taking precedence / 원본 값이 우선하는 새 맵 생성
+    - Missing keys from original are filled with defaults / 원본에서 누락된 키는 기본값으로 채워짐
+    - Time Complexity: O(n + d), Space Complexity: O(n + d)
+
+### Tests / 테스트
+- Added comprehensive tests in `maputil/default_test.go`:
+  - **TestGetOrSet**: 7 sub-tests / 7개 하위 테스트
+    - get existing key, set new key, empty map, zero value, string map, struct map, cache pattern / 기존 키 가져오기, 새 키 설정, 빈 맵, 제로 값, 문자열 맵, 구조체 맵, 캐시 패턴
+  - **TestSetDefault**: 7 sub-tests / 7개 하위 테스트
+    - set new key, existing key, empty map, zero value, multiple defaults, nil default, configuration / 새 키 설정, 기존 키, 빈 맵, 제로 값, 여러 기본값, nil 기본값, 설정
+  - **TestDefaults**: 8 sub-tests / 8개 하위 테스트
+    - basic merge, empty original, empty defaults, both empty, immutability, complex types, precedence, user preferences / 기본 병합, 빈 원본, 빈 기본값, 둘 다 빈 경우, 불변성, 복잡한 타입, 우선순위, 사용자 기본 설정
+  - **Benchmarks**: 6 benchmarks for GetOrSet, SetDefault, Defaults / 6개 벤치마크
+    - GetOrSet (mixed keys, existing keys only) / GetOrSet (혼합 키, 기존 키만)
+    - SetDefault (mixed keys, existing keys only) / SetDefault (혼합 키, 기존 키만)
+    - Defaults (small maps, large maps) / Defaults (작은 맵, 큰 맵)
+
+### Documentation / 문서
+- Added complete bilingual documentation in `maputil/default.go`
+- Updated examples in `examples/maputil/main.go` (utilityFunctions section) / 예제 업데이트
+  - Added examples for GetOrSet, SetDefault, Defaults / GetOrSet, SetDefault, Defaults 예제 추가
+  - Shows cache initialization, config management, user preference patterns / 캐시 초기화, 설정 관리, 사용자 기본 설정 패턴 표시
+- Function count: 87 → 90 (9 of 17 utility functions) / 함수 개수: 87 → 90 (17개 유틸리티 함수 중 9개)
+
+### Notes / 참고사항
+- Seventh through ninth of 17 new utility functions planned for maputil / maputil에 계획된 17개 신규 유틸리티 함수 중 7~9번째
+- These functions are essential for configuration management and lazy initialization / 이 함수들은 설정 관리 및 지연 초기화에 필수적
+- Python dict.setdefault() and Lodash _.defaults() inspired / Python dict.setdefault()와 Lodash _.defaults()에서 영감
+
 ## [v1.8.011] - 2025-10-15
 
 ### Added / 추가

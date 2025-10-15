@@ -1446,4 +1446,71 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   Note: Original map unchanged (immutable)")
 	logger.Info("   💡 Use case: Bulk price adjustments, data normalization, unit conversions")
 	logger.Info("")
+
+	// 7. GetOrSet - Get value or set default / 값 가져오기 또는 기본값 설정
+	logger.Info("7️⃣  GetOrSet() - Get value or set default / 값 가져오기 또는 기본값 설정")
+	logger.Info("   Purpose: Ensure a key always has a value")
+	logger.Info("   목적: 키가 항상 값을 가지도록 보장")
+
+	cache := map[string]int{"a": 1, "b": 2}
+	logger.Info("   Input map:", "cache", cache)
+
+	// Get existing value
+	val1 := maputil.GetOrSet(cache, "a", 10)
+	logger.Info("   ✅ Get existing key 'a':", "value", val1)
+
+	// Set and get new value
+	val2 := maputil.GetOrSet(cache, "c", 10)
+	logger.Info("   ✅ Get new key 'c' (sets to 10):", "value", val2)
+	logger.Info("   Updated cache:", "cache", cache)
+
+	logger.Info("   Note: Map is modified in-place, useful for lazy initialization")
+	logger.Info("   💡 Use case: Cache initialization, default value management, lazy loading")
+	logger.Info("")
+
+	// 8. SetDefault - Set key only if not exists / 키가 존재하지 않을 때만 설정
+	logger.Info("8️⃣  SetDefault() - Set key only if not exists / 키가 존재하지 않을 때만 설정")
+	logger.Info("   Purpose: Initialize keys without overwriting")
+	logger.Info("   목적: 덮어쓰지 않고 키 초기화")
+
+	configMap := map[string]string{"host": "localhost"}
+	logger.Info("   Input map:", "config", configMap)
+
+	// Set new key
+	wasSet1 := maputil.SetDefault(configMap, "port", "8080")
+	logger.Info("   ✅ Set new key 'port':", "wasSet", wasSet1, "config", configMap)
+
+	// Try to overwrite existing key (won't work)
+	wasSet2 := maputil.SetDefault(configMap, "host", "0.0.0.0")
+	logger.Info("   ❌ Try to overwrite 'host':", "wasSet", wasSet2, "config", configMap)
+
+	logger.Info("   Note: Returns true if key was set, false if already existed")
+	logger.Info("   💡 Use case: Safe config initialization, default value setup")
+	logger.Info("")
+
+	// 9. Defaults - Merge with default values / 기본값과 병합
+	logger.Info("9️⃣  Defaults() - Merge with default values / 기본값과 병합")
+	logger.Info("   Purpose: Apply default values for missing keys")
+	logger.Info("   목적: 누락된 키에 대해 기본값 적용")
+
+	userConfig := map[string]string{"host": "localhost"}
+	defaultConfig := map[string]string{
+		"host":    "0.0.0.0",
+		"port":    "8080",
+		"timeout": "30s",
+	}
+	logger.Info("   User config:", "userConfig", userConfig)
+	logger.Info("   Default config:", "defaultConfig", defaultConfig)
+
+	fullConfig := maputil.Defaults(userConfig, defaultConfig)
+	logger.Info("   ✅ Merged config:", "fullConfig", fullConfig)
+	logger.Info("   Note: User values take precedence, new map created (immutable)")
+
+	// Empty user config case
+	emptyConfig := map[string]string{}
+	allDefaults := maputil.Defaults(emptyConfig, defaultConfig)
+	logger.Info("   ✅ Empty config merged with defaults:", "result", allDefaults)
+
+	logger.Info("   💡 Use case: Config management, user preferences + system defaults, template rendering")
+	logger.Info("")
 }
