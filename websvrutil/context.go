@@ -602,3 +602,183 @@ func (c *Context) Bind(obj interface{}) error {
 	// Content-Type이 지정되지 않은 경우 폼 바인딩을 기본값으로 사용
 	return c.BindForm(obj)
 }
+
+// Cookie returns the named cookie provided in the request.
+// Cookie는 요청에서 제공된 이름이 지정된 쿠키를 반환합니다.
+//
+// Example / 예제:
+//
+//	cookie, err := ctx.Cookie("session_id")
+//	if err != nil {
+//	    // Cookie not found
+//	}
+func (c *Context) Cookie(name string) (*http.Cookie, error) {
+	return c.Request.Cookie(name)
+}
+
+// SetCookie adds a Set-Cookie header to the response.
+// SetCookie는 응답에 Set-Cookie 헤더를 추가합니다.
+//
+// Example / 예제:
+//
+//	cookie := &http.Cookie{
+//	    Name:     "session_id",
+//	    Value:    "abc123",
+//	    Path:     "/",
+//	    MaxAge:   3600,
+//	    HttpOnly: true,
+//	    Secure:   true,
+//	}
+//	ctx.SetCookie(cookie)
+func (c *Context) SetCookie(cookie *http.Cookie) {
+	http.SetCookie(c.ResponseWriter, cookie)
+}
+
+// DeleteCookie deletes a cookie by setting its MaxAge to -1.
+// DeleteCookie는 MaxAge를 -1로 설정하여 쿠키를 삭제합니다.
+//
+// Example / 예제:
+//
+//	ctx.DeleteCookie("session_id", "/")
+func (c *Context) DeleteCookie(name, path string) {
+	cookie := &http.Cookie{
+		Name:   name,
+		Value:  "",
+		Path:   path,
+		MaxAge: -1,
+	}
+	http.SetCookie(c.ResponseWriter, cookie)
+}
+
+// GetCookie is a convenience method to get a cookie value.
+// GetCookie는 쿠키 값을 가져오는 편의 메서드입니다.
+//
+// Example / 예제:
+//
+//	value := ctx.GetCookie("session_id")
+func (c *Context) GetCookie(name string) string {
+	cookie, err := c.Request.Cookie(name)
+	if err != nil {
+		return ""
+	}
+	return cookie.Value
+}
+
+// AddHeader adds a header value to the response.
+// AddHeader는 응답에 헤더 값을 추가합니다.
+//
+// Unlike SetHeader, this appends the value if the header already exists.
+// SetHeader와 달리 헤더가 이미 존재하는 경우 값을 추가합니다.
+//
+// Example / 예제:
+//
+//	ctx.AddHeader("Set-Cookie", "cookie1=value1")
+//	ctx.AddHeader("Set-Cookie", "cookie2=value2")
+func (c *Context) AddHeader(key, value string) {
+	c.ResponseWriter.Header().Add(key, value)
+}
+
+// GetHeader returns the request header with the given key.
+// GetHeader는 주어진 키의 요청 헤더를 반환합니다.
+//
+// This is an alias for Header() for consistency.
+// 일관성을 위한 Header()의 별칭입니다.
+//
+// Example / 예제:
+//
+//	userAgent := ctx.GetHeader("User-Agent")
+func (c *Context) GetHeader(key string) string {
+	return c.Request.Header.Get(key)
+}
+
+// GetHeaders returns all values for the given header key.
+// GetHeaders는 주어진 헤더 키의 모든 값을 반환합니다.
+//
+// Example / 예제:
+//
+//	acceptEncodings := ctx.GetHeaders("Accept-Encoding")
+func (c *Context) GetHeaders(key string) []string {
+	return c.Request.Header.Values(key)
+}
+
+// HeaderExists checks if a request header exists.
+// HeaderExists는 요청 헤더가 존재하는지 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.HeaderExists("Authorization") {
+//	    // Process authentication
+//	}
+func (c *Context) HeaderExists(key string) bool {
+	_, exists := c.Request.Header[key]
+	return exists
+}
+
+// ContentType returns the Content-Type header of the request.
+// ContentType은 요청의 Content-Type 헤더를 반환합니다.
+//
+// Example / 예제:
+//
+//	contentType := ctx.ContentType()
+func (c *Context) ContentType() string {
+	return c.Request.Header.Get("Content-Type")
+}
+
+// UserAgent returns the User-Agent header of the request.
+// UserAgent는 요청의 User-Agent 헤더를 반환합니다.
+//
+// Example / 예제:
+//
+//	userAgent := ctx.UserAgent()
+func (c *Context) UserAgent() string {
+	return c.Request.Header.Get("User-Agent")
+}
+
+// Referer returns the Referer header of the request.
+// Referer는 요청의 Referer 헤더를 반환합니다.
+//
+// Example / 예제:
+//
+//	referer := ctx.Referer()
+func (c *Context) Referer() string {
+	return c.Request.Header.Get("Referer")
+}
+
+// ClientIP returns the client IP address.
+// ClientIP는 클라이언트 IP 주소를 반환합니다.
+//
+// It checks X-Forwarded-For, X-Real-IP headers first, then falls back to RemoteAddr.
+// X-Forwarded-For, X-Real-IP 헤더를 먼저 확인한 후 RemoteAddr로 대체합니다.
+//
+// Example / 예제:
+//
+//	ip := ctx.ClientIP()
+func (c *Context) ClientIP() string {
+	// Check X-Forwarded-For header
+	// X-Forwarded-For 헤더 확인
+	if xff := c.Request.Header.Get("X-Forwarded-For"); xff != "" {
+		// Return the first IP in the list
+		// 목록의 첫 번째 IP 반환
+		for idx := 0; idx < len(xff); idx++ {
+			if xff[idx] == ',' {
+				return xff[:idx]
+			}
+		}
+		return xff
+	}
+
+	// Check X-Real-IP header
+	// X-Real-IP 헤더 확인
+	if xri := c.Request.Header.Get("X-Real-IP"); xri != "" {
+		return xri
+	}
+
+	// Fall back to RemoteAddr
+	// RemoteAddr로 대체
+	for idx := 0; idx < len(c.Request.RemoteAddr); idx++ {
+		if c.Request.RemoteAddr[idx] == ':' {
+			return c.Request.RemoteAddr[:idx]
+		}
+	}
+	return c.Request.RemoteAddr
+}

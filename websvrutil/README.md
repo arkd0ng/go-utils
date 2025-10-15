@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.013
+**Version / 버전**: v1.11.014
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.013) / 현재 기능
+## Current Features (v1.11.014) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -115,6 +115,22 @@ Request context for accessing path parameters, query strings, headers, and stori
 - `BindJSON(obj interface{}) error` - Bind JSON request body / JSON 요청 본문 바인딩
 - `BindForm(obj interface{}) error` - Bind form data / 폼 데이터 바인딩
 - `BindQuery(obj interface{}) error` - Bind query parameters / 쿼리 매개변수 바인딩
+
+**Cookie Helpers / 쿠키 헬퍼** (v1.11.014+):
+- `Cookie(name string) (*http.Cookie, error)` - Get cookie by name / 이름으로 쿠키 가져오기
+- `SetCookie(cookie *http.Cookie)` - Set response cookie / 응답 쿠키 설정
+- `DeleteCookie(name, path string)` - Delete cookie / 쿠키 삭제
+- `GetCookie(name string) string` - Get cookie value / 쿠키 값 가져오기
+
+**Header Helpers / 헤더 헬퍼** (v1.11.014+):
+- `AddHeader(key, value string)` - Add response header / 응답 헤더 추가
+- `GetHeader(key string) string` - Get request header / 요청 헤더 가져오기
+- `GetHeaders(key string) []string` - Get all header values / 모든 헤더 값 가져오기
+- `HeaderExists(key string) bool` - Check if header exists / 헤더 존재 확인
+- `ContentType() string` - Get Content-Type header / Content-Type 헤더 가져오기
+- `UserAgent() string` - Get User-Agent header / User-Agent 헤더 가져오기
+- `Referer() string` - Get Referer header / Referer 헤더 가져오기
+- `ClientIP() string` - Get client IP address / 클라이언트 IP 주소 가져오기
 
 **Helper Function / 헬퍼 함수**:
 - `GetContext(r *http.Request) *Context` - Get Context from request / 요청에서 Context 가져오기
@@ -628,6 +644,7 @@ The following features are planned for future releases:
 - ✅ v1.11.011: Layout System and Built-in Functions (layouts, 26+ built-in functions) / 레이아웃 시스템 및 내장 함수 (레이아웃, 26개 이상의 내장 함수)
 - ✅ v1.11.012: Hot Reload (automatic template reloading, file watching) / 핫 리로드 (자동 템플릿 재로드, 파일 감시)
 - ✅ v1.11.013: Request Binding (Bind, BindJSON, BindForm, BindQuery) / 요청 바인딩 (Bind, BindJSON, BindForm, BindQuery)
+- ✅ v1.11.014: Cookie & Header Helpers (Cookie, SetCookie, DeleteCookie, GetCookie, AddHeader, GetHeaders, ClientIP) / 쿠키 및 헤더 헬퍼
 
 ## Documentation / 문서
 

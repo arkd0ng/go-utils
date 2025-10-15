@@ -5,6 +5,61 @@
 
 ---
 
+## [v1.11.014] - 2025-10-16
+
+### Added / 추가
+- **Cookie Helpers** / **쿠키 헬퍼** (`context.go`)
+  - `Cookie(name string) (*http.Cookie, error)` - Get cookie by name
+  - `SetCookie(cookie *http.Cookie)` - Set response cookie with full options
+  - `DeleteCookie(name, path string)` - Delete cookie by setting MaxAge to -1
+  - `GetCookie(name string) string` - Convenience method to get cookie value
+
+- **Header Helpers** / **헤더 헬퍼** (`context.go`)
+  - `AddHeader(key, value string)` - Add header value (appends if exists)
+  - `GetHeader(key string) string` - Get request header (alias for Header())
+  - `GetHeaders(key string) []string` - Get all values for a header key
+  - `HeaderExists(key string) bool` - Check if request header exists
+  - `ContentType() string` - Get Content-Type header
+  - `UserAgent() string` - Get User-Agent header
+  - `Referer() string` - Get Referer header
+  - `ClientIP() string` - Get client IP address with X-Forwarded-For, X-Real-IP support
+
+- **Comprehensive Tests** / **종합 테스트** (`cookie_test.go`)
+  - `TestCookie` - Test getting a cookie
+  - `TestCookieNotFound` - Test non-existent cookie
+  - `TestSetCookie` - Test setting a cookie
+  - `TestDeleteCookie` - Test deleting a cookie
+  - `TestGetCookie` - Test convenience method
+  - `TestAddHeader` - Test adding multiple header values
+  - `TestGetHeader` - Test getting request header
+  - `TestGetHeaders` - Test getting multiple header values
+  - `TestHeaderExists` - Test header existence check
+  - `TestContentType` - Test Content-Type helper
+  - `TestUserAgent` - Test User-Agent helper
+  - `TestReferer` - Test Referer helper
+  - `TestClientIP` - Test client IP extraction (4 sub-tests)
+  - **Total: 13 test functions** for cookie and header helpers
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.014
+- Bumped version to v1.11.014 in `cfg/app.yaml`
+- Updated `README.md` with cookie and header helpers documentation
+- Added new file: `cookie_test.go`
+
+### Testing Coverage / 테스트 커버리지
+- **13 new test functions** for cookie and header helpers
+- **Total: 175+ test functions**, **Total: 39 benchmark functions**
+- **78.0% test coverage** - All tests passing ✅
+
+### Notes / 참고사항
+- Cookie helpers provide easy cookie management with full HTTP cookie options
+- Header helpers include convenience methods for common headers (Content-Type, User-Agent, Referer)
+- ClientIP() intelligently extracts IP from X-Forwarded-For, X-Real-IP, or RemoteAddr
+- All methods are thread-safe and integrated into Context
+- Next: v1.11.015+ will add file upload support
+
+---
+
 ## [v1.11.013] - 2025-10-16
 
 ### Added / 추가
