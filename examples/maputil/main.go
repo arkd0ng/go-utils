@@ -76,11 +76,30 @@ func main() {
 	defer logger.Close()
 
 	// Display banner / 배너 표시
-	logger.Banner("maputil Package Examples", maputil.Version)
-	logger.Info("==============================================================================")
-	logger.Info("This example demonstrates all 81 functions in the maputil package")
-	logger.Info("이 예제는 maputil 패키지의 모든 81개 함수를 시연합니다")
-	logger.Info("==============================================================================")
+	logger.Banner("maputil Package - Comprehensive Examples", maputil.Version)
+	logger.Info("")
+	logger.Info("╔════════════════════════════════════════════════════════════════════════════╗")
+	logger.Info("║            Maputil Package - Comprehensive Examples                        ║")
+	logger.Info("║            Maputil 패키지 - 종합 예제                                        ║")
+	logger.Info("╚════════════════════════════════════════════════════════════════════════════╝")
+	logger.Info("")
+
+	logger.Info("📋 Package Information / 패키지 정보")
+	logger.Info("   Package: github.com/arkd0ng/go-utils/maputil")
+	logger.Info("   Description: Extremely simple map utilities (20 lines → 1-2 lines)")
+	logger.Info("   설명: 극도로 간단한 맵 유틸리티 (20줄 → 1-2줄)")
+	logger.Info("   Total Functions: 99+ functions across 14 categories")
+	logger.Info("   Go 1.18+ Generics: Type-safe map operations")
+	logger.Info("   Zero Dependencies: Standard library only (gopkg.in/yaml.v3 excluded)")
+	logger.Info("")
+
+	logger.Info("🌟 Key Features / 주요 기능")
+	logger.Info("   • Type Safety: Go 1.18+ generics with compile-time type checking")
+	logger.Info("   • Functional Style: Inspired by JavaScript, Python map/dict methods")
+	logger.Info("   • Immutability: All operations return new maps (no mutation)")
+	logger.Info("   • Generic Constraints: comparable constraints for keys")
+	logger.Info("   • Nested Map Support: GetNested, SetNested, SafeGet operations")
+	logger.Info("   • 92.8% Test Coverage: 90+ subtests, 17+ benchmarks")
 	logger.Info("")
 
 	// Run all examples / 모든 예제 실행

@@ -6,6 +6,45 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.014] - 2025-10-15
+
+### Enhanced / 보강됨
+
+#### Enhanced Logging Header in Maputil Example / Maputil 예제에 향상된 로깅 헤더 추가
+
+**Changes / 변경사항:**
+- Enhanced `examples/maputil/main.go` with comprehensive header matching sliceutil style
+- Added package information section with emojis (📋 📚 🌟)
+- Updated header to show 99+ functions across 14 categories
+- Bilingual header with key features section
+- Original comprehensive example (1730+ lines) retained with improved header
+- `examples/maputil/main.go`를 sliceutil 스타일과 매칭되는 종합 헤더로 개선
+- 이모지를 포함한 패키지 정보 섹션 추가 (📋 📚 🌟)
+- 14개 카테고리에 걸친 99+ 함수를 보여주는 헤더 업데이트
+- 주요 기능 섹션이 포함된 이중 언어 헤더
+- 향상된 헤더와 함께 원본 종합 예제 (1730+ 줄) 유지
+
+**Header Improvements / 헤더 개선사항:**
+- Package: github.com/arkd0ng/go-utils/maputil
+- Description: Extremely simple map utilities (20 lines → 1-2 lines)
+- Total Functions: 99+ functions across 14 categories
+- Key Features: Type safety, Functional style, Immutability, Nested map support, 92.8% test coverage
+- Bilingual throughout (English/Korean)
+- 패키지, 설명, 총 함수 수, 주요 기능 정보 포함
+- 전체 이중 언어 (영문/한글)
+
+**Testing / 테스트:**
+- ✅ Example compiles and runs successfully
+- ✅ Log file generated with enhanced header
+- ✅ All existing 99+ function examples work correctly
+- ✅ Consistent with sliceutil example style
+- ✅ 예제 컴파일 및 실행 성공
+- ✅ 개선된 헤더로 로그 파일 생성
+- ✅ 기존 99+ 함수 예제 모두 정상 작동
+- ✅ sliceutil 예제 스타일과 일관성 유지
+
+---
+
 ## [v1.9.013] - 2025-10-15
 
 ### Enhanced / 보강됨
