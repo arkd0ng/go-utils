@@ -6,6 +6,37 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.007] - 2025-10-15
+
+### Added / 추가
+- **New Function**: `ForEach` - Execute function for each key-value pair / 각 키-값 쌍에 대해 함수 실행
+  - Category: Utility Functions (NEW) / 유틸리티 함수 (신규)
+  - Signature: `func ForEach[K comparable, V any](m map[K]V, fn func(K, V))`
+  - Purpose: Side-effect operations like logging, debugging, data collection / 로깅, 디버깅, 데이터 수집과 같은 부수 효과 작업
+  - Time Complexity: O(n), Space Complexity: O(1)
+  - Similar to JavaScript's forEach and sliceutil's ForEach / JavaScript의 forEach 및 sliceutil의 ForEach와 유사
+
+### Tests / 테스트
+- Added comprehensive tests in `maputil/util_test.go`:
+  - TestForEach: 7 sub-tests covering all scenarios / 모든 시나리오를 다루는 7개 하위 테스트
+  - TestForEachLogging: Logging use case demonstration / 로깅 사용 사례 시연
+  - BenchmarkForEach: Performance benchmarks for sizes 10, 100, 1000 / 크기 10, 100, 1000에 대한 성능 벤치마크
+  - BenchmarkForEachVsRange: Comparison with native range / 네이티브 range와 비교
+  - Benchmark result: ~10μs for 1000 entries (comparable to native range) / 1000개 항목에 대해 ~10μs (네이티브 range와 유사)
+
+### Examples / 예제
+- Added `utilityFunctions()` section in `examples/maputil/main.go`
+  - ForEach demonstration with logging example / 로깅 예제와 함께 ForEach 시연
+  - Shows key collection pattern / 키 수집 패턴 표시
+
+### Documentation / 문서
+- Added complete bilingual documentation in `maputil/util.go`
+- Function count: 81 → 82 / 함수 개수: 81 → 82
+
+### Notes / 참고사항
+- This is the first of 17 new utility functions planned for maputil / maputil에 계획된 17개 신규 유틸리티 함수 중 첫 번째
+- Maintains consistency with sliceutil package / sliceutil 패키지와 일관성 유지
+
 ## [v1.8.006] - 2025-10-15
 
 ### Added / 추가

@@ -62,6 +62,9 @@ func main() {
 	// Category 10: Comparison (6 functions) / 비교 (6개 함수)
 	comparisons(ctx, logger)
 
+	// Category 11: Utility Functions (NEW) / 유틸리티 함수 (신규)
+	utilityFunctions(ctx, logger)
+
 	// Advanced: Real-World Use Cases / 고급: 실제 사용 사례
 	realWorldExamples(ctx, logger)
 
@@ -1289,5 +1292,38 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   - Average:", "ms", fmt.Sprintf("%.1f", avgTime))
 	logger.Info("   - Fastest:", "service", fastestService, "ms", fastestTime)
 	logger.Info("   - Slowest:", "service", slowestService, "ms", slowestTime)
+	logger.Info("")
+}
+
+// ============================================================================
+// Category 11: Utility Functions (NEW) / 유틸리티 함수 (신규)
+// ============================================================================
+func utilityFunctions(ctx context.Context, logger *logging.Logger) {
+	logger.Info("")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("Category 11: Utility Functions (NEW) / 유틸리티 함수 (신규)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
+
+	// 1. ForEach - Iterate over map entries / 맵 항목 순회
+	logger.Info("1️⃣  ForEach() - Execute function for each entry / 각 항목에 대해 함수 실행")
+	logger.Info("   Purpose: Perform side effects for each key-value pair")
+	logger.Info("   목적: 각 키-값 쌍에 대해 부수 효과 수행")
+
+	m := map[string]int{"errors": 5, "warnings": 12, "info": 100}
+	logger.Info("   Input map:", "map", m)
+
+	logger.Info("   Iterating with ForEach:")
+	maputil.ForEach(m, func(level string, count int) {
+		logger.Info("   - Log level:", "level", level, "count", count)
+	})
+
+	// Example: Collect all keys
+	var keys []string
+	maputil.ForEach(m, func(k string, v int) {
+		keys = append(keys, k)
+	})
+	logger.Info("   ✅ Collected keys:", "keys", keys)
+	logger.Info("   💡 Use case: Logging, debugging, collecting data without creating new maps")
 	logger.Info("")
 }
