@@ -6,6 +6,53 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.006] - 2025-10-15
+
+### Added / 추가됨
+
+#### Log File Backup Management System for All Examples / 모든 예제에 로그 파일 백업 관리 시스템 추가
+
+**Feature / 기능:**
+- Implemented automatic log file backup and cleanup system across all example programs
+- 모든 예제 프로그램에 자동 로그 파일 백업 및 정리 시스템 구현
+
+**Details / 상세 내용:**
+- Each example now backs up previous log file with timestamp format `yyyymmdd-hhmmss` before creating new log
+- Automatically maintains only 5 most recent backup files per example
+- Old backup files are automatically deleted to prevent disk space issues
+- 각 예제가 새 로그를 생성하기 전에 `yyyymmdd-hhmmss` 타임스탬프 형식으로 이전 로그 파일 백업
+- 예제당 최근 5개의 백업 파일만 자동으로 유지
+- 디스크 공간 문제를 방지하기 위해 오래된 백업 파일 자동 삭제
+
+**Updated Examples / 업데이트된 예제:**
+1. `examples/random_string/main.go` - Added backup logic for `random-example.log`
+2. `examples/stringutil/main.go` - Added backup logic for `stringutil-example.log`
+3. `examples/timeutil/main.go` - Added backup logic for `timeutil-example.log`
+4. `examples/sliceutil/main.go` - Added backup logic for `sliceutil-example.log`
+5. `examples/maputil/main.go` - Added backup logic for `maputil-example.log`
+6. `examples/mysql/main.go` - Added backup logic for `mysql-example.log`
+7. `examples/redis/main.go` - Added backup logic for `redis-example.log`
+8. `examples/logging/main.go` - Added helper function `backupLogFile()` for 12 different log files
+9. `examples/fileutil/main.go` - Already has backup logic (updated timestamp format to include seconds)
+
+**Technical Implementation / 기술 구현:**
+- Uses `fileutil.Exists()` to check for existing log files
+- Uses `fileutil.ModTime()` to get file modification time for backup naming
+- Uses `fileutil.CopyFile()` to create timestamped backups
+- Uses `filepath.Glob()` to find and manage backup files
+- Uses `fileutil.DeleteFile()` to clean up old backups
+- Custom sorting algorithm to identify oldest files
+
+**Benefits / 장점:**
+- Prevents log file loss when running examples multiple times
+- Maintains clean logs directory without manual intervention
+- Provides historical log files for comparison and debugging
+- 예제를 여러 번 실행할 때 로그 파일 손실 방지
+- 수동 개입 없이 깨끗한 로그 디렉토리 유지
+- 비교 및 디버깅을 위한 히스토리 로그 파일 제공
+
+---
+
 ## [v1.9.005] - 2025-10-15
 
 ### Added / 추가됨

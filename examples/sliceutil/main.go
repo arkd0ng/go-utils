@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
+	"github.com/arkd0ng/go-utils/fileutil"
 	"github.com/arkd0ng/go-utils/logging"
 	"github.com/arkd0ng/go-utils/sliceutil"
 )
@@ -28,20 +30,64 @@ type Product struct {
 }
 
 func main() {
-	// Create results directory if it doesn't exist / 결과 디렉토리가 없다면 새롭게 생성
-	if err := os.MkdirAll("logs", 0755); err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to create logs directory: %v\n", err)
-		os.Exit(1)
+	// Setup log file with backup management / 백업 관리와 함께 로그 파일 설정
+	logFilePath := "logs/sliceutil-example.log"
+
+	// Check if previous log file exists / 이전 로그 파일 존재 여부 확인
+	if fileutil.Exists(logFilePath) {
+		// Get modification time of existing log file / 기존 로그 파일의 수정 시간 가져오기
+		modTime, err := fileutil.ModTime(logFilePath)
+		if err == nil {
+			// Create backup filename with timestamp / 타임스탬프와 함께 백업 파일명 생성
+			backupName := fmt.Sprintf("logs/sliceutil-example-%s.log", modTime.Format("20060102-150405"))
+
+			// Backup existing log file / 기존 로그 파일 백업
+			if err := fileutil.CopyFile(logFilePath, backupName); err == nil {
+				fmt.Printf("✅ Backed up previous log to: %s\n", backupName)
+			}
+		}
+
+		// Cleanup old backup files - keep only 5 most recent / 오래된 백업 파일 정리 - 최근 5개만 유지
+		backupPattern := "logs/sliceutil-example-*.log"
+		backupFiles, err := filepath.Glob(backupPattern)
+		if err == nil && len(backupFiles) > 5 {
+			// Sort by modification time / 수정 시간으로 정렬
+			type fileInfo struct {
+				path    string
+				modTime time.Time
+			}
+			var files []fileInfo
+			for _, f := range backupFiles {
+				if mt, err := fileutil.ModTime(f); err == nil {
+					files = append(files, fileInfo{path: f, modTime: mt})
+				}
+			}
+
+			// Sort oldest first / 가장 오래된 것부터 정렬
+			for i := 0; i < len(files)-1; i++ {
+				for j := i + 1; j < len(files); j++ {
+					if files[i].modTime.After(files[j].modTime) {
+						files[i], files[j] = files[j], files[i]
+					}
+				}
+			}
+
+			// Delete oldest files to keep only 5 / 5개만 유지하도록 가장 오래된 파일 삭제
+			for i := 0; i < len(files)-5; i++ {
+				fileutil.DeleteFile(files[i].path)
+				fmt.Printf("🗑️  Deleted old backup: %s\n", files[i].path)
+			}
+		}
 	}
 
-	// Initialize logger / 로거 초기화
+	// Initialize logger with fixed filename / 고정 파일명으로 로거 초기화
 	logger, err := logging.New(
-		logging.WithFilePath(fmt.Sprintf("logs/sliceutil-example-%s.log", time.Now().Format("20060102-150405"))),
+		logging.WithFilePath(logFilePath),
 		logging.WithLevel(logging.DEBUG),
 		logging.WithStdout(true),
 	)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to initialize logger: %v\n", err)
+		fmt.Printf("Failed to initialize logger: %v\n", err)
 		os.Exit(1)
 	}
 	defer logger.Close()

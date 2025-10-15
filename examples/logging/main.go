@@ -1,12 +1,100 @@
 package main
 
 import (
+	"fmt"
+	"path/filepath"
 	"time"
 
+	"github.com/arkd0ng/go-utils/fileutil"
 	"github.com/arkd0ng/go-utils/logging"
 )
 
+// backupLogFile handles log file backup and cleanup for any log file
+// backupLogFile은 모든 로그 파일의 백업 및 정리를 처리합니다
+func backupLogFile(logFilePath string) {
+	if !fileutil.Exists(logFilePath) {
+		return
+	}
+
+	// Get modification time of existing log file / 기존 로그 파일의 수정 시간 가져오기
+	modTime, err := fileutil.ModTime(logFilePath)
+	if err != nil {
+		return
+	}
+
+	// Extract directory and filename / 디렉토리와 파일명 추출
+	dir := filepath.Dir(logFilePath)
+	filename := filepath.Base(logFilePath)
+	ext := filepath.Ext(filename)
+	nameWithoutExt := filename[:len(filename)-len(ext)]
+
+	// Create backup filename with timestamp / 타임스탬프와 함께 백업 파일명 생성
+	backupName := fmt.Sprintf("%s/%s-%s%s", dir, nameWithoutExt, modTime.Format("20060102-150405"), ext)
+
+	// Backup existing log file / 기존 로그 파일 백업
+	if err := fileutil.CopyFile(logFilePath, backupName); err == nil {
+		fmt.Printf("✅ Backed up previous log to: %s\n", backupName)
+	}
+
+	// Cleanup old backup files - keep only 5 most recent / 오래된 백업 파일 정리 - 최근 5개만 유지
+	backupPattern := fmt.Sprintf("%s/%s-*%s", dir, nameWithoutExt, ext)
+	backupFiles, err := filepath.Glob(backupPattern)
+	if err != nil || len(backupFiles) <= 5 {
+		return
+	}
+
+	// Sort by modification time / 수정 시간으로 정렬
+	type fileInfo struct {
+		path    string
+		modTime time.Time
+	}
+	var files []fileInfo
+	for _, f := range backupFiles {
+		if mt, err := fileutil.ModTime(f); err == nil {
+			files = append(files, fileInfo{path: f, modTime: mt})
+		}
+	}
+
+	// Sort oldest first / 가장 오래된 것부터 정렬
+	for i := 0; i < len(files)-1; i++ {
+		for j := i + 1; j < len(files); j++ {
+			if files[i].modTime.After(files[j].modTime) {
+				files[i], files[j] = files[j], files[i]
+			}
+		}
+	}
+
+	// Delete oldest files to keep only 5 / 5개만 유지하도록 가장 오래된 파일 삭제
+	for i := 0; i < len(files)-5; i++ {
+		fileutil.DeleteFile(files[i].path)
+		fmt.Printf("🗑️  Deleted old backup: %s\n", files[i].path)
+	}
+}
+
 func main() {
+	// Backup all log files that will be used in examples / 예제에서 사용할 모든 로그 파일 백업
+	logFiles := []string{
+		"logs/app.log",
+		"logs/custom.log",
+		"logs/database.log",
+		"logs/api.log",
+		"logs/levels.log",
+		"logs/structured.log",
+		"logs/auto_banner_default.log",
+		"logs/auto_banner_custom.log",
+		"logs/auto_banner_convenience.log",
+		"logs/auto_banner_disabled.log",
+		"logs/manual_banner_only.log",
+		"logs/banners.log",
+	}
+
+	fmt.Println("🔄 Checking and backing up existing log files...")
+	fmt.Println("🔄 기존 로그 파일 확인 및 백업 중...")
+	for _, logFile := range logFiles {
+		backupLogFile(logFile)
+	}
+	fmt.Println()
+
 	// Example 1: Default logger (가장 간단한 사용)
 	// Example 1: Default logger (simplest usage)
 	defaultExample()
