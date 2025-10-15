@@ -5,6 +5,50 @@
 
 ---
 
+## [v1.11.018] - 2025-10-16
+
+### Added / 추가
+- **Graceful Shutdown with Signal Handling** / **시그널 처리와 함께 정상 종료** (`app.go`)
+  - `RunWithGracefulShutdown(addr string, timeout time.Duration) error` - Run server with automatic signal handling
+  - Automatically listens for SIGINT and SIGTERM signals
+  - Gracefully shuts down server when signal received
+  - Configurable shutdown timeout
+  - Simplified alternative to manual signal handling
+
+- **Signal Handling** / **시그널 처리**
+  - Automatic handling of SIGINT (Ctrl+C) and SIGTERM signals
+  - Goroutine-based server startup for non-blocking signal handling
+  - Select-based multiplexing for server errors and shutdown signals
+  - Context-based timeout for graceful shutdown
+
+- **Comprehensive Tests** / **종합 테스트** (`shutdown_test.go`)
+  - `TestShutdownWithoutRun` - Test shutdown without running server
+  - `TestShutdown` - Test basic shutdown functionality
+  - `TestShutdownNotRunning` - Test error when server not running
+  - `TestShutdownWithTimeout` - Test shutdown timeout behavior
+  - `TestShutdownIdempotent` - Test multiple shutdown calls
+  - `TestRunWithGracefulShutdown` - Test signal handling (manual test)
+  - `TestGracefulShutdownWithActiveConnections` - Test connection draining (manual test)
+  - `BenchmarkShutdown` - Benchmark shutdown operation
+  - **Total: 7 test functions + 1 benchmark** for graceful shutdown
+
+### Changed / 변경
+- **Added Imports to app.go** / **app.go에 임포트 추가**
+  - Added `os`, `os/signal`, `syscall`, `time` imports for signal handling
+
+### Documentation / 문서
+- **README.md**
+  - Updated version to v1.11.018
+  - Added `RunWithGracefulShutdown` method to App Struct section
+  - Added "Graceful Shutdown (Simple)" example showing the new method
+  - Example demonstrates automatic signal handling with 5-second timeout
+
+### Performance / 성능
+- **Test Coverage**: 79.5% of statements / 구문의 79.5%
+- **RunWithGracefulShutdown**: Minimal overhead, uses goroutine and channel-based signaling
+
+---
+
 ## [v1.11.017] - 2025-10-16
 
 ### Added / 추가

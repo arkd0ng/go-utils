@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.017
+**Version / 버전**: v1.11.018
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.017) / 현재 기능
+## Current Features (v1.11.018) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -38,6 +38,7 @@ The main application instance that manages your web server.
 - `NotFound(handler)` - Custom 404 handler / 커스텀 404 핸들러
 - `Run(addr string) error` - Start server / 서버 시작
 - `Shutdown(ctx context.Context) error` - Graceful shutdown / 정상 종료
+- `RunWithGracefulShutdown(addr string, timeout time.Duration) error` - Run with signal handling / 시그널 처리와 함께 실행
 - `ServeHTTP(w http.ResponseWriter, r *http.Request)` - Implement http.Handler / http.Handler 구현
 
 ### Router / 라우터
@@ -454,6 +455,35 @@ func main() {
     }
 
     log.Println("Server exited")
+}
+```
+
+### Graceful Shutdown (Simple) / 정상 종료 (간단)
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "time"
+    "github.com/arkd0ng/go-utils/websvrutil"
+)
+
+func main() {
+    app := websvrutil.New()
+
+    app.GET("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "Hello, World!")
+    })
+
+    // RunWithGracefulShutdown automatically handles SIGINT and SIGTERM signals
+    // RunWithGracefulShutdown은 SIGINT 및 SIGTERM 시그널을 자동으로 처리합니다
+    if err := app.RunWithGracefulShutdown(":8080", 5*time.Second); err != nil {
+        log.Fatal(err)
+    }
+
+    log.Println("Server stopped gracefully")
 }
 ```
 

@@ -5,7 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
+	"time"
 )
 
 // App is the main application instance for the web server.
@@ -399,6 +403,55 @@ func (a *App) Shutdown(ctx context.Context) error {
 
 	fmt.Println("Server shutting down gracefully...")
 	return server.Shutdown(ctx)
+}
+
+// RunWithGracefulShutdown starts the server and handles graceful shutdown on OS signals.
+// RunWithGracefulShutdown은 서버를 시작하고 OS 신호에 대한 우아한 종료를 처리합니다.
+//
+// It listens for SIGINT (Ctrl+C) and SIGTERM signals and shuts down gracefully.
+// SIGINT (Ctrl+C) 및 SIGTERM 신호를 수신하고 우아하게 종료합니다.
+//
+// The timeout parameter specifies how long to wait for active connections to close.
+// timeout 매개변수는 활성 연결이 닫힐 때까지 기다릴 시간을 지정합니다.
+//
+// Example / 예제:
+//
+//	app := websvrutil.New()
+//	// ... configure routes ...
+//	if err := app.RunWithGracefulShutdown(":8080", 30*time.Second); err != nil {
+//	    log.Fatal(err)
+//	}
+func (a *App) RunWithGracefulShutdown(addr string, timeout time.Duration) error {
+	// Start server in a goroutine / 고루틴에서 서버 시작
+	serverErr := make(chan error, 1)
+	go func() {
+		serverErr <- a.Run(addr)
+	}()
+
+	// Wait for interrupt signal / 인터럽트 신호 대기
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	select {
+	case err := <-serverErr:
+		// Server failed to start / 서버 시작 실패
+		return err
+	case sig := <-quit:
+		// Received shutdown signal / 종료 신호 수신
+		fmt.Printf("\nReceived signal: %v\n", sig)
+
+		// Create shutdown context with timeout / 타임아웃이 있는 종료 컨텍스트 생성
+		ctx, cancel := context.WithTimeout(context.Background(), timeout)
+		defer cancel()
+
+		// Attempt graceful shutdown / 우아한 종료 시도
+		if err := a.Shutdown(ctx); err != nil {
+			return fmt.Errorf("server shutdown failed: %w", err)
+		}
+
+		fmt.Println("Server stopped")
+		return nil
+	}
 }
 
 // buildHandler builds the final HTTP handler by applying all middleware.
