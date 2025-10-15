@@ -18,7 +18,40 @@ This file contains a high-level overview of major and minor versions. For detail
 
 ---
 
-## [v1.10.x] - HTTP Client Utilities Package / HTTP 클라이언트 유틸리티 패키지 (현재 / Current)
+## [v1.11.x] - Web Server Utilities Package / 웹 서버 유틸리티 패키지 (개발 중 / In Development)
+
+**Focus / 초점**: Extreme simplicity web server utilities / 극도로 간단한 웹 서버 유틸리티
+
+**Status / 상태**: In Development / 개발 중
+**Branch / 브랜치**: `feature/v1.11.x-websvrutil`
+
+**Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.11.md](docs/CHANGELOG/CHANGELOG-v1.11.md)
+
+### Planned Features / 계획된 기능
+- **Simple Router**: RESTful routing with path parameters / 경로 매개변수를 가진 RESTful 라우팅
+- **Middleware**: CORS, logging, recovery, auth, rate limiting / 미들웨어
+- **Handler Helpers**: JSON response, error response, file serving / 핸들러 헬퍼
+- **Request/Response Utilities**: Body binding, cookie, headers / 요청/응답 유틸리티
+- **Server Management**: Graceful shutdown, hot reload, health check / 서버 관리
+
+**Key Design Principles / 주요 설계 원칙**:
+- Extreme Simplicity: 50+ lines → 5 lines / 극도의 간결함: 50줄 이상 → 5줄
+- Zero Configuration: Sensible defaults for 99% of use cases / 제로 설정: 99% 사용 사례에 대한 합리적인 기본값
+- Standard Compatible: Works with standard net/http / 표준 net/http와 호환
+- Middleware Chain: Easy middleware composition / 쉬운 미들웨어 조합
+
+**Current Version / 현재 버전**: v1.11.001 (2025-10-16)
+
+**Roadmap / 로드맵**:
+- Phase 1 (v1.11.001-005): Core router and basic handlers
+- Phase 2 (v1.11.006-010): Middleware implementation
+- Phase 3 (v1.11.011-015): Request/Response utilities
+- Phase 4 (v1.11.016-020): Server management features
+- Phase 5 (v1.11.021-025): Documentation and examples
+
+---
+
+## [v1.10.x] - HTTP Client Utilities Package / HTTP 클라이언트 유틸리티 패키지 (완료 / Completed)
 
 **Focus / 초점**: Extreme simplicity HTTP client utilities / 극도로 간단한 HTTP 클라이언트 유틸리티
 

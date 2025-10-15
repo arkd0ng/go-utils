@@ -813,9 +813,29 @@ err := httputil.Get(url, &users, httputil.WithBearerToken("token"))
 
 ---
 
+### 🚧 In Development / 개발 중
+
+#### [websvrutil](./websvrutil/) - Web Server Utilities (v1.11.x)
+
+**Status / 상태**: In Development / 개발 중
+**Branch / 브랜치**: `feature/v1.11.x-websvrutil`
+**Version / 버전**: v1.11.001
+
+Extreme simplicity web server utilities - reduce 50+ lines of server setup code to just 5 lines.
+
+극도로 간단한 웹 서버 유틸리티 - 50줄 이상의 서버 설정 코드를 단 5줄로 줄입니다.
+
+**Planned Features / 계획된 기능**:
+- Simple Router with RESTful routing / RESTful 라우팅을 가진 간단한 라우터
+- Middleware (CORS, logging, recovery, auth, rate limiting) / 미들웨어
+- Handler helpers (JSON response, error response, file serving) / 핸들러 헬퍼
+- Request/Response utilities (body binding, cookie, headers) / 요청/응답 유틸리티
+- Server management (graceful shutdown, hot reload, health check) / 서버 관리
+
+---
+
 ### 🔜 Coming Soon / 개발 예정
 
-- **httpserver** - HTTP server utilities (router, middleware, etc.) / HTTP 서버 유틸리티 (라우터, 미들웨어 등)
 - **validation** - Validation utilities / 검증 유틸리티
 - **errorutil** - Error handling helpers / 에러 처리 헬퍼
 
