@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.003
+**Version / 버전**: v1.11.004
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.003) / 현재 기능
+## Current Features (v1.11.004) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -57,6 +57,44 @@ Fast HTTP request router with parameter and wildcard support.
 - `/users` - Exact match / 정확한 일치
 - `/users/:id` - Parameter (e.g., `/users/123`) / 매개변수
 - `/files/*` - Wildcard (matches everything) / 와일드카드 (모든 것과 일치)
+
+### Context / 컨텍스트
+
+Request context for accessing path parameters, query strings, headers, and storing custom values.
+
+경로 매개변수, 쿼리 문자열, 헤더에 액세스하고 커스텀 값을 저장하기 위한 요청 컨텍스트.
+
+**Parameter Access / 매개변수 액세스**:
+- `Param(name string) string` - Get path parameter / 경로 매개변수 가져오기
+- `Params() map[string]string` - Get all parameters / 모든 매개변수 가져오기
+
+**Custom Values / 커스텀 값**:
+- `Set(key string, value interface{})` - Store value / 값 저장
+- `Get(key string) (interface{}, bool)` - Retrieve value / 값 검색
+- `MustGet(key string) interface{}` - Get or panic / 가져오거나 패닉
+- `GetString(key string) string` - Get string value / 문자열 값 가져오기
+- `GetInt(key string) int` - Get int value / int 값 가져오기
+- `GetBool(key string) bool` - Get bool value / bool 값 가져오기
+
+**Request Helpers / 요청 헬퍼**:
+- `Query(key string) string` - Get query parameter / 쿼리 매개변수 가져오기
+- `QueryDefault(key, defaultValue string) string` - Get with default / 기본값으로 가져오기
+- `Header(key string) string` - Get request header / 요청 헤더 가져오기
+- `Method() string` - Get HTTP method / HTTP 메서드 가져오기
+- `Path() string` - Get URL path / URL 경로 가져오기
+- `Context() context.Context` - Get request context / 요청 컨텍스트 가져오기
+- `WithContext(ctx context.Context) *Context` - Replace context / 컨텍스트 교체
+
+**Response Helpers / 응답 헬퍼**:
+- `SetHeader(key, value string)` - Set response header / 응답 헤더 설정
+- `Status(code int)` - Set status code / 상태 코드 설정
+- `Write(data []byte) (int, error)` - Write response / 응답 작성
+- `WriteString(s string) (int, error)` - Write string / 문자열 작성
+
+**Helper Function / 헬퍼 함수**:
+- `GetContext(r *http.Request) *Context` - Get Context from request / 요청에서 Context 가져오기
+
+**Thread-safe / 스레드 안전**: All Context operations are protected by sync.RWMutex / 모든 Context 작업은 sync.RWMutex로 보호됩니다
 
 ### Options Pattern / 옵션 패턴
 
@@ -105,9 +143,11 @@ func main() {
     })
 
     app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
-        // Parameters will be accessible via Context in v1.11.004
-        // 매개변수는 v1.11.004에서 Context를 통해 액세스 가능
-        fmt.Fprintf(w, "User page")
+        // Get Context to access path parameters
+        // 경로 매개변수 액세스를 위한 Context 가져오기
+        ctx := websvrutil.GetContext(r)
+        id := ctx.Param("id")
+        fmt.Fprintf(w, "User ID: %s", id)
     })
 
     app.POST("/users", func(w http.ResponseWriter, r *http.Request) {
@@ -259,6 +299,78 @@ func main() {
 }
 ```
 
+### Context Usage / Context 사용
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+    "github.com/arkd0ng/go-utils/websvrutil"
+)
+
+func main() {
+    app := websvrutil.New()
+
+    // Path parameters
+    // 경로 매개변수
+    app.GET("/users/:id/posts/:postId", func(w http.ResponseWriter, r *http.Request) {
+        ctx := websvrutil.GetContext(r)
+        userID := ctx.Param("id")
+        postID := ctx.Param("postId")
+        fmt.Fprintf(w, "User: %s, Post: %s", userID, postID)
+    })
+
+    // Query parameters
+    // 쿼리 매개변수
+    app.GET("/search", func(w http.ResponseWriter, r *http.Request) {
+        ctx := websvrutil.GetContext(r)
+        q := ctx.Query("q")
+        page := ctx.QueryDefault("page", "1")
+        fmt.Fprintf(w, "Query: %s, Page: %s", q, page)
+    })
+
+    // Custom values storage
+    // 커스텀 값 저장
+    app.GET("/user/:id", func(w http.ResponseWriter, r *http.Request) {
+        ctx := websvrutil.GetContext(r)
+
+        // Store custom values
+        // 커스텀 값 저장
+        ctx.Set("userId", ctx.Param("id"))
+        ctx.Set("authenticated", true)
+
+        // Retrieve values
+        // 값 검색
+        if authenticated := ctx.GetBool("authenticated"); authenticated {
+            userID := ctx.GetString("userId")
+            fmt.Fprintf(w, "Authenticated user: %s", userID)
+        }
+    })
+
+    // Request headers
+    // 요청 헤더
+    app.GET("/api/data", func(w http.ResponseWriter, r *http.Request) {
+        ctx := websvrutil.GetContext(r)
+        authToken := ctx.Header("Authorization")
+        contentType := ctx.Header("Content-Type")
+
+        // Set response headers
+        // 응답 헤더 설정
+        ctx.SetHeader("X-API-Version", "1.0")
+        ctx.SetHeader("Content-Type", "application/json")
+
+        fmt.Fprintf(w, "Auth: %s, Type: %s", authToken, contentType)
+    })
+
+    if err := app.Run(":8080"); err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
 ### Wildcard and Custom 404 / 와일드카드 및 커스텀 404
 
 ```go
@@ -283,7 +395,9 @@ func main() {
     // Parameter match
     // 매개변수 일치
     app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, "User details")
+        ctx := websvrutil.GetContext(r)
+        id := ctx.Param("id")
+        fmt.Fprintf(w, "User ID: %s", id)
     })
 
     // Wildcard match (catches all paths starting with /files/)
@@ -311,7 +425,7 @@ The following features are planned for future releases:
 
 다음 기능이 향후 릴리스에 계획되어 있습니다:
 
-- **Context** (v1.11.004-005): Request context with parameter binding / 매개변수 바인딩이 있는 요청 컨텍스트
+- **Response Helpers** (v1.11.005): JSON, HTML, Text helpers / JSON, HTML, 텍스트 헬퍼
 - **Middleware System** (v1.11.006-010): Built-in middleware (recovery, logger, CORS, auth) / 내장 미들웨어
 - **Template System** (v1.11.011-015): Auto-discovery, layouts, hot reload / 자동 발견, 레이아웃, 핫 리로드
 - **Advanced Features** (v1.11.016-020): File upload, static serving, cookie helpers / 파일 업로드, 정적 제공
@@ -324,7 +438,7 @@ The following features are planned for future releases:
 - ✅ v1.11.001: Project setup and planning / 프로젝트 설정 및 계획
 - ✅ v1.11.002: App & Options / 앱 및 옵션
 - ✅ v1.11.003: Router / 라우터
-- 📝 v1.11.004: Context (Part 1) / 컨텍스트 (1부)
+- ✅ v1.11.004: Context (Part 1) / 컨텍스트 (1부)
 - 📝 v1.11.005: Response Helpers / 응답 헬퍼
 
 ## Documentation / 문서

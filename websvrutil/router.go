@@ -1,6 +1,7 @@
 package websvrutil
 
 import (
+	"context"
 	"net/http"
 	"strings"
 	"sync"
@@ -168,13 +169,17 @@ func (ro *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// 라우트 일치 시도
 	for _, route := range routes {
 		if params, ok := route.match(r.URL.Path); ok {
-			// Store parameters in request context (will be implemented in v1.11.004)
-			// 요청 컨텍스트에 매개변수 저장 (v1.11.004에서 구현 예정)
+			// Create context with parameters
+			// 매개변수와 함께 컨텍스트 생성
+			ctx := NewContext(w, r)
 			if len(params) > 0 {
-				// For now, we'll just call the handler
-				// 지금은 핸들러만 호출합니다
-				// TODO: Store params in context in v1.11.004
+				ctx.setParams(params)
 			}
+
+			// Store context in request context
+			// 요청 컨텍스트에 컨텍스트 저장
+			r = r.WithContext(contextWithValue(r.Context(), ctx))
+
 			route.Handler(w, r)
 			return
 		}
@@ -183,6 +188,12 @@ func (ro *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// No route matched, call not found handler
 	// 일치하는 라우트 없음, not found 핸들러 호출
 	ro.notFoundHandler(w, r)
+}
+
+// contextWithValue stores the Context in the request's context.Context.
+// contextWithValue는 요청의 context.Context에 Context를 저장합니다.
+func contextWithValue(ctx context.Context, c *Context) context.Context {
+	return context.WithValue(ctx, contextKeyParams, c)
 }
 
 // match checks if the route matches the given path and extracts parameters.

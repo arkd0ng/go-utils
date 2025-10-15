@@ -5,6 +5,95 @@
 
 ---
 
+## [v1.11.004] - 2025-10-16
+
+### Added / 추가
+- Created `context.go` with Context implementation / Context 구현이 있는 context.go 생성
+  - `Context` struct for request context management / 요청 컨텍스트 관리를 위한 Context 구조체
+  - Thread-safe with sync.RWMutex / sync.RWMutex로 스레드 안전
+  - Parameter access: `Param(name)`, `Params()` / 매개변수 액세스
+  - Custom value storage: `Set(key, value)`, `Get(key)`, `MustGet(key)` / 커스텀 값 저장
+  - Typed getters: `GetString()`, `GetInt()`, `GetBool()` / 타입 지정 getter
+  - Query parameters: `Query(key)`, `QueryDefault(key, default)` / 쿼리 매개변수
+  - Header access: `Header(key)`, `SetHeader(key, value)` / 헤더 액세스
+  - Request helpers: `Method()`, `Path()`, `Context()`, `WithContext()` / 요청 헬퍼
+  - Response helpers: `Status(code)`, `Write(data)`, `WriteString(s)` / 응답 헬퍼
+  - Helper function: `GetContext(r *http.Request)` / 헬퍼 함수
+- Modified `router.go` to create Context and store parameters / Context를 생성하고 매개변수를 저장하도록 router.go 수정
+  - Router now creates Context for each request / Router가 각 요청에 대해 Context 생성
+  - Parameters extracted from path are stored in Context / 경로에서 추출된 매개변수가 Context에 저장
+  - Context stored in request's context.Context / Context가 요청의 context.Context에 저장
+  - Added `contextWithValue()` helper function / contextWithValue() 헬퍼 함수 추가
+- Created comprehensive `context_test.go` with 24+ test functions / 24개 이상의 테스트 함수가 있는 포괄적인 context_test.go 생성
+  - Context creation tests / Context 생성 테스트
+  - Parameter access tests (Param, Params) / 매개변수 액세스 테스트
+  - Custom value storage tests (Set, Get, MustGet) / 커스텀 값 저장 테스트
+  - Typed getter tests (GetString, GetInt, GetBool) / 타입 지정 getter 테스트
+  - Query parameter tests (Query, QueryDefault) / 쿼리 매개변수 테스트
+  - Header tests (Header, SetHeader) / 헤더 테스트
+  - Response tests (Status, Write, WriteString) / 응답 테스트
+  - Request helper tests (Method, Path, Context, WithContext) / 요청 헬퍼 테스트
+  - GetContext helper tests / GetContext 헬퍼 테스트
+  - 3 benchmark functions (NewContext, SetGet, Param) / 3개의 벤치마크 함수
+- Updated `README.md` with Context documentation / Context 문서로 README.md 업데이트
+  - Added comprehensive Context features section / 포괄적인 Context 기능 섹션 추가
+  - Updated quick start with Context examples / Context 예제로 빠른 시작 업데이트
+  - Added Context usage example with 4 scenarios / 4가지 시나리오가 있는 Context 사용 예제 추가
+  - Updated version to v1.11.004 / 버전을 v1.11.004로 업데이트
+  - Updated development status progress / 개발 상태 진행 상황 업데이트
+- Updated `examples/websvrutil/main.go` with Context examples / Context 예제로 examples/websvrutil/main.go 업데이트
+  - 14 total examples (added 4 new Context examples) / 총 14개 예제 (4개의 새로운 Context 예제 추가)
+  - Example 7: Context - Path parameters / Context - 경로 매개변수
+  - Example 8: Context - Query parameters / Context - 쿼리 매개변수
+  - Example 9: Context - Custom values / Context - 커스텀 값
+  - Example 10: Context - Request headers / Context - 요청 헤더
+  - Renamed examples 7-10 to 11-14 / 예제 7-10을 11-14로 이름 변경
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.004 / websvrutil.go 버전 상수를 v1.11.004로 업데이트
+- Bumped version to v1.11.004 in `cfg/app.yaml` / cfg/app.yaml의 버전을 v1.11.004로 상향
+- Modified Router ServeHTTP to create and inject Context / Router ServeHTTP를 Context를 생성하고 주입하도록 수정
+
+### Technical Details / 기술 세부사항
+- **Context Architecture** / **Context 아키텍처**:
+  - Request-scoped context for parameter and value storage / 매개변수 및 값 저장을 위한 요청 범위 컨텍스트
+  - Thread-safe with sync.RWMutex (concurrent read, exclusive write) / sync.RWMutex로 스레드 안전 (동시 읽기, 배타적 쓰기)
+  - Stored in request's context.Context for retrieval / 검색을 위해 요청의 context.Context에 저장
+  - Provides convenient access to common request data / 일반적인 요청 데이터에 대한 편리한 액세스 제공
+- **Context Features** / **Context 기능**:
+  - Parameter access: Path parameters from route patterns / 매개변수 액세스: 라우트 패턴의 경로 매개변수
+  - Custom values: Store/retrieve arbitrary values / 커스텀 값: 임의의 값 저장/검색
+  - Query helpers: Easy query parameter access / 쿼리 헬퍼: 쉬운 쿼리 매개변수 액세스
+  - Header helpers: Read request/write response headers / 헤더 헬퍼: 요청 헤더 읽기/응답 헤더 쓰기
+  - Response helpers: Write status and body / 응답 헬퍼: 상태 및 본문 작성
+- **Integration with Router** / **Router와의 통합**:
+  - Router creates Context for each request / Router가 각 요청에 대해 Context 생성
+  - Parameters from route matching stored in Context / 라우트 일치에서 나온 매개변수가 Context에 저장
+  - Context accessible via `GetContext(r *http.Request)` / GetContext(r *http.Request)를 통해 Context 액세스 가능
+  - Context stored using internal context key / 내부 컨텍스트 키를 사용하여 Context 저장
+
+### Testing Coverage / 테스트 커버리지
+- **24+ new context test functions** / **24개 이상의 새로운 context 테스트 함수**
+- **3 context benchmark functions** / **3개의 context 벤치마크 함수**
+- **Total: 76+ test functions** (52 from v1.11.003 + 24 new) / **총 76개 이상의 테스트 함수**
+- **Total: 14 benchmark functions** (11 from v1.11.003 + 3 new) / **총 14개의 벤치마크 함수**
+- Tests cover: Context creation, parameter access, custom values, query/headers, response helpers / 테스트 범위: Context 생성, 매개변수 액세스, 커스텀 값, 쿼리/헤더, 응답 헬퍼
+
+### Performance / 성능
+- Context benchmarks (sample results) / Context 벤치마크 (샘플 결과):
+  - NewContext: ~100-150 ns/op
+  - Set/Get operations: ~50-100 ns/op
+  - Param access: ~10-20 ns/op
+  - Thread-safe operations with minimal overhead / 최소 오버헤드로 스레드 안전 작업
+
+### Notes / 참고사항
+- Path parameters are now fully accessible via Context / 경로 매개변수는 이제 Context를 통해 완전히 액세스 가능
+- Context provides convenient helpers for common request/response operations / Context는 일반적인 요청/응답 작업을 위한 편리한 헬퍼 제공
+- Thread-safe for concurrent access (multiple goroutines can read simultaneously) / 동시 액세스에 안전 (여러 고루틴이 동시에 읽을 수 있음)
+- Next: v1.11.005 will add JSON/HTML/Text response helpers / 다음: v1.11.005는 JSON/HTML/Text 응답 헬퍼 추가 예정
+
+---
+
 ## [v1.11.003] - 2025-10-16
 
 ### Added / 추가

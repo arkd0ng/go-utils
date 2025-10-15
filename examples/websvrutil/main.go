@@ -15,8 +15,8 @@ import (
 )
 
 func main() {
-	fmt.Println("=== websvrutil Package Examples (v1.11.003) ===")
-	fmt.Println("=== websvrutil 패키지 예제 (v1.11.003) ===\n")
+	fmt.Println("=== websvrutil Package Examples (v1.11.004) ===")
+	fmt.Println("=== websvrutil 패키지 예제 (v1.11.004) ===\n")
 
 	// Example 1: Basic Server / 기본 서버
 	fmt.Println("Example 1: Basic Server / 기본 서버")
@@ -42,21 +42,37 @@ func main() {
 	fmt.Println("\nExample 6: Custom 404 Handler / 커스텀 404 핸들러")
 	example6Custom404()
 
-	// Example 7: Graceful Shutdown / 정상 종료
-	fmt.Println("\nExample 7: Graceful Shutdown / 정상 종료")
-	example7GracefulShutdown()
+	// Example 7: Context - Path Parameters / Context - 경로 매개변수
+	fmt.Println("\nExample 7: Context - Path Parameters / Context - 경로 매개변수")
+	example7ContextPathParameters()
 
-	// Example 8: Custom Middleware / 커스텀 미들웨어
-	fmt.Println("\nExample 8: Custom Middleware / 커스텀 미들웨어")
-	example8CustomMiddleware()
+	// Example 8: Context - Query Parameters / Context - 쿼리 매개변수
+	fmt.Println("\nExample 8: Context - Query Parameters / Context - 쿼리 매개변수")
+	example8ContextQueryParameters()
 
-	// Example 9: Multiple Middleware / 다중 미들웨어
-	fmt.Println("\nExample 9: Multiple Middleware / 다중 미들웨어")
-	example9MultipleMiddleware()
+	// Example 9: Context - Custom Values / Context - 커스텀 값
+	fmt.Println("\nExample 9: Context - Custom Values / Context - 커스텀 값")
+	example9ContextCustomValues()
 
-	// Example 10: Production Configuration / 프로덕션 설정
-	fmt.Println("\nExample 10: Production Configuration / 프로덕션 설정")
-	example10ProductionConfig()
+	// Example 10: Context - Request Headers / Context - 요청 헤더
+	fmt.Println("\nExample 10: Context - Request Headers / Context - 요청 헤더")
+	example10ContextHeaders()
+
+	// Example 11: Graceful Shutdown / 정상 종료
+	fmt.Println("\nExample 11: Graceful Shutdown / 정상 종료")
+	example11GracefulShutdown()
+
+	// Example 12: Custom Middleware / 커스텀 미들웨어
+	fmt.Println("\nExample 12: Custom Middleware / 커스텀 미들웨어")
+	example12CustomMiddleware()
+
+	// Example 13: Multiple Middleware / 다중 미들웨어
+	fmt.Println("\nExample 13: Multiple Middleware / 다중 미들웨어")
+	example13MultipleMiddleware()
+
+	// Example 14: Production Configuration / 프로덕션 설정
+	fmt.Println("\nExample 14: Production Configuration / 프로덕션 설정")
+	example14ProductionConfig()
 
 	fmt.Println("\n=== All Examples Completed ===")
 	fmt.Println("=== 모든 예제 완료 ===")
@@ -173,8 +189,6 @@ func example4PathParameters() {
 	// Register route with parameter
 	// 매개변수가 있는 라우트 등록
 	app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
-		// Parameters will be accessible via Context in v1.11.004
-		// 매개변수는 v1.11.004에서 Context를 통해 액세스 가능
 		w.WriteHeader(http.StatusOK)
 	})
 
@@ -207,8 +221,8 @@ func example4PathParameters() {
 		}
 	}
 
-	fmt.Println("\n✓ Parameter extraction working (values accessible in v1.11.004)")
-	fmt.Println("✓ 매개변수 추출 작동 중 (값은 v1.11.004에서 액세스 가능)")
+	fmt.Println("\n✓ Parameter extraction working")
+	fmt.Println("✓ 매개변수 추출 작동 중")
 }
 
 // example5WildcardRoutes demonstrates wildcard route matching.
@@ -297,9 +311,192 @@ func example6Custom404() {
 	fmt.Println("✓ 커스텀 404 핸들러가 올바르게 작동합니다")
 }
 
-// example7GracefulShutdown demonstrates graceful server shutdown.
-// example7GracefulShutdown은 정상적인 서버 종료를 시연합니다.
-func example7GracefulShutdown() {
+// example7ContextPathParameters demonstrates Context path parameter access.
+// example7ContextPathParameters는 Context 경로 매개변수 액세스를 시연합니다.
+func example7ContextPathParameters() {
+	app := websvrutil.New()
+
+	var extractedID, extractedUserID, extractedPostID string
+
+	// Single parameter
+	// 단일 매개변수
+	app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		extractedID = ctx.Param("id")
+		fmt.Fprintf(w, "User ID: %s", extractedID)
+	})
+
+	// Multiple parameters
+	// 다중 매개변수
+	app.GET("/users/:userId/posts/:postId", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		extractedUserID = ctx.Param("userId")
+		extractedPostID = ctx.Param("postId")
+		fmt.Fprintf(w, "User: %s, Post: %s", extractedUserID, extractedPostID)
+	})
+
+	fmt.Println("✓ Routes with Context parameters registered")
+	fmt.Println("✓ Context 매개변수가 있는 라우트 등록됨")
+
+	// Test single parameter
+	// 단일 매개변수 테스트
+	req1 := httptest.NewRequest("GET", "/users/123", nil)
+	rec1 := httptest.NewRecorder()
+	app.ServeHTTP(rec1, req1)
+
+	fmt.Println("\n  Single parameter test:")
+	fmt.Println("  단일 매개변수 테스트:")
+	fmt.Printf("  - URL: /users/123\n")
+	fmt.Printf("  - Extracted ID: %s\n", extractedID)
+
+	// Test multiple parameters
+	// 다중 매개변수 테스트
+	req2 := httptest.NewRequest("GET", "/users/456/posts/789", nil)
+	rec2 := httptest.NewRecorder()
+	app.ServeHTTP(rec2, req2)
+
+	fmt.Println("\n  Multiple parameters test:")
+	fmt.Println("  다중 매개변수 테스트:")
+	fmt.Printf("  - URL: /users/456/posts/789\n")
+	fmt.Printf("  - Extracted User ID: %s\n", extractedUserID)
+	fmt.Printf("  - Extracted Post ID: %s\n", extractedPostID)
+
+	fmt.Println("\n✓ Context path parameter access working")
+	fmt.Println("✓ Context 경로 매개변수 액세스 작동 중")
+}
+
+// example8ContextQueryParameters demonstrates Context query parameter access.
+// example8ContextQueryParameters는 Context 쿼리 매개변수 액세스를 시연합니다.
+func example8ContextQueryParameters() {
+	app := websvrutil.New()
+
+	var query, page, limit string
+
+	app.GET("/search", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		query = ctx.Query("q")
+		page = ctx.QueryDefault("page", "1")
+		limit = ctx.QueryDefault("limit", "10")
+		fmt.Fprintf(w, "Query: %s, Page: %s, Limit: %s", query, page, limit)
+	})
+
+	fmt.Println("✓ Search route with query parameters registered")
+	fmt.Println("✓ 쿼리 매개변수가 있는 검색 라우트 등록됨")
+
+	// Test with query parameters
+	// 쿼리 매개변수로 테스트
+	req := httptest.NewRequest("GET", "/search?q=golang&page=2", nil)
+	rec := httptest.NewRecorder()
+	app.ServeHTTP(rec, req)
+
+	fmt.Println("\n  Query parameter test:")
+	fmt.Println("  쿼리 매개변수 테스트:")
+	fmt.Printf("  - URL: /search?q=golang&page=2\n")
+	fmt.Printf("  - Query (q): %s\n", query)
+	fmt.Printf("  - Page: %s\n", page)
+	fmt.Printf("  - Limit (default): %s\n", limit)
+
+	fmt.Println("\n✓ Context query parameter access working")
+	fmt.Println("✓ Context 쿼리 매개변수 액세스 작동 중")
+}
+
+// example9ContextCustomValues demonstrates storing and retrieving custom values.
+// example9ContextCustomValues는 커스텀 값 저장 및 검색을 시연합니다.
+func example9ContextCustomValues() {
+	app := websvrutil.New()
+
+	var storedUser string
+	var storedAuth bool
+	var storedCount int
+
+	app.GET("/user/:id", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+
+		// Store custom values
+		// 커스텀 값 저장
+		ctx.Set("userId", ctx.Param("id"))
+		ctx.Set("authenticated", true)
+		ctx.Set("requestCount", 42)
+
+		// Retrieve values
+		// 값 검색
+		storedUser = ctx.GetString("userId")
+		storedAuth = ctx.GetBool("authenticated")
+		storedCount = ctx.GetInt("requestCount")
+
+		fmt.Fprintf(w, "User: %s, Auth: %v, Count: %d", storedUser, storedAuth, storedCount)
+	})
+
+	fmt.Println("✓ Route with custom value storage registered")
+	fmt.Println("✓ 커스텀 값 저장이 있는 라우트 등록됨")
+
+	// Test custom values
+	// 커스텀 값 테스트
+	req := httptest.NewRequest("GET", "/user/alice", nil)
+	rec := httptest.NewRecorder()
+	app.ServeHTTP(rec, req)
+
+	fmt.Println("\n  Custom values test:")
+	fmt.Println("  커스텀 값 테스트:")
+	fmt.Printf("  - Stored user ID: %s\n", storedUser)
+	fmt.Printf("  - Stored authenticated: %v\n", storedAuth)
+	fmt.Printf("  - Stored request count: %d\n", storedCount)
+
+	fmt.Println("\n✓ Context custom value storage working")
+	fmt.Println("✓ Context 커스텀 값 저장 작동 중")
+}
+
+// example10ContextHeaders demonstrates request and response header access.
+// example10ContextHeaders는 요청 및 응답 헤더 액세스를 시연합니다.
+func example10ContextHeaders() {
+	app := websvrutil.New()
+
+	var authHeader, contentType string
+
+	app.GET("/api/data", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+
+		// Read request headers
+		// 요청 헤더 읽기
+		authHeader = ctx.Header("Authorization")
+		contentType = ctx.Header("Content-Type")
+
+		// Set response headers
+		// 응답 헤더 설정
+		ctx.SetHeader("X-API-Version", "1.0")
+		ctx.SetHeader("Content-Type", "application/json")
+
+		fmt.Fprintf(w, "Auth: %s, Type: %s", authHeader, contentType)
+	})
+
+	fmt.Println("✓ API route with header access registered")
+	fmt.Println("✓ 헤더 액세스가 있는 API 라우트 등록됨")
+
+	// Test with headers
+	// 헤더로 테스트
+	req := httptest.NewRequest("GET", "/api/data", nil)
+	req.Header.Set("Authorization", "Bearer token123")
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+	app.ServeHTTP(rec, req)
+
+	fmt.Println("\n  Request headers:")
+	fmt.Println("  요청 헤더:")
+	fmt.Printf("  - Authorization: %s\n", authHeader)
+	fmt.Printf("  - Content-Type: %s\n", contentType)
+
+	fmt.Println("\n  Response headers:")
+	fmt.Println("  응답 헤더:")
+	fmt.Printf("  - X-API-Version: %s\n", rec.Header().Get("X-API-Version"))
+	fmt.Printf("  - Content-Type: %s\n", rec.Header().Get("Content-Type"))
+
+	fmt.Println("\n✓ Context header access working")
+	fmt.Println("✓ Context 헤더 액세스 작동 중")
+}
+
+// example11GracefulShutdown demonstrates graceful server shutdown.
+// example11GracefulShutdown은 정상적인 서버 종료를 시연합니다.
+func example11GracefulShutdown() {
 	app := websvrutil.New()
 
 	// Setup signal handling
@@ -350,9 +547,9 @@ func example7GracefulShutdown() {
 	fmt.Println("✓ 서버가 정상적으로 종료됩니다")
 }
 
-// example8CustomMiddleware demonstrates adding custom middleware.
-// example8CustomMiddleware는 커스텀 미들웨어 추가를 시연합니다.
-func example8CustomMiddleware() {
+// example12CustomMiddleware demonstrates adding custom middleware.
+// example12CustomMiddleware는 커스텀 미들웨어 추가를 시연합니다.
+func example12CustomMiddleware() {
 	app := websvrutil.New()
 
 	// Create a logging middleware
@@ -389,9 +586,9 @@ func example8CustomMiddleware() {
 	fmt.Println("✓ 미들웨어 실행 성공")
 }
 
-// example9MultipleMiddleware demonstrates adding multiple middleware.
-// example9MultipleMiddleware는 다중 미들웨어 추가를 시연합니다.
-func example9MultipleMiddleware() {
+// example13MultipleMiddleware demonstrates adding multiple middleware.
+// example13MultipleMiddleware는 다중 미들웨어 추가를 시연합니다.
+func example13MultipleMiddleware() {
 	app := websvrutil.New()
 
 	// First middleware: Request ID
@@ -455,9 +652,9 @@ func example9MultipleMiddleware() {
 	fmt.Println("✓ 모든 미들웨어가 순서대로 실행됨")
 }
 
-// example10ProductionConfig demonstrates a production-ready configuration.
-// example10ProductionConfig는 프로덕션 준비 설정을 시연합니다.
-func example10ProductionConfig() {
+// example14ProductionConfig demonstrates a production-ready configuration.
+// example14ProductionConfig는 프로덕션 준비 설정을 시연합니다.
+func example14ProductionConfig() {
 	app := websvrutil.New(
 		// Security timeouts / 보안 타임아웃
 		websvrutil.WithReadTimeout(10*time.Second),
