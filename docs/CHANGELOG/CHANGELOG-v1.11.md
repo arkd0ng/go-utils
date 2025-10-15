@@ -5,6 +5,60 @@
 
 ---
 
+## [v1.11.013] - 2025-10-16
+
+### Added / 추가
+- **Request Binding System** / **요청 바인딩 시스템** (`context.go`, `bind.go`)
+  - `Bind(obj interface{}) error` - Auto bind request data based on Content-Type
+  - `BindJSON(obj interface{}) error` - Bind JSON request body to struct
+  - `BindForm(obj interface{}) error` - Bind form data to struct with `form` tags
+  - `BindQuery(obj interface{}) error` - Bind query parameters to struct with `form` tags
+  - Supports automatic Content-Type detection (application/json, application/x-www-form-urlencoded, multipart/form-data)
+  - Reflection-based struct field mapping using `form` tags
+  - Type conversion support: string, int, uint, float, bool
+
+- **Form Data Binding Helper** / **폼 데이터 바인딩 헬퍼** (`bind.go`)
+  - `bindFormData(obj interface{}, values url.Values) error` - Bind URL values to struct
+  - `setFieldValue(field reflect.Value, value string) error` - Set struct field value by type
+  - Supports int (int, int8, int16, int32, int64)
+  - Supports uint (uint, uint8, uint16, uint32, uint64)
+  - Supports float (float32, float64)
+  - Supports bool
+  - Supports string
+  - Error handling for invalid type conversions
+
+- **Comprehensive Tests** / **종합 테스트** (`bind_test.go`)
+  - `TestBindJSON` - Test JSON binding with valid and invalid JSON
+  - `TestBindForm` - Test form data binding
+  - `TestBindQuery` - Test query parameter binding
+  - `TestBind` - Test automatic binding based on Content-Type
+  - `TestBindFormData` - Test helper function with all data types
+  - `TestBindFormDataError` - Test error cases (not pointer, not struct)
+  - `BenchmarkBindJSON` - Benchmark JSON binding performance
+  - `BenchmarkBindForm` - Benchmark form binding performance
+  - **Total: 6 test functions + 2 benchmarks** for request binding
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.013
+- Bumped version to v1.11.013 in `cfg/app.yaml`
+- Updated `README.md` with request binding documentation
+- Added new files: `bind.go`, `bind_test.go`
+
+### Testing Coverage / 테스트 커버리지
+- **6 new test functions + 2 benchmarks** for request binding
+- **Total: 162+ test functions**, **Total: 39 benchmark functions**
+- **77.5% test coverage** - All tests passing ✅
+
+### Notes / 참고사항
+- Request binding uses reflection for automatic struct mapping
+- Struct fields should use `form` tags to specify form/query field names
+- JSON binding uses standard `json` tags
+- Supports nested structs for complex data structures
+- Type conversion errors are properly handled and reported
+- Next: v1.11.014+ will add cookie & header helpers or file upload
+
+---
+
 ## [v1.11.012] - 2025-10-16
 
 ### Added / 추가

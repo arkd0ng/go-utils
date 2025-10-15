@@ -504,3 +504,101 @@ func (c *Context) RenderWithLayout(code int, layoutName, templateName string, da
 	// 레이아웃과 함께 템플릿 렌더링
 	return engine.RenderWithLayout(c.ResponseWriter, layoutName, templateName, data)
 }
+
+// BindJSON binds the request body as JSON to the provided struct.
+// BindJSON은 요청 본문을 JSON으로 제공된 구조체에 바인딩합니다.
+//
+// Example / 예제:
+//
+//	var user User
+//	if err := ctx.BindJSON(&user); err != nil {
+//	    return ctx.Error(400, "Invalid JSON")
+//	}
+func (c *Context) BindJSON(obj interface{}) error {
+	if c.Request.Body == nil {
+		return fmt.Errorf("request body is nil")
+	}
+
+	decoder := json.NewDecoder(c.Request.Body)
+	if err := decoder.Decode(obj); err != nil {
+		return fmt.Errorf("failed to decode JSON: %w", err)
+	}
+
+	return nil
+}
+
+// BindForm binds the form data to the provided struct.
+// BindForm은 폼 데이터를 제공된 구조체에 바인딩합니다.
+//
+// The struct should use `form` tags to specify form field names.
+// 구조체는 `form` 태그를 사용하여 폼 필드 이름을 지정해야 합니다.
+//
+// Example / 예제:
+//
+//	type LoginForm struct {
+//	    Username string `form:"username"`
+//	    Password string `form:"password"`
+//	}
+//	var form LoginForm
+//	if err := ctx.BindForm(&form); err != nil {
+//	    return ctx.Error(400, "Invalid form data")
+//	}
+func (c *Context) BindForm(obj interface{}) error {
+	if err := c.Request.ParseForm(); err != nil {
+		return fmt.Errorf("failed to parse form: %w", err)
+	}
+
+	return bindFormData(obj, c.Request.Form)
+}
+
+// BindQuery binds the query parameters to the provided struct.
+// BindQuery는 쿼리 매개변수를 제공된 구조체에 바인딩합니다.
+//
+// The struct should use `form` tags to specify query parameter names.
+// 구조체는 `form` 태그를 사용하여 쿼리 매개변수 이름을 지정해야 합니다.
+//
+// Example / 예제:
+//
+//	type SearchQuery struct {
+//	    Q    string `form:"q"`
+//	    Page int    `form:"page"`
+//	}
+//	var query SearchQuery
+//	if err := ctx.BindQuery(&query); err != nil {
+//	    return ctx.Error(400, "Invalid query parameters")
+//	}
+func (c *Context) BindQuery(obj interface{}) error {
+	return bindFormData(obj, c.Request.URL.Query())
+}
+
+// Bind automatically binds the request data based on Content-Type.
+// Bind는 Content-Type에 따라 요청 데이터를 자동으로 바인딩합니다.
+//
+// It supports JSON (application/json) and form data (application/x-www-form-urlencoded, multipart/form-data).
+// JSON (application/json) 및 폼 데이터 (application/x-www-form-urlencoded, multipart/form-data)를 지원합니다.
+//
+// Example / 예제:
+//
+//	var data RequestData
+//	if err := ctx.Bind(&data); err != nil {
+//	    return ctx.Error(400, "Invalid request data")
+//	}
+func (c *Context) Bind(obj interface{}) error {
+	contentType := c.Request.Header.Get("Content-Type")
+
+	// Check for JSON content type
+	// JSON Content-Type 확인
+	if contentType == "application/json" || contentType == "application/json; charset=utf-8" {
+		return c.BindJSON(obj)
+	}
+
+	// Check for form content types
+	// 폼 Content-Type 확인
+	if contentType == "application/x-www-form-urlencoded" || contentType == "multipart/form-data" {
+		return c.BindForm(obj)
+	}
+
+	// Default to form binding if no content type specified
+	// Content-Type이 지정되지 않은 경우 폼 바인딩을 기본값으로 사용
+	return c.BindForm(obj)
+}

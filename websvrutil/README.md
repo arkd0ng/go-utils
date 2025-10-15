@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.012
+**Version / 버전**: v1.11.013
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.012) / 현재 기능
+## Current Features (v1.11.013) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -109,6 +109,12 @@ Request context for accessing path parameters, query strings, headers, and stori
 - `XML(code int, xml string) error` - Send XML response / XML 응답 전송
 - `Redirect(code int, url string)` - HTTP redirect / HTTP 리다이렉트
 - `NoContent()` - Send 204 No Content / 204 No Content 전송
+
+**Request Binding / 요청 바인딩** (v1.11.013+):
+- `Bind(obj interface{}) error` - Auto bind based on Content-Type / Content-Type에 따라 자동 바인딩
+- `BindJSON(obj interface{}) error` - Bind JSON request body / JSON 요청 본문 바인딩
+- `BindForm(obj interface{}) error` - Bind form data / 폼 데이터 바인딩
+- `BindQuery(obj interface{}) error` - Bind query parameters / 쿼리 매개변수 바인딩
 
 **Helper Function / 헬퍼 함수**:
 - `GetContext(r *http.Request) *Context` - Get Context from request / 요청에서 Context 가져오기
@@ -621,6 +627,7 @@ The following features are planned for future releases:
 - ✅ v1.11.010: Template Engine Core (TemplateEngine, auto-loading, custom functions) / 템플릿 엔진 핵심 (TemplateEngine, 자동 로딩, 커스텀 함수)
 - ✅ v1.11.011: Layout System and Built-in Functions (layouts, 26+ built-in functions) / 레이아웃 시스템 및 내장 함수 (레이아웃, 26개 이상의 내장 함수)
 - ✅ v1.11.012: Hot Reload (automatic template reloading, file watching) / 핫 리로드 (자동 템플릿 재로드, 파일 감시)
+- ✅ v1.11.013: Request Binding (Bind, BindJSON, BindForm, BindQuery) / 요청 바인딩 (Bind, BindJSON, BindForm, BindQuery)
 
 ## Documentation / 문서
 
