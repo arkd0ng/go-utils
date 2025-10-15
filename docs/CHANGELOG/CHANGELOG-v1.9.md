@@ -6,6 +6,127 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.011] - 2025-10-15
+
+### Enhanced / 보강됨
+
+#### Extremely Detailed Logging in Stringutil Example / Stringutil 예제에 극도로 상세한 로깅 추가
+
+**Changes / 변경사항:**
+- Completely rewrote `examples/stringutil/main.go` with comprehensive detailed logging (~543 lines)
+- Added function-level documentation through logs (Signature, Description, Use Cases, Features, Results)
+- Follows the established pattern from random_string (v1.9.009) and fileutil examples
+- Log file serves as complete user manual without needing external documentation
+- `examples/stringutil/main.go`를 종합적인 상세 로깅으로 완전히 재작성 (~543줄)
+- 로그를 통한 함수 레벨 문서화 (시그니처, 설명, 사용 사례, 기능, 결과)
+- random_string (v1.9.009) 및 fileutil 예제의 확립된 패턴을 따름
+- 로그 파일이 외부 문서 없이 완전한 사용자 매뉴얼 역할 수행
+
+**Coverage / 범위:**
+
+1. **Case Conversion Functions (9 functions) / 케이스 변환 함수 (9개 함수):**
+   - Detailed: `ToSnakeCase`, `ToCamelCase`, `ToKebabCase`, `ToPascalCase`, `ToScreamingSnakeCase`
+   - Each with: Function Signature, Description, Use Cases (4+), Key Features (4+), Execution, Results
+   - Summarized: `ToTitle`, `Slugify`, `Quote`, `Unquote`
+   - 상세 설명: 5개 함수, 요약 설명: 4개 함수
+
+2. **String Manipulation Functions (17 functions) / 문자열 조작 함수 (17개 함수):**
+   - Detailed: `Reverse()` with Unicode testing (ASCII, Korean, emoji)
+   - Demonstrated Unicode safety (rune-based, not byte-based)
+   - Summarized: Truncate, Clean, Repeat, PadLeft, PadRight, etc. (16 functions)
+   - 상세 설명: Reverse (유니코드 안전성 테스트 포함)
+   - 요약 설명: 16개 함수
+
+3. **Validation Functions (8 functions) / 유효성 검사 함수 (8개 함수):**
+   - Summarized with execution examples
+   - Functions: IsEmail, IsURL, IsAlphanumeric, IsNumeric, IsAlpha, IsBlank, IsLower, IsUpper
+   - 실행 예제와 함께 요약
+
+4. **Summary of All 10 Categories (53 total functions) / 전체 10개 카테고리 요약 (총 53개 함수):**
+   - Comparison (3 functions)
+   - Search & Replace (6 functions)
+   - Unicode Operations (3 functions)
+   - Collection Utilities (7 functions)
+   - Encoding/Decoding (8 functions)
+   - String Distance (4 functions)
+   - Formatting (12 functions)
+
+**Logging Pattern / 로깅 패턴:**
+
+Each detailed function includes:
+각 상세 함수는 다음을 포함합니다:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1.1 FunctionName() - Short Description
+    한글 설명
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 Function Signature / 함수 시그니처:
+   func FunctionName(params) return_type
+
+📖 Description / 설명:
+   • English description
+   • 한글 설명
+
+🎯 Use Cases / 사용 사례:
+   • Use case 1 (사용 사례 1)
+   • Use case 2 (사용 사례 2)
+   • Use case 3 (사용 사례 3)
+   • Use case 4 (사용 사례 4)
+
+💡 Key Features / 주요 기능:
+   • Feature 1
+   • Feature 2
+   • Feature 3
+   • Feature 4
+
+▶️  Executing / 실행 중:
+   FunctionName('input') = 'output'
+
+✅ Results Analysis / 결과 분석:
+   1. Analysis point 1
+   2. Analysis point 2
+```
+
+**Technical Details / 기술 세부사항:**
+- Bilingual (English/Korean) throughout all logs
+- Dual output: file (`logs/stringutil-example.log`, 26KB) AND stdout
+- Log backup with cleanup (keeps 5 most recent)
+- Delete original log after backup to prevent duplication (v1.9.010 fix applied)
+- Unicode safety demonstrated with Korean and emoji examples
+- 모든 로그에서 이중 언어 (영어/한글)
+- 이중 출력: 파일 (`logs/stringutil-example.log`, 26KB) 및 stdout
+- 로그 백업 및 정리 (최근 5개 유지)
+- 백업 후 원본 로그 삭제하여 중복 방지 (v1.9.010 수정 적용)
+- 한글 및 이모지 예제로 유니코드 안전성 시연
+
+**Benefits / 이점:**
+- ✅ **Comprehensive documentation**: Logs serve as complete user manual
+- ✅ **Bilingual support**: Full English and Korean documentation
+- ✅ **Practical examples**: Real-world use cases for each function
+- ✅ **Unicode demonstration**: Proves string operations work with all languages
+- ✅ **Consistent pattern**: Follows established example style across the project
+- ✅ **종합 문서화**: 로그가 완전한 사용자 매뉴얼 역할
+- ✅ **이중 언어 지원**: 완전한 영어 및 한글 문서
+- ✅ **실용적인 예제**: 각 함수의 실제 사용 사례
+- ✅ **유니코드 시연**: 모든 언어에서 문자열 작업 작동 증명
+- ✅ **일관된 패턴**: 프로젝트 전체에서 확립된 예제 스타일 따름
+
+**Updated Files / 업데이트된 파일:**
+1. `cfg/app.yaml` - Version bumped to v1.9.011
+2. `examples/stringutil/main.go` - Complete rewrite with detailed logging (~543 lines)
+3. `docs/CHANGELOG/CHANGELOG-v1.9.md` - This entry
+
+**Testing / 테스트:**
+- ✅ Compiled successfully: `go run examples/stringutil/main.go`
+- ✅ Log file created: `logs/stringutil-example.log` (26KB)
+- ✅ Dual output verified: Both file and stdout
+- ✅ Backup logic working: Original log deleted after backup
+- ✅ Unicode test passed: Korean and emoji characters handled correctly
+
+---
+
 ## [v1.9.010] - 2025-10-15
 
 ### Fixed / 수정됨
