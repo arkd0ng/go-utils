@@ -6,6 +6,35 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.003] - 2025-10-15
+
+### Changed / 변경
+- Modified `maputil/maputil.go` to dynamically load version from `cfg/app.yaml` / `maputil/maputil.go`를 수정하여 `cfg/app.yaml`에서 버전을 동적으로 로드하도록 변경
+  - Changed `Version` from const to var with `getVersion()` function / `Version`을 const에서 `getVersion()` 함수를 사용하는 var로 변경
+  - Uses `logging.TryLoadAppVersion()` to read version / `logging.TryLoadAppVersion()`을 사용하여 버전 읽기
+  - Returns "unknown" if `app.yaml` cannot be loaded / `app.yaml`을 로드할 수 없으면 "unknown" 반환
+
+### Fixed / 수정
+- Fixed compilation errors in `examples/maputil/main.go` / `examples/maputil/main.go`의 컴파일 에러 수정
+  - Fixed `MapKeys` function signature: added missing value parameter `(k, v)` / `MapKeys` 함수 시그니처 수정: 누락된 값 파라미터 `(k, v)` 추가
+  - Fixed `Flatten` function: added missing delimiter parameter / `Flatten` 함수 수정: 누락된 구분자 파라미터 추가
+  - Removed non-existent `ReduceRight` function, replaced with `Sum` / 존재하지 않는 `ReduceRight` 함수 제거, `Sum`으로 대체
+  - Fixed `MinBy`/`MaxBy` function signatures: changed from comparator `func(V, V) bool` to score function `func(V) float64` / `MinBy`/`MaxBy` 함수 시그니처 수정: 비교자 `func(V, V) bool`에서 점수 함수 `func(V) float64`로 변경
+  - Renumbered all functions after removing `ReduceRight` / `ReduceRight` 제거 후 모든 함수 번호 재정렬
+  - Added missing `CountBy` example to Category 3 (Aggregation) / Category 3 (집계)에 누락된 `CountBy` 예제 추가
+
+### Improved / 개선
+- Enhanced `examples/maputil/main.go` with comprehensive tutorial-style logging / 포괄적인 튜토리얼 스타일 로깅으로 `examples/maputil/main.go` 개선
+  - All 81 functions now demonstrated with detailed explanations / 81개 함수 모두 상세한 설명과 함께 시연
+  - Bilingual comments (English/Korean) throughout / 전체적으로 이중 언어 주석 (영문/한글)
+  - Added 5 real-world use case examples / 5개 실제 사용 사례 예제 추가
+  - Visual separators and emoji indicators for better readability / 가독성 향상을 위한 시각적 구분선 및 이모지 표시
+
+### Documentation / 문서
+- Complete example coverage: 81/81 functions (100%) / 완전한 예제 커버리지: 81/81 함수 (100%)
+- Total output: 649 lines of detailed logs / 총 출력: 649줄의 상세한 로그
+- Each function includes: Purpose, Use case, Input/Output examples / 각 함수는 목적, 사용 사례, 입/출력 예제 포함
+
 ## [v1.8.002] - 2025-10-15
 
 ### Added / 추가

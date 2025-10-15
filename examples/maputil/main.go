@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/arkd0ng/go-utils/logging"
 	"github.com/arkd0ng/go-utils/maputil"
@@ -12,7 +13,7 @@ func main() {
 	// Initialize logger / 로거 초기화
 	logger, err := logging.New(
 		logging.WithLevel(logging.DEBUG),
-		logging.WithColor(true),
+		logging.WithFilePath(fmt.Sprintf("logs/maputil-example-%s.log", time.Now().Format("20060102_150405"))),
 		logging.WithStdout(true),
 	)
 	if err != nil {
@@ -448,6 +449,17 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   - Income transactions:", "count", len(grouped["income"]))
 	logger.Info("   - Expense transactions:", "count", len(grouped["expense"]))
 	logger.Info("   💡 Use case: Data categorization, reporting")
+	logger.Info("")
+
+	// 9. CountBy - Count by key function / 키 함수로 개수 세기
+	logger.Info("9️⃣  CountBy() - Count slice elements by key function / 키 함수로 슬라이스 요소 개수 세기")
+	logger.Info("   Purpose: Get count for each category")
+	logger.Info("   목적: 각 범주별 개수 가져오기")
+	counts := maputil.CountBy[string, Transaction, string](transactions, func(t Transaction) string {
+		return t.Type
+	})
+	logger.Info("   Transaction counts by type:", "counts", counts)
+	logger.Info("   💡 Use case: Statistics, frequency analysis, histograms")
 	logger.Info("")
 }
 
