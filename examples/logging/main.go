@@ -74,18 +74,18 @@ func backupLogFile(logFilePath string) {
 func main() {
 	// Backup all log files that will be used in examples / 예제에서 사용할 모든 로그 파일 백업
 	logFiles := []string{
-		"logs/app.log",
-		"logs/custom.log",
-		"logs/database.log",
-		"logs/api.log",
-		"logs/levels.log",
-		"logs/structured.log",
-		"logs/auto_banner_default.log",
-		"logs/auto_banner_custom.log",
-		"logs/auto_banner_convenience.log",
-		"logs/auto_banner_disabled.log",
-		"logs/manual_banner_only.log",
-		"logs/banners.log",
+		"logs/logging-example-app.log",
+		"logs/logging-example-custom.log",
+		"logs/logging-example-database.log",
+		"logs/logging-example-api.log",
+		"logs/logging-example-levels.log",
+		"logs/logging-example-structured.log",
+		"logs/logging-example-auto_banner_default.log",
+		"logs/logging-example-auto_banner_custom.log",
+		"logs/logging-example-auto_banner_convenience.log",
+		"logs/logging-example-auto_banner_disabled.log",
+		"logs/logging-example-manual_banner_only.log",
+		"logs/logging-example-banners.log",
 	}
 
 	fmt.Println("🔄 Checking and backing up existing log files...")
@@ -140,7 +140,7 @@ func defaultExample() {
 // customExample은 다양한 옵션으로 커스텀 로거를 생성하는 것을 보여줍니다
 func customExample() {
 	logger, err := logging.New(
-		logging.WithFilePath("logs/custom.log"),
+		logging.WithFilePath("logs/logging-example-custom.log"),
 		logging.WithMaxSize(50),      // 50 MB
 		logging.WithMaxBackups(5),    // Keep 5 backups / 5개 백업 유지
 		logging.WithMaxAge(7),         // Keep for 7 days / 7일 동안 보관
@@ -164,14 +164,14 @@ func customExample() {
 func multipleLoggersExample() {
 	// Application logger / 애플리케이션 로거
 	appLogger, _ := logging.New(
-		logging.WithFilePath("logs/app.log"),
+		logging.WithFilePath("logs/logging-example-app.log"),
 		logging.WithPrefix("[APP]"),
 	)
 	defer appLogger.Close()
 
 	// Database logger / 데이터베이스 로거
 	dbLogger, _ := logging.New(
-		logging.WithFilePath("logs/database.log"),
+		logging.WithFilePath("logs/logging-example-database.log"),
 		logging.WithPrefix("[DB]"),
 		logging.WithLevel(logging.DEBUG),
 	)
@@ -179,7 +179,7 @@ func multipleLoggersExample() {
 
 	// API logger / API 로거
 	apiLogger, _ := logging.New(
-		logging.WithFilePath("logs/api.log"),
+		logging.WithFilePath("logs/logging-example-api.log"),
 		logging.WithPrefix("[API]"),
 	)
 	defer apiLogger.Close()
@@ -199,7 +199,7 @@ func multipleLoggersExample() {
 // logLevelsExample은 다양한 로그 레벨을 보여줍니다
 func logLevelsExample() {
 	logger, _ := logging.New(
-		logging.WithFilePath("logs/levels.log"),
+		logging.WithFilePath("logs/logging-example-levels.log"),
 		logging.WithLevel(logging.DEBUG), // Show all levels / 모든 레벨 표시
 	)
 	defer logger.Close()
@@ -231,7 +231,7 @@ func logLevelsExample() {
 // structuredLoggingExample은 키-값 쌍을 사용한 구조화된 로깅을 보여줍니다
 func structuredLoggingExample() {
 	logger, _ := logging.New(
-		logging.WithFilePath("logs/structured.log"),
+		logging.WithFilePath("logs/logging-example-structured.log"),
 		logging.WithPrefix("[STRUCT]"),
 	)
 	defer logger.Close()
@@ -283,7 +283,7 @@ func autoBannerExample() {
 	// By default, a banner is automatically printed when logger is created
 	// 기본적으로 로거 생성 시 자동으로 배너가 출력됩니다
 	logger1, _ := logging.New(
-		logging.WithFilePath("logs/auto_banner_default.log"),
+		logging.WithFilePath("logs/logging-example-auto_banner_default.log"),
 	)
 	defer logger1.Close()
 
@@ -295,7 +295,7 @@ func autoBannerExample() {
 	// You can customize the app name and version for the auto banner
 	// 자동 배너의 앱 이름과 버전을 커스터마이즈할 수 있습니다
 	logger2, _ := logging.New(
-		logging.WithFilePath("logs/auto_banner_custom.log"),
+		logging.WithFilePath("logs/logging-example-auto_banner_custom.log"),
 		logging.WithAppName("MyApp"),
 		logging.WithAppVersion("v2.0.0"),
 	)
@@ -309,7 +309,7 @@ func autoBannerExample() {
 	// Use WithBanner() to set both name and version at once
 	// WithBanner()를 사용하여 이름과 버전을 한 번에 설정할 수 있습니다
 	logger3, _ := logging.New(
-		logging.WithFilePath("logs/auto_banner_convenience.log"),
+		logging.WithFilePath("logs/logging-example-auto_banner_convenience.log"),
 		logging.WithBanner("ProductionAPI", "v3.2.1"),
 	)
 	defer logger3.Close()
@@ -322,7 +322,7 @@ func autoBannerExample() {
 	// If you don't want auto banner, disable it explicitly
 	// 자동 배너를 원하지 않으면 명시적으로 비활성화할 수 있습니다
 	logger4, _ := logging.New(
-		logging.WithFilePath("logs/auto_banner_disabled.log"),
+		logging.WithFilePath("logs/logging-example-auto_banner_disabled.log"),
 		logging.WithAutoBanner(false),
 	)
 	defer logger4.Close()
@@ -335,7 +335,7 @@ func autoBannerExample() {
 	// You can disable auto banner and call Banner() manually when needed
 	// 자동 배너를 비활성화하고 필요할 때 수동으로 배너를 호출할 수 있습니다
 	logger5, _ := logging.New(
-		logging.WithFilePath("logs/manual_banner_only.log"),
+		logging.WithFilePath("logs/logging-example-manual_banner_only.log"),
 		logging.WithAutoBanner(false),
 	)
 	defer logger5.Close()
@@ -351,7 +351,7 @@ func autoBannerExample() {
 // bannerExample은 다양한 배너 스타일을 보여줍니다
 func bannerExample() {
 	logger, _ := logging.New(
-		logging.WithFilePath("logs/banners.log"),
+		logging.WithFilePath("logs/logging-example-banners.log"),
 	)
 	defer logger.Close()
 

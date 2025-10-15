@@ -6,6 +6,83 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.007] - 2025-10-15
+
+### Changed / 변경됨
+
+#### Standardized Logging Example Log File Naming Convention / 로깅 예제 로그 파일 명명 규칙 표준화
+
+**Feature / 기능:**
+- Updated all log file names in logging example to use consistent `logging-example-` prefix
+- 로깅 예제의 모든 로그 파일명을 일관된 `logging-example-` 접두사를 사용하도록 업데이트
+
+**Details / 상세 내용:**
+- All 12 log files in `examples/logging/main.go` now follow the naming pattern: `logs/logging-example-{name}.log`
+- This matches the naming convention used by all other example programs
+- `examples/logging/main.go`의 모든 12개 로그 파일이 이제 명명 패턴을 따름: `logs/logging-example-{name}.log`
+- 이는 다른 모든 예제 프로그램에서 사용하는 명명 규칙과 일치함
+
+**Updated Log File Names / 업데이트된 로그 파일명:**
+```
+Before (이전)                      →  After (이후)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+logs/app.log                       →  logs/logging-example-app.log
+logs/custom.log                    →  logs/logging-example-custom.log
+logs/database.log                  →  logs/logging-example-database.log
+logs/api.log                       →  logs/logging-example-api.log
+logs/levels.log                    →  logs/logging-example-levels.log
+logs/structured.log                →  logs/logging-example-structured.log
+logs/auto_banner_default.log       →  logs/logging-example-auto_banner_default.log
+logs/auto_banner_custom.log        →  logs/logging-example-auto_banner_custom.log
+logs/auto_banner_convenience.log   →  logs/logging-example-auto_banner_convenience.log
+logs/auto_banner_disabled.log      →  logs/logging-example-auto_banner_disabled.log
+logs/manual_banner_only.log        →  logs/logging-example-manual_banner_only.log
+logs/banners.log                   →  logs/logging-example-banners.log
+```
+
+**Technical Changes / 기술적 변경사항:**
+- Updated `logFiles` array in `main()` function with new file paths (12 entries)
+- Updated all 12 `logging.WithFilePath()` calls across 7 example functions:
+  - `customExample()` - 1 logger
+  - `multipleLoggersExample()` - 3 loggers (app, database, api)
+  - `logLevelsExample()` - 1 logger
+  - `structuredLoggingExample()` - 1 logger
+  - `autoBannerExample()` - 5 loggers (default, custom, convenience, disabled, manual)
+  - `bannerExample()` - 1 logger
+- Backup and cleanup functionality automatically works with new names
+- `main()` 함수의 `logFiles` 배열을 새 파일 경로로 업데이트 (12개 항목)
+- 7개 예제 함수의 모든 12개 `logging.WithFilePath()` 호출 업데이트
+- 백업 및 정리 기능이 새 이름으로 자동 작동
+
+**Modified Functions / 수정된 함수:**
+1. `main()` - Updated logFiles array
+2. `customExample()` - Updated file path
+3. `multipleLoggersExample()` - Updated 3 file paths
+4. `logLevelsExample()` - Updated file path
+5. `structuredLoggingExample()` - Updated file path
+6. `autoBannerExample()` - Updated 5 file paths
+7. `bannerExample()` - Updated file path
+
+**Benefits / 장점:**
+- Consistent naming convention across all 9 example programs
+- Easy identification of logging example files in logs directory
+- Better organization and clarity
+- Automatic backup management works seamlessly with new names
+- 모든 9개 예제 프로그램에 걸쳐 일관된 명명 규칙
+- logs 디렉토리에서 로깅 예제 파일 쉽게 식별
+- 더 나은 조직화 및 명확성
+- 자동 백업 관리가 새 이름으로 원활하게 작동
+
+**Compatibility / 호환성:**
+- Old log files are not automatically migrated (manual cleanup recommended)
+- New runs will create files with new naming convention
+- Backup system will handle new files from first run onwards
+- 이전 로그 파일은 자동으로 마이그레이션되지 않음 (수동 정리 권장)
+- 새 실행은 새 명명 규칙으로 파일 생성
+- 백업 시스템은 첫 실행부터 새 파일 처리
+
+---
+
 ## [v1.9.006] - 2025-10-15
 
 ### Added / 추가됨
