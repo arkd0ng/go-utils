@@ -709,16 +709,21 @@ err := fileutil.WriteString(path, content)
 
 ### ✅ [httputil](./httputil/) - HTTP Client Utilities
 
-Extremely simple HTTP client that reduces 30+ lines of boilerplate code to just 2-3 lines with **automatic retry logic**, **JSON handling**, and **rich error types**.
+Extremely simple HTTP client that reduces 30+ lines of boilerplate code to just 2-3 lines with **automatic retry logic**, **JSON handling**, **rich error types**, and **advanced features**.
 
-극도로 간단한 HTTP 클라이언트로 30줄 이상의 보일러플레이트 코드를 단 2-3줄로 줄이며, **자동 재시도 로직**, **JSON 처리**, **풍부한 에러 타입**을 제공합니다.
+극도로 간단한 HTTP 클라이언트로 30줄 이상의 보일러플레이트 코드를 단 2-3줄로 줄이며, **자동 재시도 로직**, **JSON 처리**, **풍부한 에러 타입**, **고급 기능**을 제공합니다.
 
-**Core Features**: RESTful methods (GET/POST/PUT/PATCH/DELETE), automatic JSON encoding/decoding, smart retry with exponential backoff, 12 configuration options, rich error types, zero external dependencies / RESTful 메서드, 자동 JSON 인코딩/디코딩, 지수 백오프를 통한 스마트 재시도, 12개 설정 옵션, 풍부한 에러 타입, 외부 의존성 없음
+**Core Features**: RESTful methods (GET/POST/PUT/PATCH/DELETE), automatic JSON encoding/decoding, smart retry with exponential backoff, 14 configuration options, rich error types, zero external dependencies / RESTful 메서드, 자동 JSON 인코딩/디코딩, 지수 백오프를 통한 스마트 재시도, 14개 설정 옵션, 풍부한 에러 타입, 외부 의존성 없음
 
 **API Levels / API 레벨**:
-- **Simple API (10 functions)**: Package-level convenience functions / 패키지 레벨 편의 함수
+- **Simple API (26+ functions)**: Package-level convenience functions / 패키지 레벨 편의 함수
 - **Client API**: Configured HTTP client for multiple requests / 여러 요청을 위한 설정된 HTTP 클라이언트
-- **Options Pattern**: 12 built-in options (timeout, auth, retry, etc.) / 12개 내장 옵션
+- **Response Helpers (20+ methods)**: Status checks, body access, headers / 상태 확인, 본문 접근, 헤더
+- **File Operations**: Upload/download with progress tracking / 진행 상황 추적이 있는 업로드/다운로드
+- **URL Builder**: Fluent API for building URLs / URL 구축을 위한 Fluent API
+- **Form Builder**: Fluent API for building forms / 폼 구축을 위한 Fluent API
+- **Cookie Management**: In-memory and persistent cookie jars / 메모리 내 및 지속성 쿠키 저장소
+- **Options Pattern**: 14 built-in options (timeout, auth, retry, cookies, etc.) / 14개 내장 옵션
 - **Error Types**: HTTPError, RetryError, TimeoutError / 에러 타입
 
 ```go
@@ -736,15 +741,44 @@ err := httputil.Post("https://api.example.com/users", payload, &response,
     httputil.WithTimeout(30*time.Second),
     httputil.WithRetry(3))
 
-// Client for multiple requests / 여러 요청을 위한 클라이언트
+// Client with cookies and base URL / 쿠키와 베이스 URL을 가진 클라이언트
 client := httputil.NewClient(
     httputil.WithBaseURL("https://api.example.com/v1"),
     httputil.WithBearerToken("your-token"),
-    httputil.WithRetry(5))
+    httputil.WithRetry(5),
+    httputil.WithPersistentCookies("cookies.json"))
 
 client.Get("/users", &users)
 client.Post("/users", newUser, &created)
 client.Delete("/users/123", nil)
+
+// File download with progress / 진행 상황과 함께 파일 다운로드
+err = httputil.DownloadFile(
+    "https://example.com/large-file.zip",
+    "./downloads/file.zip",
+    httputil.WithProgress(func(bytesRead, totalBytes int64) {
+        progress := float64(bytesRead) / float64(totalBytes) * 100
+        fmt.Printf("\rDownloading: %.2f%%", progress)
+    }))
+
+// Response helpers / 응답 헬퍼
+resp, _ := httputil.DoRaw("GET", "https://api.example.com/users", nil)
+if resp.IsSuccess() {
+    bodyString := resp.String()
+    var users []User
+    resp.JSON(&users)
+}
+
+// URL and Form builders / URL 및 Form 빌더
+url := httputil.NewURL("https://api.example.com").
+    Path("users", "search").
+    Param("q", "golang").
+    Build()
+
+form := httputil.NewForm().
+    Set("username", "john").
+    Set("email", "john@example.com").
+    AddIf(hasPromo, "promo_code", "SAVE20")
 ```
 
 **Before vs After**:
@@ -781,7 +815,7 @@ err := httputil.Get(url, &users, httputil.WithBearerToken("token"))
 
 ### 🔜 Coming Soon / 개발 예정
 
-- **httputil Phase 2+** - Response helpers, file upload/download, etc. / 응답 헬퍼, 파일 업로드/다운로드 등
+- **httpserver** - HTTP server utilities (router, middleware, etc.) / HTTP 서버 유틸리티 (라우터, 미들웨어 등)
 - **validation** - Validation utilities / 검증 유틸리티
 - **errorutil** - Error handling helpers / 에러 처리 헬퍼
 

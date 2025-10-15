@@ -25,15 +25,22 @@ This file contains a high-level overview of major and minor versions. For detail
 **Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.10.md](docs/CHANGELOG/CHANGELOG-v1.10.md)
 
 ### Highlights / 주요 사항
-- **Complete httputil package (Phase 1)**: 30+ lines → 2-3 lines of code / 완전한 httputil 패키지 (Phase 1): 30줄 이상 → 2-3줄 코드
+- **Complete httputil package (Phase 1-5)**: 30+ lines → 2-3 lines of code / 완전한 httputil 패키지 (Phase 1-5): 30줄 이상 → 2-3줄 코드
 - **RESTful HTTP methods**: GET, POST, PUT, PATCH, DELETE + Context variants / RESTful HTTP 메서드: GET, POST, PUT, PATCH, DELETE + Context 변형
+- **Simple API (26+ functions)**: Package-level convenience functions / 간단한 API (26개 이상 함수): 패키지 레벨 편의 함수
+- **Response helpers (20+ methods)**: Status checks, body access, headers / 응답 헬퍼 (20개 이상 메서드): 상태 확인, 본문 접근, 헤더
+- **File operations**: Upload/download with progress tracking / 파일 작업: 진행 상황 추적이 있는 업로드/다운로드
+- **URL Builder**: Fluent API for building URLs with parameters / URL 빌더: 매개변수와 함께 URL을 구축하기 위한 Fluent API
+- **Form Builder**: Fluent API for building forms with conditional fields / Form 빌더: 조건부 필드가 있는 폼을 구축하기 위한 Fluent API
+- **Cookie Management**: In-memory and persistent cookie jars / 쿠키 관리: 메모리 내 및 지속성 쿠키 저장소
 - **Automatic JSON handling**: Request/response encoding and decoding / 자동 JSON 처리: 요청/응답 인코딩 및 디코딩
 - **Smart retry logic**: Exponential backoff with jitter for network errors and 5xx / 스마트 재시도 로직: 네트워크 에러 및 5xx에 대한 지터가 있는 지수 백오프
-- **12 configuration options**: Timeout, headers, auth, retry, base URL, etc. / 12개 설정 옵션: 타임아웃, 헤더, 인증, 재시도, 기본 URL 등
+- **14 configuration options**: Timeout, headers, auth, retry, cookies, base URL, etc. / 14개 설정 옵션: 타임아웃, 헤더, 인증, 재시도, 쿠키, 기본 URL 등
 - **Rich error types**: HTTPError, RetryError, TimeoutError with full context / 풍부한 에러 타입: 전체 컨텍스트가 있는 HTTPError, RetryError, TimeoutError
 - **Options pattern**: Flexible configuration without breaking API / 옵션 패턴: API를 깨뜨리지 않는 유연한 설정
-- **Zero external dependencies**: Standard library only (net/http, encoding/json) / 외부 의존성 없음: 표준 라이브러리만 (net/http, encoding/json)
+- **Zero external dependencies**: Standard library only (net/http, encoding/json, mime/multipart) / 외부 의존성 없음: 표준 라이브러리만 (net/http, encoding/json, mime/multipart)
 - **Comprehensive documentation**: README, USER_MANUAL, DEVELOPER_GUIDE, WORK_PLAN / 포괄적인 문서화: README, USER_MANUAL, DEVELOPER_GUIDE, WORK_PLAN
+- **60.9% test coverage**: 17+ tests, 100+ sub-tests / 60.9% 테스트 커버리지: 17개 이상 테스트, 100개 이상 하위 테스트
 
 **Key Design Principles / 주요 설계 원칙**:
 - Extreme Simplicity: 30+ lines → 2-3 lines / 극도의 간결함: 30줄 이상 → 2-3줄
@@ -41,13 +48,12 @@ This file contains a high-level overview of major and minor versions. For detail
 - Type Safety: Rich error types with context / 타입 안전성: 컨텍스트가 있는 풍부한 에러 타입
 - Zero Configuration: Sensible defaults for 99% of use cases / 제로 설정: 99% 사용 사례에 대한 합리적인 기본값
 
-**Latest Version / 최신 버전**: v1.10.001 (2025-10-15)
+**Latest Version / 최신 버전**: v1.10.004 (2025-10-16)
 
-**Roadmap / 로드맵**:
-- Phase 2 (v1.10.002-004): Response helpers, status code checks, header utilities
-- Phase 3 (v1.10.005-007): File download/upload with progress callbacks
-- Phase 4 (v1.10.008-010): URL utilities, form data helpers
-- Phase 5 (v1.10.011-015): Example programs and polish
+**Completed Phases / 완료된 단계**:
+- ✅ Phase 1 (v1.10.001): Core HTTP client, RESTful methods, retry logic / 핵심 HTTP 클라이언트, RESTful 메서드, 재시도 로직
+- ✅ Phase 2-4 (v1.10.002-003): Response helpers, file operations, URL/Form builders / 응답 헬퍼, 파일 작업, URL/Form 빌더
+- ✅ Phase 5 (v1.10.004): Cookie management (in-memory and persistent) / 쿠키 관리 (메모리 내 및 지속성)
 
 ---
 
