@@ -38,3 +38,40 @@ func ForEach[K comparable, V any](m map[K]V, fn func(K, V)) {
 		fn(k, v)
 	}
 }
+
+// GetMany retrieves multiple values from the map by their keys.
+// GetMany는 키로 맵에서 여러 값을 검색합니다.
+//
+// This function returns a slice of values corresponding to the provided keys.
+// If a key does not exist in the map, the zero value for V is returned at that position.
+//
+// 이 함수는 제공된 키에 해당하는 값의 슬라이스를 반환합니다.
+// 키가 맵에 존재하지 않으면 해당 위치에 V의 제로 값이 반환됩니다.
+//
+// Time Complexity / 시간 복잡도: O(k) where k is the number of keys / k는 키의 개수
+// Space Complexity / 공간 복잡도: O(k)
+//
+// Parameters / 매개변수:
+//   - m: The input map / 입력 맵
+//   - keys: Variable number of keys to retrieve / 검색할 키의 가변 개수
+//
+// Returns / 반환값:
+//   - []V: Slice of values corresponding to the keys / 키에 해당하는 값의 슬라이스
+//
+// Example / 예제:
+//
+//	m := map[string]int{"a": 1, "b": 2, "c": 3}
+//	values := maputil.GetMany(m, "a", "c", "d")
+//	// values: [1, 3, 0] (d doesn't exist, returns zero value)
+//
+// Use Case / 사용 사례:
+//   - Batch retrieval of multiple values / 여러 값의 일괄 검색
+//   - Configuration lookups / 설정 조회
+//   - Data extraction for processing / 처리를 위한 데이터 추출
+func GetMany[K comparable, V any](m map[K]V, keys ...K) []V {
+	result := make([]V, len(keys))
+	for i, key := range keys {
+		result[i] = m[key]
+	}
+	return result
+}

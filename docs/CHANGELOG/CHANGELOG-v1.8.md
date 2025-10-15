@@ -6,6 +6,38 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.008] - 2025-10-15
+
+### Added / 추가
+- **New Function**: `GetMany` - Retrieve multiple values at once / 여러 값을 한 번에 검색
+  - Category: Utility Functions / 유틸리티 함수
+  - Signature: `func GetMany[K comparable, V any](m map[K]V, keys ...K) []V`
+  - Purpose: Batch retrieval of multiple values by keys / 키로 여러 값을 일괄 검색
+  - Returns zero value for non-existent keys / 존재하지 않는 키에 대해 제로 값 반환
+  - Time Complexity: O(k) where k is number of keys, Space Complexity: O(k)
+
+### Tests / 테스트
+- Added comprehensive tests in `maputil/util_test.go`:
+  - TestGetMany: 9 sub-tests covering all scenarios / 모든 시나리오를 다루는 9개 하위 테스트
+    - basic retrieval, non-existent keys, empty keys, single key / 기본 검색, 존재하지 않는 키, 빈 키, 단일 키
+    - duplicate keys, empty map, string values, complex values, large number of keys / 중복 키, 빈 맵, 문자열 값, 복잡한 값, 많은 수의 키
+  - BenchmarkGetMany: Performance benchmarks for 1, 5, 10, 50, 100 keys / 1, 5, 10, 50, 100개 키에 대한 성능 벤치마크
+  - BenchmarkGetManyVsLoop: Comparison with manual loop / 수동 루프와 비교
+  - Benchmark result: ~25ns for 1 key, ~114ns for 10 keys (comparable to manual loop) / 1개 키에 대해 ~25ns, 10개 키에 대해 ~114ns (수동 루프와 유사)
+
+### Examples / 예제
+- Added GetMany demonstration in `examples/maputil/main.go`
+  - Configuration batch lookup example / 설정 일괄 조회 예제
+  - Shows handling of non-existent keys (returns zero value) / 존재하지 않는 키 처리 표시 (제로 값 반환)
+
+### Documentation / 문서
+- Added complete bilingual documentation in `maputil/util.go`
+- Function count: 82 → 83 (2 of 17 utility functions) / 함수 개수: 82 → 83 (17개 유틸리티 함수 중 2개)
+
+### Notes / 참고사항
+- Second of 17 new utility functions planned for maputil / maputil에 계획된 17개 신규 유틸리티 함수 중 두 번째
+- Useful for batch configuration lookups and multi-key data extraction / 배치 설정 조회 및 다중 키 데이터 추출에 유용
+
 ## [v1.8.007] - 2025-10-15
 
 ### Added / 추가

@@ -1326,4 +1326,25 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   ✅ Collected keys:", "keys", keys)
 	logger.Info("   💡 Use case: Logging, debugging, collecting data without creating new maps")
 	logger.Info("")
+
+	// 2. GetMany - Retrieve multiple values at once / 여러 값을 한 번에 검색
+	logger.Info("2️⃣  GetMany() - Get multiple values at once / 여러 값을 한 번에 가져오기")
+	logger.Info("   Purpose: Batch retrieval of multiple values by keys")
+	logger.Info("   목적: 키로 여러 값을 일괄 검색")
+
+	config := map[string]string{
+		"host":     "localhost",
+		"port":     "5432",
+		"database": "mydb",
+		"username": "admin",
+		"password": "secret",
+	}
+	logger.Info("   Input map:", "config", config)
+
+	// Get multiple configuration values
+	values := maputil.GetMany(config, "host", "port", "database", "timeout")
+	logger.Info("   ✅ Retrieved values (host, port, database, timeout):", "values", values)
+	logger.Info("   Note: 'timeout' doesn't exist, returns empty string (zero value)")
+	logger.Info("   💡 Use case: Batch config lookups, multi-key data extraction")
+	logger.Info("")
 }
