@@ -6,6 +6,41 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.015] - 2025-10-15
+
+### Added / 추가
+- **New Functions** (2 functions): Median, Frequencies / 새 함수 (2개)
+  - Category: Statistics Functions / 통계 함수
+  - **Median**: Calculate median of numeric map values / 맵 숫자 값의 중앙값 계산
+    - Signature: `func Median[K comparable, V Number](m map[K]V) (float64, bool)`
+    - Collects all values, sorts, and returns middle value / 모든 값을 수집하고 정렬한 후 중간 값 반환
+    - Returns average of two middle values for even-length maps / 짝수 길이 맵의 경우 두 중간 값의 평균 반환
+    - Time Complexity: O(n log n), Space Complexity: O(n)
+  - **Frequencies**: Count occurrence of each unique value / 각 고유 값의 출현 빈도 계산
+    - Signature: `func Frequencies[K comparable, V comparable](m map[K]V) map[V]int`
+    - Creates inverted map: value → count / 반전된 맵 생성: 값 → 개수
+    - Useful for finding duplicates and analyzing distributions / 중복 찾기 및 분포 분석에 유용
+    - Time Complexity: O(n), Space Complexity: O(u)
+
+### Tests / 테스트
+- Added comprehensive tests in `maputil/aggregate_test.go`:
+  - **TestMedian**: 8 sub-tests / 8개 하위 테스트
+    - odd length, even length, empty map, single value, two values, all same, float values, negative values / 홀수 길이, 짝수 길이, 빈 맵, 단일 값, 두 값, 모두 같음, 소수점 값, 음수 값
+  - **TestFrequencies**: 8 sub-tests / 8개 하위 테스트
+    - string values, int values, empty map, all unique, all same, single entry, boolean values, duplicate detection / 문자열 값, 정수 값, 빈 맵, 모두 고유, 모두 같음, 단일 항목, 부울 값, 중복 감지
+  - **Benchmarks**: 4 benchmarks (Median, Median_Large, Frequencies, Frequencies_Large) / 4개 벤치마크
+
+### Documentation / 문서
+- Updated `maputil/aggregate.go` with complete bilingual documentation
+- Function count: 97 → 99 (ALL 17 utility functions complete!) / 함수 개수: 97 → 99 (17개 유틸리티 함수 모두 완성!)
+
+### Notes / 참고사항
+- **MILESTONE**: All 17 utility functions complete! / 마일스톤: 17개 유틸리티 함수 모두 완성!
+- Seventeenth (final) utility functions for maputil / maputil의 17번째 (최종) 유틸리티 함수
+- These functions complement existing statistics operations / 이 함수들은 기존 통계 작업을 보완
+- Median useful for statistical analysis, Frequencies for duplicate detection / Median은 통계 분석에, Frequencies는 중복 감지에 유용
+- Total function count now: 99 functions in maputil package / 총 함수 개수: maputil 패키지의 99개 함수
+
 ## [v1.8.014] - 2025-10-15
 
 ### Added / 추가

@@ -293,3 +293,137 @@ func CountBy[K comparable, V any, G comparable](slice []V, fn func(V) G) map[G]i
 
 	return result
 }
+
+// Median calculates the median of all numeric values in the map.
+// Median는 맵의 모든 숫자 값의 중앙값을 계산합니다.
+//
+// This function collects all values, sorts them, and returns the middle value.
+// For even-length maps, it returns the average of the two middle values.
+// Returns (0, false) for empty maps.
+//
+// 이 함수는 모든 값을 수집하고 정렬한 후 중간 값을 반환합니다.
+// 짝수 길이 맵의 경우 두 중간 값의 평균을 반환합니다.
+// 빈 맵의 경우 (0, false)를 반환합니다.
+//
+// Time Complexity / 시간 복잡도: O(n log n) due to sorting
+// Space Complexity / 공간 복잡도: O(n) for collecting values
+//
+// Parameters / 매개변수:
+//   - m: The input map with numeric values / 숫자 값이 있는 입력 맵
+//
+// Returns / 반환값:
+//   - float64: The median value / 중앙값
+//   - bool: false if map is empty, true otherwise / 맵이 비어있으면 false, 그렇지 않으면 true
+//
+// Example / 예제:
+//
+//	scores := map[string]int{
+//		"Alice":   85,
+//		"Bob":     90,
+//		"Charlie": 75,
+//		"Diana":   95,
+//		"Eve":     80,
+//	}
+//	median, ok := maputil.Median(scores) // median = 85.0 (middle value when sorted)
+//
+//	evenScores := map[string]int{
+//		"Alice": 80,
+//		"Bob":   90,
+//		"Charlie": 70,
+//		"Diana": 100,
+//	}
+//	median2, ok2 := maputil.Median(evenScores) // median2 = 85.0 (average of 80 and 90)
+//
+// Use Case / 사용 사례:
+//   - Statistical analysis / 통계 분석
+//   - Grade distribution analysis / 성적 분포 분석
+//   - Performance metrics / 성능 메트릭
+//   - Finding typical values / 대표값 찾기
+func Median[K comparable, V Number](m map[K]V) (float64, bool) {
+	if len(m) == 0 {
+		return 0, false
+	}
+
+	// Collect all values into a slice
+	values := make([]float64, 0, len(m))
+	for _, v := range m {
+		values = append(values, float64(v))
+	}
+
+	// Sort values
+	for i := 0; i < len(values)-1; i++ {
+		for j := i + 1; j < len(values); j++ {
+			if values[i] > values[j] {
+				values[i], values[j] = values[j], values[i]
+			}
+		}
+	}
+
+	n := len(values)
+	if n%2 == 1 {
+		// Odd length: return middle value
+		return values[n/2], true
+	}
+
+	// Even length: return average of two middle values
+	mid1 := values[n/2-1]
+	mid2 := values[n/2]
+	return (mid1 + mid2) / 2, true
+}
+
+// Frequencies counts the occurrence of each unique value in the map.
+// Frequencies는 맵의 각 고유 값의 출현 빈도를 계산합니다.
+//
+// This function inverts the map structure, creating a map where keys are the
+// original values and values are their occurrence counts. Useful for finding
+// duplicate values or analyzing value distributions.
+//
+// 이 함수는 맵 구조를 반전하여 키가 원래 값이고 값이 출현 횟수인 맵을 생성합니다.
+// 중복 값을 찾거나 값 분포를 분석하는 데 유용합니다.
+//
+// Time Complexity / 시간 복잡도: O(n)
+// Space Complexity / 공간 복잡도: O(u) where u is unique values
+//
+// Parameters / 매개변수:
+//   - m: The input map / 입력 맵
+//
+// Returns / 반환값:
+//   - map[V]int: Map of value → count / 값 → 개수 맵
+//
+// Example / 예제:
+//
+//	grades := map[string]string{
+//		"Alice":   "A",
+//		"Bob":     "B",
+//		"Charlie": "A",
+//		"Diana":   "C",
+//		"Eve":     "B",
+//		"Frank":   "A",
+//	}
+//	freq := maputil.Frequencies(grades)
+//	// freq = map[string]int{"A": 3, "B": 2, "C": 1}
+//
+//	scores := map[string]int{
+//		"test1": 85,
+//		"test2": 90,
+//		"test3": 85,
+//		"test4": 90,
+//		"test5": 75,
+//	}
+//	scoreFreq := maputil.Frequencies(scores)
+//	// scoreFreq = map[int]int{85: 2, 90: 2, 75: 1}
+//
+// Use Case / 사용 사례:
+//   - Finding duplicate values / 중복 값 찾기
+//   - Value distribution analysis / 값 분포 분석
+//   - Histogram generation / 히스토그램 생성
+//   - Data quality checks / 데이터 품질 확인
+func Frequencies[K comparable, V comparable](m map[K]V) map[V]int {
+	result := make(map[V]int)
+
+	for _, value := range m {
+		result[value]++
+	}
+
+	return result
+}
