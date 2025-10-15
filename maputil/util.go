@@ -118,3 +118,49 @@ func SetMany[K comparable, V any](m map[K]V, entries ...Entry[K, V]) map[K]V {
 	}
 	return result
 }
+
+// Tap executes a side-effect function on the map and returns the original map.
+// Tap은 맵에 대해 부수 효과 함수를 실행하고 원본 맵을 반환합니다.
+//
+// This function is useful for method chaining where you want to perform a side effect
+// (like logging or debugging) without breaking the chain. The function receives the
+// entire map and can inspect or operate on it, but the original map is returned unchanged.
+//
+// 이 함수는 체인을 끊지 않고 부수 효과(로깅 또는 디버깅 등)를 수행하려는
+// 메서드 체이닝에 유용합니다. 함수는 전체 맵을 받아 검사하거나 작업할 수 있지만,
+// 원본 맵은 변경되지 않고 반환됩니다.
+//
+// Time Complexity / 시간 복잡도: O(n) - depends on fn / fn에 따라 다름
+// Space Complexity / 공간 복잡도: O(1)
+//
+// Parameters / 매개변수:
+//   - m: The input map / 입력 맵
+//   - fn: Side-effect function to execute / 실행할 부수 효과 함수
+//
+// Returns / 반환값:
+//   - map[K]V: The original map (unchanged) / 원본 맵 (변경되지 않음)
+//
+// Example / 예제:
+//
+//	m := map[string]int{"a": 1, "b": 2, "c": 3}
+//	result := maputil.Filter(m, func(k string, v int) bool {
+//	    return v > 1
+//	}).
+//	Tap(func(m map[string]int) {
+//	    fmt.Printf("Filtered map: %v\n", m)
+//	}).
+//	Map(func(k string, v int) int {
+//	    return v * 2
+//	})
+//	// Logs: Filtered map: map[b:2 c:3]
+//	// result: map[string]int{"b": 4, "c": 6}
+//
+// Use Case / 사용 사례:
+//   - Debugging in method chains / 메서드 체인에서 디버깅
+//   - Logging intermediate results / 중간 결과 로깅
+//   - Collecting statistics without breaking chain / 체인을 끊지 않고 통계 수집
+//   - Performing validation or assertions / 유효성 검사 또는 단언 수행
+func Tap[K comparable, V any](m map[K]V, fn func(map[K]V)) map[K]V {
+	fn(m)
+	return m
+}

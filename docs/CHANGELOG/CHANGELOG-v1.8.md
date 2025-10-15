@@ -6,6 +6,33 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.010] - 2025-10-15
+
+### Added / 추가
+- **New Function**: `Tap` - Execute side-effect function and return original map / 부수 효과 함수를 실행하고 원본 맵 반환
+  - Category: Utility Functions / 유틸리티 함수
+  - Signature: `func Tap[K comparable, V any](m map[K]V, fn func(map[K]V)) map[K]V`
+  - Purpose: Method chaining with side effects (logging, debugging) / 부수 효과가 있는 메서드 체이닝 (로깅, 디버깅)
+  - Returns original map unchanged / 원본 맵을 변경하지 않고 반환
+  - Time Complexity: O(n) - depends on fn, Space Complexity: O(1)
+
+### Tests / 테스트
+- Added comprehensive tests in `maputil/util_test.go`:
+  - TestTap: 8 sub-tests covering all scenarios / 모든 시나리오를 다루는 8개 하위 테스트
+    - basic tap, logging use case, chaining pattern, empty map / 기본 탭, 로깅 사용 사례, 체이닝 패턴, 빈 맵
+    - statistics collection, validation use case, nil function, different types / 통계 수집, 검증 사용 사례, nil 함수, 다른 타입
+  - BenchmarkTap: Performance benchmarks for sizes 10, 100, 1000 / 크기 10, 100, 1000에 대한 성능 벤치마크
+  - BenchmarkTapVsInline: Comparison with inline side effect / 인라인 부수 효과와 비교
+  - Benchmark result: ~124ns for size 10, ~816ns for size 100 (no allocations) / 크기 10에 대해 ~124ns, 크기 100에 대해 ~816ns (할당 없음)
+
+### Documentation / 문서
+- Added complete bilingual documentation in `maputil/util.go`
+- Function count: 84 → 85 (4 of 17 utility functions) / 함수 개수: 84 → 85 (17개 유틸리티 함수 중 4개)
+
+### Notes / 참고사항
+- Fourth of 17 new utility functions planned for maputil / maputil에 계획된 17개 신규 유틸리티 함수 중 네 번째
+- Useful for debugging in method chains without breaking flow / 흐름을 끊지 않고 메서드 체인에서 디버깅에 유용
+
 ## [v1.8.009] - 2025-10-15
 
 ### Added / 추가

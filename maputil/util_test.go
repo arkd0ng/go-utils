@@ -702,3 +702,254 @@ func BenchmarkSetManyVsLoop(b *testing.B) {
 		}
 	})
 }
+
+// TestTap tests the Tap function with various scenarios.
+// TestTap는 다양한 시나리오로 Tap 함수를 테스트합니다.
+func TestTap(t *testing.T) {
+	t.Run("basic tap", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3}
+		var tapped map[string]int
+
+		result := Tap(m, func(m map[string]int) {
+			tapped = m
+		})
+
+		// Should return the same map
+		if len(result) != len(m) {
+			t.Errorf("Tap() length = %d, want %d", len(result), len(m))
+		}
+
+		for k, v := range m {
+			if result[k] != v {
+				t.Errorf("Tap() result[%s] = %d, want %d", k, result[k], v)
+			}
+		}
+
+		// Should have called the function with the map
+		if len(tapped) != len(m) {
+			t.Errorf("Tap() function not called correctly, tapped length = %d, want %d", len(tapped), len(m))
+		}
+	})
+
+	t.Run("logging use case", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3}
+		var logged []string
+
+		result := Tap(m, func(m map[string]int) {
+			for k, v := range m {
+				logged = append(logged, fmt.Sprintf("%s=%d", k, v))
+			}
+		})
+
+		// Map should be unchanged
+		if len(result) != 3 {
+			t.Errorf("Tap() length = %d, want 3", len(result))
+		}
+
+		// Should have logged all entries
+		if len(logged) != 3 {
+			t.Errorf("Tap() logged %d entries, want 3", len(logged))
+		}
+	})
+
+	t.Run("chaining pattern", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+		var intermediate map[string]int
+
+		// Simulate a chain: Filter -> Tap -> Map
+		filtered := Filter(m, func(k string, v int) bool {
+			return v > 1
+		})
+
+		tapped := Tap(filtered, func(m map[string]int) {
+			intermediate = make(map[string]int)
+			for k, v := range m {
+				intermediate[k] = v
+			}
+		})
+
+		result := Map(tapped, func(k string, v int) int {
+			return v * 2
+		})
+
+		// Should have captured intermediate state
+		if len(intermediate) != 3 {
+			t.Errorf("Tap() intermediate length = %d, want 3", len(intermediate))
+		}
+
+		// Final result should be correct
+		expected := map[string]int{"b": 4, "c": 6, "d": 8}
+		if len(result) != len(expected) {
+			t.Errorf("Chained operation length = %d, want %d", len(result), len(expected))
+		}
+
+		for k, v := range expected {
+			if result[k] != v {
+				t.Errorf("Chained operation result[%s] = %d, want %d", k, result[k], v)
+			}
+		}
+	})
+
+	t.Run("empty map", func(t *testing.T) {
+		m := map[string]int{}
+		called := false
+
+		result := Tap(m, func(m map[string]int) {
+			called = true
+		})
+
+		if !called {
+			t.Errorf("Tap() function not called for empty map")
+		}
+
+		if len(result) != 0 {
+			t.Errorf("Tap() length = %d, want 0", len(result))
+		}
+	})
+
+	t.Run("statistics collection", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}
+		var sum, count int
+
+		result := Tap(m, func(m map[string]int) {
+			for _, v := range m {
+				sum += v
+				count++
+			}
+		})
+
+		// Should have collected statistics
+		if sum != 15 {
+			t.Errorf("Tap() sum = %d, want 15", sum)
+		}
+
+		if count != 5 {
+			t.Errorf("Tap() count = %d, want 5", count)
+		}
+
+		// Map should be unchanged
+		if len(result) != 5 {
+			t.Errorf("Tap() length = %d, want 5", len(result))
+		}
+	})
+
+	t.Run("validation use case", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3}
+		var valid bool
+
+		result := Tap(m, func(m map[string]int) {
+			// Check if all values are positive
+			valid = true
+			for _, v := range m {
+				if v <= 0 {
+					valid = false
+					break
+				}
+			}
+		})
+
+		if !valid {
+			t.Errorf("Tap() validation failed, all values should be positive")
+		}
+
+		// Map should be unchanged
+		if len(result) != 3 {
+			t.Errorf("Tap() length = %d, want 3", len(result))
+		}
+	})
+
+	t.Run("nil function", func(t *testing.T) {
+		m := map[string]int{"a": 1}
+
+		// Should handle nil function gracefully (will panic as expected)
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("Tap() with nil function should panic")
+			}
+		}()
+
+		_ = Tap(m, nil)
+	})
+
+	t.Run("different types", func(t *testing.T) {
+		m := map[int]string{1: "one", 2: "two", 3: "three"}
+		var keys []int
+
+		result := Tap(m, func(m map[int]string) {
+			for k := range m {
+				keys = append(keys, k)
+			}
+		})
+
+		// Should have collected keys
+		if len(keys) != 3 {
+			t.Errorf("Tap() collected %d keys, want 3", len(keys))
+		}
+
+		// Map should be unchanged
+		if len(result) != 3 {
+			t.Errorf("Tap() length = %d, want 3", len(result))
+		}
+
+		for k, v := range m {
+			if result[k] != v {
+				t.Errorf("Tap() result[%d] = %s, want %s", k, result[k], v)
+			}
+		}
+	})
+}
+
+// BenchmarkTap benchmarks the Tap function.
+// BenchmarkTap는 Tap 함수를 벤치마크합니다.
+func BenchmarkTap(b *testing.B) {
+	sizes := []int{10, 100, 1000}
+
+	for _, size := range sizes {
+		b.Run(fmt.Sprintf("size_%d", size), func(b *testing.B) {
+			m := make(map[int]int, size)
+			for i := 0; i < size; i++ {
+				m[i] = i * 2
+			}
+
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				_ = Tap(m, func(m map[int]int) {
+					sum := 0
+					for _, v := range m {
+						sum += v
+					}
+				})
+			}
+		})
+	}
+}
+
+// BenchmarkTapVsInline compares Tap with inline side effect.
+// BenchmarkTapVsInline은 Tap과 인라인 부수 효과를 비교합니다.
+func BenchmarkTapVsInline(b *testing.B) {
+	m := make(map[int]int, 100)
+	for i := 0; i < 100; i++ {
+		m[i] = i * 2
+	}
+
+	b.Run("Tap", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_ = Tap(m, func(m map[int]int) {
+				sum := 0
+				for _, v := range m {
+					sum += v
+				}
+			})
+		}
+	})
+
+	b.Run("Inline", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			sum := 0
+			for _, v := range m {
+				sum += v
+			}
+			_ = m
+		}
+	})
+}
