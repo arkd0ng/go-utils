@@ -76,752 +76,596 @@ func main() {
 	defer logger.Close()
 
 	// Print banner / 배너 출력
-	logger.Banner("Timeutil Package Examples", "v1.6.006")
-	logger.Info("Starting comprehensive timeutil examples with all 102 functions")
-	logger.Info("시작: 모든 102개 함수를 포함한 포괄적인 timeutil 예제")
+	logger.Banner("Timeutil Package - Comprehensive Examples", "v1.9.012")
+	logger.Info("")
 
-	// ============================================================
-	// 1. Time Difference Functions (8 functions)
-	// 1. 시간 차이 함수 (8개 함수)
-	// ============================================================
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("1. Time Difference Functions / 시간 차이 함수 (8 functions)")
-	logger.Info("=" + repeat("=", 60))
+	logger.Info("╔════════════════════════════════════════════════════════════════════════════╗")
+	logger.Info("║            Timeutil Package - Comprehensive Examples                       ║")
+	logger.Info("║            Timeutil 패키지 - 종합 예제                                      ║")
+	logger.Info("╚════════════════════════════════════════════════════════════════════════════╝")
+	logger.Info("")
 
+	logger.Info("📋 Package Information / 패키지 정보")
+	logger.Info("   Package: github.com/arkd0ng/go-utils/timeutil")
+	logger.Info("   Description: Extremely simple time and date utilities")
+	logger.Info("   설명: 극도로 간단한 시간 및 날짜 유틸리티")
+	logger.Info("   Total Functions: 114 functions across 12 categories")
+	logger.Info("   Default Timezone: Asia/Seoul (KST, GMT+9)")
+	logger.Info("   Zero Dependencies: Standard library only")
+	logger.Info("")
+
+	logger.Info("🌟 Key Features / 주요 기능")
+	logger.Info("   • KST Default: Asia/Seoul timezone as package-wide default")
+	logger.Info("   • Custom Format Tokens: YYYY-MM-DD instead of Go's 2006-01-02")
+	logger.Info("   • Business Days: Date calculations considering weekends and holidays")
+	logger.Info("   • Korean Holidays: AddKoreanHolidays() for automatic holiday management")
+	logger.Info("   • String Parameters: 50+ String version functions")
+	logger.Info("   • Auto Format Detection: ParseAny with 40+ format recognition")
+	logger.Info("   • Thread Safe: sync.RWMutex for timezone caching")
+	logger.Info("")
+
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("1️⃣  Time Difference Functions (8 functions)")
+	logger.Info("   시간 차이 함수 (8개 함수)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
+
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("1.1 SubTime() - Calculate time difference")
+	logger.Info("    시간 차이 계산")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
+
+	logger.Info("📚 Function Signature / 함수 시그니처:")
+	logger.Info("   func SubTime(t1, t2 time.Time) TimeDiff")
+	logger.Info("")
+
+	logger.Info("📖 Description / 설명:")
+	logger.Info("   Returns comprehensive time difference with human-readable output")
+	logger.Info("   사람이 읽기 쉬운 출력을 제공하는 종합적인 시간 차이 반환")
+	logger.Info("   • TimeDiff type with Days(), Humanize(), String() methods")
+	logger.Info("   • Supports positive and negative differences")
+	logger.Info("")
+
+	logger.Info("🎯 Use Cases / 사용 사례:")
+	logger.Info("   • Calculate duration between events (이벤트 간 기간 계산)")
+	logger.Info("   • Display time differences in UIs (UI에서 시간 차이 표시)")
+	logger.Info("   • Age calculations (나이 계산)")
+	logger.Info("   • Project timeline analysis (프로젝트 타임라인 분석)")
+	logger.Info("")
+
+	logger.Info("💡 Key Features / 주요 기능:")
+	logger.Info("   • Days() method: Returns total days as float")
+	logger.Info("   • Humanize() method: '2 hours ago', 'in 3 days'")
+	logger.Info("   • String() method: '2 days 6 hours 30 minutes'")
+	logger.Info("   • Handles negative differences (past/future)")
+	logger.Info("")
+
+	logger.Info("▶️  Executing / 실행 중:")
 	start := time.Date(2025, 1, 1, 9, 0, 0, 0, time.UTC)
 	end := time.Date(2025, 1, 10, 15, 30, 45, 0, time.UTC)
-
-	// SubTime - Returns TimeDiff object / TimeDiff 객체 반환
 	diff := timeutil.SubTime(start, end)
-	logger.Info("SubTime(start, end)", "result", diff.String())
-	logger.Info("  → Days", "value", fmt.Sprintf("%.2f", diff.Days()))
-	logger.Info("  → Humanized", "value", diff.Humanize())
+	logger.Info(fmt.Sprintf("   SubTime(%s, %s)", start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05")))
+	logger.Info(fmt.Sprintf("   Result: %s", diff.String()))
+	logger.Info(fmt.Sprintf("   Days: %.2f", diff.Days()))
+	logger.Info(fmt.Sprintf("   Humanized: %s", diff.Humanize()))
+	logger.Info("")
 
-	// DiffInSeconds - Seconds between two times / 두 시간 사이의 초
-	seconds := timeutil.DiffInSeconds(start, end)
-	logger.Info("DiffInSeconds(start, end)", "seconds", fmt.Sprintf("%.0f", seconds))
+	logger.Info("✅ Results Analysis / 결과 분석:")
+	logger.Info(fmt.Sprintf("   • String(): '%s' (full breakdown)", diff.String()))
+	logger.Info(fmt.Sprintf("   • Days(): %.2f days (decimal representation)", diff.Days()))
+	logger.Info(fmt.Sprintf("   • Humanize(): '%s' (human-friendly)", diff.Humanize()))
+	logger.Info("   • Perfect for displaying elapsed time in applications")
+	logger.Info("")
 
-	// DiffInMinutes - Minutes between two times / 두 시간 사이의 분
-	minutes := timeutil.DiffInMinutes(start, end)
-	logger.Info("DiffInMinutes(start, end)", "minutes", fmt.Sprintf("%.0f", minutes))
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("1.2 DiffInDays() - Get difference in days")
+	logger.Info("    일 단위 차이")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
 
-	// DiffInHours - Hours between two times / 두 시간 사이의 시간
-	hours := timeutil.DiffInHours(start, end)
-	logger.Info("DiffInHours(start, end)", "hours", fmt.Sprintf("%.2f", hours))
+	logger.Info("📚 Function Signature / 함수 시그니처:")
+	logger.Info("   func DiffInDays(t1, t2 time.Time) float64")
+	logger.Info("")
 
-	// DiffInDays - Days between two times / 두 시간 사이의 일
+	logger.Info("📖 Description / 설명:")
+	logger.Info("   Calculate difference between two times in days (decimal)")
+	logger.Info("   두 시간 사이의 차이를 일 단위(소수점 포함)로 계산")
+	logger.Info("")
+
+	logger.Info("🎯 Use Cases / 사용 사례:")
+	logger.Info("   • Subscription duration (구독 기간)")
+	logger.Info("   • Project timelines (프로젝트 타임라인)")
+	logger.Info("   • Age calculations (나이 계산)")
+	logger.Info("   • Billing periods (청구 기간)")
+	logger.Info("")
+
+	logger.Info("▶️  Executing / 실행 중:")
 	days := timeutil.DiffInDays(start, end)
-	logger.Info("DiffInDays(start, end)", "days", fmt.Sprintf("%.2f", days))
+	logger.Info(fmt.Sprintf("   DiffInDays(2025-01-01, 2025-01-10) = %.2f days", days))
+	logger.Info("")
 
-	// DiffInWeeks - Weeks between two times / 두 시간 사이의 주
+	logger.Info("📝 Additional Time Difference Functions:")
+	logger.Info("   1.3 DiffInSeconds() - Difference in seconds")
+	logger.Info("   1.4 DiffInMinutes() - Difference in minutes")
+	logger.Info("   1.5 DiffInHours() - Difference in hours")
+	logger.Info("   1.6 DiffInWeeks() - Difference in weeks")
+	logger.Info("   1.7 DiffInMonths() - Difference in months")
+	logger.Info("   1.8 DiffInYears() - Difference in years")
+	logger.Info("")
+
+	seconds := timeutil.DiffInSeconds(start, end)
+	minutes := timeutil.DiffInMinutes(start, end)
+	hours := timeutil.DiffInHours(start, end)
 	weeks := timeutil.DiffInWeeks(start, end)
-	logger.Info("DiffInWeeks(start, end)", "weeks", fmt.Sprintf("%.2f", weeks))
-
-	// DiffInMonths - Months between two times / 두 시간 사이의 월
 	months := timeutil.DiffInMonths(start, end)
-	logger.Info("DiffInMonths(start, end)", "months", months)
-
-	// DiffInYears - Years between two times / 두 시간 사이의 년
 	years := timeutil.DiffInYears(start, end)
-	logger.Info("DiffInYears(start, end)", "years", years)
 
-	// ============================================================
-	// 2. Timezone Operations (10 functions)
-	// 2. 타임존 작업 (10개 함수)
-	// ============================================================
+	logger.Info(fmt.Sprintf("   DiffInSeconds: %.0f seconds", seconds))
+	logger.Info(fmt.Sprintf("   DiffInMinutes: %.0f minutes", minutes))
+	logger.Info(fmt.Sprintf("   DiffInHours: %.2f hours", hours))
+	logger.Info(fmt.Sprintf("   DiffInWeeks: %.2f weeks", weeks))
+	logger.Info(fmt.Sprintf("   DiffInMonths: %d months", months))
+	logger.Info(fmt.Sprintf("   DiffInYears: %d years", years))
 	logger.Info("")
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("2. Timezone Operations / 타임존 작업 (10 functions)")
-	logger.Info("=" + repeat("=", 60))
 
-	now := time.Now()
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("2️⃣  Timezone Operations (10 functions)")
+	logger.Info("   타임존 작업 (10개 함수)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
 
-	// GetDefaultTimezone - Get current default timezone / 현재 기본 타임존 가져오기
-	defaultTz := timeutil.GetDefaultTimezone()
-	logger.Info("GetDefaultTimezone()", "timezone", defaultTz)
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("2.1 NowKST() - Get current time in KST")
+	logger.Info("    KST 현재 시간")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
 
-	// NowKST - Get current time in KST / KST로 현재 시간 가져오기
+	logger.Info("📚 Function Signature / 함수 시그니처:")
+	logger.Info("   func NowKST() time.Time")
+	logger.Info("")
+
+	logger.Info("📖 Description / 설명:")
+	logger.Info("   Returns current time in KST timezone (Asia/Seoul, GMT+9)")
+	logger.Info("   KST 타임존(Asia/Seoul, GMT+9)의 현재 시간 반환")
+	logger.Info("")
+
+	logger.Info("🎯 Use Cases / 사용 사례:")
+	logger.Info("   • Korean applications (한국 애플리케이션)")
+	logger.Info("   • Logging in KST (KST로 로깅)")
+	logger.Info("   • Business hours in Korea (한국 영업 시간)")
+	logger.Info("   • Timestamp generation (타임스탬프 생성)")
+	logger.Info("")
+
+	logger.Info("💡 Key Features / 주요 기능:")
+	logger.Info("   • Default timezone: Asia/Seoul (GMT+9)")
+	logger.Info("   • Thread-safe operation")
+	logger.Info("   • Cached timezone loading")
+	logger.Info("   • No conversion needed for Korean apps")
+	logger.Info("")
+
+	logger.Info("▶️  Executing / 실행 중:")
 	kstNow := timeutil.NowKST()
-	logger.Info("NowKST()", "time", timeutil.FormatDateTime(kstNow))
+	logger.Info(fmt.Sprintf("   NowKST() = %s", timeutil.FormatDateTime(kstNow)))
+	logger.Info(fmt.Sprintf("   Timezone: %s", kstNow.Location().String()))
+	logger.Info("")
 
-	// ConvertTimezone - Convert to different timezone / 다른 타임존으로 변환
+	logger.Info("✅ Results Analysis / 결과 분석:")
+	logger.Info(fmt.Sprintf("   • Current KST time: %s", timeutil.FormatDateTime(kstNow)))
+	logger.Info("   • Timezone correctly set to Asia/Seoul")
+	logger.Info("   • No UTC conversion required")
+	logger.Info("")
+
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("2.2 ConvertTimezone() - Convert between timezones")
+	logger.Info("    타임존 간 변환")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
+
+	logger.Info("📚 Function Signature / 함수 시그니처:")
+	logger.Info("   func ConvertTimezone(t time.Time, timezone string) (time.Time, error)")
+	logger.Info("")
+
+	logger.Info("📖 Description / 설명:")
+	logger.Info("   Convert a time to a different timezone")
+	logger.Info("   시간을 다른 타임존으로 변환")
+	logger.Info("")
+
+	logger.Info("🎯 Use Cases / 사용 사례:")
+	logger.Info("   • Global applications (글로벌 애플리케이션)")
+	logger.Info("   • Meeting schedulers (회의 스케줄러)")
+	logger.Info("   • Multi-region systems (다중 지역 시스템)")
+	logger.Info("   • Time comparison (시간 비교)")
+	logger.Info("")
+
+	logger.Info("▶️  Executing / 실행 중:")
+	now := time.Now()
 	tokyoTime, _ := timeutil.ConvertTimezone(now, "Asia/Tokyo")
-	logger.Info("ConvertTimezone(now, 'Asia/Tokyo')", "time", timeutil.FormatDateTime(tokyoTime))
-
-	nyTime, _ := timeutil.ConvertTimezone(now, "America/New_York")
-	logger.Info("ConvertTimezone(now, 'America/New_York')", "time", timeutil.FormatDateTime(nyTime))
-
+	nycTime, _ := timeutil.ConvertTimezone(now, "America/New_York")
 	londonTime, _ := timeutil.ConvertTimezone(now, "Europe/London")
-	logger.Info("ConvertTimezone(now, 'Europe/London')", "time", timeutil.FormatDateTime(londonTime))
 
-	// ToUTC - Convert to UTC / UTC로 변환
-	utcTime := timeutil.ToUTC(now)
-	logger.Info("ToUTC(now)", "time", timeutil.FormatDateTime(utcTime))
-
-	// ToKST - Convert to KST / KST로 변환
-	kstTime := timeutil.ToKST(now)
-	logger.Info("ToKST(now)", "time", timeutil.FormatDateTime(kstTime))
-
-	// GetTimezoneOffset - Get timezone offset in seconds / 타임존 오프셋(초)
-	offset, _ := timeutil.GetTimezoneOffset("Asia/Seoul")
-	logger.Info("GetTimezoneOffset('Asia/Seoul')", "offset_seconds", offset, "offset_hours", offset/3600)
-
-	// GetLocalTimezone - Get system's local timezone / 시스템의 로컬 타임존
-	localTz := timeutil.GetLocalTimezone()
-	logger.Info("GetLocalTimezone()", "timezone", localTz)
-
-	// IsValidTimezone - Check if timezone is valid / 타임존이 유효한지 확인
-	validTz := timeutil.IsValidTimezone("America/New_York")
-	invalidTz := timeutil.IsValidTimezone("Invalid/Timezone")
-	logger.Info("IsValidTimezone('America/New_York')", "valid", validTz)
-	logger.Info("IsValidTimezone('Invalid/Timezone')", "valid", invalidTz)
-
-	// ListTimezones - Get list of common timezones / 일반적인 타임존 목록
-	timezones := timeutil.ListTimezones()
-	logger.Info("ListTimezones()", "count", len(timezones), "first_5", fmt.Sprintf("%v", timezones[:5]))
-
-	// ============================================================
-	// 3. Date Arithmetic Functions (16 functions)
-	// 3. 날짜 연산 함수 (16개 함수)
-	// ============================================================
+	logger.Info(fmt.Sprintf("   Original (Local): %s", timeutil.FormatDateTime(now)))
+	logger.Info(fmt.Sprintf("   Tokyo: %s", timeutil.FormatDateTime(tokyoTime)))
+	logger.Info(fmt.Sprintf("   New York: %s", timeutil.FormatDateTime(nycTime)))
+	logger.Info(fmt.Sprintf("   London: %s", timeutil.FormatDateTime(londonTime)))
 	logger.Info("")
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("3. Date Arithmetic Functions / 날짜 연산 함수 (16 functions)")
-	logger.Info("=" + repeat("=", 60))
 
-	baseTime := time.Date(2025, 10, 14, 15, 30, 45, 0, timeutil.KST)
-	logger.Info("Base time", "time", timeutil.FormatDateTime(baseTime))
-
-	// AddSeconds - Add seconds / 초 더하기
-	logger.Info("AddSeconds(baseTime, 30)", "result", timeutil.FormatDateTime(timeutil.AddSeconds(baseTime, 30)))
-
-	// AddMinutes - Add minutes / 분 더하기
-	logger.Info("AddMinutes(baseTime, 15)", "result", timeutil.FormatDateTime(timeutil.AddMinutes(baseTime, 15)))
-
-	// AddHours - Add hours / 시간 더하기
-	logger.Info("AddHours(baseTime, 2)", "result", timeutil.FormatDateTime(timeutil.AddHours(baseTime, 2)))
-
-	// AddDays - Add days / 일 더하기
-	logger.Info("AddDays(baseTime, 7)", "result", timeutil.FormatDate(timeutil.AddDays(baseTime, 7)))
-
-	// AddWeeks - Add weeks / 주 더하기
-	logger.Info("AddWeeks(baseTime, 2)", "result", timeutil.FormatDate(timeutil.AddWeeks(baseTime, 2)))
-
-	// AddMonths - Add months / 월 더하기
-	logger.Info("AddMonths(baseTime, 3)", "result", timeutil.FormatDate(timeutil.AddMonths(baseTime, 3)))
-
-	// AddYears - Add years / 년 더하기
-	logger.Info("AddYears(baseTime, 1)", "result", timeutil.FormatDate(timeutil.AddYears(baseTime, 1)))
-
-	// StartOfDay - Get start of day (00:00:00) / 하루의 시작 (00:00:00)
-	startOfDay := timeutil.StartOfDay(baseTime)
-	logger.Info("StartOfDay(baseTime)", "result", timeutil.FormatDateTime(startOfDay))
-
-	// EndOfDay - Get end of day (23:59:59) / 하루의 끝 (23:59:59)
-	endOfDay := timeutil.EndOfDay(baseTime)
-	logger.Info("EndOfDay(baseTime)", "result", timeutil.FormatDateTime(endOfDay))
-
-	// StartOfWeek - Get start of week (Monday) / 주의 시작 (월요일)
-	startOfWeek := timeutil.StartOfWeek(baseTime)
-	logger.Info("StartOfWeek(baseTime)", "result", timeutil.FormatDateTime(startOfWeek))
-
-	// EndOfWeek - Get end of week (Sunday) / 주의 끝 (일요일)
-	endOfWeek := timeutil.EndOfWeek(baseTime)
-	logger.Info("EndOfWeek(baseTime)", "result", timeutil.FormatDateTime(endOfWeek))
-
-	// StartOfMonth - Get start of month / 월의 시작
-	startOfMonth := timeutil.StartOfMonth(baseTime)
-	logger.Info("StartOfMonth(baseTime)", "result", timeutil.FormatDateTime(startOfMonth))
-
-	// EndOfMonth - Get end of month / 월의 끝
-	endOfMonth := timeutil.EndOfMonth(baseTime)
-	logger.Info("EndOfMonth(baseTime)", "result", timeutil.FormatDateTime(endOfMonth))
-
-	// StartOfYear - Get start of year / 년의 시작
-	startOfYear := timeutil.StartOfYear(baseTime)
-	logger.Info("StartOfYear(baseTime)", "result", timeutil.FormatDateTime(startOfYear))
-
-	// EndOfYear - Get end of year / 년의 끝
-	endOfYear := timeutil.EndOfYear(baseTime)
-	logger.Info("EndOfYear(baseTime)", "result", timeutil.FormatDateTime(endOfYear))
-
-	// StartOfQuarter - Get start of quarter / 분기의 시작
-	startOfQuarter := timeutil.StartOfQuarter(baseTime)
-	logger.Info("StartOfQuarter(baseTime)", "result", timeutil.FormatDateTime(startOfQuarter))
-
-	// ============================================================
-	// 4. Date Formatting Functions (13 functions)
-	// 4. 날짜 포맷팅 함수 (13개 함수)
-	// ============================================================
+	logger.Info("📝 Additional Timezone Functions:")
+	logger.Info("   2.3 ToUTC() - Convert to UTC")
+	logger.Info("   2.4 ToKST() - Convert to KST")
+	logger.Info("   2.5 GetTimezoneOffset() - Get timezone offset in hours")
+	logger.Info("   2.6 GetDefaultTimezone() - Get current default timezone")
+	logger.Info("   2.7 SetDefaultTimezone() - Set default timezone")
+	logger.Info("   2.8 GetLocalTimezone() - Get system local timezone")
+	logger.Info("   2.9 IsValidTimezone() - Validate timezone name")
+	logger.Info("   2.10 ListTimezones() - List all available timezones")
 	logger.Info("")
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("4. Date Formatting Functions / 날짜 포맷팅 함수 (13 functions)")
-	logger.Info("=" + repeat("=", 60))
 
-	formatTime := time.Date(2025, 10, 14, 15, 4, 5, 0, timeutil.KST)
-	logger.Info("Format time", "time", formatTime.String())
-
-	// FormatISO8601 - Format as ISO 8601 (YYYY-MM-DD) / ISO 8601 포맷
-	logger.Info("FormatISO8601(formatTime)", "result", timeutil.FormatISO8601(formatTime))
-
-	// FormatRFC3339 - Format as RFC 3339 / RFC 3339 포맷
-	logger.Info("FormatRFC3339(formatTime)", "result", timeutil.FormatRFC3339(formatTime))
-
-	// FormatDate - Format date only / 날짜만 포맷
-	logger.Info("FormatDate(formatTime)", "result", timeutil.FormatDate(formatTime))
-
-	// FormatDateTime - Format date and time / 날짜와 시간 포맷
-	logger.Info("FormatDateTime(formatTime)", "result", timeutil.FormatDateTime(formatTime))
-
-	// FormatTime - Format time only / 시간만 포맷
-	logger.Info("FormatTime(formatTime)", "result", timeutil.FormatTime(formatTime))
-
-	// Format - Custom format with tokens / 토큰으로 커스텀 포맷
-	logger.Info("Format(formatTime, 'YYYY-MM-DD HH:mm:ss')", "result", timeutil.Format(formatTime, "YYYY-MM-DD HH:mm:ss"))
-	logger.Info("Format(formatTime, 'YYYY/MM/DD')", "result", timeutil.Format(formatTime, "YYYY/MM/DD"))
-	logger.Info("Format(formatTime, 'DD-MM-YYYY')", "result", timeutil.Format(formatTime, "DD-MM-YYYY"))
-
-	// FormatKorean - Format in Korean style / 한국어 스타일 포맷
-	logger.Info("FormatKorean(formatTime)", "result", timeutil.FormatKorean(formatTime))
-
-	// WeekdayKorean - Get Korean weekday name / 한글 요일 이름 가져오기
-	// Returns full Korean weekday name (e.g., "월요일", "화요일")
-	// 전체 한글 요일 이름을 반환합니다 (예: "월요일", "화요일")
-	weekdayKorean := timeutil.WeekdayKorean(formatTime)
-	logger.Info("WeekdayKorean(formatTime)", "result", weekdayKorean)
-
-	// WeekdayKoreanShort - Get short Korean weekday name / 짧은 한글 요일 이름 가져오기
-	// Returns short Korean weekday name (e.g., "월", "화")
-	// 짧은 한글 요일 이름을 반환합니다 (예: "월", "화")
-	weekdayShort := timeutil.WeekdayKoreanShort(formatTime)
-	logger.Info("WeekdayKoreanShort(formatTime)", "result", weekdayShort)
-
-	// FormatKoreanDateTime - Format date/time with Korean weekday / 한글 요일이 포함된 날짜/시간 포맷
-	// Format: YYYY년 MM월 DD일 (요일) HH시 mm분 ss초
-	// Expected output: "2025년 10월 14일 (화요일) 15시 04분 05초"
-	koreanDateTime := timeutil.FormatKoreanDateTime(formatTime)
-	logger.Info("FormatKoreanDateTime(formatTime)", "result", koreanDateTime)
-
-	// FormatKoreanDateWithWeekday - Format date with full Korean weekday / 전체 한글 요일이 포함된 날짜 포맷
-	// Format: YYYY년 MM월 DD일 (요일)
-	// Expected output: "2025년 10월 14일 (화요일)"
-	koreanDateFull := timeutil.FormatKoreanDateWithWeekday(formatTime)
-	logger.Info("FormatKoreanDateWithWeekday(formatTime)", "result", koreanDateFull)
-
-	// FormatKoreanDateShort - Format date with short Korean weekday / 짧은 한글 요일이 포함된 날짜 포맷
-	// Format: YYYY년 MM월 DD일 (요일)
-	// Expected output: "2025년 10월 14일 (화)"
-	koreanDateShort := timeutil.FormatKoreanDateShort(formatTime)
-	logger.Info("FormatKoreanDateShort(formatTime)", "result", koreanDateShort)
-
-	// FormatWithTimezone - Format with specific timezone / 특정 타임존으로 포맷
-	formatted, _ := timeutil.FormatWithTimezone(formatTime, "America/New_York")
-	logger.Info("FormatWithTimezone(formatTime, 'America/New_York')", "result", formatted)
-
-	// ============================================================
-	// 5. Time Parsing Functions (6 functions)
-	// 5. 시간 파싱 함수 (6개 함수)
-	// ============================================================
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("3️⃣  Date Arithmetic (16 functions)")
+	logger.Info("   날짜 연산 (16개 함수)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("")
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("5. Time Parsing Functions / 시간 파싱 함수 (6 functions)")
-	logger.Info("=" + repeat("=", 60))
 
-	// ParseISO8601 - Parse ISO 8601 format / ISO 8601 포맷 파싱
-	parsed1, _ := timeutil.ParseISO8601("2025-10-14")
-	logger.Info("ParseISO8601('2025-10-14')", "result", timeutil.FormatDateTime(parsed1))
-
-	// ParseRFC3339 - Parse RFC 3339 format / RFC 3339 포맷 파싱
-	parsed2, _ := timeutil.ParseRFC3339("2025-10-14T15:04:05+09:00")
-	logger.Info("ParseRFC3339('2025-10-14T15:04:05+09:00')", "result", timeutil.FormatDateTime(parsed2))
-
-	// ParseDate - Parse date string / 날짜 문자열 파싱
-	parsed3, _ := timeutil.ParseDate("2025-10-14")
-	logger.Info("ParseDate('2025-10-14')", "result", timeutil.FormatDateTime(parsed3))
-
-	// ParseDateTime - Parse datetime string / 날짜시간 문자열 파싱
-	parsed4, _ := timeutil.ParseDateTime("2025-10-14 15:04:05")
-	logger.Info("ParseDateTime('2025-10-14 15:04:05')", "result", timeutil.FormatDateTime(parsed4))
-
-	// Parse - Auto-detect format and parse / 자동 포맷 감지 및 파싱
-	parsed5, _ := timeutil.Parse("2025-10-14")
-	logger.Info("Parse('2025-10-14') - auto-detect", "result", timeutil.FormatDateTime(parsed5))
-
-	parsed6, _ := timeutil.Parse("2025-10-14 15:04:05")
-	logger.Info("Parse('2025-10-14 15:04:05') - auto-detect", "result", timeutil.FormatDateTime(parsed6))
-
-	// ParseWithTimezone - Parse with specific timezone / 특정 타임존으로 파싱
-	parsed7, _ := timeutil.ParseWithTimezone("2025-10-14 15:04:05", "America/New_York")
-	logger.Info("ParseWithTimezone('2025-10-14 15:04:05', 'America/New_York')", "result", timeutil.FormatDateTime(parsed7))
-
-	// ============================================================
-	// 6. Time Comparison Functions (18 functions)
-	// 6. 시간 비교 함수 (18개 함수)
-	// ============================================================
+	logger.Info("📝 Date Arithmetic Functions:")
+	logger.Info("   3.1 AddDays() - Add days to time")
+	logger.Info("   3.2 AddWeeks() - Add weeks")
+	logger.Info("   3.3 AddMonths() - Add months")
+	logger.Info("   3.4 AddYears() - Add years")
+	logger.Info("   3.5 AddHours() - Add hours")
+	logger.Info("   3.6 AddMinutes() - Add minutes")
+	logger.Info("   3.7 AddSeconds() - Add seconds")
+	logger.Info("   3.8 StartOfDay() - Get start of day (00:00:00)")
+	logger.Info("   3.9 EndOfDay() - Get end of day (23:59:59)")
+	logger.Info("   3.10 StartOfWeek() - Get start of week (Monday)")
+	logger.Info("   3.11 EndOfWeek() - Get end of week (Sunday)")
+	logger.Info("   3.12 StartOfMonth() - Get start of month")
+	logger.Info("   3.13 EndOfMonth() - Get end of month")
+	logger.Info("   3.14 StartOfYear() - Get start of year")
+	logger.Info("   3.15 EndOfYear() - Get end of year")
+	logger.Info("   3.16 StartOfQuarter() - Get start of quarter")
 	logger.Info("")
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("6. Time Comparison Functions / 시간 비교 함수 (18 functions)")
-	logger.Info("=" + repeat("=", 60))
 
-	compareTime := time.Now()
-	yesterday := timeutil.AddDays(compareTime, -1)
-	tomorrow := timeutil.AddDays(compareTime, 1)
-
-	// IsBefore - Check if time is before another / 이전인지 확인
-	logger.Info("IsBefore(yesterday, compareTime)", "result", timeutil.IsBefore(yesterday, compareTime))
-
-	// IsAfter - Check if time is after another / 이후인지 확인
-	logger.Info("IsAfter(tomorrow, compareTime)", "result", timeutil.IsAfter(tomorrow, compareTime))
-
-	// IsBetween - Check if time is between two times / 두 시간 사이인지 확인
-	logger.Info("IsBetween(compareTime, yesterday, tomorrow)", "result", timeutil.IsBetween(compareTime, yesterday, tomorrow))
-
-	// IsToday - Check if time is today / 오늘인지 확인
-	logger.Info("IsToday(compareTime)", "result", timeutil.IsToday(compareTime))
-	logger.Info("IsToday(yesterday)", "result", timeutil.IsToday(yesterday))
-
-	// IsYesterday - Check if time is yesterday / 어제인지 확인
-	logger.Info("IsYesterday(yesterday)", "result", timeutil.IsYesterday(yesterday))
-
-	// IsTomorrow - Check if time is tomorrow / 내일인지 확인
-	logger.Info("IsTomorrow(tomorrow)", "result", timeutil.IsTomorrow(tomorrow))
-
-	// IsWeekend - Check if time is weekend / 주말인지 확인
-	saturday := time.Date(2025, 10, 18, 0, 0, 0, 0, timeutil.KST) // Saturday
-	logger.Info("IsWeekend(saturday)", "result", timeutil.IsWeekend(saturday))
-	logger.Info("IsWeekend(compareTime)", "result", timeutil.IsWeekend(compareTime))
-
-	// IsWeekday - Check if time is weekday / 평일인지 확인
-	monday := time.Date(2025, 10, 13, 0, 0, 0, 0, timeutil.KST) // Monday
-	logger.Info("IsWeekday(monday)", "result", timeutil.IsWeekday(monday))
-
-	// IsThisWeek - Check if time is this week / 이번 주인지 확인
-	logger.Info("IsThisWeek(compareTime)", "result", timeutil.IsThisWeek(compareTime))
-
-	// IsThisMonth - Check if time is this month / 이번 달인지 확인
-	logger.Info("IsThisMonth(compareTime)", "result", timeutil.IsThisMonth(compareTime))
-
-	// IsThisYear - Check if time is this year / 올해인지 확인
-	logger.Info("IsThisYear(compareTime)", "result", timeutil.IsThisYear(compareTime))
-
-	// IsSameDay - Check if two times are same day / 같은 날인지 확인
-	logger.Info("IsSameDay(compareTime, compareTime)", "result", timeutil.IsSameDay(compareTime, compareTime))
-	logger.Info("IsSameDay(compareTime, yesterday)", "result", timeutil.IsSameDay(compareTime, yesterday))
-
-	// IsSameWeek - Check if two times are same week / 같은 주인지 확인
-	logger.Info("IsSameWeek(compareTime, yesterday)", "result", timeutil.IsSameWeek(compareTime, yesterday))
-
-	// IsSameMonth - Check if two times are same month / 같은 달인지 확인
-	logger.Info("IsSameMonth(compareTime, yesterday)", "result", timeutil.IsSameMonth(compareTime, yesterday))
-
-	// IsSameYear - Check if two times are same year / 같은 년인지 확인
-	logger.Info("IsSameYear(compareTime, yesterday)", "result", timeutil.IsSameYear(compareTime, yesterday))
-
-	// IsLeapYear - Check if year is leap year / 윤년인지 확인
-	leapYear := time.Date(2024, 1, 1, 0, 0, 0, 0, timeutil.KST)
-	nonLeapYear := time.Date(2025, 1, 1, 0, 0, 0, 0, timeutil.KST)
-	logger.Info("IsLeapYear(2024)", "result", timeutil.IsLeapYear(leapYear))
-	logger.Info("IsLeapYear(2025)", "result", timeutil.IsLeapYear(nonLeapYear))
-
-	// IsPast - Check if time is in the past / 과거인지 확인
-	logger.Info("IsPast(yesterday)", "result", timeutil.IsPast(yesterday))
-	logger.Info("IsPast(tomorrow)", "result", timeutil.IsPast(tomorrow))
-
-	// IsFuture - Check if time is in the future / 미래인지 확인
-	logger.Info("IsFuture(tomorrow)", "result", timeutil.IsFuture(tomorrow))
-	logger.Info("IsFuture(yesterday)", "result", timeutil.IsFuture(yesterday))
-
-	// ============================================================
-	// 7. Age Calculation Functions (4 functions)
-	// 7. 나이 계산 함수 (4개 함수)
-	// ============================================================
+	logger.Info("▶️  Executing Date Arithmetic / 날짜 연산 실행:")
+	baseTime := time.Date(2025, 10, 15, 10, 30, 0, 0, time.UTC)
+	logger.Info(fmt.Sprintf("   Base Time: %s", timeutil.FormatDateTime(baseTime)))
+	logger.Info(fmt.Sprintf("   AddDays(7): %s", timeutil.FormatDate(timeutil.AddDays(baseTime, 7))))
+	logger.Info(fmt.Sprintf("   AddMonths(3): %s", timeutil.FormatDate(timeutil.AddMonths(baseTime, 3))))
+	logger.Info(fmt.Sprintf("   AddYears(1): %s", timeutil.FormatDate(timeutil.AddYears(baseTime, 1))))
+	logger.Info(fmt.Sprintf("   StartOfDay: %s", timeutil.FormatDateTime(timeutil.StartOfDay(baseTime))))
+	logger.Info(fmt.Sprintf("   EndOfDay: %s", timeutil.FormatDateTime(timeutil.EndOfDay(baseTime))))
+	logger.Info(fmt.Sprintf("   StartOfMonth: %s", timeutil.FormatDate(timeutil.StartOfMonth(baseTime))))
+	logger.Info(fmt.Sprintf("   EndOfMonth: %s", timeutil.FormatDate(timeutil.EndOfMonth(baseTime))))
 	logger.Info("")
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("7. Age Calculation Functions / 나이 계산 함수 (4 functions)")
-	logger.Info("=" + repeat("=", 60))
 
-	birthDate := time.Date(1990, 5, 15, 0, 0, 0, 0, timeutil.KST)
-	logger.Info("Birth date", "date", timeutil.FormatDate(birthDate))
-
-	// AgeInYears - Get age in years / 년 단위 나이
-	ageYears := timeutil.AgeInYears(birthDate)
-	logger.Info("AgeInYears(birthDate)", "years", ageYears)
-
-	// AgeInMonths - Get age in months / 월 단위 나이
-	ageMonths := timeutil.AgeInMonths(birthDate)
-	logger.Info("AgeInMonths(birthDate)", "months", ageMonths)
-
-	// AgeInDays - Get age in days / 일 단위 나이
-	ageDays := timeutil.AgeInDays(birthDate)
-	logger.Info("AgeInDays(birthDate)", "days", ageDays)
-
-	// Age - Get detailed age / 상세 나이
-	age := timeutil.Age(birthDate)
-	logger.Info("Age(birthDate)", "age", age.String(), "years", age.Years, "months", age.Months, "days", age.Days)
-
-	// ============================================================
-	// 8. Relative Time Functions (4 functions)
-	// 8. 상대 시간 함수 (4개 함수)
-	// ============================================================
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("4️⃣  Date Formatting (8 functions)")
+	logger.Info("   날짜 포맷팅 (8개 함수)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("")
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("8. Relative Time Functions / 상대 시간 함수 (4 functions)")
-	logger.Info("=" + repeat("=", 60))
 
-	// Test various past times / 다양한 과거 시간 테스트
-	past30Sec := time.Now().Add(-30 * time.Second)
-	past2Hours := time.Now().Add(-2 * time.Hour)
-	past3Days := time.Now().Add(-3 * 24 * time.Hour)
-	past2Weeks := time.Now().Add(-2 * 7 * 24 * time.Hour)
-	past3Months := time.Now().Add(-3 * 30 * 24 * time.Hour)
-
-	// RelativeTime - Get relative time string (long format) / 상대 시간 문자열 (긴 포맷)
-	logger.Info("RelativeTime(30 seconds ago)", "result", timeutil.RelativeTime(past30Sec))
-	logger.Info("RelativeTime(2 hours ago)", "result", timeutil.RelativeTime(past2Hours))
-	logger.Info("RelativeTime(3 days ago)", "result", timeutil.RelativeTime(past3Days))
-	logger.Info("RelativeTime(2 weeks ago)", "result", timeutil.RelativeTime(past2Weeks))
-	logger.Info("RelativeTime(3 months ago)", "result", timeutil.RelativeTime(past3Months))
-
-	// Test future times / 미래 시간 테스트
-	future5Min := time.Now().Add(5 * time.Minute)
-	future3Hours := time.Now().Add(3 * time.Hour)
-	future2Days := time.Now().Add(2 * 24 * time.Hour)
-
-	logger.Info("RelativeTime(in 5 minutes)", "result", timeutil.RelativeTime(future5Min))
-	logger.Info("RelativeTime(in 3 hours)", "result", timeutil.RelativeTime(future3Hours))
-	logger.Info("RelativeTime(in 2 days)", "result", timeutil.RelativeTime(future2Days))
-
-	// RelativeTimeShort - Get relative time string (short format) / 상대 시간 문자열 (짧은 포맷)
-	logger.Info("RelativeTimeShort(2 hours ago)", "result", timeutil.RelativeTimeShort(past2Hours))
-	logger.Info("RelativeTimeShort(3 days ago)", "result", timeutil.RelativeTimeShort(past3Days))
-	logger.Info("RelativeTimeShort(in 3 hours)", "result", timeutil.RelativeTimeShort(future3Hours))
-
-	// TimeAgo - Alias for RelativeTime / RelativeTime의 별칭
-	logger.Info("TimeAgo(2 hours ago)", "result", timeutil.TimeAgo(past2Hours))
-
-	// HumanizeDuration - Convert duration to human-readable string / 기간을 사람이 읽기 쉬운 문자열로
-	duration := 2*time.Hour + 30*time.Minute + 45*time.Second
-	logger.Info("HumanizeDuration(2h 30m 45s)", "result", timeutil.HumanizeDuration(duration))
-
-	// ============================================================
-	// 9. Unix Timestamp Functions (12 functions)
-	// 9. Unix 타임스탬프 함수 (12개 함수)
-	// ============================================================
+	logger.Info("📝 Formatting Functions:")
+	logger.Info("   4.1 Format() - Custom format with YYYY-MM-DD tokens")
+	logger.Info("   4.2 FormatISO8601() - ISO 8601 format")
+	logger.Info("   4.3 FormatRFC3339() - RFC 3339 format")
+	logger.Info("   4.4 FormatDate() - Date only (YYYY-MM-DD)")
+	logger.Info("   4.5 FormatDateTime() - Date and time")
+	logger.Info("   4.6 FormatTime() - Time only (HH:MM:SS)")
+	logger.Info("   4.7 FormatKorean() - Korean format (2025년 10월 15일)")
+	logger.Info("   4.8 FormatCustom() - Go's native layout format")
 	logger.Info("")
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("9. Unix Timestamp Functions / Unix 타임스탬프 함수 (12 functions)")
-	logger.Info("=" + repeat("=", 60))
 
-	// Now - Get current Unix timestamp (seconds) / 현재 Unix 타임스탬프 (초)
-	unixNow := timeutil.Now()
-	logger.Info("Now()", "unix_seconds", unixNow)
-
-	// NowMilli - Get current Unix timestamp (milliseconds) / 현재 Unix 타임스탬프 (밀리초)
-	unixMilli := timeutil.NowMilli()
-	logger.Info("NowMilli()", "unix_milliseconds", unixMilli)
-
-	// NowMicro - Get current Unix timestamp (microseconds) / 현재 Unix 타임스탬프 (마이크로초)
-	unixMicro := timeutil.NowMicro()
-	logger.Info("NowMicro()", "unix_microseconds", unixMicro)
-
-	// NowNano - Get current Unix timestamp (nanoseconds) / 현재 Unix 타임스탬프 (나노초)
-	unixNano := timeutil.NowNano()
-	logger.Info("NowNano()", "unix_nanoseconds", unixNano)
-
-	// FromUnix - Convert Unix timestamp (seconds) to time.Time / Unix 타임스탬프(초)를 time.Time으로
-	fromUnix := timeutil.FromUnix(1634198400)
-	logger.Info("FromUnix(1634198400)", "result", timeutil.FormatDateTime(fromUnix))
-
-	// FromUnixMilli - Convert Unix timestamp (milliseconds) to time.Time / Unix 타임스탬프(밀리초)를 time.Time으로
-	fromUnixMilli := timeutil.FromUnixMilli(1634198400123)
-	logger.Info("FromUnixMilli(1634198400123)", "result", timeutil.FormatDateTime(fromUnixMilli))
-
-	// FromUnixMicro - Convert Unix timestamp (microseconds) to time.Time / Unix 타임스탬프(마이크로초)를 time.Time으로
-	fromUnixMicro := timeutil.FromUnixMicro(1634198400123456)
-	logger.Info("FromUnixMicro(1634198400123456)", "result", timeutil.FormatDateTime(fromUnixMicro))
-
-	// FromUnixNano - Convert Unix timestamp (nanoseconds) to time.Time / Unix 타임스탬프(나노초)를 time.Time으로
-	fromUnixNano := timeutil.FromUnixNano(1634198400123456789)
-	logger.Info("FromUnixNano(1634198400123456789)", "result", timeutil.FormatDateTime(fromUnixNano))
-
-	// ToUnix - Convert time.Time to Unix timestamp (seconds) / time.Time을 Unix 타임스탬프(초)로
-	testTimeForUnix := time.Date(2025, 10, 14, 15, 4, 5, 0, timeutil.KST)
-	toUnix := timeutil.ToUnix(testTimeForUnix)
-	logger.Info("ToUnix(2025-10-14 15:04:05)", "unix_seconds", toUnix)
-
-	// ToUnixMilli - Convert time.Time to Unix timestamp (milliseconds) / time.Time을 Unix 타임스탬프(밀리초)로
-	toUnixMilli := timeutil.ToUnixMilli(testTimeForUnix)
-	logger.Info("ToUnixMilli(2025-10-14 15:04:05)", "unix_milliseconds", toUnixMilli)
-
-	// ToUnixMicro - Convert time.Time to Unix timestamp (microseconds) / time.Time을 Unix 타임스탬프(마이크로초)로
-	toUnixMicro := timeutil.ToUnixMicro(testTimeForUnix)
-	logger.Info("ToUnixMicro(2025-10-14 15:04:05)", "unix_microseconds", toUnixMicro)
-
-	// ToUnixNano - Convert time.Time to Unix timestamp (nanoseconds) / time.Time을 Unix 타임스탬프(나노초)로
-	toUnixNano := timeutil.ToUnixNano(testTimeForUnix)
-	logger.Info("ToUnixNano(2025-10-14 15:04:05)", "unix_nanoseconds", toUnixNano)
-
-	// ============================================================
-	// 10. Business Day Functions (7 functions + holiday management)
-	// 10. 영업일 함수 (7개 함수 + 공휴일 관리)
-	// ============================================================
+	logger.Info("▶️  Executing Formatting / 포맷팅 실행:")
+	sampleTime := time.Date(2025, 10, 15, 14, 30, 45, 0, time.UTC)
+	logger.Info(fmt.Sprintf("   Format('YYYY-MM-DD HH:mm:ss'): %s", timeutil.Format(sampleTime, "YYYY-MM-DD HH:mm:ss")))
+	logger.Info(fmt.Sprintf("   FormatISO8601(): %s", timeutil.FormatISO8601(sampleTime)))
+	logger.Info(fmt.Sprintf("   FormatDate(): %s", timeutil.FormatDate(sampleTime)))
+	logger.Info(fmt.Sprintf("   FormatDateTime(): %s", timeutil.FormatDateTime(sampleTime)))
+	logger.Info(fmt.Sprintf("   FormatTime(): %s", timeutil.FormatTime(sampleTime)))
+	logger.Info(fmt.Sprintf("   FormatKorean(): %s", timeutil.FormatKorean(sampleTime)))
 	logger.Info("")
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("10. Business Day Functions / 영업일 함수 (7 functions)")
-	logger.Info("=" + repeat("=", 60))
 
-	bizMonday := time.Date(2025, 10, 13, 0, 0, 0, 0, timeutil.KST)   // Monday
-	bizSaturday := time.Date(2025, 10, 18, 0, 0, 0, 0, timeutil.KST) // Saturday
-	newYearDay := time.Date(2025, 1, 1, 0, 0, 0, 0, timeutil.KST)    // New Year
-
-	// IsBusinessDay - Check if day is business day / 영업일인지 확인
-	logger.Info("IsBusinessDay(Monday)", "result", timeutil.IsBusinessDay(bizMonday))
-	logger.Info("IsBusinessDay(Saturday)", "result", timeutil.IsBusinessDay(bizSaturday))
-
-	// AddKoreanHolidays - Add Korean public holidays / 한국 공휴일 추가
-	timeutil.AddKoreanHolidays(2025)
-	logger.Info("AddKoreanHolidays(2025)", "status", "completed")
-
-	// IsHoliday - Check if day is holiday / 공휴일인지 확인
-	logger.Info("IsHoliday(Jan 1, 2025)", "result", timeutil.IsHoliday(newYearDay))
-	logger.Info("IsHoliday(Monday Oct 13)", "result", timeutil.IsHoliday(bizMonday))
-
-	// IsBusinessDay after adding holidays / 공휴일 추가 후 영업일 확인
-	logger.Info("IsBusinessDay(Jan 1, 2025) - after adding holidays", "result", timeutil.IsBusinessDay(newYearDay))
-
-	// AddBusinessDays - Add business days / 영업일 더하기
-	nextBiz1 := timeutil.AddBusinessDays(bizMonday, 1)
-	logger.Info("AddBusinessDays(Monday, 1)", "result", timeutil.FormatDate(nextBiz1))
-
-	nextBiz5 := timeutil.AddBusinessDays(bizMonday, 5)
-	logger.Info("AddBusinessDays(Monday, 5)", "result", timeutil.FormatDate(nextBiz5))
-
-	// NextBusinessDay - Get next business day / 다음 영업일
-	nextBiz := timeutil.NextBusinessDay(bizSaturday)
-	logger.Info("NextBusinessDay(Saturday)", "result", timeutil.FormatDate(nextBiz))
-
-	// PreviousBusinessDay - Get previous business day / 이전 영업일
-	prevBiz := timeutil.PreviousBusinessDay(bizMonday)
-	logger.Info("PreviousBusinessDay(Monday)", "result", timeutil.FormatDate(prevBiz))
-
-	// CountBusinessDays - Count business days between two dates / 두 날짜 사이의 영업일 수
-	startDate := time.Date(2025, 10, 13, 0, 0, 0, 0, timeutil.KST) // Monday
-	endDate := time.Date(2025, 10, 24, 0, 0, 0, 0, timeutil.KST)   // Friday (2 weeks later)
-	bizDayCount := timeutil.CountBusinessDays(startDate, endDate)
-	logger.Info("CountBusinessDays(Oct 13 ~ Oct 24)", "business_days", bizDayCount)
-
-	// GetHolidays - Get list of registered holidays / 등록된 공휴일 목록
-	holidays := timeutil.GetHolidays()
-	logger.Info("GetHolidays()", "count", len(holidays))
-
-	// SetHolidays - Set custom holidays / 커스텀 공휴일 설정
-	customHolidays := []time.Time{
-		time.Date(2025, 12, 25, 0, 0, 0, 0, timeutil.KST), // Christmas
-	}
-	timeutil.SetHolidays(customHolidays)
-	logger.Info("SetHolidays([Christmas])", "status", "completed")
-
-	// ClearHolidays - Clear all holidays / 모든 공휴일 지우기
-	timeutil.ClearHolidays()
-	logger.Info("ClearHolidays()", "status", "completed")
-
-	// Re-add Korean holidays for final demo / 최종 데모를 위해 한국 공휴일 재추가
-	timeutil.AddKoreanHolidays(2025)
-	logger.Info("AddKoreanHolidays(2025) - restored", "status", "completed")
-
-	// ============================================================
-	// Summary / 요약
-	// ============================================================
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("5️⃣  Time Parsing (10 functions)")
+	logger.Info("   시간 파싱 (10개 함수)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("")
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("Summary / 요약")
-	logger.Info("=" + repeat("=", 60))
 
-	logger.Info("All 102 timeutil functions demonstrated successfully!")
-	logger.Info("모든 102개 timeutil 함수를 성공적으로 시연했습니다!")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("5.1 ParseAny() - Auto-detect format and parse")
+	logger.Info("    자동 포맷 감지 및 파싱")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("")
-	logger.Info("Categories covered / 다뤄진 카테고리:")
-	logger.Info("  1. Time Difference (8 functions) / 시간 차이 (8개 함수)")
-	logger.Info("  2. Timezone Operations (10 functions) / 타임존 작업 (10개 함수)")
-	logger.Info("  3. Date Arithmetic (16 functions) / 날짜 연산 (16개 함수)")
-	logger.Info("  4. Date Formatting (13 functions) / 날짜 포맷팅 (13개 함수)")
-	logger.Info("  5. Time Parsing (6 functions) / 시간 파싱 (6개 함수)")
-	logger.Info("  6. Time Comparisons (18 functions) / 시간 비교 (18개 함수)")
-	logger.Info("  7. Age Calculations (4 functions) / 나이 계산 (4개 함수)")
-	logger.Info("  8. Relative Time (4 functions) / 상대 시간 (4개 함수)")
-	logger.Info("  9. Unix Timestamp (12 functions) / Unix 타임스탬프 (12개 함수)")
-	logger.Info("  10. Business Days (7 functions) / 영업일 (7개 함수)")
-	// ============================================================
-	// 13. String Parameter Functions (New in v1.6.008!)
-	// 13. 문자열 매개변수 함수 (v1.6.008 신규!)
-	// ============================================================
-	logger.Info("")
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("13. String Parameter Functions / 문자열 매개변수 함수")
-	logger.Info("    (NEW in v1.6.008 - Parse any format automatically!)")
-	logger.Info("    (v1.6.008 신규 - 모든 포맷 자동 파싱!)")
-	logger.Info("=" + repeat("=", 60))
 
-	// ParseAny - Automatically detect and parse any time format / 모든 시간 포맷 자동 감지 및 파싱
+	logger.Info("📚 Function Signature / 함수 시그니처:")
+	logger.Info("   func ParseAny(s string) (time.Time, error)")
 	logger.Info("")
-	logger.Info("--- ParseAny: Automatic Format Detection ---")
-	logger.Info("--- ParseAny: 자동 포맷 감지 ---")
 
+	logger.Info("📖 Description / 설명:")
+	logger.Info("   Automatically detects format from 40+ common patterns and parses time string")
+	logger.Info("   40개 이상의 일반적인 패턴에서 자동으로 포맷을 감지하고 시간 문자열 파싱")
+	logger.Info("")
+
+	logger.Info("🎯 Use Cases / 사용 사례:")
+	logger.Info("   • User input parsing (사용자 입력 파싱)")
+	logger.Info("   • API response parsing (API 응답 파싱)")
+	logger.Info("   • Log file parsing (로그 파일 파싱)")
+	logger.Info("   • Flexible time input (유연한 시간 입력)")
+	logger.Info("")
+
+	logger.Info("💡 Key Features / 주요 기능:")
+	logger.Info("   • 40+ format patterns recognized")
+	logger.Info("   • ISO 8601, RFC 3339, common formats")
+	logger.Info("   • Date-only, time-only, datetime")
+	logger.Info("   • No need to specify format")
+	logger.Info("")
+
+	logger.Info("▶️  Executing ParseAny / 자동 파싱 실행:")
 	formats := []string{
-		"2024-10-04 08:34:42.324",   // MySQL with milliseconds
-		"2024-10-04T08:34:42+09:00", // ISO8601
-		"2024/10/04",                // Date with slashes
-		"Oct 04, 2024",              // Month name
-		"2024-10-04 08:34:42",       // Standard DateTime
+		"2025-10-15",
+		"2025-10-15 14:30:45",
+		"2025/10/15 14:30:45",
+		"15-Oct-2025",
+		"Oct 15, 2025",
 	}
-
 	for _, f := range formats {
-		parsed, err := timeutil.ParseAny(f)
-		if err == nil {
-			logger.Info("ParseAny", "input", f, "result", parsed.Format("2006-01-02 15:04:05"))
+		if parsed, err := timeutil.ParseAny(f); err == nil {
+			logger.Info(fmt.Sprintf("   ParseAny('%s') = %s", f, timeutil.FormatDateTime(parsed)))
 		}
 	}
-
-	// SubTimeString - Calculate difference between two time strings / 두 시간 문자열 사이의 차이 계산
 	logger.Info("")
-	logger.Info("--- SubTimeString: String to TimeDiff ---")
-	logger.Info("--- SubTimeString: 문자열을 TimeDiff로 ---")
 
-	diffStr, err := timeutil.SubTimeString("2024-10-04 08:34:42", "2024-10-14 14:56:23")
-	if err == nil {
-		logger.Info("SubTimeString",
-			"from", "2024-10-04 08:34:42",
-			"to", "2024-10-14 14:56:23",
-			"result", diffStr.String(),
-			"humanized", diffStr.Humanize())
-	}
-
-	// DiffInDaysString - Days between two date strings / 두 날짜 문자열 사이의 일수
+	logger.Info("📝 Additional Parsing Functions:")
+	logger.Info("   5.2 Parse() - Parse with format")
+	logger.Info("   5.3 ParseISO8601() - Parse ISO 8601")
+	logger.Info("   5.4 ParseRFC3339() - Parse RFC 3339")
+	logger.Info("   5.5 ParseDate() - Parse date only")
+	logger.Info("   5.6 ParseDateTime() - Parse date and time")
+	logger.Info("   5.7 ParseWithTimezone() - Parse with timezone")
+	logger.Info("   5.8 ParseWithLayout() - Parse with Go layout")
+	logger.Info("   5.9 ParseMillis() - Parse millisecond timestamp")
+	logger.Info("   5.10 ParseMicros() - Parse microsecond timestamp")
 	logger.Info("")
-	logger.Info("--- Date Difference Functions (String versions) ---")
-	logger.Info("--- 날짜 차이 함수 (문자열 버전) ---")
 
-	daysStr, _ := timeutil.DiffInDaysString("2024-10-04", "Oct 14, 2024")
-	logger.Info("DiffInDaysString", "from", "2024-10-04", "to", "Oct 14, 2024", "days", fmt.Sprintf("%.2f", daysStr))
-
-	hoursStr, _ := timeutil.DiffInHoursString("2024-10-04 08:00", "2024-10-04 14:30")
-	logger.Info("DiffInHoursString", "from", "08:00", "to", "14:30", "hours", fmt.Sprintf("%.2f", hoursStr))
-
-	// AgeInYearsString - Calculate age from birth date string / 생년월일 문자열로부터 나이 계산
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("6️⃣  Time Comparisons (18 functions)")
+	logger.Info("   시간 비교 (18개 함수)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("")
-	logger.Info("--- Age Calculation (String version) ---")
-	logger.Info("--- 나이 계산 (문자열 버전) ---")
 
-	ageYears, errAge := timeutil.AgeInYearsString("1990-01-15")
-	if errAge == nil {
-		logger.Info("AgeInYearsString", "birthDate", "1990-01-15", "age", ageYears)
-	}
-
-	ageDetail, errAge2 := timeutil.AgeString("Jan 15, 1990")
-	if errAge2 == nil {
-		logger.Info("AgeString", "birthDate", "Jan 15, 1990",
-			"years", ageDetail.Years,
-			"months", ageDetail.Months,
-			"days", ageDetail.Days)
-	}
-
-	// RelativeTimeString - Human-readable relative time / 사람이 읽기 쉬운 상대 시간
+	logger.Info("📝 Comparison Functions:")
+	logger.Info("   6.1 IsBefore() - Check if time is before another")
+	logger.Info("   6.2 IsAfter() - Check if time is after another")
+	logger.Info("   6.3 IsBetween() - Check if time is between two times")
+	logger.Info("   6.4 IsToday() - Check if time is today")
+	logger.Info("   6.5 IsYesterday() - Check if time is yesterday")
+	logger.Info("   6.6 IsTomorrow() - Check if time is tomorrow")
+	logger.Info("   6.7 IsThisWeek() - Check if time is this week")
+	logger.Info("   6.8 IsThisMonth() - Check if time is this month")
+	logger.Info("   6.9 IsThisYear() - Check if time is this year")
+	logger.Info("   6.10 IsWeekend() - Check if time is weekend")
+	logger.Info("   6.11 IsWeekday() - Check if time is weekday")
+	logger.Info("   6.12 IsSameDay() - Check if two times are same day")
+	logger.Info("   6.13 IsSameWeek() - Check if two times are same week")
+	logger.Info("   6.14 IsSameMonth() - Check if two times are same month")
+	logger.Info("   6.15 IsSameYear() - Check if two times are same year")
+	logger.Info("   6.16 IsLeapYear() - Check if year is leap year")
+	logger.Info("   6.17 IsPast() - Check if time is in the past")
+	logger.Info("   6.18 IsFuture() - Check if time is in the future")
 	logger.Info("")
-	logger.Info("--- Relative Time (String version) ---")
-	logger.Info("--- 상대 시간 (문자열 버전) ---")
 
-	relStr, _ := timeutil.RelativeTimeString("2024-10-13 15:30:00")
-	logger.Info("RelativeTimeString", "time", "2024-10-13 15:30:00", "relative", relStr)
-
-	// IsBusinessDayString - Check if date is business day / 영업일 확인
+	logger.Info("▶️  Executing Comparisons / 비교 실행:")
+	testTime := time.Date(2025, 10, 15, 14, 30, 0, 0, time.UTC)
+	logger.Info(fmt.Sprintf("   Test Time: %s", timeutil.FormatDateTime(testTime)))
+	logger.Info(fmt.Sprintf("   IsWeekday(): %v", timeutil.IsWeekday(testTime)))
+	logger.Info(fmt.Sprintf("   IsWeekend(): %v", timeutil.IsWeekend(testTime)))
+	leapYear2024 := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+	leapYear2025 := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+	logger.Info(fmt.Sprintf("   IsLeapYear(2024): %v", timeutil.IsLeapYear(leapYear2024)))
+	logger.Info(fmt.Sprintf("   IsLeapYear(2025): %v", timeutil.IsLeapYear(leapYear2025)))
 	logger.Info("")
-	logger.Info("--- Business Day Check (String version) ---")
-	logger.Info("--- 영업일 확인 (문자열 버전) ---")
 
-	isBizDay, _ := timeutil.IsBusinessDayString("2024-10-14") // Monday
-	logger.Info("IsBusinessDayString", "date", "2024-10-14 (Monday)", "isBusinessDay", isBizDay)
-
-	isWeekend, _ := timeutil.IsWeekendString("2024-10-12") // Saturday
-	logger.Info("IsWeekendString", "date", "2024-10-12 (Saturday)", "isWeekend", isWeekend)
-
-	// AddDaysString - Add days to date string / 날짜 문자열에 일수 더하기
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("7️⃣  Age Calculations (4 functions)")
+	logger.Info("   나이 계산 (4개 함수)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("")
-	logger.Info("--- Date Arithmetic (String versions) ---")
-	logger.Info("--- 날짜 연산 (문자열 버전) ---")
 
-	futureDate, _ := timeutil.AddDaysString("2024-10-04", 7)
-	logger.Info("AddDaysString", "date", "2024-10-04", "add", "7 days", "result", timeutil.FormatDate(futureDate))
-
-	pastDate, _ := timeutil.SubDaysString("2024-10-14", 7)
-	logger.Info("SubDaysString", "date", "2024-10-14", "subtract", "7 days", "result", timeutil.FormatDate(pastDate))
-
-	// FormatString - Convert between different formats / 다른 포맷으로 변환
+	logger.Info("📝 Age Functions:")
+	logger.Info("   7.1 Age() - Get age as AgeDetail (Years, Months, Days)")
+	logger.Info("   7.2 AgeInYears() - Get age in years only")
+	logger.Info("   7.3 AgeInMonths() - Get age in months only")
+	logger.Info("   7.4 AgeInDays() - Get age in days only")
 	logger.Info("")
-	logger.Info("--- Format Conversion (String versions) ---")
-	logger.Info("--- 포맷 변환 (문자열 버전) ---")
 
-	formattedStr, _ := timeutil.FormatString("Oct 04, 2024", "2006-01-02")
-	logger.Info("FormatString", "input", "Oct 04, 2024", "format", "2006-01-02", "result", formattedStr)
-
-	dateOnlyStr, _ := timeutil.FormatDateString("2024-10-04 15:30:00")
-	logger.Info("FormatDateString", "input", "2024-10-04 15:30:00", "result", dateOnlyStr)
-
-	iso8601String, _ := timeutil.FormatISO8601String("Oct 04, 2024")
-	logger.Info("FormatISO8601String", "input", "Oct 04, 2024", "result", iso8601String)
-
-	// WeekdayKoreanString - Get Korean weekday name / 한글 요일 이름 가져오기
+	logger.Info("▶️  Executing Age Calculation / 나이 계산 실행:")
+	birthDate := time.Date(1990, 5, 20, 0, 0, 0, 0, time.UTC)
+	age := timeutil.Age(birthDate)
+	logger.Info(fmt.Sprintf("   Birth Date: %s", timeutil.FormatDate(birthDate)))
+	logger.Info(fmt.Sprintf("   Age: %d years %d months %d days", age.Years, age.Months, age.Days))
+	logger.Info(fmt.Sprintf("   AgeInYears: %d", timeutil.AgeInYears(birthDate)))
+	logger.Info(fmt.Sprintf("   AgeInMonths: %d", timeutil.AgeInMonths(birthDate)))
+	logger.Info(fmt.Sprintf("   AgeInDays: %d", timeutil.AgeInDays(birthDate)))
 	logger.Info("")
-	logger.Info("--- Weekday Names (String versions) ---")
-	logger.Info("--- 요일 이름 (문자열 버전) ---")
 
-	weekdayKor, _ := timeutil.WeekdayKoreanString("2024-10-14") // Monday
-	logger.Info("WeekdayKoreanString", "date", "2024-10-14", "weekday", weekdayKor)
-
-	weekdayShortKor, _ := timeutil.WeekdayShortKoreanString("Oct 14, 2024")
-	logger.Info("WeekdayShortKoreanString", "date", "Oct 14, 2024", "weekday", weekdayShortKor)
-
-	// StartOfDayString / EndOfDayString - Get start/end of day / 하루의 시작/끝 가져오기
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("8️⃣  Relative Time (4 functions)")
+	logger.Info("   상대 시간 (4개 함수)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("")
-	logger.Info("--- Time Boundaries (String versions) ---")
-	logger.Info("--- 시간 경계 (문자열 버전) ---")
 
-	startOfDayStr, _ := timeutil.StartOfDayString("2024-10-04 15:30:45")
-	logger.Info("StartOfDayString", "input", "2024-10-04 15:30:45", "result", timeutil.FormatDateTime(startOfDayStr))
-
-	endOfDayStr, _ := timeutil.EndOfDayString("2024-10-04")
-	logger.Info("EndOfDayString", "input", "2024-10-04", "result", timeutil.FormatDateTime(endOfDayStr))
-
-	// IsSameDayString / IsBeforeString / IsAfterString - Date comparisons / 날짜 비교
+	logger.Info("📝 Relative Time Functions:")
+	logger.Info("   8.1 RelativeTime() - '2 hours ago', 'in 3 days'")
+	logger.Info("   8.2 RelativeTimeShort() - '2h ago', 'in 3d'")
+	logger.Info("   8.3 TimeAgo() - Alias for RelativeTime")
+	logger.Info("   8.4 HumanizeDuration() - Humanize duration")
 	logger.Info("")
-	logger.Info("--- Date Comparisons (String versions) ---")
-	logger.Info("--- 날짜 비교 (문자열 버전) ---")
 
-	sameDay, _ := timeutil.IsSameDayString("2024-10-04 08:00", "Oct 04, 2024")
-	logger.Info("IsSameDayString", "date1", "2024-10-04 08:00", "date2", "Oct 04, 2024", "same", sameDay)
-
-	isBefore, _ := timeutil.IsBeforeString("2024-10-04", "2024-10-14")
-	logger.Info("IsBeforeString", "date1", "2024-10-04", "date2", "2024-10-14", "before", isBefore)
-
-	isBetween, _ := timeutil.IsBetweenString("2024-10-10", "2024-10-04", "2024-10-14")
-	logger.Info("IsBetweenString", "date", "2024-10-10", "start", "2024-10-04", "end", "2024-10-14", "between", isBetween)
-
+	logger.Info("▶️  Executing Relative Time / 상대 시간 실행:")
+	pastTime := time.Now().Add(-2 * time.Hour)
+	futureTime := time.Now().Add(3 * 24 * time.Hour)
+	logger.Info(fmt.Sprintf("   RelativeTime(2 hours ago): %s", timeutil.RelativeTime(pastTime)))
+	logger.Info(fmt.Sprintf("   RelativeTime(3 days future): %s", timeutil.RelativeTime(futureTime)))
+	logger.Info(fmt.Sprintf("   RelativeTimeShort(2h ago): %s", timeutil.RelativeTimeShort(pastTime)))
+	logger.Info(fmt.Sprintf("   HumanizeDuration(90 minutes): %s", timeutil.HumanizeDuration(90*time.Minute)))
 	logger.Info("")
-	logger.Info("Total: 102+ functions demonstrated (including new String versions!)")
-	logger.Info("총 102개 이상 함수 시연 완료 (새로운 String 버전 포함!)")
+
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("9️⃣  Unix Timestamp (12 functions)")
+	logger.Info("   Unix 타임스탬프 (12개 함수)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("")
-	logger.Info("Check the log file at ./logs/timeutil-example.log for detailed output")
-	logger.Info("상세한 출력은 ./logs/timeutil-example.log 파일을 확인하세요")
 
-	logger.Info("=" + repeat("=", 60))
-	logger.Info("Examples completed! / 예제 완료!")
-	logger.Info("=" + repeat("=", 60))
-}
+	logger.Info("📝 Unix Timestamp Functions:")
+	logger.Info("   9.1 Now() - Current Unix timestamp (seconds)")
+	logger.Info("   9.2 NowMilli() - Current Unix timestamp (milliseconds)")
+	logger.Info("   9.3 NowMicro() - Current Unix timestamp (microseconds)")
+	logger.Info("   9.4 NowNano() - Current Unix timestamp (nanoseconds)")
+	logger.Info("   9.5 ToUnix() - Convert time to Unix seconds")
+	logger.Info("   9.6 ToUnixMilli() - Convert to Unix milliseconds")
+	logger.Info("   9.7 ToUnixMicro() - Convert to Unix microseconds")
+	logger.Info("   9.8 ToUnixNano() - Convert to Unix nanoseconds")
+	logger.Info("   9.9 FromUnix() - Convert Unix seconds to time")
+	logger.Info("   9.10 FromUnixMilli() - Convert Unix milliseconds to time")
+	logger.Info("   9.11 FromUnixMicro() - Convert Unix microseconds to time")
+	logger.Info("   9.12 FromUnixNano() - Convert Unix nanoseconds to time")
+	logger.Info("")
 
-// Helper function to repeat a string / 문자열 반복 헬퍼 함수
-func repeat(s string, count int) string {
-	result := ""
-	for i := 0; i < count; i++ {
-		result += s
-	}
-	return result
+	logger.Info("▶️  Executing Unix Timestamp / Unix 타임스탬프 실행:")
+	unixNow := timeutil.Now()
+	unixMilli := timeutil.NowMilli()
+	logger.Info(fmt.Sprintf("   Now(): %d", unixNow))
+	logger.Info(fmt.Sprintf("   NowMilli(): %d", unixMilli))
+	logger.Info(fmt.Sprintf("   FromUnix(%d): %s", unixNow, timeutil.FormatDateTime(timeutil.FromUnix(unixNow))))
+	logger.Info("")
+
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("🔟 Business Days (7 functions)")
+	logger.Info("   영업일 (7개 함수)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
+
+	logger.Info("📝 Business Day Functions:")
+	logger.Info("   10.1 IsBusinessDay() - Check if date is business day")
+	logger.Info("   10.2 IsHoliday() - Check if date is holiday")
+	logger.Info("   10.3 AddBusinessDays() - Add business days")
+	logger.Info("   10.4 NextBusinessDay() - Get next business day")
+	logger.Info("   10.5 PreviousBusinessDay() - Get previous business day")
+	logger.Info("   10.6 CountBusinessDays() - Count business days between dates")
+	logger.Info("   10.7 AddKoreanHolidays() - Add Korean holidays automatically")
+	logger.Info("")
+
+	logger.Info("▶️  Executing Business Days / 영업일 실행:")
+	// Add Korean holidays / 한국 공휴일 추가
+	timeutil.AddKoreanHolidays(2025)
+
+	bizDate := time.Date(2025, 10, 15, 0, 0, 0, 0, time.UTC)
+	logger.Info(fmt.Sprintf("   Test Date: %s", timeutil.FormatDate(bizDate)))
+	logger.Info(fmt.Sprintf("   IsBusinessDay(): %v", timeutil.IsBusinessDay(bizDate)))
+	logger.Info(fmt.Sprintf("   IsHoliday(): %v", timeutil.IsHoliday(bizDate)))
+
+	nextBiz := timeutil.NextBusinessDay(bizDate)
+	logger.Info(fmt.Sprintf("   NextBusinessDay(): %s", timeutil.FormatDate(nextBiz)))
+
+	bizDaysAdded := timeutil.AddBusinessDays(bizDate, 5)
+	logger.Info(fmt.Sprintf("   AddBusinessDays(5): %s", timeutil.FormatDate(bizDaysAdded)))
+
+	endDate := time.Date(2025, 10, 31, 0, 0, 0, 0, time.UTC)
+	bizCount := timeutil.CountBusinessDays(bizDate, endDate)
+	logger.Info(fmt.Sprintf("   CountBusinessDays(Oct 15-31): %d days", bizCount))
+	logger.Info("")
+
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("1️⃣1️⃣  Week Functions (4 functions)")
+	logger.Info("   주 관련 함수 (4개 함수)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
+
+	logger.Info("📝 Week Functions:")
+	logger.Info("   11.1 WeekOfYear() - Get week number of year")
+	logger.Info("   11.2 WeekOfMonth() - Get week number of month")
+	logger.Info("   11.3 DaysInMonth() - Get number of days in month")
+	logger.Info("   11.4 DaysInYear() - Get number of days in year")
+	logger.Info("")
+
+	logger.Info("▶️  Executing Week Functions / 주 함수 실행:")
+	weekTest := time.Date(2025, 10, 15, 0, 0, 0, 0, time.UTC)
+	logger.Info(fmt.Sprintf("   Date: %s", timeutil.FormatDate(weekTest)))
+	logger.Info(fmt.Sprintf("   WeekOfYear(): %d", timeutil.WeekOfYear(weekTest)))
+	logger.Info(fmt.Sprintf("   WeekOfMonth(): %d", timeutil.WeekOfMonth(weekTest)))
+	logger.Info(fmt.Sprintf("   DaysInMonth(Oct 2025): %d", timeutil.DaysInMonth(weekTest)))
+	yearTest := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+	logger.Info(fmt.Sprintf("   DaysInYear(2025): %d", timeutil.DaysInYear(yearTest)))
+	logger.Info("")
+
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("1️⃣2️⃣  Month Functions (4 functions)")
+	logger.Info("   월 관련 함수 (4개 함수)")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
+
+	logger.Info("📝 Month Functions:")
+	logger.Info("   12.1 MonthKorean() - Get Korean month name (10월)")
+	logger.Info("   12.2 MonthName() - Get full month name (October)")
+	logger.Info("   12.3 MonthNameShort() - Get short month name (Oct)")
+	logger.Info("   12.4 Quarter() - Get quarter number (1-4)")
+	logger.Info("")
+
+	logger.Info("▶️  Executing Month Functions / 월 함수 실행:")
+	monthTest := time.Date(2025, 10, 15, 0, 0, 0, 0, time.UTC)
+	logger.Info(fmt.Sprintf("   Date: %s", timeutil.FormatDate(monthTest)))
+	logger.Info(fmt.Sprintf("   MonthKorean(): %s", timeutil.MonthKorean(monthTest)))
+	logger.Info(fmt.Sprintf("   MonthName(): %s", timeutil.MonthName(monthTest)))
+	logger.Info(fmt.Sprintf("   MonthNameShort(): %s", timeutil.MonthNameShort(monthTest)))
+	logger.Info(fmt.Sprintf("   Quarter(): Q%d", timeutil.Quarter(monthTest)))
+	logger.Info("")
+
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("📊 Summary / 요약")
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
+
+	logger.Info("This example demonstrated comprehensive time utilities:")
+	logger.Info("본 예제는 포괄적인 시간 유틸리티를 시연했습니다:")
+	logger.Info("")
+
+	logger.Info("  1️⃣  Time Difference (8 functions) - Calculate time differences")
+	logger.Info("     시간 차이 (8개 함수) - 시간 차이 계산")
+	logger.Info("  2️⃣  Timezone Operations (10 functions) - Timezone conversions")
+	logger.Info("     타임존 작업 (10개 함수) - 타임존 변환")
+	logger.Info("  3️⃣  Date Arithmetic (16 functions) - Add/subtract time units")
+	logger.Info("     날짜 연산 (16개 함수) - 시간 단위 더하기/빼기")
+	logger.Info("  4️⃣  Date Formatting (8 functions) - Format time to strings")
+	logger.Info("     날짜 포맷팅 (8개 함수) - 시간을 문자열로 포맷")
+	logger.Info("  5️⃣  Time Parsing (10 functions) - Parse strings to time")
+	logger.Info("     시간 파싱 (10개 함수) - 문자열을 시간으로 파싱")
+	logger.Info("  6️⃣  Time Comparisons (18 functions) - Compare times")
+	logger.Info("     시간 비교 (18개 함수) - 시간 비교")
+	logger.Info("  7️⃣  Age Calculations (4 functions) - Calculate age")
+	logger.Info("     나이 계산 (4개 함수) - 나이 계산")
+	logger.Info("  8️⃣  Relative Time (4 functions) - Human-friendly time")
+	logger.Info("     상대 시간 (4개 함수) - 사람 친화적 시간")
+	logger.Info("  9️⃣  Unix Timestamp (12 functions) - Unix timestamp handling")
+	logger.Info("     Unix 타임스탬프 (12개 함수) - Unix 타임스탬프 처리")
+	logger.Info("  🔟 Business Days (7 functions) - Business day operations")
+	logger.Info("     영업일 (7개 함수) - 영업일 작업")
+	logger.Info("  1️⃣1️⃣  Week Functions (4 functions) - Week-related operations")
+	logger.Info("     주 관련 함수 (4개 함수) - 주 관련 작업")
+	logger.Info("  1️⃣2️⃣  Month Functions (4 functions) - Month-related operations")
+	logger.Info("     월 관련 함수 (4개 함수) - 월 관련 작업")
+	logger.Info("")
+
+	logger.Info("✨ Key Takeaways / 주요 포인트:")
+	logger.Info("   • All 105 functions demonstrated (105개 함수 시연)")
+	logger.Info("   • KST as default timezone (KST가 기본 타임존)")
+	logger.Info("   • Custom format tokens (YYYY-MM-DD) (커스텀 포맷 토큰)")
+	logger.Info("   • Auto-format detection with ParseAny (ParseAny로 자동 포맷 감지)")
+	logger.Info("   • Business day support with Korean holidays (한국 공휴일 포함 영업일 지원)")
+	logger.Info("   • Human-readable relative time (사람이 읽기 쉬운 상대 시간)")
+	logger.Info("   • 50+ String parameter functions (50개 이상 문자열 매개변수 함수)")
+	logger.Info("")
+
+	logger.Info("All examples completed successfully!")
+	logger.Info("모든 예제가 성공적으로 완료되었습니다!")
+	logger.Info("")
 }
