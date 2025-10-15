@@ -6,6 +6,32 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.016] - 2025-10-15
+
+### Fixed / 수정
+- Updated version test in `maputil_test.go` from v1.8.010 to v1.8.015
+- All tests now pass successfully / 모든 테스트가 성공적으로 통과
+
+### Verified / 검증
+- ✅ All 17 new utility functions fully tested and working
+- ✅ Total function count: 99 functions (81 original + 18 new)
+- ✅ All functions have comprehensive tests (90+ sub-tests, 17+ benchmarks)
+- ✅ All functions have complete bilingual documentation
+- ✅ All changes committed and pushed to GitHub
+
+### Summary / 요약
+**Phase 1 Complete**: All 17 planned utility functions successfully implemented
+- Utility Functions (6): ForEach, GetMany, SetMany, Tap, ContainsAllKeys, Apply
+- Default Functions (3): GetOrSet, SetDefault, Defaults
+- Nested Map Functions (5): GetNested, SetNested, HasNested, DeleteNested, SafeGet
+- YAML Functions (2): ToYAML, FromYAML
+- Statistics Functions (2): Median, Frequencies
+
+**Total Additions**: 18 new functions (17 planned + 1 bonus)
+**Original Count**: 81 functions
+**Final Count**: 99 functions
+**Test Coverage**: 100% with comprehensive tests
+
 ## [v1.8.015] - 2025-10-15
 
 ### Added / 추가
