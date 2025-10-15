@@ -151,3 +151,21 @@ func IsSubset[K comparable, V comparable](subset, superset map[K]V) bool {
 
 	return true
 }
+
+// IsSuperset checks if a map is a superset of another map.
+// IsSuperset는 맵이 다른 맵의 상위집합인지 확인합니다.
+//
+// A map is a superset if it contains all key-value pairs from the subset.
+// 맵이 subset의 모든 키-값 쌍을 포함하면 상위집합입니다.
+//
+// Time complexity: O(n) where n is the size of subset
+// 시간 복잡도: O(n) 여기서 n은 subset의 크기
+//
+// Example / 예제:
+//
+//	superset := map[string]int{"a": 1, "b": 2, "c": 3}
+//	subset := map[string]int{"a": 1, "b": 2}
+//	result := maputil.IsSuperset(superset, subset) // true
+func IsSuperset[K comparable, V comparable](superset, subset map[K]V) bool {
+	return IsSubset(subset, superset)
+}

@@ -6,6 +6,36 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.002] - 2025-10-15
+
+### Added / 추가
+- Complete test suite for all 81 functions across 10 categories / 10개 카테고리의 모든 81개 함수에 대한 완전한 테스트 스위트
+- Comprehensive benchmarks for performance testing / 성능 테스트를 위한 포괄적인 벤치마크
+- Added missing functions: `FromJSON`, `EqualMaps`, `IsSuperset`, `PrefixKeys`, `SuffixKeys`, `TransformKeys`, `MinValue`, `MaxValue`, `SumValues` / 누락된 함수 추가
+
+### Fixed / 수정
+- Fixed type parameter issues in test files / 테스트 파일의 타입 파라미터 문제 수정
+- Corrected function signatures to match implementation / 구현과 일치하도록 함수 시그니처 수정
+- Updated test expectations to match actual function behavior / 실제 함수 동작과 일치하도록 테스트 기대값 업데이트
+
+### Test Files / 테스트 파일
+- `maputil_test.go` - Package-level tests / 패키지 레벨 테스트
+- `basic_test.go` - 11 basic operation tests + 5 benchmarks / 11개 기본 작업 테스트 + 5개 벤치마크
+- `transform_test.go` - 10 transformation tests + 4 benchmarks / 10개 변환 테스트 + 4개 벤치마크
+- `aggregate_test.go` - 9 aggregation tests + 3 benchmarks / 9개 집계 테스트 + 3개 벤치마크
+- `merge_test.go` - 8 merge operation tests + 6 benchmarks / 8개 병합 작업 테스트 + 6개 벤치마크
+- `filter_test.go` - 7 filter operation tests + 7 benchmarks / 7개 필터 작업 테스트 + 7개 벤치마크
+- `convert_test.go` - 9 conversion tests + 9 benchmarks / 9개 변환 테스트 + 9개 벤치마크
+- `predicate_test.go` - 7 predicate tests + 7 benchmarks / 7개 조건자 테스트 + 7개 벤치마크
+- `keys_test.go` - 8 key operation tests + 8 benchmarks / 8개 키 작업 테스트 + 8개 벤치마크
+- `values_test.go` - 8 value operation tests + 7 benchmarks / 8개 값 작업 테스트 + 7개 벤치마크
+- `comparison_test.go` - 6 comparison tests + 6 benchmarks / 6개 비교 테스트 + 6개 벤치마크
+
+**Total: 80+ test functions and 60+ benchmark functions**
+**총: 80개 이상의 테스트 함수와 60개 이상의 벤치마크 함수**
+
+All tests passing ✅ / 모든 테스트 통과 ✅
+
 ## [v1.8.001] - 2025-10-15
 
 ### Added / 추가

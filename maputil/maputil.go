@@ -56,7 +56,7 @@ package maputil
 
 // Version is the current version of the maputil package.
 // Version은 maputil 패키지의 현재 버전입니다.
-const Version = "v1.8.001"
+const Version = "v1.8.002"
 
 // Entry represents a key-value pair in a map.
 // Entry는 맵의 키-값 쌍을 나타냅니다.

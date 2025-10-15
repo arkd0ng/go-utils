@@ -144,3 +144,84 @@ func UpdateValues[K comparable, V any](m map[K]V, fn func(K, V) V) map[K]V {
 	}
 	return result
 }
+
+// MinValue returns the minimum value from a map.
+// MinValue는 맵에서 최솟값을 반환합니다.
+//
+// Returns the minimum value and true if found, or zero value and false if map is empty.
+// 찾은 경우 최솟값과 true를, 맵이 비어있으면 제로값과 false를 반환합니다.
+//
+// Time complexity: O(n)
+// 시간 복잡도: O(n)
+//
+// Example / 예제:
+//
+//	m := map[string]int{"a": 3, "b": 1, "c": 2}
+//	min, found := maputil.MinValue(m) // min = 1, found = true
+func MinValue[K comparable, V Ordered](m map[K]V) (V, bool) {
+	if len(m) == 0 {
+		var zero V
+		return zero, false
+	}
+
+	var min V
+	first := true
+	for _, v := range m {
+		if first || v < min {
+			min = v
+			first = false
+		}
+	}
+	return min, true
+}
+
+// MaxValue returns the maximum value from a map.
+// MaxValue는 맵에서 최댓값을 반환합니다.
+//
+// Returns the maximum value and true if found, or zero value and false if map is empty.
+// 찾은 경우 최댓값과 true를, 맵이 비어있으면 제로값과 false를 반환합니다.
+//
+// Time complexity: O(n)
+// 시간 복잡도: O(n)
+//
+// Example / 예제:
+//
+//	m := map[string]int{"a": 3, "b": 1, "c": 2}
+//	max, found := maputil.MaxValue(m) // max = 3, found = true
+func MaxValue[K comparable, V Ordered](m map[K]V) (V, bool) {
+	if len(m) == 0 {
+		var zero V
+		return zero, false
+	}
+
+	var max V
+	first := true
+	for _, v := range m {
+		if first || v > max {
+			max = v
+			first = false
+		}
+	}
+	return max, true
+}
+
+// SumValues returns the sum of all values in a map.
+// SumValues는 맵의 모든 값의 합을 반환합니다.
+//
+// Returns zero if the map is empty.
+// 맵이 비어있으면 0을 반환합니다.
+//
+// Time complexity: O(n)
+// 시간 복잡도: O(n)
+//
+// Example / 예제:
+//
+//	m := map[string]int{"a": 1, "b": 2, "c": 3}
+//	sum := maputil.SumValues(m) // sum = 6
+func SumValues[K comparable, V Number](m map[K]V) V {
+	var sum V
+	for _, v := range m {
+		sum += v
+	}
+	return sum
+}

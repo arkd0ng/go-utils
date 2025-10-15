@@ -188,3 +188,21 @@ func ToJSON[K comparable, V any](m map[K]V) (string, error) {
 	}
 	return string(bytes), nil
 }
+
+// FromJSON parses a JSON string into a map.
+// FromJSON은 JSON 문자열을 맵으로 파싱합니다.
+//
+// Returns an error if the JSON string cannot be unmarshaled.
+// JSON 문자열을 언마샬링할 수 없으면 에러를 반환합니다.
+//
+// Time complexity: O(n)
+// 시간 복잡도: O(n)
+//
+// Example / 예제:
+//
+//	var m map[string]int
+//	err := maputil.FromJSON(`{"a":1,"b":2,"c":3}`, &m)
+//	// m = map[string]int{"a": 1, "b": 2, "c": 3}
+func FromJSON[K comparable, V any](jsonStr string, m *map[K]V) error {
+	return json.Unmarshal([]byte(jsonStr), m)
+}

@@ -1,5 +1,34 @@
 package maputil
 
+// EqualMaps checks whether two maps are equal.
+// EqualMaps는 두 맵이 동일한지 확인합니다.
+//
+// Two maps are equal if they have the same keys and values.
+// 두 맵은 같은 키와 값을 가지면 동일합니다.
+//
+// Time complexity: O(n)
+// 시간 복잡도: O(n)
+//
+// Example / 예제:
+//
+//	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
+//	m2 := map[string]int{"a": 1, "b": 2, "c": 3}
+//	equal := maputil.EqualMaps(m1, m2) // true
+func EqualMaps[K comparable, V comparable](m1, m2 map[K]V) bool {
+	if len(m1) != len(m2) {
+		return false
+	}
+
+	for k, v1 := range m1 {
+		v2, exists := m2[k]
+		if !exists || v1 != v2 {
+			return false
+		}
+	}
+
+	return true
+}
+
 // EqualFunc checks whether two maps are equal using a custom comparator function.
 // EqualFunc은 사용자 정의 비교 함수를 사용하여 두 맵이 동일한지 확인합니다.
 //

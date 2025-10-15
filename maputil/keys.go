@@ -170,3 +170,65 @@ func FindKey[K comparable, V any](m map[K]V, fn func(K, V) bool) (K, bool) {
 func FindKeys[K comparable, V any](m map[K]V, fn func(K, V) bool) []K {
 	return KeysBy(m, fn)
 }
+
+// PrefixKeys adds a prefix to all keys in a map.
+// PrefixKeys는 맵의 모든 키에 접두사를 추가합니다.
+//
+// Time complexity: O(n)
+// 시간 복잡도: O(n)
+//
+// Example / 예제:
+//
+//	m := map[string]int{"a": 1, "b": 2}
+//	result := maputil.PrefixKeys(m, "key_")
+//	// map[string]int{"key_a": 1, "key_b": 2}
+func PrefixKeys[V any](m map[string]V, prefix string) map[string]V {
+	result := make(map[string]V, len(m))
+	for k, v := range m {
+		result[prefix+k] = v
+	}
+	return result
+}
+
+// SuffixKeys adds a suffix to all keys in a map.
+// SuffixKeys는 맵의 모든 키에 접미사를 추가합니다.
+//
+// Time complexity: O(n)
+// 시간 복잡도: O(n)
+//
+// Example / 예제:
+//
+//	m := map[string]int{"a": 1, "b": 2}
+//	result := maputil.SuffixKeys(m, "_key")
+//	// map[string]int{"a_key": 1, "b_key": 2}
+func SuffixKeys[V any](m map[string]V, suffix string) map[string]V {
+	result := make(map[string]V, len(m))
+	for k, v := range m {
+		result[k+suffix] = v
+	}
+	return result
+}
+
+// TransformKeys transforms all keys in a map using a function.
+// TransformKeys는 함수를 사용하여 맵의 모든 키를 변환합니다.
+//
+// If multiple keys map to the same transformed key, the last value wins.
+// 여러 키가 같은 변환된 키로 매핑되면 마지막 값이 우선합니다.
+//
+// Time complexity: O(n)
+// 시간 복잡도: O(n)
+//
+// Example / 예제:
+//
+//	m := map[string]int{"a": 1, "b": 2, "c": 3}
+//	result := maputil.TransformKeys(m, func(k string) string {
+//	    return strings.ToUpper(k)
+//	}) // map[string]int{"A": 1, "B": 2, "C": 3}
+func TransformKeys[K comparable, V any](m map[K]V, fn func(K) K) map[K]V {
+	result := make(map[K]V, len(m))
+	for k, v := range m {
+		newKey := fn(k)
+		result[newKey] = v
+	}
+	return result
+}
