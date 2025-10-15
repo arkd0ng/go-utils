@@ -6,6 +6,39 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.004] - 2025-10-15
+
+### Enhanced / 보강됨
+
+#### Complete Logging Migration in Fileutil Example / Fileutil 예제의 완전한 로깅 마이그레이션
+
+**Updated Files / 업데이트된 파일:**
+- `examples/fileutil/main.go` - Completely replaced all fmt output with structured logging / 모든 fmt 출력을 구조화된 로깅으로 완전히 교체
+
+**Key Changes / 주요 변경사항:**
+- Replaced all `fmt.Println()` and `fmt.Printf()` calls with structured `logger.Info()` calls / 모든 `fmt.Println()` 및 `fmt.Printf()` 호출을 구조화된 `logger.Info()` 호출로 교체
+- Implemented key-value structured logging for all output messages / 모든 출력 메시지에 대해 키-값 구조화 로깅 구현
+- Added logger parameter to `example2PathOperations()` function / `example2PathOperations()` 함수에 logger 매개변수 추가
+- Used consistent key naming: `path`, `count`, `value`, `bytes`, `hash`, `checksum`, `valid`, `same`, `exists`, `isEmpty`, `name` / 일관된 키 이름 사용
+- Eliminated duplicate output (removed redundant fmt.Println after logger.Info) / 중복 출력 제거 (logger.Info 이후 중복된 fmt.Println 제거)
+- Maintained fmt.Printf only for progress callback (line 208) which cannot easily access logger / 로거에 쉽게 접근할 수 없는 진행 상황 콜백(208행)에만 fmt.Printf 유지
+
+**Benefits / 이점:**
+- All output now appears in both console and log file thanks to `WithStdout(true)` / `WithStdout(true)` 덕분에 모든 출력이 콘솔과 로그 파일 양쪽에 표시됨
+- Structured logging allows easier parsing and analysis of logs / 구조화된 로깅으로 로그를 더 쉽게 파싱하고 분석 가능
+- Consistent logging pattern across all example functions / 모든 예제 함수에서 일관된 로깅 패턴
+- Better observability with key-value pairs / 키-값 쌍으로 더 나은 관찰 가능성
+
+**Example Output / 예제 출력:**
+```
+2025-10-15 19:56:38 [INFO] ✓ Written to file path=/path/to/file.txt
+2025-10-15 19:56:38 [INFO] ✓ Found files count=3
+2025-10-15 19:56:38 [INFO] ✓ SHA256 hash hash=7d5e51fa...
+2025-10-15 19:56:38 [INFO] ✓ Directory status exists=true isEmpty=true
+```
+
+---
+
 ## [v1.9.003] - 2025-10-15
 
 ### Enhanced / 보강됨
