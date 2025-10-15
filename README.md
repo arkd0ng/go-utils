@@ -507,8 +507,9 @@ doubled := sliceutil.Map(evens, func(n int) int { return n * 2 })
 
 **Documentation / 문서**:
 - [Package README](./sliceutil/README.md) - Quick start and examples / 빠른 시작 및 예제
-- [User Manual](./docs/sliceutil/USER_MANUAL.md) - Comprehensive user guide (~1,800 lines) / 포괄적인 사용자 가이드 (~1,800줄)
-- [Developer Guide](./docs/sliceutil/DEVELOPER_GUIDE.md) - Technical documentation (~1,500 lines) / 기술 문서 (~1,500줄)
+- [User Manual](./docs/sliceutil/USER_MANUAL.md) - Comprehensive user guide (3,887 lines) / 포괄적인 사용자 가이드 (3,887줄)
+- [Developer Guide](./docs/sliceutil/DEVELOPER_GUIDE.md) - Technical documentation (2,205 lines) / 기술 문서 (2,205줄)
+- [Performance Benchmarks](./docs/sliceutil/PERFORMANCE_BENCHMARKS.md) - Real benchmark data / 실제 벤치마크 데이터
 
 **[→ View full documentation / 전체 문서 보기](./sliceutil/README.md)**
 
@@ -516,7 +517,6 @@ doubled := sliceutil.Map(evens, func(n int) int { return n * 2 })
 
 ### 🔜 Coming Soon / 개발 예정
 
-- **sliceutil** - Slice/Array helpers / 슬라이스/배열 헬퍼
 - **maputil** - Map utilities / 맵 유틸리티
 - **fileutil** - File/Path utilities / 파일/경로 유틸리티
 - **httputil** - HTTP helpers / HTTP 헬퍼
@@ -602,11 +602,23 @@ For detailed version history, see:
 - [CHANGELOG.md](./CHANGELOG.md) - Major/Minor 버전 개요
 - [docs/CHANGELOG/](./docs/CHANGELOG/) - 상세한 패치별 변경사항
 
-### v1.6.x (Current / 현재)
+### v1.7.x (Current / 현재)
+
+- **NEW**: `sliceutil` package - Slice utilities / 슬라이스 유틸리티
+  - 20 lines → 1 line code reduction / 20줄 → 1줄 코드 감소
+  - 95 functions across 14 categories / 14개 카테고리에 걸쳐 95개 함수
+  - Go 1.18+ generics for type safety / Go 1.18+ 제네릭으로 타입 안전성
+  - Functional programming style / 함수형 프로그래밍 스타일
+  - Immutable operations / 불변 작업
+  - Zero dependencies / 제로 의존성
+  - 100% test coverage / 100% 테스트 커버리지
+  - Comprehensive documentation (USER_MANUAL, DEVELOPER_GUIDE, PERFORMANCE_BENCHMARKS) / 포괄적인 문서화
+
+### v1.6.x
 
 - **NEW**: `timeutil` package - Time and date utilities / 시간 및 날짜 유틸리티
   - 20 lines → 1 line code reduction / 20줄 → 1줄 코드 감소
-  - 80+ functions across 10 categories / 10개 카테고리에 걸쳐 80개 이상 함수
+  - 114 functions across 12 categories / 12개 카테고리에 걸쳐 114개 함수
   - KST (GMT+9) as default timezone / KST (GMT+9)를 기본 타임존으로 설정
   - Custom format tokens (YYYY-MM-DD) / 커스텀 포맷 토큰
   - Business day support with Korean holidays / 한국 공휴일을 포함한 영업일 지원
