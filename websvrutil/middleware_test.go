@@ -3,9 +3,11 @@ package websvrutil
 import (
 	"bytes"
 	"compress/gzip"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -989,6 +991,351 @@ func BenchmarkSecureHeaders(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+	}
+}
+
+// TestBodyLimit tests the BodyLimit middleware
+// TestBodyLimit는 BodyLimit 미들웨어를 테스트합니다
+func TestBodyLimit(t *testing.T) {
+	middleware := BodyLimit(100) // 100 bytes limit
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		w.WriteHeader(http.StatusOK)
+		w.Write(body)
+	}))
+
+	// Test with small body (should succeed)
+	t.Run("SmallBody", func(t *testing.T) {
+		smallBody := strings.Repeat("a", 50)
+		req := httptest.NewRequest("POST", "/test", strings.NewReader(smallBody))
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusOK {
+			t.Errorf("Expected status 200, got %d", rec.Code)
+		}
+	})
+
+	// Test with large body (should fail)
+	t.Run("LargeBody", func(t *testing.T) {
+		largeBody := strings.Repeat("a", 200)
+		req := httptest.NewRequest("POST", "/test", strings.NewReader(largeBody))
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+
+		// The body should be truncated or return error
+		// 본문이 잘리거나 에러가 반환되어야 함
+		if rec.Code == http.StatusOK && len(rec.Body.String()) > 100 {
+			t.Errorf("Body should be limited to 100 bytes")
+		}
+	})
+}
+
+// TestBodyLimitWithConfig tests the BodyLimit middleware with custom config
+// TestBodyLimitWithConfig는 사용자 정의 설정으로 BodyLimit 미들웨어를 테스트합니다
+func TestBodyLimitWithConfig(t *testing.T) {
+	middleware := BodyLimitWithConfig(BodyLimitConfig{
+		MaxBytes: 1024,
+	})
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("POST", "/test", strings.NewReader("test"))
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", rec.Code)
+	}
+}
+
+// TestStatic tests the Static middleware
+// TestStatic는 Static 미들웨어를 테스트합니다
+func TestStatic(t *testing.T) {
+	// Create temporary directory and file for testing
+	// 테스트를 위한 임시 디렉토리와 파일 생성
+	tmpDir := t.TempDir()
+	testFile := tmpDir + "/test.txt"
+	os.WriteFile(testFile, []byte("Hello, Static!"), 0644)
+
+	middleware := Static(tmpDir)
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Not Found"))
+	}))
+
+	// Test existing file
+	t.Run("ExistingFile", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/test.txt", nil)
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusOK {
+			t.Errorf("Expected status 200, got %d", rec.Code)
+		}
+		if !strings.Contains(rec.Body.String(), "Hello, Static!") {
+			t.Errorf("Expected 'Hello, Static!' in response, got %s", rec.Body.String())
+		}
+	})
+
+	// Test non-existing file (should fall through to next handler)
+	t.Run("NonExistingFile", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/nonexistent.txt", nil)
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusNotFound {
+			t.Errorf("Expected status 404, got %d", rec.Code)
+		}
+	})
+}
+
+// TestStaticWithConfig tests the Static middleware with custom config
+// TestStaticWithConfig는 사용자 정의 설정으로 Static 미들웨어를 테스트합니다
+func TestStaticWithConfig(t *testing.T) {
+	tmpDir := t.TempDir()
+	indexFile := tmpDir + "/index.html"
+	os.WriteFile(indexFile, []byte("<h1>Index</h1>"), 0644)
+
+	middleware := StaticWithConfig(StaticConfig{
+		Root:  tmpDir,
+		Index: "index.html",
+	})
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+	}))
+
+	req := httptest.NewRequest("GET", "/", nil)
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", rec.Code)
+	}
+}
+
+// TestRedirect tests the Redirect middleware
+// TestRedirect는 Redirect 미들웨어를 테스트합니다
+func TestRedirect(t *testing.T) {
+	middleware := Redirect("https://example.com")
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusMovedPermanently {
+		t.Errorf("Expected status 301, got %d", rec.Code)
+	}
+	location := rec.Header().Get("Location")
+	if location != "https://example.com" {
+		t.Errorf("Expected Location 'https://example.com', got '%s'", location)
+	}
+}
+
+// TestRedirectWithConfig tests the Redirect middleware with custom config
+// TestRedirectWithConfig는 사용자 정의 설정으로 Redirect 미들웨어를 테스트합니다
+func TestRedirectWithConfig(t *testing.T) {
+	middleware := RedirectWithConfig(RedirectConfig{
+		Code: http.StatusFound,
+		To:   "https://new-site.com",
+	})
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusFound {
+		t.Errorf("Expected status 302, got %d", rec.Code)
+	}
+}
+
+// TestHTTPSRedirect tests the HTTPSRedirect middleware
+// TestHTTPSRedirect는 HTTPSRedirect 미들웨어를 테스트합니다
+func TestHTTPSRedirect(t *testing.T) {
+	middleware := HTTPSRedirect()
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	// Test HTTP request (should redirect)
+	t.Run("HTTPRequest", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "http://example.com/test", nil)
+		req.Host = "example.com"
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusMovedPermanently {
+			t.Errorf("Expected status 301, got %d", rec.Code)
+		}
+		location := rec.Header().Get("Location")
+		if !strings.HasPrefix(location, "https://") {
+			t.Errorf("Expected HTTPS redirect, got %s", location)
+		}
+	})
+
+	// Test HTTPS request (should not redirect)
+	t.Run("HTTPSRequest", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "https://example.com/test", nil)
+		req.Header.Set("X-Forwarded-Proto", "https")
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusOK {
+			t.Errorf("Expected status 200, got %d", rec.Code)
+		}
+	})
+}
+
+// TestWWWRedirect tests the WWWRedirect middleware
+// TestWWWRedirect는 WWWRedirect 미들웨어를 테스트합니다
+func TestWWWRedirect(t *testing.T) {
+	// Test adding www prefix
+	t.Run("AddWWW", func(t *testing.T) {
+		middleware := WWWRedirect(true)
+		handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}))
+
+		req := httptest.NewRequest("GET", "http://example.com/test", nil)
+		req.Host = "example.com"
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusMovedPermanently {
+			t.Errorf("Expected status 301, got %d", rec.Code)
+		}
+		location := rec.Header().Get("Location")
+		if !strings.Contains(location, "www.example.com") {
+			t.Errorf("Expected www.example.com in location, got %s", location)
+		}
+	})
+
+	// Test removing www prefix
+	t.Run("RemoveWWW", func(t *testing.T) {
+		middleware := WWWRedirect(false)
+		handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}))
+
+		req := httptest.NewRequest("GET", "http://www.example.com/test", nil)
+		req.Host = "www.example.com"
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusMovedPermanently {
+			t.Errorf("Expected status 301, got %d", rec.Code)
+		}
+		location := rec.Header().Get("Location")
+		if strings.Contains(location, "www.") {
+			t.Errorf("Expected no www in location, got %s", location)
+		}
+	})
+
+	// Test no redirect when already correct
+	t.Run("NoRedirect", func(t *testing.T) {
+		middleware := WWWRedirect(true)
+		handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}))
+
+		req := httptest.NewRequest("GET", "http://www.example.com/test", nil)
+		req.Host = "www.example.com"
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusOK {
+			t.Errorf("Expected status 200, got %d", rec.Code)
+		}
+	})
+}
+
+// BenchmarkBodyLimit benchmarks the BodyLimit middleware
+// BenchmarkBodyLimit는 BodyLimit 미들웨어를 벤치마크합니다
+func BenchmarkBodyLimit(b *testing.B) {
+	middleware := BodyLimit(1024 * 1024) // 1MB
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		req := httptest.NewRequest("POST", "/test", strings.NewReader("test data"))
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+	}
+}
+
+// BenchmarkStatic benchmarks the Static middleware
+// BenchmarkStatic는 Static 미들웨어를 벤치마크합니다
+func BenchmarkStatic(b *testing.B) {
+	tmpDir := b.TempDir()
+	middleware := Static(tmpDir)
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+	}))
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		req := httptest.NewRequest("GET", "/nonexistent.txt", nil)
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+	}
+}
+
+// BenchmarkRedirect benchmarks the Redirect middleware
+// BenchmarkRedirect는 Redirect 미들웨어를 벤치마크합니다
+func BenchmarkRedirect(b *testing.B) {
+	middleware := Redirect("https://example.com")
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		req := httptest.NewRequest("GET", "/test", nil)
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+	}
+}
+
+// BenchmarkHTTPSRedirect benchmarks the HTTPSRedirect middleware
+// BenchmarkHTTPSRedirect는 HTTPSRedirect 미들웨어를 벤치마크합니다
+func BenchmarkHTTPSRedirect(b *testing.B) {
+	middleware := HTTPSRedirect()
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		req := httptest.NewRequest("GET", "http://example.com/test", nil)
+		req.Host = "example.com"
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+	}
+}
+
+// BenchmarkWWWRedirect benchmarks the WWWRedirect middleware
+// BenchmarkWWWRedirect는 WWWRedirect 미들웨어를 벤치마크합니다
+func BenchmarkWWWRedirect(b *testing.B) {
+	middleware := WWWRedirect(true)
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		req := httptest.NewRequest("GET", "http://example.com/test", nil)
+		req.Host = "example.com"
 		rec := httptest.NewRecorder()
 		handler.ServeHTTP(rec, req)
 	}

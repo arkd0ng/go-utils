@@ -5,6 +5,59 @@
 
 ---
 
+## [v1.11.009] - 2025-10-16
+
+### Added / 추가
+- Added 5 new final middleware to `middleware.go` / middleware.go에 5개의 새로운 최종 미들웨어 추가
+  - **BodyLimit Middleware / 본문 제한 미들웨어**:
+    - `BodyLimit(maxBytes)` - Limits maximum request body size / 최대 요청 본문 크기 제한
+    - `BodyLimitWithConfig(config)` - Custom body limit configuration / 커스텀 본문 제한 설정
+    - Default limit: 10MB / 기본 제한: 10MB
+    - Uses http.MaxBytesReader for efficient limiting / http.MaxBytesReader를 사용한 효율적인 제한
+    - Prevents memory exhaustion attacks / 메모리 고갈 공격 방지
+  - **Static Middleware / 정적 파일 미들웨어**:
+    - `Static(root)` - Serves static files from directory / 디렉토리에서 정적 파일 제공
+    - `StaticWithConfig(config)` - Custom static file configuration / 커스텀 정적 파일 설정
+    - Automatic index.html serving / 자동 index.html 제공
+    - Optional directory browsing / 선택적 디렉토리 탐색
+    - Falls through to next handler if file not found / 파일을 찾을 수 없으면 다음 핸들러로 전달
+  - **Redirect Middleware / 리디렉션 미들웨어**:
+    - `Redirect(to)` - Redirects all requests to URL / 모든 요청을 URL로 리디렉션
+    - `RedirectWithConfig(config)` - Custom redirect configuration / 커스텀 리디렉션 설정
+    - Default: 301 Moved Permanently / 기본값: 301 Moved Permanently
+    - Configurable status code / 설정 가능한 상태 코드
+  - **HTTPSRedirect Middleware / HTTPS 리디렉션 미들웨어**:
+    - `HTTPSRedirect()` - Redirects HTTP to HTTPS / HTTP를 HTTPS로 리디렉션
+    - Detects protocol from TLS and X-Forwarded-Proto header / TLS 및 X-Forwarded-Proto 헤더에서 프로토콜 감지
+    - 301 Permanent redirect / 301 영구 리디렉션
+  - **WWWRedirect Middleware / WWW 리디렉션 미들웨어**:
+    - `WWWRedirect(addWWW)` - Adds or removes www prefix / www 접두사 추가 또는 제거
+    - Supports both HTTP and HTTPS / HTTP 및 HTTPS 모두 지원
+    - Protocol-aware redirection / 프로토콜 인식 리디렉션
+- Created comprehensive tests in `middleware_test.go`: 11 tests + 5 benchmarks
+- Updated `README.md` with new middleware documentation
+- **Total 14 middleware now available** / 총 14개 미들웨어 사용 가능
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.009
+- Bumped version to v1.11.009 in `cfg/app.yaml`
+- Fixed middleware imports: Added `os` to imports
+- Fixed `middleware_test.go` imports: Added `io` and `os`
+- Fixed WWWRedirect and HTTPSRedirect to use `r.URL.Path` instead of `r.RequestURI` for proper URL construction
+
+### Testing Coverage / 테스트 커버리지
+- **11 new tests + 5 benchmarks** for new middleware
+- **Total: 132+ test functions**, **Total: 31 benchmark functions**
+- **85.3% test coverage** - All tests passing ✅
+
+### Notes / 참고사항
+- **Phase 2 (Middleware System) complete!** / Phase 2 (미들웨어 시스템) 완료!
+- Total 14 middleware available: Recovery, Logger, CORS, RequestID, Timeout, BasicAuth, RateLimiter, Compression, SecureHeaders, BodyLimit, Static, Redirect, HTTPSRedirect, WWWRedirect
+- Comprehensive middleware suite for production-ready web servers / 프로덕션 준비 웹 서버를 위한 포괄적인 미들웨어 제품군
+- Next: v1.11.010+ will focus on Phase 3 (Template System) / 다음: v1.11.010+는 Phase 3 (템플릿 시스템)에 집중
+
+---
+
 ## [v1.11.008] - 2025-10-16
 
 ### Added / 추가

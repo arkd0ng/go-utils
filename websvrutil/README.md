@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.008
+**Version / 버전**: v1.11.009
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.008) / 현재 기능
+## Current Features (v1.11.009) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -207,6 +207,28 @@ Built-in middleware for common use cases.
 - Strict-Transport-Security (HSTS) - HTTPS enforcement / HTTPS 강제
 - Content-Security-Policy - CSP support / CSP 지원
 - Referrer-Policy - Referrer control / 리퍼러 제어
+
+**BodyLimit Middleware / 본문 제한 미들웨어**:
+- `BodyLimit(maxBytes)` - Limits maximum request body size / 최대 요청 본문 크기 제한
+- `BodyLimitWithConfig(config)` - Custom body limit configuration / 커스텀 본문 제한 설정
+- Default limit: 10MB / 기본 제한: 10MB
+- Returns error when body exceeds limit / 본문이 제한을 초과하면 에러 반환
+- Prevents memory exhaustion attacks / 메모리 고갈 공격 방지
+
+**Static Middleware / 정적 파일 미들웨어**:
+- `Static(root)` - Serves static files from directory / 디렉토리에서 정적 파일 제공
+- `StaticWithConfig(config)` - Custom static file configuration / 커스텀 정적 파일 설정
+- Automatic index.html serving / 자동 index.html 제공
+- Optional directory browsing / 선택적 디렉토리 탐색
+- Falls through to next handler if file not found / 파일을 찾을 수 없으면 다음 핸들러로 전달
+
+**Redirect Middleware / 리디렉션 미들웨어**:
+- `Redirect(to)` - Redirects all requests to URL / 모든 요청을 URL로 리디렉션
+- `RedirectWithConfig(config)` - Custom redirect configuration / 커스텀 리디렉션 설정
+- `HTTPSRedirect()` - Redirects HTTP to HTTPS / HTTP를 HTTPS로 리디렉션
+- `WWWRedirect(addWWW)` - Adds or removes www prefix / www 접두사 추가 또는 제거
+- Default: 301 Moved Permanently / 기본값: 301 Moved Permanently
+- Configurable status code / 설정 가능한 상태 코드
 
 ## Quick Start / 빠른 시작
 
@@ -533,6 +555,7 @@ The following features are planned for future releases:
 - ✅ v1.11.006: Middleware (Recovery, Logger, CORS) / 미들웨어 (복구, 로거, CORS)
 - ✅ v1.11.007: Additional Middleware (RequestID, Timeout, BasicAuth) / 추가 미들웨어 (요청 ID, 타임아웃, Basic 인증)
 - ✅ v1.11.008: Advanced Middleware (RateLimiter, Compression, SecureHeaders) / 고급 미들웨어 (Rate Limiter, 압축, 보안 헤더)
+- ✅ v1.11.009: Final Middleware (BodyLimit, Static, Redirect, HTTPSRedirect, WWWRedirect) / 최종 미들웨어 (본문 제한, 정적 파일, 리디렉션)
 
 ## Documentation / 문서
 

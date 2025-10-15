@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"runtime/debug"
 	"strings"
 	"sync"
@@ -911,6 +912,239 @@ func SecureHeadersWithConfig(config SecureHeadersConfig) MiddlewareFunc {
 			// 설정된 경우 CSP 설정
 			if config.ContentSecurityPolicy != "" {
 				w.Header().Set("Content-Security-Policy", config.ContentSecurityPolicy)
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+// BodyLimitConfig defines the configuration for BodyLimit middleware.
+// BodyLimitConfig는 BodyLimit 미들웨어의 설정을 정의합니다.
+type BodyLimitConfig struct {
+	// MaxBytes is the maximum allowed request body size in bytes
+	// MaxBytes는 허용되는 최대 요청 본문 크기(바이트)입니다
+	MaxBytes int64
+}
+
+// BodyLimit returns a middleware that limits the maximum request body size.
+// BodyLimit는 최대 요청 본문 크기를 제한하는 미들웨어를 반환합니다.
+//
+// Default limit is 10MB.
+// 기본 제한은 10MB입니다.
+//
+// Example / 예제:
+//
+//	// Limit request body to 5MB
+//	// 요청 본문을 5MB로 제한
+//	server.Use(BodyLimit(5 * 1024 * 1024))
+func BodyLimit(maxBytes int64) MiddlewareFunc {
+	return BodyLimitWithConfig(BodyLimitConfig{
+		MaxBytes: maxBytes,
+	})
+}
+
+// BodyLimitWithConfig returns a middleware with custom configuration.
+// BodyLimitWithConfig는 사용자 정의 설정으로 미들웨어를 반환합니다.
+func BodyLimitWithConfig(config BodyLimitConfig) MiddlewareFunc {
+	if config.MaxBytes <= 0 {
+		config.MaxBytes = 10 << 20 // 10MB default
+	}
+
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Limit the request body size
+			// 요청 본문 크기 제한
+			r.Body = http.MaxBytesReader(w, r.Body, config.MaxBytes)
+
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+// StaticConfig defines the configuration for Static middleware.
+// StaticConfig는 Static 미들웨어의 설정을 정의합니다.
+type StaticConfig struct {
+	// Root is the root directory to serve files from
+	// Root는 파일을 제공할 루트 디렉토리입니다
+	Root string
+
+	// Index is the index file to serve (default: "index.html")
+	// Index는 제공할 인덱스 파일입니다 (기본값: "index.html")
+	Index string
+
+	// Browse enables directory browsing
+	// Browse는 디렉토리 탐색을 활성화합니다
+	Browse bool
+}
+
+// Static returns a middleware that serves static files from the specified directory.
+// Static는 지정된 디렉토리에서 정적 파일을 제공하는 미들웨어를 반환합니다.
+//
+// Example / 예제:
+//
+//	// Serve static files from "./public" directory
+//	// "./public" 디렉토리에서 정적 파일 제공
+//	server.Use(Static("./public"))
+func Static(root string) MiddlewareFunc {
+	return StaticWithConfig(StaticConfig{
+		Root: root,
+	})
+}
+
+// StaticWithConfig returns a middleware with custom configuration.
+// StaticWithConfig는 사용자 정의 설정으로 미들웨어를 반환합니다.
+func StaticWithConfig(config StaticConfig) MiddlewareFunc {
+	if config.Root == "" {
+		config.Root = "."
+	}
+	if config.Index == "" {
+		config.Index = "index.html"
+	}
+
+	fileServer := http.FileServer(http.Dir(config.Root))
+
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Check if file exists
+			// 파일이 존재하는지 확인
+			filePath := config.Root + r.URL.Path
+			info, err := os.Stat(filePath)
+
+			if err == nil {
+				// If it's a directory, serve index file or browse
+				// 디렉토리인 경우 인덱스 파일 제공 또는 탐색
+				if info.IsDir() {
+					indexPath := filePath + "/" + config.Index
+					if _, err := os.Stat(indexPath); err == nil {
+						fileServer.ServeHTTP(w, r)
+						return
+					}
+					if !config.Browse {
+						next.ServeHTTP(w, r)
+						return
+					}
+				}
+				// Serve the file
+				// 파일 제공
+				fileServer.ServeHTTP(w, r)
+				return
+			}
+
+			// File not found, pass to next handler
+			// 파일을 찾을 수 없으면 다음 핸들러로 전달
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+// RedirectConfig defines the configuration for Redirect middleware.
+// RedirectConfig는 Redirect 미들웨어의 설정을 정의합니다.
+type RedirectConfig struct {
+	// Code is the HTTP status code for redirect (default: 301 Moved Permanently)
+	// Code는 리디렉션을 위한 HTTP 상태 코드입니다 (기본값: 301 Moved Permanently)
+	Code int
+
+	// To is the destination URL
+	// To는 대상 URL입니다
+	To string
+}
+
+// Redirect returns a middleware that redirects all requests to the specified URL.
+// Redirect는 모든 요청을 지정된 URL로 리디렉션하는 미들웨어를 반환합니다.
+//
+// Uses 301 Moved Permanently by default.
+// 기본적으로 301 Moved Permanently를 사용합니다.
+//
+// Example / 예제:
+//
+//	// Redirect all HTTP to HTTPS
+//	// 모든 HTTP를 HTTPS로 리디렉션
+//	httpServer.Use(Redirect("https://example.com"))
+func Redirect(to string) MiddlewareFunc {
+	return RedirectWithConfig(RedirectConfig{
+		To: to,
+	})
+}
+
+// RedirectWithConfig returns a middleware with custom configuration.
+// RedirectWithConfig는 사용자 정의 설정으로 미들웨어를 반환합니다.
+func RedirectWithConfig(config RedirectConfig) MiddlewareFunc {
+	if config.Code == 0 {
+		config.Code = http.StatusMovedPermanently // 301
+	}
+
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Redirect to destination
+			// 대상으로 리디렉션
+			http.Redirect(w, r, config.To, config.Code)
+		})
+	}
+}
+
+// HTTPSRedirect returns a middleware that redirects HTTP requests to HTTPS.
+// HTTPSRedirect는 HTTP 요청을 HTTPS로 리디렉션하는 미들웨어를 반환합니다.
+//
+// Example / 예제:
+//
+//	// Redirect all HTTP to HTTPS
+//	// 모든 HTTP를 HTTPS로 리디렉션
+//	httpServer.Use(HTTPSRedirect())
+func HTTPSRedirect() MiddlewareFunc {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// If not HTTPS, redirect to HTTPS
+			// HTTPS가 아니면 HTTPS로 리디렉션
+			if r.TLS == nil && r.Header.Get("X-Forwarded-Proto") != "https" {
+				host := r.Host
+				if host == "" {
+					host = "localhost"
+				}
+				url := "https://" + host + r.URL.Path
+				http.Redirect(w, r, url, http.StatusMovedPermanently)
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+// WWWRedirect returns a middleware that redirects non-www to www or vice versa.
+// WWWRedirect는 non-www를 www로 또는 그 반대로 리디렉션하는 미들웨어를 반환합니다.
+//
+// Example / 예제:
+//
+//	// Redirect to www version
+//	// www 버전으로 리디렉션
+//	server.Use(WWWRedirect(true))
+func WWWRedirect(addWWW bool) MiddlewareFunc {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			host := r.Host
+			hasWWW := len(host) > 4 && host[:4] == "www."
+
+			if addWWW && !hasWWW {
+				// Add www prefix
+				// www 접두사 추가
+				scheme := "http"
+				if r.TLS != nil || r.Header.Get("X-Forwarded-Proto") == "https" {
+					scheme = "https"
+				}
+				url := scheme + "://www." + host + r.URL.Path
+				http.Redirect(w, r, url, http.StatusMovedPermanently)
+				return
+			} else if !addWWW && hasWWW {
+				// Remove www prefix
+				// www 접두사 제거
+				scheme := "http"
+				if r.TLS != nil || r.Header.Get("X-Forwarded-Proto") == "https" {
+					scheme = "https"
+				}
+				url := scheme + "://" + host[4:] + r.URL.Path
+				http.Redirect(w, r, url, http.StatusMovedPermanently)
+				return
 			}
 
 			next.ServeHTTP(w, r)
