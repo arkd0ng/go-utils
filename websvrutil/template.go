@@ -42,6 +42,14 @@ type TemplateEngine struct {
 	// layouts stores layout templates
 	// layouts는 레이아웃 템플릿을 저장합니다
 	layouts map[string]*template.Template
+
+	// autoReload enables automatic template reloading
+	// autoReload는 자동 템플릿 재로드를 활성화합니다
+	autoReload bool
+
+	// stopChan is used to stop the auto-reload goroutine
+	// stopChan은 자동 재로드 고루틴을 중지하는 데 사용됩니다
+	stopChan chan struct{}
 }
 
 // NewTemplateEngine creates a new template engine.
@@ -621,4 +629,163 @@ func (e *TemplateEngine) ListLayouts() []string {
 		names = append(names, name)
 	}
 	return names
+}
+
+// EnableAutoReload enables automatic template reloading when files change.
+// EnableAutoReload은 파일이 변경될 때 자동 템플릿 재로드를 활성화합니다.
+//
+// This feature is useful during development. It watches the template directory
+// and automatically reloads templates when they are modified.
+// 이 기능은 개발 중에 유용합니다. 템플릿 디렉토리를 감시하고
+// 수정되면 자동으로 템플릿을 다시 로드합니다.
+//
+// Example / 예제:
+//
+//	engine.EnableAutoReload()
+func (e *TemplateEngine) EnableAutoReload() error {
+	if e.autoReload {
+		return nil // Already enabled / 이미 활성화됨
+	}
+
+	e.autoReload = true
+	e.stopChan = make(chan struct{})
+
+	// Start watching for file changes
+	// 파일 변경 감시 시작
+	go e.watchTemplates()
+
+	return nil
+}
+
+// DisableAutoReload disables automatic template reloading.
+// DisableAutoReload은 자동 템플릿 재로드를 비활성화합니다.
+func (e *TemplateEngine) DisableAutoReload() {
+	if !e.autoReload {
+		return
+	}
+
+	e.autoReload = false
+	close(e.stopChan)
+}
+
+// watchTemplates watches the template directory for changes and reloads templates.
+// watchTemplates는 템플릿 디렉토리의 변경 사항을 감시하고 템플릿을 다시 로드합니다.
+func (e *TemplateEngine) watchTemplates() {
+	ticker := time.NewTicker(1 * time.Second) // Poll every second / 매 초마다 폴링
+	defer ticker.Stop()
+
+	// Store last modification times
+	// 마지막 수정 시간 저장
+	lastMod := make(map[string]time.Time)
+
+	// Initialize with current modification times
+	// 현재 수정 시간으로 초기화
+	filepath.Walk(e.dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return nil
+		}
+		if !info.IsDir() && isTemplateFile(path) {
+			lastMod[path] = info.ModTime()
+		}
+		return nil
+	})
+
+	// Also watch layouts directory
+	// 레이아웃 디렉토리도 감시
+	if _, err := os.Stat(e.layoutDir); err == nil {
+		filepath.Walk(e.layoutDir, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return nil
+			}
+			if !info.IsDir() && isTemplateFile(path) {
+				lastMod[path] = info.ModTime()
+			}
+			return nil
+		})
+	}
+
+	for {
+		select {
+		case <-e.stopChan:
+			return
+		case <-ticker.C:
+			// Check for changes in template directory
+			// 템플릿 디렉토리의 변경 사항 확인
+			changed := false
+
+			filepath.Walk(e.dir, func(path string, info os.FileInfo, err error) error {
+				if err != nil {
+					return nil
+				}
+				if !info.IsDir() && isTemplateFile(path) {
+					if modTime, ok := lastMod[path]; ok {
+						if info.ModTime().After(modTime) {
+							changed = true
+							lastMod[path] = info.ModTime()
+						}
+					} else {
+						// New file / 새 파일
+						changed = true
+						lastMod[path] = info.ModTime()
+					}
+				}
+				return nil
+			})
+
+			// Check for changes in layouts directory
+			// 레이아웃 디렉토리의 변경 사항 확인
+			if _, err := os.Stat(e.layoutDir); err == nil {
+				filepath.Walk(e.layoutDir, func(path string, info os.FileInfo, err error) error {
+					if err != nil {
+						return nil
+					}
+					if !info.IsDir() && isTemplateFile(path) {
+						if modTime, ok := lastMod[path]; ok {
+							if info.ModTime().After(modTime) {
+								changed = true
+								lastMod[path] = info.ModTime()
+							}
+						} else {
+							// New file / 새 파일
+							changed = true
+							lastMod[path] = info.ModTime()
+						}
+					}
+					return nil
+				})
+			}
+
+			// Reload templates if changed
+			// 변경된 경우 템플릿 다시 로드
+			if changed {
+				fmt.Println("[Template Hot Reload] Detected changes, reloading templates...")
+				if err := e.LoadAll(); err != nil {
+					fmt.Printf("[Template Hot Reload] Error reloading templates: %v\n", err)
+				} else {
+					fmt.Println("[Template Hot Reload] Templates reloaded successfully")
+				}
+
+				// Also reload layouts
+				// 레이아웃도 다시 로드
+				if _, err := os.Stat(e.layoutDir); err == nil {
+					if err := e.LoadAllLayouts(); err != nil {
+						fmt.Printf("[Template Hot Reload] Error reloading layouts: %v\n", err)
+					}
+				}
+			}
+		}
+	}
+}
+
+// IsAutoReloadEnabled returns whether auto-reload is enabled.
+// IsAutoReloadEnabled는 자동 재로드가 활성화되어 있는지 반환합니다.
+func (e *TemplateEngine) IsAutoReloadEnabled() bool {
+	return e.autoReload
+}
+
+// isTemplateFile checks if a file is a template file based on its extension.
+// isTemplateFile은 확장자를 기반으로 파일이 템플릿 파일인지 확인합니다.
+func isTemplateFile(path string) bool {
+	ext := strings.ToLower(filepath.Ext(path))
+	return ext == ".html" || ext == ".htm" || ext == ".tmpl"
 }

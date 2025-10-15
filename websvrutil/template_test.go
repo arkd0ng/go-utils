@@ -560,3 +560,78 @@ func BenchmarkRenderWithLayout(b *testing.B) {
 		engine.RenderWithLayout(&buf, "base.html", "index.html", data)
 	}
 }
+
+// TestEnableAutoReload tests enabling auto-reload
+// TestEnableAutoReload은 자동 재로드 활성화를 테스트합니다
+func TestEnableAutoReload(t *testing.T) {
+	tmpDir := t.TempDir()
+	engine := NewTemplateEngine(tmpDir)
+
+	if engine.IsAutoReloadEnabled() {
+		t.Error("Expected auto-reload to be disabled by default")
+	}
+
+	err := engine.EnableAutoReload()
+	if err != nil {
+		t.Fatalf("Failed to enable auto-reload: %v", err)
+	}
+
+	if !engine.IsAutoReloadEnabled() {
+		t.Error("Expected auto-reload to be enabled")
+	}
+
+	// Enable again should not error
+	// 다시 활성화해도 에러가 발생하지 않아야 함
+	err = engine.EnableAutoReload()
+	if err != nil {
+		t.Fatalf("Failed to enable auto-reload again: %v", err)
+	}
+
+	// Cleanup / 정리
+	engine.DisableAutoReload()
+}
+
+// TestDisableAutoReload tests disabling auto-reload
+// TestDisableAutoReload은 자동 재로드 비활성화를 테스트합니다
+func TestDisableAutoReload(t *testing.T) {
+	tmpDir := t.TempDir()
+	engine := NewTemplateEngine(tmpDir)
+
+	engine.EnableAutoReload()
+	if !engine.IsAutoReloadEnabled() {
+		t.Error("Expected auto-reload to be enabled")
+	}
+
+	engine.DisableAutoReload()
+	if engine.IsAutoReloadEnabled() {
+		t.Error("Expected auto-reload to be disabled")
+	}
+
+	// Disable again should not error
+	// 다시 비활성화해도 에러가 발생하지 않아야 함
+	engine.DisableAutoReload()
+}
+
+// TestIsAutoReloadEnabled tests checking auto-reload status
+// TestIsAutoReloadEnabled는 자동 재로드 상태 확인을 테스트합니다
+func TestIsAutoReloadEnabled(t *testing.T) {
+	tmpDir := t.TempDir()
+	engine := NewTemplateEngine(tmpDir)
+
+	// Initially disabled / 초기에는 비활성화
+	if engine.IsAutoReloadEnabled() {
+		t.Error("Expected auto-reload to be disabled initially")
+	}
+
+	// Enable / 활성화
+	engine.EnableAutoReload()
+	if !engine.IsAutoReloadEnabled() {
+		t.Error("Expected auto-reload to be enabled after calling EnableAutoReload")
+	}
+
+	// Disable / 비활성화
+	engine.DisableAutoReload()
+	if engine.IsAutoReloadEnabled() {
+		t.Error("Expected auto-reload to be disabled after calling DisableAutoReload")
+	}
+}

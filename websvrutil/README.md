@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.011
+**Version / 버전**: v1.11.012
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.011) / 현재 기능
+## Current Features (v1.11.012) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -241,6 +241,7 @@ HTML 렌더링을 위한 내장 템플릿 엔진 (자동 발견 및 커스텀 �
 - Support for nested directories / 중첩 디렉토리 지원
 - **Layout system** / **레이아웃 시스템** (v1.11.011+)
 - **26+ built-in template functions** / **26개 이상의 내장 템플릿 함수** (v1.11.011+)
+- **Hot reload in development** / **개발 시 핫 리로드** (v1.11.012+)
 - Custom template functions / 커스텀 템플릿 함수
 - Custom delimiters / 커스텀 구분자
 - Thread-safe template caching / 스레드 안전 템플릿 캐싱
@@ -285,6 +286,11 @@ HTML 렌더링을 위한 내장 템플릿 엔진 (자동 발견 및 커스텀 �
 - **URL functions**: `urlEncode`, `urlDecode`
 - **Safe HTML**: `safeHTML`, `safeURL`, `safeJS`
 - **Utility functions**: `default`, `len`
+
+**Hot Reload Methods** (v1.11.012+):
+- `EnableAutoReload()` - Enable automatic template reloading / 자동 템플릿 재로드 활성화
+- `DisableAutoReload()` - Disable automatic template reloading / 자동 템플릿 재로드 비활성화
+- `IsAutoReloadEnabled()` - Check if auto-reload is enabled / 자동 재로드 활성화 확인
 
 ## Quick Start / 빠른 시작
 
@@ -614,6 +620,7 @@ The following features are planned for future releases:
 - ✅ v1.11.009: Final Middleware (BodyLimit, Static, Redirect, HTTPSRedirect, WWWRedirect) / 최종 미들웨어 (본문 제한, 정적 파일, 리디렉션)
 - ✅ v1.11.010: Template Engine Core (TemplateEngine, auto-loading, custom functions) / 템플릿 엔진 핵심 (TemplateEngine, 자동 로딩, 커스텀 함수)
 - ✅ v1.11.011: Layout System and Built-in Functions (layouts, 26+ built-in functions) / 레이아웃 시스템 및 내장 함수 (레이아웃, 26개 이상의 내장 함수)
+- ✅ v1.11.012: Hot Reload (automatic template reloading, file watching) / 핫 리로드 (자동 템플릿 재로드, 파일 감시)
 
 ## Documentation / 문서
 

@@ -5,6 +5,55 @@
 
 ---
 
+## [v1.11.012] - 2025-10-16
+
+### Added / 추가
+- **Hot Reload System** / **핫 리로드 시스템** (`template.go`)
+  - `EnableAutoReload()` - Enable automatic template reloading when files change
+  - `DisableAutoReload()` - Disable automatic template reloading
+  - `IsAutoReloadEnabled()` - Check if auto-reload is currently enabled
+  - Polling-based file watcher (checks every 1 second)
+  - Watches both template directory and layouts directory
+  - Automatically reloads templates and layouts when files are modified
+  - Console logging for reload events: "[Template Hot Reload] Detected changes, reloading templates..."
+  - Thread-safe auto-reload management with stopChan
+  - New fields in TemplateEngine: `autoReload bool`, `stopChan chan struct{}`
+
+- **App Integration** / **앱 통합** (`app.go`)
+  - Auto-enable hot reload when `WithAutoReload(true)` option is set
+  - Logs: "[Template Hot Reload] Auto-reload enabled for templates and layouts"
+  - References correct `options.EnableAutoReload` field
+
+- **Helper Function** / **헬퍼 함수** (`template.go`)
+  - `isTemplateFile(path string) bool` - Check if file is a template based on extension
+  - Supports .html, .htm, .tmpl extensions
+
+- **Comprehensive Tests** / **종합 테스트** (`template_test.go`)
+  - `TestEnableAutoReload` - Test enabling auto-reload
+  - `TestDisableAutoReload` - Test disabling auto-reload
+  - `TestIsAutoReloadEnabled` - Test checking auto-reload status
+  - **Total: 24 test functions** for complete template system
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.012
+- Bumped version to v1.11.012 in `cfg/app.yaml`
+- Updated `README.md` with hot reload documentation
+- Modified TemplateEngine struct to include auto-reload fields
+
+### Testing Coverage / 테스트 커버리지
+- **24 test functions + 4 benchmarks** for complete template system with hot reload
+- **Total: 156+ test functions**, **Total: 37 benchmark functions**
+- **77.2% test coverage** - All tests passing ✅
+
+### Notes / 참고사항
+- Hot reload uses polling (1 second interval) instead of filesystem events (no external dependencies)
+- Useful during development - automatically reloads templates when modified
+- Enable with `WithAutoReload(true)` option or call `EnableAutoReload()` manually
+- Disable in production for better performance
+- Next: v1.11.013+ will add additional template features or move to Phase 4 (Advanced Features)
+
+---
+
 ## [v1.11.011] - 2025-10-16
 
 ### Added / 추가

@@ -87,6 +87,16 @@ func New(opts ...Option) *App {
 			// 에러 로그하지만 실패하지 않음 - 레이아웃은 나중에 로드될 수 있음
 			fmt.Printf("Warning: failed to auto-load layouts: %v\n", err)
 		}
+
+		// Enable auto-reload if configured
+		// 설정된 경우 자동 재로드 활성화
+		if options.EnableAutoReload {
+			if err := templateEngine.EnableAutoReload(); err != nil {
+				fmt.Printf("Warning: failed to enable auto-reload: %v\n", err)
+			} else {
+				fmt.Println("[Template Hot Reload] Auto-reload enabled for templates and layouts")
+			}
+		}
 	}
 
 	// Create the app instance / 앱 인스턴스 생성
