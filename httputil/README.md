@@ -4,7 +4,7 @@ Extremely simple HTTP client utilities that reduce 30+ lines to 2-3 lines.
 
 극도로 간단한 HTTP 클라이언트 유틸리티로 30줄 이상의 코드를 2-3줄로 줄입니다.
 
-**Version / 버전**: v1.10.002
+**Version / 버전**: v1.10.004
 **Package Path / 패키지 경로**: `github.com/arkd0ng/go-utils/httputil`
 
 ---
@@ -862,6 +862,35 @@ client := httputil.NewClient(
     httputil.WithBaseURL("https://api.example.com/v1"),
     httputil.WithFollowRedirects(false),
 )
+```
+
+#### Cookie Management / 쿠키 관리
+
+| Option / 옵션 | Type / 타입 | Description / 설명 |
+|---------------|-------------|-------------------|
+| `WithCookies()` | - | Enable in-memory cookie jar / 메모리 내 쿠키 저장소 활성화 |
+| `WithPersistentCookies(filePath)` | `string` | Enable persistent cookie jar with file storage / 파일 저장소를 사용한 지속성 쿠키 저장소 활성화 |
+| `WithCookieJar(jar)` | `http.CookieJar` | Use custom cookie jar / 사용자 정의 쿠키 저장소 사용 |
+
+**Example / 예제:**
+```go
+// In-memory cookies (temporary) / 메모리 내 쿠키 (임시)
+client := httputil.NewClient(
+    httputil.WithBaseURL("https://api.example.com"),
+    httputil.WithCookies(),
+)
+
+// Persistent cookies (saved to file) / 지속성 쿠키 (파일에 저장)
+client := httputil.NewClient(
+    httputil.WithBaseURL("https://api.example.com"),
+    httputil.WithPersistentCookies("cookies.json"),
+)
+
+// Cookie operations / 쿠키 작업
+u, _ := url.Parse("https://api.example.com")
+client.SetCookie(u, &http.Cookie{Name: "session", Value: "abc123"})
+cookies := client.GetCookies(u)
+client.SaveCookies() // Save to file (persistent jar only) / 파일에 저장 (지속성 저장소만)
 ```
 
 ---

@@ -37,6 +37,10 @@ type config struct {
 	proxyURL        string
 	cookieJar       http.CookieJar
 
+	// Cookie jar configuration / 쿠키 저장소 설정
+	enableCookieJar bool
+	cookieJarPath   string
+
 	// Logging / 로깅
 	logger Logger
 }
@@ -209,6 +213,36 @@ func WithProxy(proxyURL string) Option {
 func WithCookieJar(jar http.CookieJar) Option {
 	return func(c *config) {
 		c.cookieJar = jar
+	}
+}
+
+// WithCookies enables cookie management with an in-memory cookie jar.
+// WithCookies는 메모리 내 쿠키 저장소를 사용한 쿠키 관리를 활성화합니다.
+//
+// This creates a temporary cookie jar that will be discarded when the client is closed.
+// 이는 클라이언트가 닫힐 때 삭제되는 임시 쿠키 저장소를 생성합니다.
+//
+// For persistent cookies, use WithPersistentCookies instead.
+// 지속적인 쿠키를 위해서는 WithPersistentCookies를 사용하세요.
+func WithCookies() Option {
+	return func(c *config) {
+		c.enableCookieJar = true
+	}
+}
+
+// WithPersistentCookies enables cookie management with file persistence.
+// WithPersistentCookies는 파일 지속성을 가진 쿠키 관리를 활성화합니다.
+//
+// Cookies will be automatically saved to and loaded from the specified file path.
+// 쿠키는 지정된 파일 경로에 자동으로 저장되고 로드됩니다.
+//
+// Example:
+//   client := httputil.NewClient(
+//       httputil.WithPersistentCookies("cookies.json"),
+//   )
+func WithPersistentCookies(filePath string) Option {
+	return func(c *config) {
+		c.cookieJarPath = filePath
 	}
 }
 

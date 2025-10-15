@@ -17,8 +17,9 @@ import (
 // Client wraps http.Client with additional functionality.
 // Client는 추가 기능을 가진 http.Client를 래핑합니다.
 type Client struct {
-	client *http.Client
-	config *config
+	client    *http.Client
+	config    *config
+	cookieJar *CookieJar // Optional cookie jar with persistence / 지속성을 가진 선택적 쿠키 저장소
 }
 
 // NewClient creates a new HTTP client with the given options.
@@ -73,9 +74,28 @@ func NewClient(opts ...Option) *Client {
 		client.Jar = cfg.cookieJar
 	}
 
+	// Initialize custom cookie jar / 사용자 정의 쿠키 저장소 초기화
+	var customCookieJar *CookieJar
+	if cfg.cookieJarPath != "" {
+		// Create persistent cookie jar / 지속성 쿠키 저장소 생성
+		jar, err := NewPersistentCookieJar(cfg.cookieJarPath)
+		if err == nil {
+			customCookieJar = jar
+			client.Jar = jar.jar
+		}
+	} else if cfg.enableCookieJar {
+		// Create in-memory cookie jar / 메모리 내 쿠키 저장소 생성
+		jar, err := NewCookieJar()
+		if err == nil {
+			customCookieJar = jar
+			client.Jar = jar.jar
+		}
+	}
+
 	return &Client{
-		client: client,
-		config: cfg,
+		client:    client,
+		config:    cfg,
+		cookieJar: customCookieJar,
 	}
 }
 

@@ -4,8 +4,13 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"os"
 	"strings"
 	"time"
 
@@ -454,6 +459,160 @@ func exampleComprehensiveWorkflow() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// EXAMPLE 11: COOKIE MANAGEMENT (PHASE 5a)
+// 예제 11: 쿠키 관리 (Phase 5a)
+// ═══════════════════════════════════════════════════════════════════════════
+func exampleCookieManagement() {
+	fmt.Println("\n" + strings.Repeat("─", 80))
+	fmt.Println("Example 11: Cookie Management (Phase 5a)")
+	fmt.Println("예제 11: 쿠키 관리 (Phase 5a)")
+	fmt.Println(strings.Repeat("─", 80))
+
+	// Create test server that handles cookies / 쿠키를 처리하는 테스트 서버 생성
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Set cookies in response / 응답에 쿠키 설정
+		http.SetCookie(w, &http.Cookie{
+			Name:  "session_id",
+			Value: "abc123xyz",
+			Path:  "/",
+		})
+		http.SetCookie(w, &http.Cookie{
+			Name:  "user_pref",
+			Value: "dark_mode",
+			Path:  "/",
+		})
+
+		// Check for cookies in request / 요청의 쿠키 확인
+		if cookie, err := r.Cookie("session_id"); err == nil {
+			w.Header().Set("X-Session-Found", cookie.Value)
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Cookie test endpoint",
+		})
+	}))
+	defer ts.Close()
+
+	fmt.Println("\n1. In-Memory Cookie Jar (temporary) / 메모리 내 쿠키 저장소 (임시)")
+	fmt.Println("   ─────────────────────────────────────────────────────")
+
+	// Create client with in-memory cookies / 메모리 내 쿠키를 사용하는 클라이언트 생성
+	client1 := httputil.NewClient(
+		httputil.WithBaseURL(ts.URL),
+		httputil.WithCookies(), // Enable in-memory cookie jar / 메모리 내 쿠키 저장소 활성화
+	)
+
+	// Make first request / 첫 번째 요청
+	var result1 map[string]string
+	err := client1.Get("/test", &result1)
+	if err != nil {
+		log.Printf("Error: %v", err)
+		return
+	}
+
+	fmt.Println("   → First request completed / 첫 번째 요청 완료")
+	fmt.Printf("   → Response: %s\n", result1["message"])
+
+	// Check cookies / 쿠키 확인
+	u, _ := url.Parse(ts.URL)
+	cookies := client1.GetCookies(u)
+	fmt.Printf("   → Received %d cookies from server:\n", len(cookies))
+	for _, cookie := range cookies {
+		fmt.Printf("      • %s = %s\n", cookie.Name, cookie.Value)
+	}
+
+	// Second request will automatically send cookies / 두 번째 요청은 자동으로 쿠키 전송
+	var result2 map[string]string
+	err = client1.Get("/test", &result2)
+	if err != nil {
+		log.Printf("Error: %v", err)
+		return
+	}
+	fmt.Println("   → Second request automatically sent cookies / 두 번째 요청이 자동으로 쿠키 전송")
+
+	fmt.Println("\n2. Persistent Cookie Jar (saved to file) / 지속성 쿠키 저장소 (파일에 저장)")
+	fmt.Println("   ─────────────────────────────────────────────────────")
+
+	// Create temporary file for cookies / 쿠키를 위한 임시 파일 생성
+	cookieFile := "example_cookies.json"
+	defer os.Remove(cookieFile) // Clean up / 정리
+
+	// Create client with persistent cookies / 지속성 쿠키를 사용하는 클라이언트 생성
+	client2 := httputil.NewClient(
+		httputil.WithBaseURL(ts.URL),
+		httputil.WithPersistentCookies(cookieFile), // Enable persistent cookies / 지속성 쿠키 활성화
+	)
+
+	// Make request / 요청 수행
+	var result3 map[string]string
+	err = client2.Get("/test", &result3)
+	if err != nil {
+		log.Printf("Error: %v", err)
+		return
+	}
+
+	fmt.Println("   → Request completed / 요청 완료")
+
+	// Save cookies to file / 쿠키를 파일에 저장
+	err = client2.SaveCookies()
+	if err != nil {
+		log.Printf("Error saving cookies: %v", err)
+		return
+	}
+
+	fmt.Printf("   → Cookies saved to %s\n", cookieFile)
+
+	// Verify file exists / 파일 존재 확인
+	if _, err := os.Stat(cookieFile); err == nil {
+		fmt.Println("   → Cookie file exists and can be loaded later / 쿠키 파일이 존재하며 나중에 로드 가능")
+	}
+
+	fmt.Println("\n3. Cookie Operations / 쿠키 작업")
+	fmt.Println("   ─────────────────────────────────────────────────────")
+
+	// Manual cookie operations / 수동 쿠키 작업
+	testURL, _ := url.Parse(ts.URL)
+
+	// Set a custom cookie / 사용자 정의 쿠키 설정
+	client1.SetCookie(testURL, &http.Cookie{
+		Name:  "custom_cookie",
+		Value: "test_value",
+		Path:  "/",
+	})
+	fmt.Println("   → Set custom cookie: custom_cookie=test_value")
+
+	// Check if cookie exists / 쿠키 존재 확인
+	if client1.HasCookie(testURL, "custom_cookie") {
+		fmt.Println("   → Cookie 'custom_cookie' exists / 쿠키 'custom_cookie'가 존재합니다")
+	}
+
+	// Get specific cookie / 특정 쿠키 가져오기
+	if cookie := client1.GetCookie(testURL, "session_id"); cookie != nil {
+		fmt.Printf("   → Retrieved cookie: %s = %s\n", cookie.Name, cookie.Value)
+	}
+
+	// Count cookies / 쿠키 개수 세기
+	allCookies := client1.GetCookies(testURL)
+	fmt.Printf("   → Total cookies: %d\n", len(allCookies))
+
+	// Clear all cookies / 모든 쿠키 제거
+	err = client1.ClearCookies()
+	if err != nil {
+		log.Printf("Error clearing cookies: %v", err)
+		return
+	}
+	fmt.Println("   → All cookies cleared / 모든 쿠키 제거됨")
+
+	// Verify cookies are cleared / 쿠키가 제거되었는지 확인
+	afterClear := client1.GetCookies(testURL)
+	fmt.Printf("   → Cookies after clear: %d\n", len(afterClear))
+
+	fmt.Println("\n   → Cookie management demonstration complete!")
+	fmt.Println("   → 쿠키 관리 데모 완료!")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // MAIN FUNCTION / 메인 함수
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -476,6 +635,7 @@ func main() {
 	exampleFileUpload()                // Phase 3
 	exampleURLBuilder()                // Phase 4
 	exampleFormBuilder()               // Phase 4
+	exampleCookieManagement()          // Phase 5a
 	exampleComprehensiveWorkflow()     // All Phases
 
 	// Print summary / 요약 출력
@@ -492,5 +652,6 @@ func main() {
 	fmt.Println("  ✓ Phase 3: File operations (download/upload with progress)")
 	fmt.Println("  ✓ Phase 4: URL Builder (fluent API)")
 	fmt.Println("  ✓ Phase 4: Form Builder (fluent API)")
+	fmt.Println("  ✓ Phase 5a: Cookie Management (in-memory and persistent)")
 	fmt.Println(strings.Repeat("═", 80))
 }

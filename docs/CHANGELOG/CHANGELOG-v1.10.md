@@ -6,6 +6,107 @@ This file contains detailed change logs for the v1.10.x releases of go-utils, fo
 
 ---
 
+## [v1.10.004] - 2025-10-15
+
+### Added / 추가됨
+
+#### Phase 5a: Cookie Management / Phase 5a: 쿠키 관리
+
+**Core Implementation / 핵심 구현**:
+- Created `httputil/cookie.go` (~280 lines) with full cookie management functionality
+- Implemented `CookieJar` struct with optional file persistence
+- Thread-safe operations with `sync.RWMutex` for concurrent access
+- JSON serialization for cookie persistence with 0600 file permissions
+- Automatic cookie loading on initialization if persistence file exists
+- cookie.go 파일 생성 (약 280줄)
+- 선택적 파일 지속성을 가진 CookieJar 구조체 구현
+- 동시 접근을 위한 sync.RWMutex를 사용한 스레드 안전 작업
+- 0600 파일 권한을 가진 쿠키 지속성을 위한 JSON 직렬화
+- 지속성 파일이 존재하면 초기화 시 자동 쿠키 로드
+
+**CookieJar Methods / CookieJar 메서드** (12 methods):
+- Constructor methods: `NewCookieJar()`, `NewPersistentCookieJar(filePath string)`
+- Cookie operations: `SetCookies()`, `GetCookies()`, `SetCookie()`, `ClearCookies()`
+- Persistence: `SaveCookies()`, `LoadCookies()`
+- Utility methods: `GetCookiesByDomain()`, `RemoveCookie()`, `CountCookies()`, `HasCookie()`, `GetCookie()`
+- 생성자 메서드: NewCookieJar(), NewPersistentCookieJar()
+- 쿠키 작업: SetCookies(), GetCookies(), SetCookie(), ClearCookies()
+- 지속성: SaveCookies(), LoadCookies()
+- 유틸리티 메서드: GetCookiesByDomain(), RemoveCookie(), CountCookies(), HasCookie(), GetCookie()
+
+**Client Integration / 클라이언트 통합**:
+- Added `cookieJar` field to `Client` struct
+- Integrated cookie jar initialization in `NewClient()`
+- Added 7 client methods for cookie management:
+  - `GetCookies(u *url.URL) []*http.Cookie`
+  - `SetCookie(u *url.URL, cookie *http.Cookie)`
+  - `ClearCookies() error`
+  - `SaveCookies() error`
+  - `LoadCookies() error`
+  - `HasCookie(u *url.URL, name string) bool`
+  - `GetCookie(u *url.URL, name string) *http.Cookie`
+- Client 구조체에 cookieJar 필드 추가
+- NewClient()에서 쿠키 저장소 초기화 통합
+- 쿠키 관리를 위한 7개 클라이언트 메서드 추가
+
+**Configuration Options / 설정 옵션** (3 new options):
+- Added `WithCookies()` - Enable in-memory cookie jar
+- Added `WithPersistentCookies(filePath string)` - Enable persistent cookie jar
+- Existing `WithCookieJar(jar http.CookieJar)` - Use custom cookie jar
+- WithCookies() - 메모리 내 쿠키 저장소 활성화
+- WithPersistentCookies(filePath) - 지속성 쿠키 저장소 활성화
+- 기존 WithCookieJar() - 사용자 정의 쿠키 저장소 사용
+
+**Testing / 테스트**:
+- Created `httputil/cookie_test.go` with comprehensive tests
+- 23 test functions covering all cookie functionality:
+  - Basic operations: NewCookieJar, SetCookies, GetCookies
+  - Persistence: SaveAndLoadCookies
+  - Utility methods: HasCookie, GetCookie, CountCookies, RemoveCookie
+  - Client integration: CookieIntegration, PersistentCookies, NoCookieJar
+  - Advanced: ThreadSafety, ExpiredCookies
+- 3 benchmark functions: SetCookie, GetCookies, HasCookie
+- All tests passing (1.247s execution time)
+- Benchmark results: ~680 ns/op for SetCookie, ~600 ns/op for GetCookies
+- cookie_test.go 파일 생성
+- 모든 쿠키 기능을 다루는 23개 테스트 함수
+- 3개 벤치마크 함수
+- 모든 테스트 통과 (1.247초 실행 시간)
+- 벤치마크 결과: SetCookie ~680 ns/op, GetCookies ~600 ns/op
+
+**Dependencies / 의존성**:
+- Added `golang.org/x/net v0.46.0` for `publicsuffix` package
+- Used for proper public suffix list handling in cookie domain operations
+- publicsuffix 패키지를 위한 golang.org/x/net v0.46.0 추가
+- 쿠키 도메인 작업에서 적절한 공용 접미사 목록 처리를 위해 사용
+
+**Documentation Planning / 문서 계획**:
+- Created `docs/httputil/DESIGN_PLAN_PHASE5.md` (~600 lines)
+  - Comprehensive architecture design for 12 Phase 5 features
+  - Cookie Management, Interceptors, Batch Requests (Phase 5a)
+  - Caching, Proxy, Circuit Breaker (Phase 5b)
+  - OAuth2, Metrics, Streaming (Phase 5c)
+  - GraphQL, WebSocket, Mocking (Phase 5d)
+- Created `docs/httputil/WORK_PLAN_PHASE5.md` (~900 lines)
+  - Detailed task breakdown for all Phase 5 features
+  - Time estimates per task (~150 hours total)
+  - 5-week timeline with weekly milestones
+- DESIGN_PLAN_PHASE5.md 생성 (약 600줄)
+- WORK_PLAN_PHASE5.md 생성 (약 900줄)
+- 12개 Phase 5 기능에 대한 종합 설계 문서
+- 상세한 작업 분류 및 시간 추정
+
+### Changed / 변경됨
+- Updated `httputil/options.go` to add cookie jar configuration fields
+- Updated `httputil/client.go` to integrate cookie jar initialization
+- options.go에 쿠키 저장소 설정 필드 추가
+- client.go에 쿠키 저장소 초기화 통합
+
+### Fixed / 수정됨
+- None / 없음
+
+---
+
 ## [v1.10.003] - 2025-10-15
 
 ### Added / 추가됨
