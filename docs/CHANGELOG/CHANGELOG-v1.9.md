@@ -6,6 +6,58 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.018] - 2025-10-15
+
+### Fixed / 수정됨
+
+#### Code Quality Improvements / 코드 품질 개선
+
+**Fileutil Example Linter Fixes / Fileutil 예제 린터 수정:**
+- Removed 13 unnecessary `fmt.Sprintf` usages for static strings
+- Removed unused `min()` helper function
+- Added `tempDir` parameter suppressions for 2 functions (`example03_PathOperations`, `example14_WalkAndFilter`)
+- 정적 문자열에서 불필요한 `fmt.Sprintf` 사용 13개 제거
+- 사용하지 않는 `min()` 헬퍼 함수 제거
+- 2개 함수에 `tempDir` 매개변수 억제 추가
+
+**Maputil Example Linter Fixes / Maputil 예제 린터 수정:**
+- Added context suppressions for 13 unused `ctx` parameters across all example functions
+- Maintained function signature consistency while acknowledging unused parameters
+- 모든 예제 함수에서 13개의 사용하지 않는 `ctx` 매개변수에 대한 context 억제 추가
+- 사용하지 않는 매개변수를 인정하면서 함수 시그니처 일관성 유지
+
+**Testing / 테스트:**
+- ✅ All examples compile successfully
+- ✅ go vet passes without warnings
+- ✅ staticcheck (S1039) and unusedparams issues resolved
+- ✅ 모든 예제 컴파일 성공
+- ✅ go vet 경고 없이 통과
+- ✅ staticcheck (S1039) 및 unusedparams 문제 해결
+
+**Impact / 영향:**
+- Cleaner code following Go best practices
+- Better performance from removing unnecessary fmt.Sprintf calls
+- Eliminates dead code and improves maintainability
+- Go 모범 사례를 따르는 더 깨끗한 코드
+- 불필요한 fmt.Sprintf 호출 제거로 성능 향상
+- 데드 코드 제거 및 유지보수성 개선
+
+---
+
+### Summary / 요약
+
+**v1.9.018 - Final Release / 최종 릴리스:**
+- Complete fileutil package with ~91 functions across 12 categories
+- All linter issues resolved in examples
+- Production-ready code quality
+- Comprehensive documentation (README, examples)
+- 12개 카테고리에 걸쳐 약 91개 함수를 포함한 완전한 fileutil 패키지
+- 예제의 모든 린터 문제 해결
+- 프로덕션 준비 완료 코드 품질
+- 포괄적인 문서화 (README, 예제)
+
+---
+
 ## [v1.9.017] - 2025-10-15
 
 ### Enhanced / 보강됨

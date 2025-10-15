@@ -44,7 +44,7 @@ This file contains a high-level overview of major and minor versions. For detail
 - Cross-Platform: OS-agnostic path operations using filepath / 크로스 플랫폼: filepath를 사용한 OS에 구애받지 않는 경로 작업
 - Zero Configuration: No setup required / 제로 설정: 설정 불필요
 
-**Latest Version / 최신 버전**: v1.9.001 (2025-10-15)
+**Latest Version / 최신 버전**: v1.9.018 (2025-10-15)
 
 ---
 
