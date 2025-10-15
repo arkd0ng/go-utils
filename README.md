@@ -45,6 +45,7 @@ go-utils/
 ├── sliceutil/       # Slice utilities (95 functions) / 슬라이스 유틸리티 (95개 함수)
 ├── maputil/         # Map utilities (99 functions) / 맵 유틸리티 (99개 함수)
 ├── fileutil/        # File and path utilities (~91 functions) / 파일 및 경로 유틸리티 (약 91개 함수)
+├── httputil/        # HTTP client utilities (10 methods + 12 options) / HTTP 클라이언트 유틸리티 (10개 메서드 + 12개 옵션)
 └── ...
 ```
 
@@ -706,9 +707,81 @@ err := fileutil.WriteString(path, content)
 
 ---
 
+### ✅ [httputil](./httputil/) - HTTP Client Utilities
+
+Extremely simple HTTP client that reduces 30+ lines of boilerplate code to just 2-3 lines with **automatic retry logic**, **JSON handling**, and **rich error types**.
+
+극도로 간단한 HTTP 클라이언트로 30줄 이상의 보일러플레이트 코드를 단 2-3줄로 줄이며, **자동 재시도 로직**, **JSON 처리**, **풍부한 에러 타입**을 제공합니다.
+
+**Core Features**: RESTful methods (GET/POST/PUT/PATCH/DELETE), automatic JSON encoding/decoding, smart retry with exponential backoff, 12 configuration options, rich error types, zero external dependencies / RESTful 메서드, 자동 JSON 인코딩/디코딩, 지수 백오프를 통한 스마트 재시도, 12개 설정 옵션, 풍부한 에러 타입, 외부 의존성 없음
+
+**API Levels / API 레벨**:
+- **Simple API (10 functions)**: Package-level convenience functions / 패키지 레벨 편의 함수
+- **Client API**: Configured HTTP client for multiple requests / 여러 요청을 위한 설정된 HTTP 클라이언트
+- **Options Pattern**: 12 built-in options (timeout, auth, retry, etc.) / 12개 내장 옵션
+- **Error Types**: HTTPError, RetryError, TimeoutError / 에러 타입
+
+```go
+import "github.com/arkd0ng/go-utils/httputil"
+
+// Simple GET request / 간단한 GET 요청
+var users []User
+err := httputil.Get("https://api.example.com/users", &users,
+    httputil.WithBearerToken("your-token"))
+
+// POST request with automatic JSON handling / 자동 JSON 처리를 가진 POST 요청
+payload := CreateUserRequest{Name: "John", Email: "john@example.com"}
+var response CreateUserResponse
+err := httputil.Post("https://api.example.com/users", payload, &response,
+    httputil.WithTimeout(30*time.Second),
+    httputil.WithRetry(3))
+
+// Client for multiple requests / 여러 요청을 위한 클라이언트
+client := httputil.NewClient(
+    httputil.WithBaseURL("https://api.example.com/v1"),
+    httputil.WithBearerToken("your-token"),
+    httputil.WithRetry(5))
+
+client.Get("/users", &users)
+client.Post("/users", newUser, &created)
+client.Delete("/users/123", nil)
+```
+
+**Before vs After**:
+```go
+// ❌ Before: 30+ lines with standard Go
+client := &http.Client{Timeout: 30 * time.Second}
+req, _ := http.NewRequest("GET", url, nil)
+req.Header.Set("Authorization", "Bearer token")
+req.Header.Set("Content-Type", "application/json")
+resp, _ := client.Do(req)
+defer resp.Body.Close()
+if resp.StatusCode >= 400 {
+    body, _ := io.ReadAll(resp.Body)
+    return fmt.Errorf("HTTP %d: %s", resp.StatusCode, body)
+}
+var users []User
+json.NewDecoder(resp.Body).Decode(&users)
+// Plus retry logic, error handling... 20+ more lines
+
+// ✅ After: 2 lines with httputil
+var users []User
+err := httputil.Get(url, &users, httputil.WithBearerToken("token"))
+```
+
+**Documentation / 문서**:
+- [Package README](./httputil/README.md) - Quick start and API reference / 빠른 시작 및 API 참조
+- [User Manual](./docs/httputil/USER_MANUAL.md) - Comprehensive usage guide / 종합 사용 가이드
+- [Developer Guide](./docs/httputil/DEVELOPER_GUIDE.md) - Architecture and internals / 아키텍처 및 내부 구조
+- [Work Plan](./docs/httputil/WORK_PLAN.md) - Development roadmap / 개발 로드맵
+
+**[→ View full documentation / 전체 문서 보기](./httputil/README.md)**
+
+---
+
 ### 🔜 Coming Soon / 개발 예정
 
-- **httputil** - HTTP helpers / HTTP 헬퍼
+- **httputil Phase 2+** - Response helpers, file upload/download, etc. / 응답 헬퍼, 파일 업로드/다운로드 등
 - **validation** - Validation utilities / 검증 유틸리티
 - **errorutil** - Error handling helpers / 에러 처리 헬퍼
 

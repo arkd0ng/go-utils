@@ -18,7 +18,40 @@ This file contains a high-level overview of major and minor versions. For detail
 
 ---
 
-## [v1.9.x] - File Utilities Package / 파일 유틸리티 패키지 (현재 / Current)
+## [v1.10.x] - HTTP Client Utilities Package / HTTP 클라이언트 유틸리티 패키지 (현재 / Current)
+
+**Focus / 초점**: Extreme simplicity HTTP client utilities / 극도로 간단한 HTTP 클라이언트 유틸리티
+
+**Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.10.md](docs/CHANGELOG/CHANGELOG-v1.10.md)
+
+### Highlights / 주요 사항
+- **Complete httputil package (Phase 1)**: 30+ lines → 2-3 lines of code / 완전한 httputil 패키지 (Phase 1): 30줄 이상 → 2-3줄 코드
+- **RESTful HTTP methods**: GET, POST, PUT, PATCH, DELETE + Context variants / RESTful HTTP 메서드: GET, POST, PUT, PATCH, DELETE + Context 변형
+- **Automatic JSON handling**: Request/response encoding and decoding / 자동 JSON 처리: 요청/응답 인코딩 및 디코딩
+- **Smart retry logic**: Exponential backoff with jitter for network errors and 5xx / 스마트 재시도 로직: 네트워크 에러 및 5xx에 대한 지터가 있는 지수 백오프
+- **12 configuration options**: Timeout, headers, auth, retry, base URL, etc. / 12개 설정 옵션: 타임아웃, 헤더, 인증, 재시도, 기본 URL 등
+- **Rich error types**: HTTPError, RetryError, TimeoutError with full context / 풍부한 에러 타입: 전체 컨텍스트가 있는 HTTPError, RetryError, TimeoutError
+- **Options pattern**: Flexible configuration without breaking API / 옵션 패턴: API를 깨뜨리지 않는 유연한 설정
+- **Zero external dependencies**: Standard library only (net/http, encoding/json) / 외부 의존성 없음: 표준 라이브러리만 (net/http, encoding/json)
+- **Comprehensive documentation**: README, USER_MANUAL, DEVELOPER_GUIDE, WORK_PLAN / 포괄적인 문서화: README, USER_MANUAL, DEVELOPER_GUIDE, WORK_PLAN
+
+**Key Design Principles / 주요 설계 원칙**:
+- Extreme Simplicity: 30+ lines → 2-3 lines / 극도의 간결함: 30줄 이상 → 2-3줄
+- Auto Everything: Automatic JSON handling, retry, error wrapping / 모든 것 자동화: 자동 JSON 처리, 재시도, 에러 래핑
+- Type Safety: Rich error types with context / 타입 안전성: 컨텍스트가 있는 풍부한 에러 타입
+- Zero Configuration: Sensible defaults for 99% of use cases / 제로 설정: 99% 사용 사례에 대한 합리적인 기본값
+
+**Latest Version / 최신 버전**: v1.10.001 (2025-10-15)
+
+**Roadmap / 로드맵**:
+- Phase 2 (v1.10.002-004): Response helpers, status code checks, header utilities
+- Phase 3 (v1.10.005-007): File download/upload with progress callbacks
+- Phase 4 (v1.10.008-010): URL utilities, form data helpers
+- Phase 5 (v1.10.011-015): Example programs and polish
+
+---
+
+## [v1.9.x] - File Utilities Package / 파일 유틸리티 패키지
 
 **Focus / 초점**: Extreme simplicity file and path utilities / 극도로 간단한 파일 및 경로 유틸리티
 
