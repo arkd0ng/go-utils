@@ -18,7 +18,34 @@ This file contains a high-level overview of major and minor versions. For detail
 
 ---
 
-## [v1.7.x] - Slice Utilities Package / 슬라이스 유틸리티 패키지 (현재 / Current)
+## [v1.8.x] - Map Utilities Package / 맵 유틸리티 패키지 (현재 / Current)
+
+**Focus / 초점**: Extreme simplicity map utilities with Go 1.18+ generics / Go 1.18+ 제네릭을 사용한 극도로 간단한 맵 유틸리티
+
+**Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.8.md](docs/CHANGELOG/CHANGELOG-v1.8.md)
+
+### Highlights / 주요 사항
+- **Complete maputil package**: 20 lines → 1-2 lines of code / 완전한 maputil 패키지: 20줄 → 1-2줄 코드
+- **81 functions across 10 categories**: Complete coverage of common map operations / 10개 카테고리에 걸쳐 81개 함수: 일반적인 맵 작업의 완전한 커버리지
+- **Go 1.18+ generics**: Type-safe map operations with generic type parameters / Go 1.18+ 제네릭: 제네릭 타입 파라미터를 사용한 타입 안전 맵 작업
+- **Functional programming**: Map, Filter, Reduce, GroupBy and more / 함수형 프로그래밍: Map, Filter, Reduce, GroupBy 등
+- **Merge operations**: Merge, Union, Intersection, Difference / 병합 작업: 병합, 합집합, 교집합, 차집합
+- **Comparison functions**: Diff, Compare, EqualFunc / 비교 함수: Diff, Compare, EqualFunc
+- **Immutable operations**: All functions return new maps (no mutation) / 불변 작업: 모든 함수는 새 맵을 반환 (변경 없음)
+- **Zero dependencies**: Standard library only / 제로 의존성: 표준 라이브러리만
+- **Comprehensive tests**: Full test coverage with benchmarks / 포괄적인 테스트: 벤치마크를 포함한 전체 테스트 커버리지
+
+**Key Design Principles / 주요 설계 원칙**:
+- Extreme Simplicity: 20 lines → 1-2 lines / 극도의 간결함: 20줄 → 1-2줄
+- Type Safety: Generic type parameters for compile-time safety / 타입 안전: 컴파일 타임 안전을 위한 제네릭 타입 파라미터
+- Functional Style: Inspired by JavaScript, Lodash, Python dict methods / 함수형 스타일: JavaScript, Lodash, Python dict 메서드에서 영감
+- Zero Configuration: No setup required / 제로 설정: 설정 불필요
+
+**Latest Version / 최신 버전**: v1.8.001 (2025-10-15)
+
+---
+
+## [v1.7.x] - Slice Utilities Package / 슬라이스 유틸리티 패키지
 
 **Focus / 초점**: Extreme simplicity slice utilities with Go 1.18+ generics / Go 1.18+ 제네릭을 사용한 극도로 간단한 슬라이스 유틸리티
 
