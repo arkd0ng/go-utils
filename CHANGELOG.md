@@ -26,13 +26,15 @@ This file contains a high-level overview of major and minor versions. For detail
 
 ### Highlights / 주요 사항
 - **Complete sliceutil package**: 20 lines → 1 line of code / 완전한 sliceutil 패키지: 20줄 → 1줄 코드
-- **60 functions**: Basic operations, transformation, aggregation, slicing, set operations, sorting, predicates, utilities / 60개 함수
+- **95 functions across 14 categories**: Complete coverage of common slice operations / 14개 카테고리에 걸쳐 95개 함수: 일반적인 슬라이스 작업의 완전한 커버리지
 - **Go 1.18+ generics**: Type-safe slice operations with generic type parameters / Go 1.18+ 제네릭: 제네릭 타입 파라미터를 사용한 타입 안전 슬라이스 작업
-- **Functional programming**: Map, Filter, Reduce, and more functional-style operations / 함수형 프로그래밍: Map, Filter, Reduce 등 함수형 스타일 작업
+- **Functional programming**: Map, Filter, Reduce, Scan, ZipWith and more / 함수형 프로그래밍: Map, Filter, Reduce, Scan, ZipWith 등
+- **Statistics functions**: Median, Mode, StandardDeviation, Variance, Percentile / 통계 함수: 중앙값, 최빈값, 표준편차, 분산, 백분위수
+- **Diff operations**: Compare slices, track changes, EqualUnordered / Diff 작업: 슬라이스 비교, 변경 추적, 순서 무관 비교
 - **Immutable operations**: All functions return new slices (no mutation) / 불변 작업: 모든 함수는 새 슬라이스를 반환 (변경 없음)
-- **Zero dependencies**: Standard library only / 제로 의존성: 표준 라이브러리만
-- **99.5% test coverage**: 260+ test cases with comprehensive edge case coverage / 99.5% 테스트 커버리지: 포괄적인 엣지 케이스 커버를 갖춘 260개 이상 테스트 케이스
-- **Comprehensive documentation**: USER_MANUAL (~1,800 lines) and DEVELOPER_GUIDE (~1,500 lines) / 포괄적인 문서화
+- **Zero dependencies**: Standard library only (except golang.org/x/exp for constraints) / 제로 의존성: 표준 라이브러리만 (제약조건을 위한 golang.org/x/exp 제외)
+- **100% test coverage**: 260+ test cases with comprehensive edge case coverage / 100% 테스트 커버리지: 포괄적인 엣지 케이스 커버를 갖춘 260개 이상 테스트 케이스
+- **Comprehensive documentation**: USER_MANUAL (3,887 lines), DEVELOPER_GUIDE (2,205 lines), PERFORMANCE_BENCHMARKS / 포괄적인 문서화: 사용자 매뉴얼 (3,887줄), 개발자 가이드 (2,205줄), 성능 벤치마크
 
 **Key Design Principles / 주요 설계 원칙**:
 - Extreme Simplicity: 20 lines → 1 line / 극도의 간결함: 20줄 → 1줄
@@ -40,7 +42,7 @@ This file contains a high-level overview of major and minor versions. For detail
 - Functional Style: Inspired by JavaScript, Python, Ruby array methods / 함수형 스타일: JavaScript, Python, Ruby 배열 메서드에서 영감
 - Zero Configuration: No setup required / 제로 설정: 설정 불필요
 
-**Latest Version / 최신 버전**: v1.7.018 (2025-10-15)
+**Latest Version / 최신 버전**: v1.7.023 (2025-10-15)
 
 ---
 

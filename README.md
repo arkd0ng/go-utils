@@ -40,9 +40,9 @@ go-utils/
 ├── database/
 │   ├── mysql/       # Extreme simplicity MySQL client / 극도로 간단한 MySQL 클라이언트
 │   └── redis/       # Extreme simplicity Redis client / 극도로 간단한 Redis 클라이언트
-├── stringutil/      # String manipulation utilities / 문자열 처리 유틸리티
-├── timeutil/        # Time and date utilities / 시간 및 날짜 유틸리티
-├── sliceutil/       # Slice helpers (coming soon) / 슬라이스 헬퍼 (예정)
+├── stringutil/      # String manipulation utilities (53 functions) / 문자열 처리 유틸리티 (53개 함수)
+├── timeutil/        # Time and date utilities (114 functions) / 시간 및 날짜 유틸리티 (114개 함수)
+├── sliceutil/       # Slice utilities (95 functions) / 슬라이스 유틸리티 (95개 함수)
 ├── maputil/         # Map utilities (coming soon) / 맵 유틸리티 (예정)
 └── ...
 ```
@@ -427,21 +427,27 @@ fmt.Println(diff.String()) // "2 days 6 hours 30 minutes"
 
 ### ✅ [sliceutil](./sliceutil/) - Slice Utilities
 
-Extreme simplicity slice utilities - reduce 20 lines of repetitive slice manipulation code to just 1 line with 60 type-safe functions.
+Extreme simplicity slice utilities - reduce 20 lines of repetitive slice manipulation code to just 1 line with **95 type-safe functions**.
 
-극도로 간단한 슬라이스 유틸리티 - 20줄의 반복적인 슬라이스 조작 코드를 단 1줄로 줄이며, 60개의 타입 안전 함수를 제공합니다.
+극도로 간단한 슬라이스 유틸리티 - 20줄의 반복적인 슬라이스 조작 코드를 단 1줄로 줄이며, **95개의 타입 안전 함수**를 제공합니다.
 
-**Core Features**: 60 functions across 8 categories, Go 1.18+ generics, functional programming style, immutable operations, zero dependencies / 8개 카테고리에 걸쳐 60개 함수, Go 1.18+ 제네릭, 함수형 프로그래밍 스타일, 불변 작업, 제로 의존성
+**Core Features**: 95 functions across 14 categories, Go 1.18+ generics, functional programming style, immutable operations, zero dependencies, 100% test coverage / 14개 카테고리에 걸쳐 95개 함수, Go 1.18+ 제네릭, 함수형 프로그래밍 스타일, 불변 작업, 제로 의존성, 100% 테스트 커버리지
 
 **Categories / 카테고리**:
-- **Basic Operations (10)**: Contains, IndexOf, Find, Count, First, Last / 기본 작업
+- **Basic Operations (11)**: Contains, IndexOf, Find, Count, FindLast, Equal / 기본 작업
 - **Transformation (8)**: Map, Filter, Unique, Reverse, Flatten, FlatMap / 변환
-- **Aggregation (7)**: Reduce, Sum, Min, Max, Average, GroupBy, Partition / 집계
-- **Slicing (7)**: Chunk, Take, Drop, Sample, Slice / 슬라이싱
-- **Set Operations (6)**: Union, Intersection, Difference, IsSubset / 집합 작업
-- **Sorting (5)**: Sort, SortBy, SortDesc, IsSorted / 정렬
-- **Predicates (6)**: All, Any, None, AllEqual, Equal / 조건자
-- **Utilities (11)**: ForEach, Join, Clone, Shuffle, Zip, Unzip / 유틸리티
+- **Aggregation (11)**: Reduce, ReduceRight, Sum, Min, Max, MinBy, MaxBy, Average, GroupBy / 집계
+- **Slicing (11)**: Chunk, Take, TakeLast, TakeWhile, Drop, DropWhile, Sample, Window, Interleave / 슬라이싱
+- **Set Operations (6)**: Union, Intersection, Difference, SymmetricDifference, IsSubset, IsSuperset / 집합 작업
+- **Sorting (6)**: Sort, SortBy, SortByMulti, SortDesc, IsSorted, IsSortedDesc / 정렬
+- **Predicates (6)**: All, Any, None, AllEqual, IsSortedBy, ContainsAll / 조건자
+- **Utilities (12)**: ForEach, ForEachIndexed, Join, Clone, Shuffle, Zip, Unzip, Tap / 유틸리티
+- **Combinatorial (2)**: Permutations, Combinations / 조합 작업
+- **Statistics (8)**: Median, Mode, Frequencies, Percentile, StandardDeviation, Variance, MostCommon, LeastCommon / 통계
+- **Diff/Comparison (4)**: Diff, DiffBy, EqualUnordered, HasDuplicates / 차이/비교
+- **Index-based (3)**: FindIndices, AtIndices, RemoveIndices / 인덱스 기반
+- **Conditional (3)**: ReplaceIf, ReplaceAll, UpdateWhere / 조건부
+- **Advanced (4)**: Scan, ZipWith, RotateLeft, RotateRight / 고급
 
 ```go
 import "github.com/arkd0ng/go-utils/sliceutil"
