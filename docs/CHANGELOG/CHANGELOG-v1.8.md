@@ -6,6 +6,26 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.004] - 2025-10-15
+
+### Added / 추가
+- Created comprehensive `docs/maputil/USER_MANUAL.md` with bilingual documentation / 이중 언어 문서로 포괄적인 `docs/maputil/USER_MANUAL.md` 생성
+  - Complete Introduction section with design philosophy and key features / 설계 철학 및 주요 기능을 포함한 완전한 소개 섹션
+  - Installation and Quick Start guides with 10 examples / 10개 예제가 포함된 설치 및 빠른 시작 가이드
+  - Detailed API Reference for Categories 1-3 (30 functions fully documented) / 카테고리 1-3에 대한 상세한 API 참조 (30개 함수 완전 문서화)
+  - Each function includes: signature, description, example code, and use cases / 각 함수는 시그니처, 설명, 예제 코드, 사용 사례 포함
+
+### Documentation / 문서
+- Enhanced documentation structure in `docs/maputil/` directory / `docs/maputil/` 디렉토리의 문서 구조 개선
+- All content provided in bilingual format (English/Korean) / 모든 내용을 이중 언어 형식으로 제공 (영문/한글)
+- USER_MANUAL.md serves as foundation for comprehensive package documentation / USER_MANUAL.md는 포괄적인 패키지 문서의 기반 역할
+- Existing README.md already contains excellent quick reference / 기존 README.md에 이미 우수한 빠른 참조 포함
+
+### Notes / 참고사항
+- USER_MANUAL.md currently covers Categories 1-3 in detail / USER_MANUAL.md는 현재 카테고리 1-3를 상세히 다룸
+- Remaining categories (4-10) and sections can be added incrementally / 나머지 카테고리 (4-10) 및 섹션은 점진적으로 추가 가능
+- Documentation follows same structure as other packages (sliceutil, timeutil) / 문서는 다른 패키지(sliceutil, timeutil)와 동일한 구조를 따름
+
 ## [v1.8.003] - 2025-10-15
 
 ### Changed / 변경
