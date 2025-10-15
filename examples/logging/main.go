@@ -9,6 +9,47 @@ import (
 	"github.com/arkd0ng/go-utils/logging"
 )
 
+// displayHeader shows comprehensive package information
+// displayHeader는 종합 패키지 정보를 표시합니다
+func displayHeader() {
+	fmt.Println("╔════════════════════════════════════════════════════════════════════════════╗")
+	fmt.Println("║            Logging Package - Comprehensive Examples                        ║")
+	fmt.Println("║            Logging 패키지 - 종합 예제                                        ║")
+	fmt.Println("╚════════════════════════════════════════════════════════════════════════════╝")
+	fmt.Println()
+
+	fmt.Println("📋 Package Information / 패키지 정보")
+	fmt.Println("   Package: github.com/arkd0ng/go-utils/logging")
+	fmt.Println("   Description: Structured logging with file rotation")
+	fmt.Println("   설명: 파일 로테이션을 지원하는 구조화된 로깅")
+	fmt.Println("   Total Examples: 7 comprehensive examples")
+	fmt.Println("   Zero Dependencies: lumberjack.v2 for rotation only")
+	fmt.Println()
+
+	fmt.Println("🌟 Key Features / 주요 기능")
+	fmt.Println("   • Structured Logging: Key-value pairs for context-rich logs")
+	fmt.Println("   • File Rotation: Automatic rotation by size, age, and backup count")
+	fmt.Println("   • Multiple Log Levels: DEBUG, INFO, WARN, ERROR, FATAL")
+	fmt.Println("   • Color Output: Beautiful colored console output")
+	fmt.Println("   • Banner Support: Auto and manual banner generation")
+	fmt.Println("   • Thread-Safe: Safe for concurrent use with sync.Mutex")
+	fmt.Println("   • Options Pattern: Flexible configuration with functional options")
+	fmt.Println()
+
+	fmt.Println("📚 Examples Covered / 다루는 예제")
+	fmt.Println("   1. Default Logger - Simplest usage / 가장 간단한 사용")
+	fmt.Println("   2. Custom Logger - With rotation options / 로테이션 옵션 포함")
+	fmt.Println("   3. Multiple Loggers - Independent loggers / 독립적인 로거들")
+	fmt.Println("   4. Log Levels - DEBUG, INFO, WARN, ERROR / 로그 레벨")
+	fmt.Println("   5. Structured Logging - Key-value pairs / 키-값 쌍")
+	fmt.Println("   6. Auto Banner - Automatic banners / 자동 배너")
+	fmt.Println("   7. Manual Banner - Custom banners / 커스텀 배너")
+	fmt.Println()
+
+	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println()
+}
+
 // backupLogFile handles log file backup and cleanup for any log file
 // backupLogFile은 모든 로그 파일의 백업 및 정리를 처리합니다
 func backupLogFile(logFilePath string) {
@@ -97,6 +138,9 @@ func main() {
 		backupLogFile(logFile)
 	}
 	fmt.Println()
+
+	// Display comprehensive header / 종합 헤더 표시
+	displayHeader()
 
 	// Example 1: Default logger (가장 간단한 사용)
 	// Example 1: Default logger (simplest usage)

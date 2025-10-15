@@ -6,6 +6,49 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.015] - 2025-10-15
+
+### Enhanced / 보강됨
+
+#### Enhanced Logging Header in Logging Example / Logging 예제에 향상된 로깅 헤더 추가
+
+**Changes / 변경사항:**
+- Enhanced `examples/logging/main.go` with comprehensive header
+- Added `displayHeader()` function with package information
+- Added 📋 Package Information section (7 examples, structured logging)
+- Added 🌟 Key Features section (file rotation, log levels, color output)
+- Added 📚 Examples Covered section listing all 7 examples
+- Bilingual header throughout (English/Korean)
+- Original comprehensive example (440+ lines) retained with improved header
+- `examples/logging/main.go`를 종합 헤더로 개선
+- 패키지 정보가 포함된 `displayHeader()` 함수 추가
+- 📋 패키지 정보 섹션 추가 (7개 예제, 구조화된 로깅)
+- 🌟 주요 기능 섹션 추가 (파일 로테이션, 로그 레벨, 컬러 출력)
+- 📚 다루는 예제 섹션으로 7개 예제 모두 나열
+- 전체 이중 언어 헤더 (영문/한글)
+- 향상된 헤더와 함께 원본 종합 예제 (440+ 줄) 유지
+
+**Header Improvements / 헤더 개선사항:**
+- Package: github.com/arkd0ng/go-utils/logging
+- Description: Structured logging with file rotation
+- Total Examples: 7 comprehensive examples covering all major features
+- Key Features: Structured logging, File rotation, Log levels, Color output, Banner support, Thread-safe, Options pattern
+- Examples list: Default, Custom, Multiple loggers, Log levels, Structured logging, Auto banner, Manual banner
+- 패키지, 설명, 총 예제 수, 주요 기능 정보 포함
+- 전체 이중 언어 (영문/한글)
+
+**Testing / 테스트:**
+- ✅ Example compiles and runs successfully
+- ✅ Enhanced header displayed at startup
+- ✅ All existing 7 examples work correctly
+- ✅ Consistent with sliceutil and maputil example style
+- ✅ 예제 컴파일 및 실행 성공
+- ✅ 시작 시 개선된 헤더 표시
+- ✅ 기존 7개 예제 모두 정상 작동
+- ✅ sliceutil 및 maputil 예제 스타일과 일관성 유지
+
+---
+
 ## [v1.9.014] - 2025-10-15
 
 ### Enhanced / 보강됨
