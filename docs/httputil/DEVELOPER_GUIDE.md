@@ -573,6 +573,241 @@ type FormBuilder struct {
 
 ---
 
+### 3.9 Cookie Management / 쿠키 관리 **[Phase 5a]**
+
+Thread-safe cookie jar with optional file persistence:
+
+파일 지속성을 가진 스레드 안전 쿠키 저장소:
+
+```go
+// CookieJar manages HTTP cookies with optional persistence
+// CookieJar는 선택적 지속성을 가진 HTTP 쿠키를 관리합니다
+type CookieJar struct {
+    jar      http.CookieJar    // Standard library cookie jar
+    filePath string             // Optional file path for persistence
+    mu       sync.RWMutex       // Thread-safe access
+}
+```
+
+**Architecture Design / 아키텍처 설계:**
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   Client                            │
+│  ┌───────────────────────────────────────────────┐  │
+│  │           cookieJar: *CookieJar               │  │
+│  └───────────────┬───────────────────────────────┘  │
+│                  │                                   │
+│                  │ delegates cookie operations       │
+│                  │ 쿠키 작업 위임                     │
+│                  ▼                                   │
+│  ┌───────────────────────────────────────────────┐  │
+│  │          CookieJar                            │  │
+│  │  ┌─────────────────────────────────────────┐  │  │
+│  │  │  jar: http.CookieJar (stdlib)           │  │  │
+│  │  │  filePath: string (optional)            │  │  │
+│  │  │  mu: sync.RWMutex (thread-safe)        │  │  │
+│  │  └─────────────────────────────────────────┘  │  │
+│  │                                               │  │
+│  │  Operations / 작업:                           │  │
+│  │  • SetCookies(u, cookies)                    │  │
+│  │  • GetCookies(u) []*http.Cookie             │  │
+│  │  • ClearCookies()                            │  │
+│  │  • SaveCookies() → JSON file                │  │
+│  │  • LoadCookies() ← JSON file                │  │
+│  │  • HasCookie(u, name) bool                   │  │
+│  │  • GetCookie(u, name) *http.Cookie          │  │
+│  │  • RemoveCookie(u, name)                    │  │
+│  │  • CountCookies(u) int                      │  │
+│  └───────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────┘
+```
+
+**Key Components / 주요 컴포넌트:**
+
+1. **CookieJar Struct / CookieJar 구조체:**
+   - Wraps `http.CookieJar` from standard library
+   - Optional file persistence with JSON serialization
+   - Thread-safe with `sync.RWMutex`
+   - 표준 라이브러리의 http.CookieJar 래핑
+   - JSON 직렬화를 사용한 선택적 파일 지속성
+   - sync.RWMutex로 스레드 안전
+
+2. **Constructor Methods / 생성자 메서드:**
+   ```go
+   // Create in-memory cookie jar / 메모리 내 쿠키 저장소 생성
+   func NewCookieJar() (*CookieJar, error)
+
+   // Create persistent cookie jar / 지속성 쿠키 저장소 생성
+   func NewPersistentCookieJar(filePath string) (*CookieJar, error)
+   ```
+
+3. **Client Integration / 클라이언트 통합:**
+   - Client has optional `cookieJar *CookieJar` field
+   - Initialized via options: `WithCookies()`, `WithPersistentCookies(path)`
+   - Client delegates all cookie operations to CookieJar
+   - Client는 선택적 cookieJar 필드 보유
+   - 옵션을 통해 초기화: WithCookies(), WithPersistentCookies()
+   - Client는 모든 쿠키 작업을 CookieJar에 위임
+
+4. **Persistence Mechanism / 지속성 메커니즘:**
+   ```go
+   // Cookie entry for JSON serialization / JSON 직렬화를 위한 쿠키 엔트리
+   type cookieEntry struct {
+       URL     string
+       Cookies []*http.Cookie
+   }
+
+   // Save: iterate jar → serialize to JSON → write file (0600)
+   // Load: read file → deserialize JSON → populate jar
+   // 저장: jar 순회 → JSON 직렬화 → 파일 작성 (0600)
+   // 로드: 파일 읽기 → JSON 역직렬화 → jar 채우기
+   ```
+
+**Implementation Details / 구현 세부사항:**
+
+1. **Thread Safety / 스레드 안전성:**
+   ```go
+   func (cj *CookieJar) SetCookie(u *url.URL, cookie *http.Cookie) {
+       cj.mu.Lock()         // Write lock / 쓰기 잠금
+       defer cj.mu.Unlock()
+       // ... operation
+   }
+
+   func (cj *CookieJar) GetCookies(u *url.URL) []*http.Cookie {
+       cj.mu.RLock()        // Read lock / 읽기 잠금
+       defer cj.mu.RUnlock()
+       // ... operation
+   }
+   ```
+
+2. **Automatic Loading / 자동 로딩:**
+   - When `NewPersistentCookieJar` is called, it automatically loads cookies if file exists
+   - No manual `LoadCookies()` call needed on initialization
+   - NewPersistentCookieJar 호출 시 파일이 존재하면 자동으로 쿠키 로드
+   - 초기화 시 수동 LoadCookies() 호출 불필요
+
+3. **File Permissions / 파일 권한:**
+   - Cookie files are saved with `0600` permissions (owner read/write only)
+   - Security: prevents other users from reading session cookies
+   - 쿠키 파일은 0600 권한으로 저장 (소유자 읽기/쓰기만)
+   - 보안: 다른 사용자가 세션 쿠키를 읽는 것 방지
+
+4. **Public Suffix List / 공용 접미사 목록:**
+   - Uses `golang.org/x/net/publicsuffix` for proper domain handling
+   - Prevents cookies from being set on TLDs (e.g., `.com`, `.org`)
+   - 적절한 도메인 처리를 위해 golang.org/x/net/publicsuffix 사용
+   - TLD에 쿠키 설정 방지 (예: .com, .org)
+
+**Client Methods / 클라이언트 메서드:**
+
+All client methods check if `cookieJar` is nil and gracefully handle the case:
+
+모든 클라이언트 메서드는 cookieJar가 nil인지 확인하고 우아하게 처리:
+
+```go
+func (c *Client) GetCookies(u *url.URL) []*http.Cookie {
+    if c.cookieJar == nil {
+        return nil  // Graceful degradation / 우아한 성능 저하
+    }
+    return c.cookieJar.GetCookies(u)
+}
+
+func (c *Client) SetCookie(u *url.URL, cookie *http.Cookie) {
+    if c.cookieJar == nil {
+        return  // No-op if cookie jar not enabled / 쿠키 저장소 미활성화 시 무작동
+    }
+    c.cookieJar.SetCookie(u, cookie)
+}
+```
+
+**Configuration Options / 설정 옵션:**
+
+```go
+// Option 1: In-memory cookies (temporary) / 옵션 1: 메모리 내 쿠키 (임시)
+func WithCookies() Option {
+    return func(c *config) {
+        c.enableCookieJar = true
+    }
+}
+
+// Option 2: Persistent cookies (file storage) / 옵션 2: 지속성 쿠키 (파일 저장)
+func WithPersistentCookies(filePath string) Option {
+    return func(c *config) {
+        c.cookieJarPath = filePath
+    }
+}
+
+// Option 3: Custom cookie jar / 옵션 3: 사용자 정의 쿠키 저장소
+func WithCookieJar(jar http.CookieJar) Option {
+    return func(c *config) {
+        c.cookieJar = jar
+    }
+}
+```
+
+**Usage Patterns / 사용 패턴:**
+
+1. **Session-Based Authentication / 세션 기반 인증:**
+   ```go
+   client := httputil.NewClient(
+       httputil.WithBaseURL("https://api.example.com"),
+       httputil.WithPersistentCookies("session.json"),
+   )
+
+   // Login once / 한 번 로그인
+   client.Post("/login", credentials, &result)
+   client.SaveCookies()
+
+   // Later: reuse session / 나중에: 세션 재사용
+   client2 := httputil.NewClient(
+       httputil.WithPersistentCookies("session.json"), // Auto-loads / 자동 로드
+   )
+   client2.Get("/profile", &profile) // Authenticated / 인증됨
+   ```
+
+2. **Multi-Step Workflow / 다단계 워크플로우:**
+   ```go
+   client := httputil.NewClient(httputil.WithCookies())
+
+   // Step 1: Start workflow / 1단계: 워크플로우 시작
+   client.Post("/workflow/start", nil, &step1)
+
+   // Step 2: Server sets tracking cookie / 2단계: 서버가 추적 쿠키 설정
+   client.Post("/workflow/step2", data, &step2)
+
+   // Step 3: Cookie automatically sent / 3단계: 쿠키 자동 전송
+   client.Post("/workflow/complete", final, &result)
+   ```
+
+**Performance / 성능:**
+
+- **SetCookie**: ~680 ns/op, 128 B/op, 6 allocs/op
+- **GetCookies**: ~600 ns/op, 424 B/op, 4 allocs/op
+- **HasCookie**: ~600 ns/op, 424 B/op, 4 allocs/op
+
+Benchmarks show minimal overhead for cookie operations.
+
+벤치마크는 쿠키 작업에 대한 최소 오버헤드를 보여줍니다.
+
+**Testing Strategy / 테스트 전략:**
+
+23 test functions covering:
+- Basic operations (NewCookieJar, SetCookies, GetCookies)
+- Persistence (SaveAndLoadCookies)
+- Client integration (CookieIntegration, PersistentCookies)
+- Edge cases (ThreadSafety, ExpiredCookies, NoCookieJar)
+- Utility methods (HasCookie, GetCookie, CountCookies, RemoveCookie)
+
+23개 테스트 함수가 다음을 커버:
+- 기본 작업
+- 지속성
+- 클라이언트 통합
+- 엣지 케이스
+- 유틸리티 메서드
+
+---
+
 ## 4. Internal Implementation / 내부 구현
 
 ### 4.1 Request Flow / 요청 흐름

@@ -819,6 +819,242 @@ err := httputil.PostForm(
 
 ---
 
+### 5.10 Cookie Management / 쿠키 관리
+
+Automatic cookie persistence and session management with file storage support.
+
+파일 저장소를 지원하는 자동 쿠키 지속성 및 세션 관리.
+
+#### 5.10.1 In-Memory Cookies (Temporary) / 메모리 내 쿠키 (임시)
+
+Cookies are stored in memory and discarded when the client is closed.
+
+쿠키는 메모리에 저장되며 클라이언트가 닫힐 때 삭제됩니다.
+
+```go
+// Enable in-memory cookie jar / 메모리 내 쿠키 저장소 활성화
+client := httputil.NewClient(
+    httputil.WithBaseURL("https://api.example.com"),
+    httputil.WithCookies(), // Enable cookie management / 쿠키 관리 활성화
+)
+
+// Make request - cookies are automatically handled
+// 요청 수행 - 쿠키가 자동으로 처리됨
+var result Response
+err := client.Get("/login", &result)
+
+// Server sets cookies in response (e.g., session_id)
+// 서버가 응답에 쿠키 설정 (예: session_id)
+
+// Subsequent requests automatically send cookies
+// 후속 요청은 자동으로 쿠키 전송
+err = client.Get("/profile", &result) // Sends session_id cookie / session_id 쿠키 전송
+```
+
+#### 5.10.2 Persistent Cookies (File Storage) / 지속성 쿠키 (파일 저장)
+
+Cookies are saved to a file and automatically loaded on initialization.
+
+쿠키가 파일에 저장되고 초기화 시 자동으로 로드됩니다.
+
+```go
+// Enable persistent cookie jar / 지속성 쿠키 저장소 활성화
+client := httputil.NewClient(
+    httputil.WithBaseURL("https://api.example.com"),
+    httputil.WithPersistentCookies("cookies.json"), // Save to file / 파일에 저장
+)
+
+// Login and get session cookie / 로그인 및 세션 쿠키 획득
+var loginResult LoginResponse
+err := client.Post("/login", LoginRequest{
+    Username: "user@example.com",
+    Password: "password",
+}, &loginResult)
+
+// Save cookies to file / 쿠키를 파일에 저장
+err = client.SaveCookies()
+if err != nil {
+    log.Printf("Failed to save cookies: %v", err)
+}
+
+// Next time, cookies are automatically loaded / 다음에는 쿠키가 자동으로 로드됨
+// No need to login again / 다시 로그인할 필요 없음
+client2 := httputil.NewClient(
+    httputil.WithBaseURL("https://api.example.com"),
+    httputil.WithPersistentCookies("cookies.json"), // Auto-loads cookies / 쿠키 자동 로드
+)
+
+// Authenticated request without login / 로그인 없이 인증된 요청
+var profile UserProfile
+err = client2.Get("/profile", &profile) // Uses saved session cookie / 저장된 세션 쿠키 사용
+```
+
+#### 5.10.3 Manual Cookie Operations / 수동 쿠키 작업
+
+Direct cookie manipulation for advanced use cases.
+
+고급 사용 사례를 위한 직접 쿠키 조작.
+
+```go
+client := httputil.NewClient(
+    httputil.WithBaseURL("https://api.example.com"),
+    httputil.WithCookies(),
+)
+
+u, _ := url.Parse("https://api.example.com")
+
+// Set a custom cookie / 사용자 정의 쿠키 설정
+client.SetCookie(u, &http.Cookie{
+    Name:   "preference",
+    Value:  "dark_mode",
+    Path:   "/",
+    MaxAge: 86400, // 24 hours / 24시간
+})
+
+// Check if cookie exists / 쿠키 존재 확인
+if client.HasCookie(u, "session_id") {
+    log.Println("User is logged in")
+}
+
+// Get specific cookie / 특정 쿠키 가져오기
+cookie := client.GetCookie(u, "session_id")
+if cookie != nil {
+    log.Printf("Session ID: %s", cookie.Value)
+}
+
+// Get all cookies for domain / 도메인의 모든 쿠키 가져오기
+cookies := client.GetCookies(u)
+log.Printf("Total cookies: %d", len(cookies))
+
+// Clear all cookies / 모든 쿠키 제거
+err := client.ClearCookies()
+if err != nil {
+    log.Printf("Failed to clear cookies: %v", err)
+}
+```
+
+#### 5.10.4 Cookie Persistence Workflow / 쿠키 지속성 워크플로우
+
+Complete workflow for session persistence across application restarts.
+
+애플리케이션 재시작 간 세션 지속성을 위한 완전한 워크플로우.
+
+```go
+func loginAndSaveSession(email, password, cookieFile string) error {
+    // Create client with persistent cookies / 지속성 쿠키를 사용하는 클라이언트 생성
+    client := httputil.NewClient(
+        httputil.WithBaseURL("https://api.example.com"),
+        httputil.WithPersistentCookies(cookieFile),
+    )
+
+    // Login / 로그인
+    var result LoginResponse
+    err := client.Post("/auth/login", LoginRequest{
+        Email:    email,
+        Password: password,
+    }, &result)
+    if err != nil {
+        return fmt.Errorf("login failed: %w", err)
+    }
+
+    // Save session cookies to file / 세션 쿠키를 파일에 저장
+    err = client.SaveCookies()
+    if err != nil {
+        return fmt.Errorf("failed to save cookies: %w", err)
+    }
+
+    log.Println("✓ Login successful, session saved")
+    return nil
+}
+
+func makeAuthenticatedRequest(cookieFile string) error {
+    // Create client and auto-load saved cookies / 클라이언트 생성 및 저장된 쿠키 자동 로드
+    client := httputil.NewClient(
+        httputil.WithBaseURL("https://api.example.com"),
+        httputil.WithPersistentCookies(cookieFile), // Auto-loads / 자동 로드
+    )
+
+    // Make authenticated request / 인증된 요청 수행
+    var profile UserProfile
+    err := client.Get("/api/profile", &profile)
+    if err != nil {
+        return fmt.Errorf("request failed: %w", err)
+    }
+
+    log.Printf("✓ Profile loaded: %s", profile.Name)
+    return nil
+}
+
+// Usage / 사용
+func main() {
+    cookieFile := "session.json"
+
+    // First time: login and save / 첫 번째: 로그인 및 저장
+    err := loginAndSaveSession("user@example.com", "password", cookieFile)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Later: use saved session / 나중에: 저장된 세션 사용
+    err = makeAuthenticatedRequest(cookieFile)
+    if err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+#### 5.10.5 Shopping Cart Example / 쇼핑 카트 예제
+
+Using cookies for shopping cart persistence.
+
+쇼핑 카트 지속성을 위한 쿠키 사용.
+
+```go
+func addToCartWithCookies() {
+    client := httputil.NewClient(
+        httputil.WithBaseURL("https://shop.example.com"),
+        httputil.WithPersistentCookies("cart_cookies.json"),
+    )
+
+    // Add items to cart / 카트에 항목 추가
+    items := []CartItem{
+        {ProductID: "prod-123", Quantity: 2},
+        {ProductID: "prod-456", Quantity: 1},
+    }
+
+    for _, item := range items {
+        var result AddToCartResponse
+        err := client.Post("/api/cart/add", item, &result)
+        if err != nil {
+            log.Printf("Failed to add item: %v", err)
+            continue
+        }
+        log.Printf("✓ Added: %s (qty: %d)", item.ProductID, item.Quantity)
+    }
+
+    // Save cart session / 카트 세션 저장
+    client.SaveCookies()
+    log.Println("✓ Cart session saved")
+
+    // Later: view cart (auto-loads session) / 나중에: 카트 보기 (세션 자동 로드)
+    client2 := httputil.NewClient(
+        httputil.WithBaseURL("https://shop.example.com"),
+        httputil.WithPersistentCookies("cart_cookies.json"),
+    )
+
+    var cart Cart
+    err := client2.Get("/api/cart", &cart)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    log.Printf("✓ Cart loaded: %d items, total: $%.2f",
+        len(cart.Items), cart.Total)
+}
+```
+
+---
+
 ## 6. Common Use Cases / 일반적인 사용 사례
 
 ### 6.1 REST API Client / REST API 클라이언트
@@ -2267,14 +2503,33 @@ err := httputil.Post(url, payload, &result)
 
 ### Q3: How do I handle cookies? / 쿠키를 처리하려면?
 
-**A:** Currently not directly supported. Use standard library's CookieJar:
+**A:** Cookie management is fully supported with automatic persistence (v1.10.004+):
 
-**답:** 현재 직접 지원되지 않음. 표준 라이브러리의 CookieJar 사용:
+**답:** 쿠키 관리는 자동 지속성과 함께 완전히 지원됩니다 (v1.10.004+):
 
 ```go
-// This feature is planned for future release
-// 이 기능은 향후 릴리스 예정
+// In-memory cookies (temporary) / 메모리 내 쿠키 (임시)
+client := httputil.NewClient(
+    httputil.WithBaseURL("https://api.example.com"),
+    httputil.WithCookies(),
+)
+
+// Persistent cookies (saved to file) / 지속성 쿠키 (파일에 저장)
+client := httputil.NewClient(
+    httputil.WithBaseURL("https://api.example.com"),
+    httputil.WithPersistentCookies("cookies.json"),
+)
+
+// Manual cookie operations / 수동 쿠키 작업
+u, _ := url.Parse("https://api.example.com")
+client.SetCookie(u, &http.Cookie{Name: "session", Value: "abc123"})
+cookies := client.GetCookies(u)
+client.SaveCookies() // Save to file / 파일에 저장
 ```
+
+See section 5.10 for detailed usage patterns.
+
+자세한 사용 패턴은 섹션 5.10을 참조하세요.
 
 ### Q4: Can I upload files? / 파일을 업로드할 수 있나요?
 
