@@ -44,6 +44,7 @@ go-utils/
 ├── timeutil/        # Time and date utilities (114 functions) / 시간 및 날짜 유틸리티 (114개 함수)
 ├── sliceutil/       # Slice utilities (95 functions) / 슬라이스 유틸리티 (95개 함수)
 ├── maputil/         # Map utilities (99 functions) / 맵 유틸리티 (99개 함수)
+├── fileutil/        # File and path utilities (~91 functions) / 파일 및 경로 유틸리티 (약 91개 함수)
 └── ...
 ```
 
@@ -625,9 +626,88 @@ result := maputil.Filter(data, func(k string, v int) bool { return v > 2 })
 
 ---
 
+### ✅ [fileutil](./fileutil/) - File and Path Utilities
+
+Extreme simplicity file and path utilities - reduce 20+ lines of repetitive file manipulation code to just 1-2 lines with **~91 cross-platform functions**.
+
+극도로 간단한 파일 및 경로 유틸리티 - 20줄의 반복적인 파일 조작 코드를 단 1-2줄로 줄이며, **약 91개의 크로스 플랫폼 함수**를 제공합니다.
+
+**Core Features**: ~91 functions across 12 categories, automatic directory creation, cross-platform compatibility, buffered I/O, atomic operations, progress callbacks, multiple hash algorithms, zero external dependencies / 12개 카테고리에 걸쳐 약 91개 함수, 자동 디렉토리 생성, 크로스 플랫폼 호환성, 버퍼링된 I/O, 원자적 작업, 진행 상황 콜백, 여러 해시 알고리즘, 외부 의존성 없음
+
+**Categories / 카테고리**:
+- **File Reading (8)**: ReadFile, ReadString, ReadLines, ReadJSON, ReadYAML, ReadCSV, ReadBytes, ReadChunk / 파일 읽기
+- **File Writing (11)**: WriteFile, WriteString, WriteLines, WriteJSON, WriteYAML, WriteCSV, WriteAtomic, Append* / 파일 쓰기
+- **File Information (15)**: Exists, IsFile, IsDir, Size, SizeHuman, Chmod, Chown, ModTime, Touch / 파일 정보
+- **Path Operations (18)**: Join, Split, Base, Dir, Ext, Abs, CleanPath, Normalize, IsAbs, IsValid, IsSafe, Match, Glob / 경로 작업
+- **File Copying (4)**: CopyFile, CopyDir, CopyRecursive, SyncDirs (with progress callbacks) / 파일 복사
+- **File Moving (5)**: MoveFile, MoveDir, Rename, RenameExt, SafeMove / 파일 이동
+- **File Deleting (7)**: DeleteFile, DeleteDir, DeleteRecursive, DeletePattern, DeleteFiles, Clean, RemoveEmpty / 파일 삭제
+- **Directory Operations (13)**: MkdirAll, CreateTemp, IsEmpty, DirSize, ListFiles, Walk, FindFiles / 디렉토리 작업
+- **File Hashing (10)**: MD5, SHA1, SHA256, SHA512, Hash, CompareFiles, CompareHash, Checksum, VerifyChecksum / 파일 해싱
+
+```go
+import "github.com/arkd0ng/go-utils/fileutil"
+
+// Write file with auto directory creation / 자동 디렉토리 생성과 함께 파일 쓰기
+err := fileutil.WriteString("path/to/file.txt", "Hello, World!")
+
+// Read file / 파일 읽기
+content, err := fileutil.ReadString("path/to/file.txt")
+
+// Copy with progress / 진행 상황과 함께 복사
+err = fileutil.CopyFile("large.dat", "backup.dat",
+    fileutil.WithProgress(func(written, total int64) {
+        percent := float64(written) / float64(total) * 100
+        fmt.Printf("\rProgress: %.1f%%", percent)
+    }))
+
+// Calculate file hash / 파일 해시 계산
+hash, err := fileutil.SHA256("file.dat")
+
+// Find all .txt files / 모든 .txt 파일 찾기
+txtFiles, err := fileutil.FindFiles(".", func(path string, info os.FileInfo) bool {
+    return fileutil.Ext(path) == ".txt"
+})
+
+// Atomic write (safe update) / 원자적 쓰기 (안전한 업데이트)
+err = fileutil.WriteAtomic("important.json", data)
+
+// JSON/YAML support / JSON/YAML 지원
+var config Config
+err = fileutil.ReadJSON("config.json", &config)
+err = fileutil.WriteYAML("config.yaml", config)
+```
+
+**Before vs After**:
+```go
+// ❌ Before: 20+ lines with standard Go
+dir := filepath.Dir(path)
+if err := os.MkdirAll(dir, 0755); err != nil {
+    return err
+}
+file, err := os.Create(path)
+if err != nil {
+    return err
+}
+defer file.Close()
+if _, err := file.WriteString(content); err != nil {
+    return err
+}
+// ... 더 많은 코드
+
+// ✅ After: 1 line with this package
+err := fileutil.WriteString(path, content)
+```
+
+**Documentation / 문서**:
+- [Package README](./fileutil/README.md) - Quick start and examples / 빠른 시작 및 예제
+
+**[→ View full documentation / 전체 문서 보기](./fileutil/README.md)**
+
+---
+
 ### 🔜 Coming Soon / 개발 예정
 
-- **fileutil** - File/Path utilities / 파일/경로 유틸리티
 - **httputil** - HTTP helpers / HTTP 헬퍼
 - **validation** - Validation utilities / 검증 유틸리티
 - **errorutil** - Error handling helpers / 에러 처리 헬퍼

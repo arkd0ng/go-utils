@@ -18,7 +18,37 @@ This file contains a high-level overview of major and minor versions. For detail
 
 ---
 
-## [v1.8.x] - Map Utilities Package / 맵 유틸리티 패키지 (현재 / Current)
+## [v1.9.x] - File Utilities Package / 파일 유틸리티 패키지 (현재 / Current)
+
+**Focus / 초점**: Extreme simplicity file and path utilities / 극도로 간단한 파일 및 경로 유틸리티
+
+**Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.9.md](docs/CHANGELOG/CHANGELOG-v1.9.md)
+
+### Highlights / 주요 사항
+- **Complete fileutil package**: 20 lines → 1-2 lines of code / 완전한 fileutil 패키지: 20줄 → 1-2줄 코드
+- **~91 functions across 12 categories**: Complete coverage of file/directory operations / 12개 카테고리에 걸쳐 약 91개 함수: 파일/디렉토리 작업의 완전한 커버리지
+- **Cross-platform compatibility**: All path operations use filepath for OS-agnostic behavior / 크로스 플랫폼 호환성: 모든 경로 작업이 OS에 구애받지 않는 filepath 사용
+- **Automatic directory creation**: All write operations auto-create parent directories / 자동 디렉토리 생성: 모든 쓰기 작업이 상위 디렉토리 자동 생성
+- **Buffered I/O**: Default 32KB buffer for optimal performance / 버퍼링된 I/O: 최적의 성능을 위한 기본 32KB 버퍼
+- **Atomic operations**: WriteAtomic for safe file updates (temp + rename) / 원자적 작업: 안전한 파일 업데이트를 위한 WriteAtomic (임시 + 이름 변경)
+- **Progress callbacks**: Copy operations support progress tracking for large files / 진행 상황 콜백: 대용량 파일에 대한 진행 상황 추적을 지원하는 복사 작업
+- **Multiple hash algorithms**: MD5, SHA1, SHA256, SHA512 / 여러 해시 알고리즘: MD5, SHA1, SHA256, SHA512
+- **Path safety**: IsSafe function to prevent directory traversal attacks / 경로 안전성: 디렉토리 탐색 공격 방지를 위한 IsSafe 함수
+- **JSON/YAML/CSV support**: Direct read/write for structured data formats / JSON/YAML/CSV 지원: 구조화된 데이터 형식의 직접 읽기/쓰기
+- **Zero external dependencies**: Standard library only (except gopkg.in/yaml.v3) / 외부 의존성 없음: 표준 라이브러리만 (gopkg.in/yaml.v3 제외)
+- **Comprehensive documentation**: Package README with quick start guide and function reference / 포괄적인 문서화: 빠른 시작 가이드 및 함수 참조를 포함한 패키지 README
+
+**Key Design Principles / 주요 설계 원칙**:
+- Extreme Simplicity: 20 lines → 1-2 lines / 극도의 간결함: 20줄 → 1-2줄
+- Safety First: Automatic directory creation, atomic writes, path validation / 안전 우선: 자동 디렉토리 생성, 원자적 쓰기, 경로 검증
+- Cross-Platform: OS-agnostic path operations using filepath / 크로스 플랫폼: filepath를 사용한 OS에 구애받지 않는 경로 작업
+- Zero Configuration: No setup required / 제로 설정: 설정 불필요
+
+**Latest Version / 최신 버전**: v1.9.001 (2025-10-15)
+
+---
+
+## [v1.8.x] - Map Utilities Package / 맵 유틸리티 패키지
 
 **Focus / 초점**: Extreme simplicity map utilities with Go 1.18+ generics / Go 1.18+ 제네릭을 사용한 극도로 간단한 맵 유틸리티
 
