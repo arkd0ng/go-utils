@@ -1,6 +1,6 @@
 # sliceutil - Slice Utilities / 슬라이스 유틸리티
 
-**v1.7.020** - Extreme Simplicity for Slice Operations! 🎉
+**v1.7.022** - Extreme Simplicity for Slice Operations! 🎉
 
 Extreme simplicity slice utility functions for Go - reduce 10-20 lines of slice manipulation code to just 1 line.
 
@@ -11,9 +11,9 @@ Extreme simplicity slice utility functions for Go - reduce 10-20 lines of slice 
 
 ## Overview / 개요
 
-The `sliceutil` package provides **73 type-safe functions** for common slice operations in Go. Stop writing repetitive loops and start using functional programming style.
+The `sliceutil` package provides **95 type-safe functions** for common slice operations in Go. Stop writing repetitive loops and start using functional programming style.
 
-`sliceutil` 패키지는 Go에서 일반적인 슬라이스 작업을 위한 **73개의 타입 안전 함수**를 제공합니다. 반복적인 루프 작성을 멈추고 함수형 프로그래밍 스타일을 사용하세요.
+`sliceutil` 패키지는 Go에서 일반적인 슬라이스 작업을 위한 **95개의 타입 안전 함수**를 제공합니다. 반복적인 루프 작성을 멈추고 함수형 프로그래밍 스타일을 사용하세요.
 
 ### Design Philosophy: "20 lines → 1 line" / 설계 철학: "20줄 → 1줄"
 
@@ -201,9 +201,9 @@ All functions use only the standard library.
 
 ### 5. Comprehensive Coverage / 포괄적인 커버리지
 
-60 functions across 8 categories cover 99% of common slice operations.
+95 functions across 13 categories cover 99% of common slice operations.
 
-8개 카테고리의 60개 함수가 일반적인 슬라이스 작업의 99%를 커버합니다.
+13개 카테고리의 95개 함수가 일반적인 슬라이스 작업의 99%를 커버합니다.
 
 ## Function Categories / 함수 카테고리
 
@@ -371,6 +371,73 @@ sliceutil.Combinations(slice, k)          // All k-combinations C(n,k)
 - 조합: C(10,5) = 252, C(20,10) = 184,756
 - 큰 슬라이스에는 주의해서 사용하세요!
 
+### 10. Statistics (8 functions) / 통계 (8개 함수)
+
+Perform statistical operations on numeric slices.
+
+숫자 슬라이스에 대한 통계 작업 수행.
+
+```go
+sliceutil.Median(slice)                   // Calculate median
+sliceutil.Mode(slice)                     // Find most frequent value
+sliceutil.Frequencies(slice)              // Get frequency map
+sliceutil.Percentile(slice, p)            // Calculate percentile
+sliceutil.StandardDeviation(slice)        // Calculate std dev
+sliceutil.Variance(slice)                 // Calculate variance
+sliceutil.MostCommon(slice, n)            // Get n most common values
+sliceutil.LeastCommon(slice, n)           // Get n least common values
+```
+
+### 11. Diff/Comparison (4 functions) / 차이/비교 (4개 함수)
+
+Compare slices and detect differences.
+
+슬라이스 비교 및 차이 감지.
+
+```go
+sliceutil.Diff(old, new)                  // Find added/removed/unchanged
+sliceutil.DiffBy(old, new, keyFunc)       // Diff by custom key
+sliceutil.EqualUnordered(a, b)            // Compare ignoring order
+sliceutil.HasDuplicates(slice)            // Check for duplicates
+```
+
+### 12. Index-based (3 functions) / 인덱스 기반 (3개 함수)
+
+Operate on slices using indices.
+
+인덱스를 사용한 슬라이스 작업.
+
+```go
+sliceutil.FindIndices(slice, predicate)   // Find all matching indices
+sliceutil.AtIndices(slice, indices)       // Get elements at indices
+sliceutil.RemoveIndices(slice, indices)   // Remove elements at indices
+```
+
+### 13. Conditional (3 functions) / 조건부 (3개 함수)
+
+Transform slices based on conditions.
+
+조건에 따른 슬라이스 변환.
+
+```go
+sliceutil.ReplaceIf(slice, predicate, value)  // Replace matching items
+sliceutil.ReplaceAll(slice, old, new)         // Replace all occurrences
+sliceutil.UpdateWhere(slice, predicate, fn)   // Update matching items
+```
+
+### 14. Advanced (4 functions) / 고급 (4개 함수)
+
+Advanced functional programming operations.
+
+고급 함수형 프로그래밍 작업.
+
+```go
+sliceutil.Scan(slice, initial, fn)        // Cumulative aggregation
+sliceutil.ZipWith(a, b, fn)               // Combine with custom function
+sliceutil.RotateLeft(slice, n)            // Rotate left by n positions
+sliceutil.RotateRight(slice, n)           // Rotate right by n positions
+```
+
 ## Real-World Examples / 실제 사용 예제
 
 ### Example 1: Data Processing Pipeline / 데이터 처리 파이프라인
@@ -512,7 +579,7 @@ MIT 라이선스 - 자세한 내용은 [LICENSE](../LICENSE)를 참조하세요.
 
 ## Version / 버전
 
-Current version: **v1.7.002**
+Current version: **v1.7.022**
 
 For version history, see [CHANGELOG-v1.7.md](../docs/CHANGELOG/CHANGELOG-v1.7.md).
 

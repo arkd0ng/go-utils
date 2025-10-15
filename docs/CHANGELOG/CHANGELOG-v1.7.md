@@ -8,6 +8,109 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.7.022] - 2025-10-15
+
+### Added / 추가
+
+- **22 NEW FUNCTIONS**: Added comprehensive utility functions across 5 new categories / 5개 새로운 카테고리에 걸쳐 22개의 종합 유틸리티 함수 추가
+
+  **Statistics (8 functions) / 통계 (8개 함수)**:
+  - `Median(slice)`: Calculate median value / 중앙값 계산
+  - `Mode(slice)`: Find most frequent value / 최빈값 찾기
+  - `Frequencies(slice)`: Get frequency map / 빈도 맵 가져오기
+  - `Percentile(slice, p)`: Calculate percentile / 백분위수 계산
+  - `StandardDeviation(slice)`: Calculate standard deviation / 표준편차 계산
+  - `Variance(slice)`: Calculate variance / 분산 계산
+  - `MostCommon(slice, n)`: Get n most common values / n개 최빈값 가져오기
+  - `LeastCommon(slice, n)`: Get n least common values / n개 최소빈값 가져오기
+
+  **Diff/Comparison (4 functions) / 차이/비교 (4개 함수)**:
+  - `Diff(old, new)`: Find added/removed/unchanged elements / 추가/제거/변경되지 않은 요소 찾기
+  - `DiffBy(old, new, keyFunc)`: Diff by custom key / 사용자 정의 키로 차이 찾기
+  - `EqualUnordered(a, b)`: Compare ignoring order / 순서 무시하고 비교
+  - `HasDuplicates(slice)`: Check for duplicate elements / 중복 요소 확인
+
+  **Index-based (3 functions) / 인덱스 기반 (3개 함수)**:
+  - `FindIndices(slice, predicate)`: Find all matching indices / 모든 일치하는 인덱스 찾기
+  - `AtIndices(slice, indices)`: Get elements at indices / 인덱스의 요소 가져오기
+  - `RemoveIndices(slice, indices)`: Remove elements at indices / 인덱스의 요소 제거
+
+  **Conditional (3 functions) / 조건부 (3개 함수)**:
+  - `ReplaceIf(slice, predicate, value)`: Replace matching items / 일치하는 항목 교체
+  - `ReplaceAll(slice, old, new)`: Replace all occurrences / 모든 발생 교체
+  - `UpdateWhere(slice, predicate, fn)`: Update matching items / 일치하는 항목 업데이트
+
+  **Advanced (4 functions) / 고급 (4개 함수)**:
+  - `Scan(slice, initial, fn)`: Cumulative aggregation / 누적 집계
+  - `ZipWith(a, b, fn)`: Combine with custom function / 사용자 정의 함수로 결합
+  - `RotateLeft(slice, n)`: Rotate left by n positions / n 위치만큼 왼쪽 회전
+  - `RotateRight(slice, n)`: Rotate right by n positions / n 위치만큼 오른쪽 회전
+
+- **COMPREHENSIVE TESTS**: Added 100% test coverage for all new functions / 모든 새 함수에 대한 100% 테스트 커버리지 추가
+  - `sliceutil/statistics_test.go`: 430 lines, comprehensive statistical tests / 430줄, 종합 통계 테스트
+  - `sliceutil/diff_test.go`: 360 lines, diff and comparison tests / 360줄, 차이 및 비교 테스트
+  - `sliceutil/index_test.go`: 260 lines, index-based operation tests / 260줄, 인덱스 기반 작업 테스트
+  - `sliceutil/conditional_test.go`: 240 lines, conditional transformation tests / 240줄, 조건부 변환 테스트
+  - `sliceutil/advanced_test.go`: 280 lines, advanced operation tests / 280줄, 고급 작업 테스트
+  - All edge cases covered (empty slices, single elements, out-of-bounds, etc.) / 모든 엣지 케이스 커버 (빈 슬라이스, 단일 요소, 범위 초과 등)
+
+- **TUTORIAL-STYLE EXAMPLES**: Added comprehensive examples (520 lines) to `examples/sliceutil/main.go` / `examples/sliceutil/main.go`에 종합 예제 (520줄) 추가
+  - `statisticsExamples()`: Test scores analysis, sales metrics / 시험 점수 분석, 매출 지표
+  - `diffExamples()`: Version control, database sync, data validation / 버전 관리, 데이터베이스 동기화, 데이터 검증
+  - `indexExamples()`: Error log analysis, batch processing / 에러 로그 분석, 배치 처리
+  - `conditionalExamples()`: Data sanitization, price adjustments / 데이터 정리, 가격 조정
+  - `advancedExamples()`: Running totals, shift scheduling, time series / 누적 합계, 교대 근무 스케줄링, 시계열
+  - Each example includes real-world scenarios with detailed logging / 각 예제는 상세한 로깅과 함께 실제 시나리오 포함
+
+- **COMPLETE DOCUMENTATION**: Updated `sliceutil/README.md` / `sliceutil/README.md` 업데이트
+  - Function count: 73 → 95 functions (+22 functions) / 함수 개수: 73 → 95개 함수 (+22개 함수)
+  - Category count: 9 → 14 categories (+5 categories) / 카테고리 개수: 9 → 14개 카테고리 (+5개 카테고리)
+  - Added new categories with full documentation / 전체 문서와 함께 새 카테고리 추가
+  - Updated version badge to v1.7.022 / 버전 배지를 v1.7.022로 업데이트
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.022 / `cfg/app.yaml` 버전을 v1.7.022로 업데이트
+- Updated `sliceutil/sliceutil.go` Version constant to "1.7.022" / `sliceutil/sliceutil.go` 버전 상수를 "1.7.022"로 업데이트
+- Updated `sliceutil/sliceutil_test.go` expected version to "1.7.022" / `sliceutil/sliceutil_test.go` 예상 버전을 "1.7.022"로 업데이트
+
+### Fixed / 수정
+
+- Fixed `MinBy`/`MaxBy` test return type in initial implementation (error not bool) / 초기 구현에서 `MinBy`/`MaxBy` 테스트 반환 타입 수정 (error, bool 아님)
+- Fixed test coverage gap in `EqualUnordered` (line 144) by adding "different unique count" test / "different unique count" 테스트를 추가하여 `EqualUnordered`의 테스트 커버리지 격차 수정 (144번째 줄)
+- Fixed unused variable in `advancedExamples` / `advancedExamples`의 사용하지 않는 변수 수정
+
+### Testing / 테스트
+
+- **Test coverage: 100.0% of statements** (maintained from v1.7.021) / **테스트 커버리지: 100.0%** (v1.7.021에서 유지)
+- All 95 functions have 100% test coverage / 모든 95개 함수가 100% 테스트 커버리지 보유
+- Added 1,570 lines of test code across 5 new test files / 5개 새 테스트 파일에 걸쳐 1,570줄의 테스트 코드 추가
+- All tests pass successfully / 모든 테스트가 성공적으로 통과
+
+### Summary / 요약
+
+v1.7.022 significantly expands the sliceutil package with 22 new utility functions:
+- Statistical analysis functions for data science and analytics use cases
+- Diff/comparison functions for version control and data synchronization
+- Index-based operations for positional manipulation
+- Conditional transformations for bulk updates
+- Advanced functional programming patterns (Scan, ZipWith, Rotate)
+- Complete with 100% test coverage and comprehensive tutorial-style examples
+- Total function count increased from 73 to 95 functions
+- Production-ready with extensive documentation and examples
+
+v1.7.022는 22개의 새로운 유틸리티 함수로 sliceutil 패키지를 크게 확장합니다:
+- 데이터 과학 및 분석 사용 사례를 위한 통계 분석 함수
+- 버전 관리 및 데이터 동기화를 위한 차이/비교 함수
+- 위치 조작을 위한 인덱스 기반 작업
+- 대량 업데이트를 위한 조건부 변환
+- 고급 함수형 프로그래밍 패턴 (Scan, ZipWith, Rotate)
+- 100% 테스트 커버리지와 종합적인 튜토리얼 스타일 예제 제공
+- 총 함수 개수가 73개에서 95개로 증가
+- 광범위한 문서 및 예제로 프로덕션 준비 완료
+
+---
+
 ## [v1.7.021] - 2025-10-15
 
 ### Added / 추가
