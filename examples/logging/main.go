@@ -74,6 +74,7 @@ func backupLogFile(logFilePath string) {
 func main() {
 	// Backup all log files that will be used in examples / 예제에서 사용할 모든 로그 파일 백업
 	logFiles := []string{
+		"logs/logging-example-default.log",
 		"logs/logging-example-app.log",
 		"logs/logging-example-custom.log",
 		"logs/logging-example-database.log",
@@ -127,12 +128,14 @@ func main() {
 // defaultExample demonstrates the simplest usage with default settings
 // defaultExample은 기본 설정으로 가장 간단한 사용법을 보여줍니다
 func defaultExample() {
-	logger := logging.Default()
+	logger, _ := logging.New(
+		logging.WithFilePath("logs/logging-example-default.log"),
+	)
 	defer logger.Close()
 
 	logger.Banner("Default Logger Example", "v1.0.0")
-	logger.Info("Using default logger")
-	logger.Info("Logs to ./logs/app.log by default")
+	logger.Info("Using logger with default settings")
+	logger.Info("Logs to ./logs/logging-example-default.log")
 	logger.SeparatorLine("=", 50)
 }
 

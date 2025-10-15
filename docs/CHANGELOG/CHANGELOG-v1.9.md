@@ -6,6 +6,60 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.008] - 2025-10-15
+
+### Fixed / 수정됨
+
+#### Fixed defaultExample() to Use Consistent Logging Naming / defaultExample()이 일관된 로깅 명명 규칙을 사용하도록 수정
+
+**Issue / 문제:**
+- `defaultExample()` function was using `logging.Default()` which creates `logs/app.log`
+- This was inconsistent with the `logging-example-` prefix used by all other examples
+- `defaultExample()` 함수가 `logging.Default()`를 사용하여 `logs/app.log` 생성
+- 다른 모든 예제에서 사용하는 `logging-example-` 접두사와 불일치
+
+**Solution / 해결방법:**
+- Changed `defaultExample()` to explicitly create logger with `logging-example-default.log` path
+- Updated log message to reflect new file path
+- Added `logging-example-default.log` to backup list in main()
+- `defaultExample()`을 명시적으로 `logging-example-default.log` 경로로 로거 생성하도록 변경
+- 로그 메시지를 새 파일 경로로 업데이트
+- main()의 백업 목록에 `logging-example-default.log` 추가
+
+**Technical Changes / 기술적 변경사항:**
+```go
+// Before (이전)
+func defaultExample() {
+    logger := logging.Default()
+    defer logger.Close()
+    logger.Info("Logs to ./logs/app.log by default")
+}
+
+// After (이후)
+func defaultExample() {
+    logger, _ := logging.New(
+        logging.WithFilePath("logs/logging-example-default.log"),
+    )
+    defer logger.Close()
+    logger.Info("Logs to ./logs/logging-example-default.log")
+}
+```
+
+**Result / 결과:**
+- Now all 13 log files in logging example use consistent `logging-example-` prefix
+- No more `logs/app.log` file created by logging example
+- Complete standardization across all example programs
+- 이제 로깅 예제의 모든 13개 로그 파일이 일관된 `logging-example-` 접두사 사용
+- 로깅 예제에서 더 이상 `logs/app.log` 파일 생성 안 함
+- 모든 예제 프로그램에 걸쳐 완전한 표준화
+
+**Total Log Files / 전체 로그 파일 개수:**
+- Previous: 12 files (이전: 12개 파일)
+- Current: 13 files (현재: 13개 파일)
+- New file: `logs/logging-example-default.log`
+
+---
+
 ## [v1.9.007] - 2025-10-15
 
 ### Changed / 변경됨
