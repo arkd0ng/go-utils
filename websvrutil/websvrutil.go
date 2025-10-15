@@ -9,4 +9,4 @@ package websvrutil
 
 // Version is the current version of the websvrutil package.
 // Version은 websvrutil 패키지의 현재 버전입니다.
-const Version = "v1.11.016"
+const Version = "v1.11.017"

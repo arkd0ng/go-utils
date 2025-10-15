@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.016
+**Version / 버전**: v1.11.017
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.016) / 현재 기능
+## Current Features (v1.11.017) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -68,13 +68,20 @@ Request context for accessing path parameters, query strings, headers, and stori
 - `Param(name string) string` - Get path parameter / 경로 매개변수 가져오기
 - `Params() map[string]string` - Get all parameters / 모든 매개변수 가져오기
 
-**Custom Values / 커스텀 값**:
+**Context Storage / 컨텍스트 저장소** (Enhanced in v1.11.017+):
 - `Set(key string, value interface{})` - Store value / 값 저장
 - `Get(key string) (interface{}, bool)` - Retrieve value / 값 검색
 - `MustGet(key string) interface{}` - Get or panic / 가져오거나 패닉
 - `GetString(key string) string` - Get string value / 문자열 값 가져오기
 - `GetInt(key string) int` - Get int value / int 값 가져오기
+- `GetInt64(key string) int64` - Get int64 value / int64 값 가져오기
+- `GetFloat64(key string) float64` - Get float64 value / float64 값 가져오기
 - `GetBool(key string) bool` - Get bool value / bool 값 가져오기
+- `GetStringSlice(key string) []string` - Get string slice / 문자열 슬라이스 가져오기
+- `GetStringMap(key string) map[string]interface{}` - Get string map / 문자열 맵 가져오기
+- `Exists(key string) bool` - Check if key exists / 키 존재 확인
+- `Delete(key string)` - Remove value / 값 제거
+- `Keys() []string` - Get all keys / 모든 키 가져오기
 
 **Request Helpers / 요청 헬퍼**:
 - `Query(key string) string` - Get query parameter / 쿼리 매개변수 가져오기
@@ -814,6 +821,7 @@ The following features are planned for future releases:
 - ✅ v1.11.014: Cookie & Header Helpers (Cookie, SetCookie, DeleteCookie, GetCookie, AddHeader, GetHeaders, ClientIP) / 쿠키 및 헤더 헬퍼
 - ✅ v1.11.015: File Upload (FormFile, MultipartForm, SaveUploadedFile, MaxUploadSize) / 파일 업로드 (FormFile, MultipartForm, SaveUploadedFile, MaxUploadSize)
 - ✅ v1.11.016: Static File Serving (Static, File, FileAttachment) / 정적 파일 서빙 (Static, File, FileAttachment)
+- ✅ v1.11.017: Context Storage Enhancement (GetInt64, GetFloat64, GetStringSlice, GetStringMap, Exists, Delete, Keys) / 컨텍스트 저장소 향상
 
 ## Documentation / 문서
 

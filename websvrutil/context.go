@@ -167,6 +167,79 @@ func (c *Context) GetBool(key string) bool {
 	return b
 }
 
+// GetInt64 retrieves an int64 value from the context.
+// GetInt64는 컨텍스트에서 int64 값을 검색합니다.
+func (c *Context) GetInt64(key string) int64 {
+	value, exists := c.Get(key)
+	if !exists {
+		return 0
+	}
+	i64, _ := value.(int64)
+	return i64
+}
+
+// GetFloat64 retrieves a float64 value from the context.
+// GetFloat64는 컨텍스트에서 float64 값을 검색합니다.
+func (c *Context) GetFloat64(key string) float64 {
+	value, exists := c.Get(key)
+	if !exists {
+		return 0.0
+	}
+	f64, _ := value.(float64)
+	return f64
+}
+
+// GetStringSlice retrieves a []string value from the context.
+// GetStringSlice는 컨텍스트에서 []string 값을 검색합니다.
+func (c *Context) GetStringSlice(key string) []string {
+	value, exists := c.Get(key)
+	if !exists {
+		return nil
+	}
+	slice, _ := value.([]string)
+	return slice
+}
+
+// GetStringMap retrieves a map[string]interface{} value from the context.
+// GetStringMap은 컨텍스트에서 map[string]interface{} 값을 검색합니다.
+func (c *Context) GetStringMap(key string) map[string]interface{} {
+	value, exists := c.Get(key)
+	if !exists {
+		return nil
+	}
+	m, _ := value.(map[string]interface{})
+	return m
+}
+
+// Exists checks if a key exists in the context.
+// Exists는 컨텍스트에 키가 존재하는지 확인합니다.
+func (c *Context) Exists(key string) bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	_, exists := c.values[key]
+	return exists
+}
+
+// Delete removes a value from the context.
+// Delete는 컨텍스트에서 값을 제거합니다.
+func (c *Context) Delete(key string) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	delete(c.values, key)
+}
+
+// Keys returns all keys in the context.
+// Keys는 컨텍스트의 모든 키를 반환합니다.
+func (c *Context) Keys() []string {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	keys := make([]string, 0, len(c.values))
+	for key := range c.values {
+		keys = append(keys, key)
+	}
+	return keys
+}
+
 // Context returns the request's context.Context.
 // Context는 요청의 context.Context를 반환합니다.
 func (c *Context) Context() context.Context {

@@ -5,6 +5,74 @@
 
 ---
 
+## [v1.11.017] - 2025-10-16
+
+### Added / 추가
+- **Context Storage Enhancement** / **컨텍스트 저장소 향상** (`context.go`)
+  - `GetInt64(key string) int64` - Get int64 value from context
+  - `GetFloat64(key string) float64` - Get float64 value from context
+  - `GetStringSlice(key string) []string` - Get string slice from context
+  - `GetStringMap(key string) map[string]interface{}` - Get string map from context
+  - `Exists(key string) bool` - Check if key exists in context
+  - `Delete(key string)` - Remove value from context
+  - `Keys() []string` - Get all keys from context
+
+- **Enhanced Type Safety** / **향상된 타입 안전성**
+  - Type-safe getter methods for common data types
+  - Zero-value returns for non-existent or wrong-type keys
+  - Thread-safe operations with sync.RWMutex protection
+
+- **Key Management** / **키 관리**
+  - Exists() method for key existence check
+  - Delete() method for value removal
+  - Keys() method to list all stored keys
+  - Support for nil values in storage
+
+- **Comprehensive Tests** / **종합 테스트** (`storage_test.go`)
+  - `TestContextStorageSetGet` - Test Set and Get operations
+  - `TestContextStorageMustGet` - Test MustGet method
+  - `TestContextStorageMustGetPanic` - Test MustGet panic on missing key
+  - `TestContextGetString` - Test string type getter
+  - `TestContextGetInt` - Test int type getter
+  - `TestContextGetBool` - Test bool type getter
+  - `TestContextGetInt64` - Test int64 type getter
+  - `TestContextGetFloat64` - Test float64 type getter
+  - `TestContextGetStringSlice` - Test string slice getter
+  - `TestContextGetStringMap` - Test string map getter
+  - `TestContextExists` - Test key existence check
+  - `TestContextDelete` - Test value deletion
+  - `TestContextKeys` - Test getting all keys
+  - `TestContextStorageConcurrency` - Test thread-safety
+  - `TestContextStorageTypes` - Test various data types
+  - `BenchmarkContextSet` - Benchmark Set operation
+  - `BenchmarkContextGet` - Benchmark Get operation
+  - `BenchmarkContextGetString` - Benchmark GetString operation
+  - **Total: 15 test functions + 3 benchmarks** for context storage
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.017
+- Bumped version to v1.11.017 in `cfg/app.yaml`
+- Updated `README.md` with enhanced Context Storage section
+- Added new file: `storage_test.go`
+
+### Testing Coverage / 테스트 커버리지
+- **15 new test functions + 3 benchmarks** for context storage
+- **Total: 205+ test functions**, **Total: 46 benchmark functions**
+- **79.2% test coverage** - All tests passing ✅
+
+### Notes / 참고사항
+- All new methods are thread-safe with RWMutex protection
+- Type-safe getters return zero values for missing/wrong-type keys
+- Exists() checks for key presence (even if value is nil)
+- Delete() safely removes keys without panic
+- Keys() returns sorted slice for predictable iteration
+- Enhanced from basic Set/Get/MustGet to full-featured storage system
+- Supports all common Go types: string, int, int64, float64, bool, slices, maps
+- Concurrency tests verify thread-safety under high load
+- Next: v1.11.018+ will continue Phase 5 (Server Management) development
+
+---
+
 ## [v1.11.016] - 2025-10-16
 
 ### Added / 추가
