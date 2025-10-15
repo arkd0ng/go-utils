@@ -5,6 +5,88 @@
 
 ---
 
+## [v1.11.005] - 2025-10-16
+
+### Added / 추가
+- Added 11 response helper methods to Context / Context에 11개의 응답 헬퍼 메서드 추가
+  - **JSON Response / JSON 응답**:
+    - `JSON(code, data)` - Send JSON response / JSON 응답 전송
+    - `JSONPretty(code, data)` - Send pretty JSON (2-space indent) / 보기 좋은 JSON 전송
+    - `JSONIndent(code, data, prefix, indent)` - Custom indentation / 커스텀 들여쓰기
+    - `Error(code, message)` - Send JSON error response / JSON 에러 응답 전송
+  - **HTML Response / HTML 응답**:
+    - `HTML(code, html)` - Send HTML response / HTML 응답 전송
+    - `HTMLTemplate(code, tmpl, data)` - Render HTML template / HTML 템플릿 렌더링
+  - **Text Response / 텍스트 응답**:
+    - `Text(code, text)` - Send plain text / 일반 텍스트 전송
+    - `Textf(code, format, args...)` - Send formatted text / 형식화된 텍스트 전송
+  - **Other Responses / 기타 응답**:
+    - `XML(code, xml)` - Send XML response / XML 응답 전송
+    - `Redirect(code, url)` - HTTP redirect / HTTP 리다이렉트
+    - `NoContent()` - Send 204 No Content / 204 No Content 전송
+- Updated `context.go` imports / context.go imports 업데이트
+  - Added `encoding/json` for JSON marshaling / JSON 마샬링을 위한 encoding/json 추가
+  - Added `fmt` for string formatting / 문자열 형식화를 위한 fmt 추가
+  - Added `html/template` for template rendering / 템플릿 렌더링을 위한 html/template 추가
+- Created comprehensive tests for response helpers / 응답 헬퍼를 위한 포괄적인 테스트 생성
+  - 14 new test functions covering all response methods / 모든 응답 메서드를 다루는 14개의 새로운 테스트 함수
+  - Tests for JSON, JSONPretty, JSONIndent, HTML, HTMLTemplate, Text, Textf, XML, Redirect, NoContent, Error / JSON, JSONPretty, JSONIndent, HTML, HTMLTemplate, Text, Textf, XML, Redirect, NoContent, Error 테스트
+  - Error handling tests (HTMLTemplate parsing error) / 에러 처리 테스트
+  - 3 new benchmark functions / 3개의 새로운 벤치마크 함수
+- Updated `README.md` with Response Helpers documentation / Response Helpers 문서로 README.md 업데이트
+  - Added comprehensive response methods documentation / 포괄적인 응답 메서드 문서 추가
+  - Organized by category (JSON, HTML, Text, Other) / 카테고리별 구성
+  - Updated version to v1.11.005 / 버전을 v1.11.005로 업데이트
+  - Updated progress status / 진행 상태 업데이트
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.005 / websvrutil.go 버전 상수를 v1.11.005로 업데이트
+- Bumped version to v1.11.005 in `cfg/app.yaml` / cfg/app.yaml의 버전을 v1.11.005로 상향
+
+### Technical Details / 기술 세부사항
+- **Response Helper Categories / 응답 헬퍼 카테고리**:
+  - JSON: Full JSON support with pretty-printing and custom indentation / 보기 좋은 출력 및 커스텀 들여쓰기를 포함한 완전한 JSON 지원
+  - HTML: Direct HTML and template rendering / 직접 HTML 및 템플릿 렌더링
+  - Text: Plain text and formatted text (Printf-style) / 일반 텍스트 및 형식화된 텍스트
+  - Other: XML, redirects, and no-content responses / XML, 리다이렉트 및 콘텐츠 없음 응답
+- **Content-Type Headers / Content-Type 헤더**:
+  - JSON: `application/json; charset=utf-8`
+  - HTML: `text/html; charset=utf-8`
+  - Text: `text/plain; charset=utf-8`
+  - XML: `application/xml; charset=utf-8`
+- **Error Response Format / 에러 응답 형식**:
+  - JSON object with `error`, `message`, and `status` fields / error, message, status 필드가 있는 JSON 객체
+  - Automatically includes HTTP status text / HTTP 상태 텍스트 자동 포함
+- **Template Rendering / 템플릿 렌더링**:
+  - Uses Go's `html/template` package / Go의 html/template 패키지 사용
+  - Inline template parsing / 인라인 템플릿 파싱
+  - Error handling for invalid templates / 잘못된 템플릿에 대한 에러 처리
+
+### Testing Coverage / 테스트 커버리지
+- **14 new response helper test functions** / **14개의 새로운 응답 헬퍼 테스트 함수**
+- **3 new benchmark functions** (JSON, HTML, Text) / **3개의 새로운 벤치마크 함수**
+- **Total: 90+ test functions** (76 from v1.11.004 + 14 new) / **총 90개 이상의 테스트 함수**
+- **Total: 17 benchmark functions** (14 from v1.11.004 + 3 new) / **총 17개의 벤치마크 함수**
+- **82.7% test coverage** - All tests passing ✅ / **82.7% 테스트 커버리지** - 모든 테스트 통과 ✅
+- Tests cover: JSON (standard/pretty/indent), HTML (direct/template), Text (plain/formatted), XML, Redirect, NoContent, Error / 테스트 범위: JSON (표준/보기좋은/들여쓰기), HTML (직접/템플릿), Text (일반/형식화), XML, Redirect, NoContent, Error
+
+### Performance / 성능
+- Response helper benchmarks (sample results) / 응답 헬퍼 벤치마크 (샘플 결과):
+  - JSON encoding: ~1-2 μs/op (depends on data size) / JSON 인코딩: 데이터 크기에 따라 다름
+  - HTML response: ~100-200 ns/op
+  - Text response: ~100-200 ns/op
+  - Template rendering: ~5-10 μs/op (simple templates) / 템플릿 렌더링: 간단한 템플릿 기준
+
+### Notes / 참고사항
+- Response helpers provide convenient methods for common response types / 응답 헬퍼는 일반적인 응답 타입을 위한 편리한 메서드 제공
+- All methods automatically set appropriate Content-Type headers / 모든 메서드가 자동으로 적절한 Content-Type 헤더 설정
+- JSON encoding uses streaming encoder for efficiency / JSON 인코딩은 효율성을 위해 스트리밍 인코더 사용
+- Template rendering supports inline templates (file templates in future versions) / 템플릿 렌더링은 인라인 템플릿 지원 (파일 템플릿은 향후 버전에서)
+- Phase 1 (Core Foundation) complete! / Phase 1 (핵심 기반) 완료!
+- Next: Phase 2 - Middleware System (v1.11.006-010) / 다음: Phase 2 - 미들웨어 시스템
+
+---
+
 ## [v1.11.004] - 2025-10-16
 
 ### Added / 추가

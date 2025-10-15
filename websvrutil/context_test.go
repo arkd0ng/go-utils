@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -476,5 +477,332 @@ func BenchmarkContextParam(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = ctx.Param("id")
+	}
+}
+
+// TestContextJSON tests JSON response.
+// TestContextJSON은 JSON 응답을 테스트합니다.
+func TestContextJSON(t *testing.T) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+	ctx := NewContext(rec, req)
+
+	data := map[string]string{"message": "success"}
+	err := ctx.JSON(200, data)
+
+	if err != nil {
+		t.Fatalf("JSON() returned error: %v", err)
+	}
+
+	if rec.Code != 200 {
+		t.Errorf("Status code = %d, want 200", rec.Code)
+	}
+
+	contentType := rec.Header().Get("Content-Type")
+	if contentType != "application/json; charset=utf-8" {
+		t.Errorf("Content-Type = %s, want application/json; charset=utf-8", contentType)
+	}
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "success") {
+		t.Errorf("Response body does not contain 'success': %s", body)
+	}
+}
+
+// TestContextJSONPretty tests pretty JSON response.
+// TestContextJSONPretty는 보기 좋은 JSON 응답을 테스트합니다.
+func TestContextJSONPretty(t *testing.T) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+	ctx := NewContext(rec, req)
+
+	data := map[string]string{"message": "success"}
+	err := ctx.JSONPretty(200, data)
+
+	if err != nil {
+		t.Fatalf("JSONPretty() returned error: %v", err)
+	}
+
+	body := rec.Body.String()
+	// Pretty JSON should have indentation
+	// 보기 좋은 JSON은 들여쓰기가 있어야 합니다
+	if !strings.Contains(body, "  ") {
+		t.Error("JSONPretty should include indentation")
+	}
+}
+
+// TestContextJSONIndent tests JSON with custom indentation.
+// TestContextJSONIndent는 커스텀 들여쓰기가 있는 JSON을 테스트합니다.
+func TestContextJSONIndent(t *testing.T) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+	ctx := NewContext(rec, req)
+
+	data := map[string]string{"message": "success"}
+	err := ctx.JSONIndent(200, data, "", "    ")
+
+	if err != nil {
+		t.Fatalf("JSONIndent() returned error: %v", err)
+	}
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "    ") {
+		t.Error("JSONIndent should include custom indentation")
+	}
+}
+
+// TestContextHTML tests HTML response.
+// TestContextHTML은 HTML 응답을 테스트합니다.
+func TestContextHTML(t *testing.T) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+	ctx := NewContext(rec, req)
+
+	html := "<h1>Hello World</h1>"
+	err := ctx.HTML(200, html)
+
+	if err != nil {
+		t.Fatalf("HTML() returned error: %v", err)
+	}
+
+	if rec.Code != 200 {
+		t.Errorf("Status code = %d, want 200", rec.Code)
+	}
+
+	contentType := rec.Header().Get("Content-Type")
+	if contentType != "text/html; charset=utf-8" {
+		t.Errorf("Content-Type = %s, want text/html; charset=utf-8", contentType)
+	}
+
+	body := rec.Body.String()
+	if body != html {
+		t.Errorf("Body = %s, want %s", body, html)
+	}
+}
+
+// TestContextHTMLTemplate tests HTML template rendering.
+// TestContextHTMLTemplate은 HTML 템플릿 렌더링을 테스트합니다.
+func TestContextHTMLTemplate(t *testing.T) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+	ctx := NewContext(rec, req)
+
+	tmpl := "<h1>Hello {{.Name}}</h1>"
+	data := map[string]string{"Name": "World"}
+	err := ctx.HTMLTemplate(200, tmpl, data)
+
+	if err != nil {
+		t.Fatalf("HTMLTemplate() returned error: %v", err)
+	}
+
+	body := rec.Body.String()
+	expected := "<h1>Hello World</h1>"
+	if body != expected {
+		t.Errorf("Body = %s, want %s", body, expected)
+	}
+}
+
+// TestContextHTMLTemplateError tests HTML template parsing error.
+// TestContextHTMLTemplateError는 HTML 템플릿 파싱 에러를 테스트합니다.
+func TestContextHTMLTemplateError(t *testing.T) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+	ctx := NewContext(rec, req)
+
+	// Invalid template syntax
+	// 잘못된 템플릿 구문
+	tmpl := "<h1>Hello {{.Name</h1>"
+	err := ctx.HTMLTemplate(200, tmpl, nil)
+
+	if err == nil {
+		t.Error("HTMLTemplate() should return error for invalid template")
+	}
+}
+
+// TestContextText tests plain text response.
+// TestContextText는 일반 텍스트 응답을 테스트합니다.
+func TestContextText(t *testing.T) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+	ctx := NewContext(rec, req)
+
+	text := "Hello World"
+	err := ctx.Text(200, text)
+
+	if err != nil {
+		t.Fatalf("Text() returned error: %v", err)
+	}
+
+	if rec.Code != 200 {
+		t.Errorf("Status code = %d, want 200", rec.Code)
+	}
+
+	contentType := rec.Header().Get("Content-Type")
+	if contentType != "text/plain; charset=utf-8" {
+		t.Errorf("Content-Type = %s, want text/plain; charset=utf-8", contentType)
+	}
+
+	body := rec.Body.String()
+	if body != text {
+		t.Errorf("Body = %s, want %s", body, text)
+	}
+}
+
+// TestContextTextf tests formatted text response.
+// TestContextTextf는 형식화된 텍스트 응답을 테스트합니다.
+func TestContextTextf(t *testing.T) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+	ctx := NewContext(rec, req)
+
+	err := ctx.Textf(200, "Hello %s, number %d", "World", 42)
+
+	if err != nil {
+		t.Fatalf("Textf() returned error: %v", err)
+	}
+
+	body := rec.Body.String()
+	expected := "Hello World, number 42"
+	if body != expected {
+		t.Errorf("Body = %s, want %s", body, expected)
+	}
+}
+
+// TestContextXML tests XML response.
+// TestContextXML은 XML 응답을 테스트합니다.
+func TestContextXML(t *testing.T) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+	ctx := NewContext(rec, req)
+
+	xml := "<root><message>success</message></root>"
+	err := ctx.XML(200, xml)
+
+	if err != nil {
+		t.Fatalf("XML() returned error: %v", err)
+	}
+
+	if rec.Code != 200 {
+		t.Errorf("Status code = %d, want 200", rec.Code)
+	}
+
+	contentType := rec.Header().Get("Content-Type")
+	if contentType != "application/xml; charset=utf-8" {
+		t.Errorf("Content-Type = %s, want application/xml; charset=utf-8", contentType)
+	}
+
+	body := rec.Body.String()
+	if body != xml {
+		t.Errorf("Body = %s, want %s", body, xml)
+	}
+}
+
+// TestContextRedirect tests HTTP redirect.
+// TestContextRedirect는 HTTP 리다이렉트를 테스트합니다.
+func TestContextRedirect(t *testing.T) {
+	req := httptest.NewRequest("GET", "/old", nil)
+	rec := httptest.NewRecorder()
+	ctx := NewContext(rec, req)
+
+	ctx.Redirect(302, "/new")
+
+	if rec.Code != 302 {
+		t.Errorf("Status code = %d, want 302", rec.Code)
+	}
+
+	location := rec.Header().Get("Location")
+	if location != "/new" {
+		t.Errorf("Location = %s, want /new", location)
+	}
+}
+
+// TestContextNoContent tests 204 No Content response.
+// TestContextNoContent는 204 No Content 응답을 테스트합니다.
+func TestContextNoContent(t *testing.T) {
+	req := httptest.NewRequest("DELETE", "/users/123", nil)
+	rec := httptest.NewRecorder()
+	ctx := NewContext(rec, req)
+
+	ctx.NoContent()
+
+	if rec.Code != 204 {
+		t.Errorf("Status code = %d, want 204", rec.Code)
+	}
+
+	if rec.Body.Len() != 0 {
+		t.Error("NoContent should not have body")
+	}
+}
+
+// TestContextError tests error response.
+// TestContextError는 에러 응답을 테스트합니다.
+func TestContextError(t *testing.T) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	rec := httptest.NewRecorder()
+	ctx := NewContext(rec, req)
+
+	err := ctx.Error(400, "Invalid input")
+
+	if err != nil {
+		t.Fatalf("Error() returned error: %v", err)
+	}
+
+	if rec.Code != 400 {
+		t.Errorf("Status code = %d, want 400", rec.Code)
+	}
+
+	contentType := rec.Header().Get("Content-Type")
+	if !strings.Contains(contentType, "application/json") {
+		t.Errorf("Content-Type should be JSON, got %s", contentType)
+	}
+
+	body := rec.Body.String()
+	if !strings.Contains(body, "Invalid input") {
+		t.Error("Error response should contain error message")
+	}
+	if !strings.Contains(body, "400") {
+		t.Error("Error response should contain status code")
+	}
+}
+
+// BenchmarkContextJSON benchmarks JSON response.
+// BenchmarkContextJSON은 JSON 응답을 벤치마크합니다.
+func BenchmarkContextJSON(b *testing.B) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	data := map[string]string{"message": "success"}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		rec := httptest.NewRecorder()
+		ctx := NewContext(rec, req)
+		_ = ctx.JSON(200, data)
+	}
+}
+
+// BenchmarkContextHTML benchmarks HTML response.
+// BenchmarkContextHTML은 HTML 응답을 벤치마크합니다.
+func BenchmarkContextHTML(b *testing.B) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	html := "<h1>Hello World</h1>"
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		rec := httptest.NewRecorder()
+		ctx := NewContext(rec, req)
+		_ = ctx.HTML(200, html)
+	}
+}
+
+// BenchmarkContextText benchmarks text response.
+// BenchmarkContextText는 텍스트 응답을 벤치마크합니다.
+func BenchmarkContextText(b *testing.B) {
+	req := httptest.NewRequest("GET", "/test", nil)
+	text := "Hello World"
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		rec := httptest.NewRecorder()
+		ctx := NewContext(rec, req)
+		_ = ctx.Text(200, text)
 	}
 }
