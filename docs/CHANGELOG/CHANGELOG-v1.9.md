@@ -6,6 +6,92 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.010] - 2025-10-15
+
+### Fixed / 수정됨
+
+#### Fixed Log Backup Logic to Prevent Content Duplication / 내용 중복 방지를 위한 로그 백업 로직 수정
+
+**Problem / 문제:**
+- When running examples multiple times, log content was being duplicated in the main log file
+- The backup system copied the log file but didn't delete the original, causing append mode to add to existing content
+- This resulted in exponentially growing log files with repeated content
+- 예제를 여러 번 실행할 때 메인 로그 파일에 로그 내용이 중복됨
+- 백업 시스템이 로그 파일을 복사했지만 원본을 삭제하지 않아서 append 모드가 기존 내용에 추가됨
+- 이로 인해 반복된 내용으로 로그 파일이 기하급수적으로 커짐
+
+**Solution / 해결방법:**
+- Added `fileutil.DeleteFile(logFilePath)` after successful backup to delete original log file
+- This ensures each run starts with a fresh log file, preventing content duplication
+- All backup files remain intact with timestamps for historical reference
+- 성공적인 백업 후 `fileutil.DeleteFile(logFilePath)`를 추가하여 원본 로그 파일 삭제
+- 각 실행이 새로운 로그 파일로 시작하여 내용 중복 방지
+- 모든 백업 파일은 타임스탬프와 함께 히스토리 참조를 위해 그대로 유지됨
+
+**Technical Changes / 기술적 변경사항:**
+
+Before (이전):
+```go
+if err := fileutil.CopyFile(logFilePath, backupName); err == nil {
+    fmt.Printf("✅ Backed up previous log to: %s\n", backupName)
+}
+```
+
+After (이후):
+```go
+if err := fileutil.CopyFile(logFilePath, backupName); err == nil {
+    fmt.Printf("✅ Backed up previous log to: %s\n", backupName)
+    // Delete original log file to prevent content duplication
+    fileutil.DeleteFile(logFilePath)
+}
+```
+
+**Updated Files / 업데이트된 파일 (9개):**
+1. `examples/random_string/main.go` - Added delete after backup
+2. `examples/stringutil/main.go` - Added delete after backup
+3. `examples/timeutil/main.go` - Added delete after backup
+4. `examples/sliceutil/main.go` - Added delete after backup
+5. `examples/maputil/main.go` - Added delete after backup
+6. `examples/mysql/main.go` - Added delete after backup
+7. `examples/redis/main.go` - Added delete after backup
+8. `examples/fileutil/main.go` - Added delete after backup
+9. `examples/logging/main.go` - Updated `backupLogFile()` helper function
+
+**Benefits / 이점:**
+- ✅ **Clean logs**: Each run produces clean, non-duplicated logs
+- ✅ **Predictable file sizes**: Log files don't grow exponentially
+- ✅ **Historical preservation**: All previous logs backed up with timestamps
+- ✅ **Consistent behavior**: All 9 examples now have identical backup logic
+- ✅ **깨끗한 로그**: 각 실행이 깨끗하고 중복되지 않은 로그 생성
+- ✅ **예측 가능한 파일 크기**: 로그 파일이 기하급수적으로 커지지 않음
+- ✅ **히스토리 보존**: 모든 이전 로그가 타임스탬프와 함께 백업됨
+- ✅ **일관된 동작**: 모든 9개 예제가 동일한 백업 로직 보유
+
+**Example Behavior / 예제 동작:**
+
+Run 1 (첫 실행):
+- Creates `logs/random-example.log` with content A
+
+Run 2 (두 번째 실행):
+- Backs up to `logs/random-example-20251015-120000.log` (content A)
+- **Deletes** `logs/random-example.log`
+- Creates fresh `logs/random-example.log` with content B (not A+B)
+
+Run 3 (세 번째 실행):
+- Backs up to `logs/random-example-20251015-120100.log` (content B)
+- **Deletes** `logs/random-example.log`
+- Creates fresh `logs/random-example.log` with content C (not B+C)
+
+**Testing / 테스트:**
+- Verified with random_string example: content no longer duplicates
+- Confirmed backup files are created correctly with timestamps
+- Tested cleanup logic still works (keeps only 5 most recent backups)
+- random_string 예제로 검증: 내용이 더 이상 중복되지 않음
+- 백업 파일이 타임스탬프와 함께 올바르게 생성됨을 확인
+- 정리 로직이 여전히 작동함을 테스트 (최근 5개 백업만 유지)
+
+---
+
 ## [v1.9.009] - 2025-10-15
 
 ### Enhanced / 보강됨

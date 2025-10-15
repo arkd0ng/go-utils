@@ -46,6 +46,8 @@ func main() {
 			// Backup existing log file / 기존 로그 파일 백업
 			if err := fileutil.CopyFile(logFilePath, backupName); err == nil {
 				fmt.Printf("✅ Backed up previous log to: %s\n", backupName)
+				// Delete original log file to prevent content duplication / 내용 중복 방지를 위해 원본 로그 파일 삭제
+				fileutil.DeleteFile(logFilePath)
 			}
 		}
 
