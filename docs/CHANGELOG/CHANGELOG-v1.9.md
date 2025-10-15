@@ -13,8 +13,8 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 #### Extremely Detailed Logging in fileutil Examples / fileutil 예제에 극도로 상세한 로깅 추가
 
 **Feature / 기능:**
-- Enhanced `examples/fileutil/main.go` Example 1 (File Writing Operations) with comprehensive, tutorial-quality logging
-- fileutil 예제의 Example 1 (파일 쓰기 작업)을 포괄적이고 튜토리얼 수준의 로깅으로 개선
+- Enhanced `examples/fileutil/main.go` Examples 1-3 with comprehensive, tutorial-quality logging
+- fileutil 예제 1-3을 포괄적이고 튜토리얼 수준의 로깅으로 개선
 
 **Details / 상세 내용:**
 - Each function now includes:
@@ -34,7 +34,7 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
   - ✅ 상세 정보와 함께 성공 확인
   - 🔍 검증 체크
 
-**Enhanced Functions / 개선된 함수:**
+**Example 1 - File Writing Operations (8 functions):**
 1. `WriteString()` - 55+ lines of detailed logging
 2. `WriteFile()` - 50+ lines of detailed logging
 3. `WriteLines()` - 60+ lines of detailed logging with content preview
@@ -43,6 +43,28 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 6. `WriteCSV()` - 55+ lines of detailed logging with CSV preview
 7. `AppendString()` - 50+ lines with before/after comparison
 8. `AppendLines()` - 50+ lines with full content display
+
+**Example 2 - File Reading Operations (6 functions):**
+1. `ReadString()` - 50+ lines with content display
+2. `ReadFile()` - 50+ lines with hex and ASCII representation
+3. `ReadLines()` - 55+ lines with line-by-line content display
+4. `ReadJSON()` - 50+ lines with parsed struct field display
+5. `ReadYAML()` - 50+ lines with parsed struct and verification
+6. `ReadCSV()` - 50+ lines with header and row display
+
+**Example 3 - Path Operations (12 functions):**
+1. `Join()` - 50+ lines for path element combination
+2. `Split()` - 50+ lines for directory/file separation
+3. `Base()` - 45+ lines for filename extraction
+4. `Dir()` - 45+ lines for directory extraction
+5. `Ext()` - 45+ lines for extension retrieval
+6. `WithoutExt()` - 50+ lines for extension removal
+7. `ChangeExt()` - 50+ lines for extension modification
+8. `HasExt()` - 55+ lines for extension validation
+9. `Abs()` - 45+ lines for absolute path resolution
+10. `IsAbs()` - 50+ lines for path type checking
+11. `CleanPath()` - 55+ lines for path normalization
+12. `ToSlash/FromSlash()` - 55+ lines for separator conversion
 
 **Benefits / 이점:**
 - Users can understand the complete function behavior from logs alone without reading documentation
