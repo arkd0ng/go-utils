@@ -1,6 +1,6 @@
 # sliceutil - Slice Utilities / 슬라이스 유틸리티
 
-**v1.7.022** - Extreme Simplicity for Slice Operations! 🎉
+**v1.7.023** - Extreme Simplicity for Slice Operations! 🎉
 
 Extreme simplicity slice utility functions for Go - reduce 10-20 lines of slice manipulation code to just 1 line.
 
@@ -579,7 +579,7 @@ MIT 라이선스 - 자세한 내용은 [LICENSE](../LICENSE)를 참조하세요.
 
 ## Version / 버전
 
-Current version: **v1.7.022**
+Current version: **v1.7.023**
 
 For version history, see [CHANGELOG-v1.7.md](../docs/CHANGELOG/CHANGELOG-v1.7.md).
 

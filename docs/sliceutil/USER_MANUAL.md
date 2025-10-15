@@ -1,6 +1,6 @@
 # Sliceutil Package - User Manual / 사용자 매뉴얼
 
-**Version / 버전**: v1.7.016
+**Version / 버전**: v1.7.023
 **Package / 패키지**: `github.com/arkd0ng/go-utils/sliceutil`
 **Go Version / Go 버전**: 1.18+
 
@@ -20,6 +20,12 @@
    - [Sorting / 정렬](#sorting--정렬)
    - [Predicates / 조건자](#predicates--조건자)
    - [Utilities / 유틸리티](#utilities--유틸리티)
+   - [Statistics / 통계](#statistics--통계)
+   - [Diff/Comparison / 차이/비교](#diffcomparison--차이비교)
+   - [Index-based Operations / 인덱스 기반 작업](#index-based-operations--인덱스-기반-작업)
+   - [Conditional Operations / 조건부 작업](#conditional-operations--조건부-작업)
+   - [Advanced Operations / 고급 작업](#advanced-operations--고급-작업)
+   - [Combinatorial Operations / 조합 작업](#combinatorial-operations--조합-작업)
 5. [Common Use Cases / 일반적인 사용 사례](#common-use-cases--일반적인-사용-사례)
 6. [Best Practices / 모범 사례](#best-practices--모범-사례)
 7. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
@@ -31,9 +37,9 @@
 
 ### What is Sliceutil? / Sliceutil이란?
 
-Sliceutil is a Go package that provides **extreme simplicity** for slice operations, reducing repetitive code from 20+ lines to just 1 line. It offers 60 type-safe functions across 8 categories for common slice manipulations.
+Sliceutil is a Go package that provides **extreme simplicity** for slice operations, reducing repetitive code from 20+ lines to just 1 line. It offers 95 type-safe functions across 14 categories for common slice manipulations.
 
-Sliceutil은 슬라이스 작업을 위한 **극도의 간결함**을 제공하는 Go 패키지로, 반복적인 코드를 20줄 이상에서 단 1줄로 줄입니다. 일반적인 슬라이스 조작을 위해 8개 카테고리에 걸쳐 60개의 타입 안전 함수를 제공합니다.
+Sliceutil은 슬라이스 작업을 위한 **극도의 간결함**을 제공하는 Go 패키지로, 반복적인 코드를 20줄 이상에서 단 1줄로 줄입니다. 일반적인 슬라이스 조작을 위해 14개 카테고리에 걸쳐 95개의 타입 안전 함수를 제공합니다.
 
 ### Design Philosophy / 설계 철학
 
@@ -72,7 +78,7 @@ doubled := sliceutil.Map(evens, func(n int) int { return n * 2 })
 - **Functional Programming Style** / **함수형 프로그래밍 스타일**: Map, Filter, Reduce, and more / Map, Filter, Reduce 등
 - **Immutable Operations** / **불변 작업**: Original slices are never modified / 원본 슬라이스는 절대 수정되지 않음
 - **Zero External Dependencies** / **제로 외부 의존성**: Only uses Go standard library / Go 표준 라이브러리만 사용
-- **Comprehensive Coverage** / **포괄적인 커버리지**: 60 functions for all common operations / 모든 일반적인 작업을 위한 60개 함수
+- **Comprehensive Coverage** / **포괄적인 커버리지**: 95 functions for all common operations / 모든 일반적인 작업을 위한 95개 함수
 - **Performance Optimized** / **성능 최적화**: Efficient algorithms with minimal allocations / 최소 할당으로 효율적인 알고리즘
 
 ### Use Cases / 사용 사례
@@ -582,6 +588,36 @@ if ok {
 }
 ```
 
+#### 11. FindLast
+
+Find the last element matching a predicate / 조건자와 일치하는 마지막 요소 찾기
+
+**Signature / 시그니처**:
+```go
+func FindLast[T any](slice []T, predicate func(T) bool) (T, bool)
+```
+
+**Parameters / 매개변수**:
+- `slice`: The slice to search / 검색할 슬라이스
+- `predicate`: Function that returns true for the desired element / 원하는 요소에 대해 true를 반환하는 함수
+
+**Returns / 반환값**: The last matching element and `true` if found, zero value and `false` otherwise / 발견되면 마지막 일치 요소와 `true`, 그렇지 않으면 제로값과 `false`
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3, 4, 5, 6}
+even, found := sliceutil.FindLast(numbers, func(n int) bool {
+    return n%2 == 0
+})
+// even = 6, found = true (last even number)
+
+words := []string{"apple", "banana", "apricot", "cherry"}
+startsWithA, found := sliceutil.FindLast(words, func(s string) bool {
+    return len(s) > 0 && s[0] == 'a'
+})
+// startsWithA = "apricot", found = true
+```
+
 ---
 
 ### Transformation / 변환
@@ -991,6 +1027,101 @@ byFirstLetter := sliceutil.CountBy(words, func(w string) rune {
     return rune(w[0])
 })
 // Result: map['a':3 'b':2]
+```
+
+#### 8. ReduceRight
+
+Apply a reducer function from right to left / 오른쪽에서 왼쪽으로 reducer 함수 적용
+
+**Signature / 시그니처**:
+```go
+func ReduceRight[T any](slice []T, initial T, reducer func(T, T) T) T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `initial`: Initial accumulator value / 초기 누적 값
+- `reducer`: Reducer function / Reducer 함수
+
+**Returns / 반환값**: Final accumulated value / 최종 누적 값
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3, 4, 5}
+result := sliceutil.ReduceRight(numbers, 0, func(acc, n int) int {
+    return acc + n
+})
+// 15 (same as Reduce for commutative operations)
+
+words := []string{"hello", "world"}
+combined := sliceutil.ReduceRight(words, "", func(acc, w string) string {
+    return acc + w
+})
+// "worldhello" (reversed compared to Reduce)
+```
+
+#### 9. MinBy
+
+Find the element with minimum key / 최소 키를 가진 요소 찾기
+
+**Signature / 시그니처**:
+```go
+func MinBy[T any, K constraints.Ordered](slice []T, keyFunc func(T) K) (T, error)
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `keyFunc`: Function to extract comparison key / 비교 키를 추출하는 함수
+
+**Returns / 반환값**: Element with minimum key and nil, or zero value and error if empty / 최소 키를 가진 요소와 nil, 또는 비어있으면 제로값과 에러
+
+**Example / 예제**:
+```go
+type Person struct {
+    Name string
+    Age  int
+}
+people := []Person{
+    {"Alice", 30},
+    {"Bob", 25},
+    {"Charlie", 35},
+}
+youngest, _ := sliceutil.MinBy(people, func(p Person) int {
+    return p.Age
+})
+// Person{Name: "Bob", Age: 25}
+```
+
+#### 10. MaxBy
+
+Find the element with maximum key / 최대 키를 가진 요소 찾기
+
+**Signature / 시그니처**:
+```go
+func MaxBy[T any, K constraints.Ordered](slice []T, keyFunc func(T) K) (T, error)
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `keyFunc`: Function to extract comparison key / 비교 키를 추출하는 함수
+
+**Returns / 반환값**: Element with maximum key and nil, or zero value and error if empty / 최대 키를 가진 요소와 nil, 또는 비어있으면 제로값과 에러
+
+**Example / 예제**:
+```go
+type Person struct {
+    Name string
+    Age  int
+}
+people := []Person{
+    {"Alice", 30},
+    {"Bob", 25},
+    {"Charlie", 35},
+}
+oldest, _ := sliceutil.MaxBy(people, func(p Person) int {
+    return p.Age
+})
+// Person{Name: "Charlie", Age: 35}
 ```
 
 ---
@@ -1461,6 +1592,44 @@ isSorted := sliceutil.IsSortedBy(people, func(a, b Person) bool {
 fmt.Println(isSorted) // true
 ```
 
+#### 6. SortByMulti
+
+Sort using a custom comparison function (alias for SortBy) / 사용자 정의 비교 함수로 정렬 (SortBy의 별칭)
+
+**Signature / 시그니처**:
+```go
+func SortByMulti[T any](slice []T, less func(a, b T) bool) []T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `less`: Comparison function / 비교 함수
+
+**Returns / 반환값**: New sorted slice / 정렬된 새 슬라이스
+
+**Example / 예제**:
+```go
+type Person struct {
+    Name string
+    Age  int
+}
+
+people := []Person{
+    {"Alice", 30},
+    {"Bob", 25},
+    {"Charlie", 30},
+}
+
+// Sort by age, then by name
+sorted := sliceutil.SortByMulti(people, func(a, b Person) bool {
+    if a.Age != b.Age {
+        return a.Age < b.Age
+    }
+    return a.Name < b.Name
+})
+// [{Bob 25} {Alice 30} {Charlie 30}]
+```
+
 ---
 
 ### Predicates / 조건자
@@ -1887,6 +2056,638 @@ result := sliceutil.Tap(numbers, func(n int) {
 // result is still [1 2 3 4 5]
 ```
 
+#### 12. Insert
+
+Insert elements at a specific index / 특정 인덱스에 요소 삽입
+
+**Signature / 시그니처**:
+```go
+func Insert[T any](slice []T, index int, elements ...T) []T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `index`: The insertion index / 삽입 인덱스
+- `elements`: Elements to insert / 삽입할 요소
+
+**Returns / 반환값**: New slice with elements inserted / 요소가 삽입된 새 슬라이스
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 5, 6}
+result := sliceutil.Insert(numbers, 2, 3, 4)
+// [1, 2, 3, 4, 5, 6]
+```
+
+---
+
+### Statistics / 통계
+
+This category provides statistical analysis functions for numeric slices.
+
+이 카테고리는 숫자 슬라이스에 대한 통계 분석 함수를 제공합니다.
+
+#### 1. Median
+
+Calculate the median value / 중앙값 계산
+
+**Signature / 시그니처**:
+```go
+func Median[T Number](slice []T) (float64, error)
+```
+
+**Parameters / 매개변수**:
+- `slice`: The slice of numbers / 숫자 슬라이스
+
+**Returns / 반환값**: Median value and error / 중앙값과 에러
+
+**Example / 예제**:
+```go
+numbers := []int{3, 1, 4, 1, 5, 9, 2}
+median, err := sliceutil.Median(numbers) // 3.0
+
+evens := []int{1, 2, 3, 4}
+median, err := sliceutil.Median(evens) // 2.5 (average of 2 and 3)
+```
+
+#### 2. Mode
+
+Find the most frequently occurring element / 최빈값 찾기
+
+**Signature / 시그니처**:
+```go
+func Mode[T comparable](slice []T) (T, error)
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+
+**Returns / 반환값**: Most common element and error / 최빈값과 에러
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 2, 3, 3, 3, 4}
+mode, err := sliceutil.Mode(numbers) // 3
+```
+
+#### 3. Frequencies
+
+Count occurrences of each element / 각 요소의 발생 횟수 세기
+
+**Signature / 시그니처**:
+```go
+func Frequencies[T comparable](slice []T) map[T]int
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+
+**Returns / 반환값**: Map of elements to counts / 요소를 개수에 매핑하는 맵
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 2, 3, 3, 3, 4}
+freq := sliceutil.Frequencies(numbers)
+// map[1:1 2:2 3:3 4:1]
+```
+
+#### 4. Percentile
+
+Calculate the p-th percentile / p번째 백분위수 계산
+
+**Signature / 시그니처**:
+```go
+func Percentile[T Number](slice []T, p float64) (float64, error)
+```
+
+**Parameters / 매개변수**:
+- `slice`: The slice of numbers / 숫자 슬라이스
+- `p`: Percentile (0-100) / 백분위수 (0-100)
+
+**Returns / 반환값**: Percentile value and error / 백분위수 값과 에러
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+p50, _ := sliceutil.Percentile(numbers, 50) // 5.5 (median)
+p75, _ := sliceutil.Percentile(numbers, 75) // 7.75
+p90, _ := sliceutil.Percentile(numbers, 90) // 9.1
+```
+
+#### 5. StandardDeviation
+
+Calculate standard deviation / 표준 편차 계산
+
+**Signature / 시그니처**:
+```go
+func StandardDeviation[T Number](slice []T) (float64, error)
+```
+
+**Parameters / 매개변수**:
+- `slice`: The slice of numbers / 숫자 슬라이스
+
+**Returns / 반환값**: Standard deviation and error / 표준 편차와 에러
+
+**Example / 예제**:
+```go
+numbers := []float64{2, 4, 4, 4, 5, 5, 7, 9}
+stddev, err := sliceutil.StandardDeviation(numbers) // ~2.0
+```
+
+#### 6. Variance
+
+Calculate variance / 분산 계산
+
+**Signature / 시그니처**:
+```go
+func Variance[T Number](slice []T) (float64, error)
+```
+
+**Parameters / 매개변수**:
+- `slice`: The slice of numbers / 숫자 슬라이스
+
+**Returns / 반환값**: Variance and error / 분산과 에러
+
+**Example / 예제**:
+```go
+numbers := []float64{2, 4, 4, 4, 5, 5, 7, 9}
+variance, err := sliceutil.Variance(numbers) // 4.0
+```
+
+#### 7. MostCommon
+
+Find the n most frequently occurring elements / 가장 자주 나타나는 n개 요소 찾기
+
+**Signature / 시그니처**:
+```go
+func MostCommon[T comparable](slice []T, n int) []T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `n`: Number of elements to return / 반환할 요소 수
+
+**Returns / 반환값**: Slice of n most common elements / 가장 자주 나타나는 n개 요소 슬라이스
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 2, 3, 3, 3, 4, 4, 4, 4}
+top2 := sliceutil.MostCommon(numbers, 2) // [4, 3]
+```
+
+#### 8. LeastCommon
+
+Find the n least frequently occurring elements / 가장 적게 나타나는 n개 요소 찾기
+
+**Signature / 시그니처**:
+```go
+func LeastCommon[T comparable](slice []T, n int) []T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `n`: Number of elements to return / 반환할 요소 수
+
+**Returns / 반환값**: Slice of n least common elements / 가장 적게 나타나는 n개 요소 슬라이스
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 2, 3, 3, 3, 4, 4, 4, 4}
+bottom2 := sliceutil.LeastCommon(numbers, 2) // [1, 2]
+```
+
+---
+
+### Diff/Comparison / 차이/비교
+
+This category provides functions for comparing slices and finding differences.
+
+이 카테고리는 슬라이스 비교 및 차이 찾기 함수를 제공합니다.
+
+#### 1. Diff
+
+Compare two slices and return differences / 두 슬라이스 비교 및 차이 반환
+
+**Signature / 시그니처**:
+```go
+func Diff[T comparable](old, new []T) DiffResult[T]
+
+type DiffResult[T any] struct {
+    Added     []T // Elements in new but not in old
+    Removed   []T // Elements in old but not in new
+    Unchanged []T // Elements in both
+}
+```
+
+**Parameters / 매개변수**:
+- `old`: The old slice / 이전 슬라이스
+- `new`: The new slice / 새 슬라이스
+
+**Returns / 반환값**: DiffResult with added, removed, and unchanged elements / 추가, 제거, 변경되지 않은 요소를 포함한 DiffResult
+
+**Example / 예제**:
+```go
+old := []int{1, 2, 3, 4}
+new := []int{2, 3, 4, 5}
+diff := sliceutil.Diff(old, new)
+// diff.Added: [5]
+// diff.Removed: [1]
+// diff.Unchanged: [2, 3, 4]
+```
+
+#### 2. DiffBy
+
+Compare slices using a key function / 키 함수를 사용하여 슬라이스 비교
+
+**Signature / 시그니처**:
+```go
+func DiffBy[T any, K comparable](old, new []T, keyFunc func(T) K) DiffResult[T]
+```
+
+**Parameters / 매개변수**:
+- `old`: The old slice / 이전 슬라이스
+- `new`: The new slice / 새 슬라이스
+- `keyFunc`: Function to extract comparison key / 비교 키를 추출하는 함수
+
+**Returns / 반환값**: DiffResult / DiffResult
+
+**Example / 예제**:
+```go
+type User struct { ID int; Name string }
+old := []User{{1, "Alice"}, {2, "Bob"}}
+new := []User{{2, "Bob"}, {3, "Charlie"}}
+diff := sliceutil.DiffBy(old, new, func(u User) int { return u.ID })
+// diff.Added: [{3, "Charlie"}]
+// diff.Removed: [{1, "Alice"}]
+```
+
+#### 3. EqualUnordered
+
+Check if two slices contain the same elements (order-independent) / 두 슬라이스가 같은 요소를 포함하는지 확인 (순서 무관)
+
+**Signature / 시그니처**:
+```go
+func EqualUnordered[T comparable](a, b []T) bool
+```
+
+**Parameters / 매개변수**:
+- `a`: First slice / 첫 번째 슬라이스
+- `b`: Second slice / 두 번째 슬라이스
+
+**Returns / 반환값**: true if same elements with same frequencies / 같은 빈도의 같은 요소면 true
+
+**Example / 예제**:
+```go
+a := []int{1, 2, 3, 2}
+b := []int{3, 2, 1, 2}
+equal := sliceutil.EqualUnordered(a, b) // true
+
+c := []int{1, 2, 3}
+d := []int{1, 2, 3, 3}
+equal := sliceutil.EqualUnordered(c, d) // false
+```
+
+#### 4. HasDuplicates
+
+Check if a slice contains any duplicates / 슬라이스에 중복이 있는지 확인
+
+**Signature / 시그니처**:
+```go
+func HasDuplicates[T comparable](slice []T) bool
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+
+**Returns / 반환값**: true if duplicates exist / 중복이 있으면 true
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3, 2, 4}
+hasDups := sliceutil.HasDuplicates(numbers) // true
+
+unique := []int{1, 2, 3, 4, 5}
+hasDups := sliceutil.HasDuplicates(unique) // false
+```
+
+---
+
+### Index-based Operations / 인덱스 기반 작업
+
+This category provides functions for index-based slice manipulations.
+
+이 카테고리는 인덱스 기반 슬라이스 조작 함수를 제공합니다.
+
+#### 1. FindIndices
+
+Find all indices matching a predicate / 조건과 일치하는 모든 인덱스 찾기
+
+**Signature / 시그니처**:
+```go
+func FindIndices[T any](slice []T, predicate func(T) bool) []int
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `predicate`: Matching function / 일치 함수
+
+**Returns / 반환값**: Slice of matching indices / 일치하는 인덱스 슬라이스
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3, 4, 5, 6}
+evenIndices := sliceutil.FindIndices(numbers, func(n int) bool {
+    return n%2 == 0
+})
+// [1, 3, 5] (indices of 2, 4, 6)
+```
+
+#### 2. AtIndices
+
+Get elements at specified indices / 지정된 인덱스의 요소 가져오기
+
+**Signature / 시그니처**:
+```go
+func AtIndices[T any](slice []T, indices []int) []T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `indices`: Indices to retrieve / 가져올 인덱스
+
+**Returns / 반환값**: Elements at specified indices / 지정된 인덱스의 요소
+
+**Example / 예제**:
+```go
+numbers := []int{10, 20, 30, 40, 50}
+selected := sliceutil.AtIndices(numbers, []int{0, 2, 4})
+// [10, 30, 50]
+```
+
+#### 3. RemoveIndices
+
+Remove elements at specified indices / 지정된 인덱스의 요소 제거
+
+**Signature / 시그니처**:
+```go
+func RemoveIndices[T any](slice []T, indices []int) []T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `indices`: Indices to remove / 제거할 인덱스
+
+**Returns / 반환값**: New slice with elements removed / 요소가 제거된 새 슬라이스
+
+**Example / 예제**:
+```go
+numbers := []int{10, 20, 30, 40, 50}
+result := sliceutil.RemoveIndices(numbers, []int{1, 3})
+// [10, 30, 50] (removed 20 and 40)
+```
+
+---
+
+### Conditional Operations / 조건부 작업
+
+This category provides conditional transformation functions.
+
+이 카테고리는 조건부 변환 함수를 제공합니다.
+
+#### 1. ReplaceIf
+
+Replace elements matching a predicate / 조건과 일치하는 요소 교체
+
+**Signature / 시그니처**:
+```go
+func ReplaceIf[T any](slice []T, predicate func(T) bool, newValue T) []T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `predicate`: Matching function / 일치 함수
+- `newValue`: Replacement value / 교체 값
+
+**Returns / 반환값**: New slice with replacements / 교체된 새 슬라이스
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3, 4, 5, 6}
+result := sliceutil.ReplaceIf(numbers, func(n int) bool {
+    return n%2 == 0
+}, 0)
+// [1, 0, 3, 0, 5, 0] (even numbers replaced with 0)
+```
+
+#### 2. ReplaceAll
+
+Replace all occurrences of a value / 값의 모든 발생 교체
+
+**Signature / 시그니처**:
+```go
+func ReplaceAll[T comparable](slice []T, oldValue, newValue T) []T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `oldValue`: Value to replace / 교체할 값
+- `newValue`: Replacement value / 교체 값
+
+**Returns / 반환값**: New slice with all replacements / 모든 교체가 완료된 새 슬라이스
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3, 2, 4, 2}
+result := sliceutil.ReplaceAll(numbers, 2, 99)
+// [1, 99, 3, 99, 4, 99]
+```
+
+#### 3. UpdateWhere
+
+Update elements matching a predicate using an updater function / 업데이터 함수로 조건과 일치하는 요소 업데이트
+
+**Signature / 시그니처**:
+```go
+func UpdateWhere[T any](slice []T, predicate func(T) bool, updater func(T) T) []T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `predicate`: Matching function / 일치 함수
+- `updater`: Update function / 업데이트 함수
+
+**Returns / 반환값**: New slice with updates / 업데이트된 새 슬라이스
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3, 4, 5}
+result := sliceutil.UpdateWhere(numbers,
+    func(n int) bool { return n%2 == 0 },
+    func(n int) int { return n * 10 })
+// [1, 20, 3, 40, 5] (even numbers multiplied by 10)
+```
+
+---
+
+### Advanced Operations / 고급 작업
+
+This category provides advanced functional programming operations.
+
+이 카테고리는 고급 함수형 프로그래밍 작업을 제공합니다.
+
+#### 1. Scan
+
+Return successive reduced values / 연속적인 reduce 값 반환
+
+**Signature / 시그니처**:
+```go
+func Scan[T any](slice []T, initial T, accumulator func(T, T) T) []T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `initial`: Initial value / 초기값
+- `accumulator`: Accumulator function / 누적 함수
+
+**Returns / 반환값**: Slice of intermediate results / 중간 결과 슬라이스
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3, 4, 5}
+result := sliceutil.Scan(numbers, 0, func(acc, n int) int {
+    return acc + n
+})
+// [0, 1, 3, 6, 10, 15] (cumulative sum)
+```
+
+#### 2. ZipWith
+
+Combine two slices using a zipper function / zipper 함수로 두 슬라이스 결합
+
+**Signature / 시그니처**:
+```go
+func ZipWith[T, U, R any](a []T, b []U, zipper func(T, U) R) []R
+```
+
+**Parameters / 매개변수**:
+- `a`: First slice / 첫 번째 슬라이스
+- `b`: Second slice / 두 번째 슬라이스
+- `zipper`: Combining function / 결합 함수
+
+**Returns / 반환값**: Combined slice / 결합된 슬라이스
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3}
+strings := []string{"a", "b", "c"}
+result := sliceutil.ZipWith(numbers, strings, func(n int, s string) string {
+    return fmt.Sprintf("%d:%s", n, s)
+})
+// ["1:a", "2:b", "3:c"]
+```
+
+#### 3. RotateLeft
+
+Rotate slice to the left / 슬라이스를 왼쪽으로 회전
+
+**Signature / 시그니처**:
+```go
+func RotateLeft[T any](slice []T, n int) []T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `n`: Rotation amount / 회전 양
+
+**Returns / 반환값**: Rotated slice / 회전된 슬라이스
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3, 4, 5}
+result := sliceutil.RotateLeft(numbers, 2)
+// [3, 4, 5, 1, 2]
+```
+
+#### 4. RotateRight
+
+Rotate slice to the right / 슬라이스를 오른쪽으로 회전
+
+**Signature / 시그니처**:
+```go
+func RotateRight[T any](slice []T, n int) []T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `n`: Rotation amount / 회전 양
+
+**Returns / 반환값**: Rotated slice / 회전된 슬라이스
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3, 4, 5}
+result := sliceutil.RotateRight(numbers, 2)
+// [4, 5, 1, 2, 3]
+```
+
+---
+
+### Combinatorial Operations / 조합 작업
+
+This category provides combinatorial operations for generating permutations and combinations.
+
+이 카테고리는 순열과 조합을 생성하는 조합 작업을 제공합니다.
+
+**Performance Warning / 성능 경고**: These operations have exponential complexity. Use with caution for large slices!
+이러한 작업은 지수 복잡도를 가집니다. 큰 슬라이스에 대해서는 주의하여 사용하세요!
+
+#### 1. Permutations
+
+Generate all permutations / 모든 순열 생성
+
+**Signature / 시그니처**:
+```go
+func Permutations[T any](slice []T) [][]T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+
+**Returns / 반환값**: All permutations / 모든 순열
+
+**Complexity / 복잡도**: O(n!) - n=5: 120, n=10: 3,628,800
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3}
+perms := sliceutil.Permutations(numbers)
+// [[1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], [3,2,1]]
+```
+
+#### 2. Combinations
+
+Generate all k-combinations / 모든 k-조합 생성
+
+**Signature / 시그니처**:
+```go
+func Combinations[T any](slice []T, k int) [][]T
+```
+
+**Parameters / 매개변수**:
+- `slice`: The input slice / 입력 슬라이스
+- `k`: Combination size / 조합 크기
+
+**Returns / 반환값**: All k-combinations / 모든 k-조합
+
+**Complexity / 복잡도**: O(C(n,k)) - C(10,5): 252, C(20,10): 184,756
+
+**Example / 예제**:
+```go
+numbers := []int{1, 2, 3, 4}
+combs := sliceutil.Combinations(numbers, 2)
+// [[1,2], [1,3], [1,4], [2,3], [2,4], [3,4]]
+```
+
 ---
 
 ## Common Use Cases / 일반적인 사용 사례
@@ -2282,6 +3083,225 @@ func main() {
 }
 ```
 
+### Use Case 9: Data Analytics with Statistics / 통계를 활용한 데이터 분석
+
+**Scenario / 시나리오**: Analyze sales data with statistical functions / 통계 함수로 판매 데이터 분석
+
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/arkd0ng/go-utils/sliceutil"
+)
+
+func main() {
+    // Daily sales data / 일일 판매 데이터
+    sales := []int{120, 150, 180, 160, 140, 170, 190, 155, 165, 175}
+
+    // Calculate basic statistics / 기본 통계 계산
+    mean := sliceutil.Average(sales)
+    median, _ := sliceutil.Median(sales)
+    stddev, _ := sliceutil.StandardDeviation(sales)
+    p25, _ := sliceutil.Percentile(sales, 25) // 1st quartile
+    p75, _ := sliceutil.Percentile(sales, 75) // 3rd quartile
+
+    fmt.Printf("Mean: %.2f\n", mean)
+    fmt.Printf("Median: %.2f\n", median)
+    fmt.Printf("Std Dev: %.2f\n", stddev)
+    fmt.Printf("25th Percentile: %.2f\n", p25)
+    fmt.Printf("75th Percentile: %.2f\n", p75)
+
+    // Find frequency distribution / 빈도 분포 찾기
+    freqs := sliceutil.Frequencies(sales)
+    fmt.Printf("Frequency Distribution: %v\n", freqs)
+
+    // Identify best and worst performing days / 최고 및 최저 실적 일 식별
+    topDays := sliceutil.MostCommon(sales, 3)
+    lowDays := sliceutil.LeastCommon(sales, 2)
+    fmt.Printf("Top 3 sales values: %v\n", topDays)
+    fmt.Printf("Bottom 2 sales values: %v\n", lowDays)
+}
+```
+
+### Use Case 10: Version Control Diff Analysis / 버전 관리 차이 분석
+
+**Scenario / 시나리오**: Compare two versions of data and track changes / 두 버전의 데이터 비교 및 변경 사항 추적
+
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/arkd0ng/go-utils/sliceutil"
+)
+
+type Feature struct {
+    ID     int
+    Name   string
+    Status string
+}
+
+func main() {
+    // Version 1 features / 버전 1 기능
+    oldFeatures := []Feature{
+        {1, "Login", "active"},
+        {2, "Search", "active"},
+        {3, "Export", "deprecated"},
+    }
+
+    // Version 2 features / 버전 2 기능
+    newFeatures := []Feature{
+        {2, "Search", "active"},
+        {3, "Export", "removed"},
+        {4, "Import", "active"},
+        {5, "Analytics", "beta"},
+    }
+
+    // Compare by ID / ID로 비교
+    diff := sliceutil.DiffBy(oldFeatures, newFeatures, func(f Feature) int {
+        return f.ID
+    })
+
+    fmt.Println("Added Features:")
+    for _, f := range diff.Added {
+        fmt.Printf("  - %s (ID: %d, Status: %s)\n", f.Name, f.ID, f.Status)
+    }
+
+    fmt.Println("\nRemoved Features:")
+    for _, f := range diff.Removed {
+        fmt.Printf("  - %s (ID: %d)\n", f.Name, f.ID)
+    }
+
+    fmt.Println("\nUnchanged Features:")
+    for _, f := range diff.Unchanged {
+        fmt.Printf("  - %s (ID: %d, Status: %s)\n", f.Name, f.ID, f.Status)
+    }
+
+    // Check for duplicates / 중복 확인
+    allIDs := sliceutil.Map(newFeatures, func(f Feature) int { return f.ID })
+    hasDups := sliceutil.HasDuplicates(allIDs)
+    fmt.Printf("\nHas duplicate IDs: %v\n", hasDups)
+}
+```
+
+### Use Case 11: Index-based Data Manipulation / 인덱스 기반 데이터 조작
+
+**Scenario / 시나리오**: Select and remove specific items by position / 위치별로 특정 항목 선택 및 제거
+
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/arkd0ng/go-utils/sliceutil"
+)
+
+func main() {
+    tasks := []string{
+        "Design UI mockups",
+        "Implement backend API",
+        "Write unit tests",
+        "Create documentation",
+        "Deploy to staging",
+        "Perform QA testing",
+        "Deploy to production",
+    }
+
+    // Find indices of completed tasks / 완료된 작업의 인덱스 찾기
+    completedTasks := []string{"Implement backend API", "Write unit tests", "Deploy to staging"}
+    completedIndices := []int{}
+    for i, task := range tasks {
+        for _, completed := range completedTasks {
+            if task == completed {
+                completedIndices = append(completedIndices, i)
+                break
+            }
+        }
+    }
+
+    // Get remaining tasks / 남은 작업 가져오기
+    remaining := sliceutil.RemoveIndices(tasks, completedIndices)
+    fmt.Println("Remaining tasks:")
+    for _, task := range remaining {
+        fmt.Printf("  - %s\n", task)
+    }
+
+    // Select specific priority tasks by index / 인덱스로 특정 우선순위 작업 선택
+    priorities := sliceutil.AtIndices(tasks, []int{0, 3, 6})
+    fmt.Println("\nPriority tasks:")
+    for _, task := range priorities {
+        fmt.Printf("  - %s\n", task)
+    }
+
+    // Find all indices matching a condition / 조건과 일치하는 모든 인덱스 찾기
+    testIndices := sliceutil.FindIndices(tasks, func(task string) bool {
+        return len(task) > 20
+    })
+    fmt.Printf("\nIndices of long tasks (>20 chars): %v\n", testIndices)
+}
+```
+
+### Use Case 12: Conditional Batch Updates / 조건부 일괄 업데이트
+
+**Scenario / 시나리오**: Update prices and inventory based on conditions / 조건에 따라 가격 및 재고 업데이트
+
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/arkd0ng/go-utils/sliceutil"
+)
+
+type Product struct {
+    ID    int
+    Name  string
+    Price float64
+    Stock int
+}
+
+func main() {
+    products := []Product{
+        {1, "Laptop", 999.99, 5},
+        {2, "Mouse", 29.99, 0},
+        {3, "Keyboard", 79.99, 15},
+        {4, "Monitor", 299.99, 0},
+        {5, "Headphones", 149.99, 8},
+    }
+
+    // Apply 20% discount to high-priced items / 고가 품목에 20% 할인 적용
+    discounted := sliceutil.UpdateWhere(products,
+        func(p Product) bool { return p.Price > 100 },
+        func(p Product) Product {
+            p.Price = p.Price * 0.8
+            return p
+        },
+    )
+
+    // Replace out-of-stock status / 품절 상태 교체
+    updated := sliceutil.UpdateWhere(discounted,
+        func(p Product) bool { return p.Stock == 0 },
+        func(p Product) Product {
+            p.Name = p.Name + " (Out of Stock)"
+            return p
+        },
+    )
+
+    // Replace negative stock with zero / 음수 재고를 0으로 교체
+    fixed := sliceutil.ReplaceIf(
+        sliceutil.Map(updated, func(p Product) int { return p.Stock }),
+        func(stock int) bool { return stock < 0 },
+        0,
+    )
+
+    fmt.Println("Updated Products:")
+    for i, p := range updated {
+        fmt.Printf("%s - $%.2f (Stock: %d)\n", p.Name, p.Price, fixed[i])
+    }
+}
+```
+
 ---
 
 ## Best Practices / 모범 사례
@@ -2518,6 +3538,132 @@ numbers := []int{1, 2, 3, 4, 5}
 if !sliceutil.IsSorted(numbers) {
     numbers = sliceutil.Sort(numbers)
 }
+```
+
+### 13. Use Statistical Functions for Data Analysis / 데이터 분석에 통계 함수 사용
+
+Leverage statistics functions for comprehensive data analysis.
+
+포괄적인 데이터 분석을 위해 통계 함수를 활용하세요.
+
+```go
+// ✅ Good - Comprehensive statistics / 좋음 - 포괄적인 통계
+data := []int{10, 20, 30, 40, 50}
+
+mean := sliceutil.Average(data)
+median, _ := sliceutil.Median(data)
+stddev, _ := sliceutil.StandardDeviation(data)
+p95, _ := sliceutil.Percentile(data, 95)
+
+fmt.Printf("Mean: %.2f, Median: %.2f, StdDev: %.2f, P95: %.2f\n",
+    mean, median, stddev, p95)
+```
+
+### 14. Use Diff Functions for Change Detection / 변경 감지에 Diff 함수 사용
+
+Use `Diff` or `DiffBy` to track changes between data versions.
+
+데이터 버전 간의 변경 사항을 추적하려면 `Diff` 또는 `DiffBy`를 사용하세요.
+
+```go
+// ✅ Good - Track changes with DiffBy / 좋음 - DiffBy로 변경 사항 추적
+type User struct {
+    ID   int
+    Name string
+}
+
+oldUsers := []User{{1, "Alice"}, {2, "Bob"}}
+newUsers := []User{{2, "Bob"}, {3, "Charlie"}}
+
+diff := sliceutil.DiffBy(oldUsers, newUsers, func(u User) int {
+    return u.ID
+})
+
+// Process additions / 추가 처리
+for _, user := range diff.Added {
+    fmt.Printf("New user: %s\n", user.Name)
+}
+```
+
+### 15. Be Cautious with Combinatorial Functions / 조합 함수 사용 시 주의
+
+`Permutations` and `Combinations` have exponential complexity. Use with small slices only.
+
+`Permutations`와 `Combinations`는 지수 복잡도를 가집니다. 작은 슬라이스에만 사용하세요.
+
+```go
+// ✅ Good - Small slice / 좋음 - 작은 슬라이스
+items := []int{1, 2, 3, 4}
+perms := sliceutil.Permutations(items) // 24 permutations / 24개 순열
+
+// ❌ Dangerous - Large slice / 위험 - 큰 슬라이스
+largeSlice := make([]int, 15)
+// perms := sliceutil.Permutations(largeSlice) // 1.3 trillion permutations!
+```
+
+### 16. Use Conditional Operations for Batch Updates / 일괄 업데이트에 조건부 작업 사용
+
+`UpdateWhere`, `ReplaceIf`, and `ReplaceAll` simplify conditional transformations.
+
+`UpdateWhere`, `ReplaceIf`, `ReplaceAll`은 조건부 변환을 단순화합니다.
+
+```go
+// ✅ Good - Conditional update / 좋음 - 조건부 업데이트
+prices := []float64{19.99, 99.99, 49.99, 199.99}
+
+// Apply discount to expensive items / 고가 품목에 할인 적용
+discounted := sliceutil.UpdateWhere(prices,
+    func(p float64) bool { return p > 50 },
+    func(p float64) float64 { return p * 0.9 },
+)
+
+// ❌ Less clear - Manual filtering and mapping / 덜 명확 - 수동 필터링 및 매핑
+var discounted []float64
+for _, p := range prices {
+    if p > 50 {
+        discounted = append(discounted, p*0.9)
+    } else {
+        discounted = append(discounted, p)
+    }
+}
+```
+
+### 17. Use Index-based Operations Efficiently / 인덱스 기반 작업 효율적으로 사용
+
+`FindIndices`, `AtIndices`, and `RemoveIndices` provide efficient index-based operations.
+
+`FindIndices`, `AtIndices`, `RemoveIndices`는 효율적인 인덱스 기반 작업을 제공합니다.
+
+```go
+// ✅ Good - Batch index operations / 좋음 - 일괄 인덱스 작업
+data := []string{"a", "b", "c", "d", "e"}
+
+// Find all indices matching condition / 조건과 일치하는 모든 인덱스 찾기
+vowelIndices := sliceutil.FindIndices(data, func(s string) bool {
+    return s == "a" || s == "e"
+})
+
+// Remove by indices / 인덱스로 제거
+remaining := sliceutil.RemoveIndices(data, vowelIndices)
+```
+
+### 18. Handle Errors from Statistical Functions / 통계 함수의 에러 처리
+
+Always check errors from statistical functions that may fail on empty slices.
+
+빈 슬라이스에서 실패할 수 있는 통계 함수의 에러를 항상 확인하세요.
+
+```go
+// ✅ Good - Check errors / 좋음 - 에러 확인
+numbers := []int{}
+median, err := sliceutil.Median(numbers)
+if err != nil {
+    log.Printf("Error calculating median: %v", err)
+    return
+}
+
+// ❌ Bad - Ignoring errors / 나쁨 - 에러 무시
+median, _ := sliceutil.Median(numbers) // May panic or give wrong results
 ```
 
 ---
