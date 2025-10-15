@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.018
+**Version / 버전**: v1.11.019
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.018) / 현재 기능
+## Current Features (v1.11.019) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -176,6 +176,46 @@ Flexible configuration using functional options.
 | `WithLogger(enable bool)` | true | Enable logger middleware / 로거 미들웨어 활성화 |
 | `WithRecovery(enable bool)` | true | Enable recovery middleware / 복구 미들웨어 활성화 |
 | `WithMaxUploadSize(size int64)` | 32 MB | Maximum file upload size / 최대 파일 업로드 크기 |
+
+### Session Management / 세션 관리
+
+Cookie-based session management with in-memory storage.
+
+쿠키 기반 세션 관리 및 인메모리 저장소.
+
+**SessionStore Methods / SessionStore 메서드**:
+- `NewSessionStore(opts SessionOptions) *SessionStore` - Create session store / 세션 저장소 생성
+- `Get(r *http.Request) (*Session, error)` - Get or create session / 세션 가져오기 또는 생성
+- `New() *Session` - Create new session / 새 세션 생성
+- `Save(w http.ResponseWriter, session *Session)` - Save session and set cookie / 세션 저장 및 쿠키 설정
+- `Destroy(w http.ResponseWriter, r *http.Request) error` - Destroy session / 세션 파괴
+- `Count() int` - Get active session count / 활성 세션 수 가져오기
+
+**Session Methods / Session 메서드**:
+- `Set(key string, value interface{})` - Store value / 값 저장
+- `Get(key string) (interface{}, bool)` - Retrieve value / 값 검색
+- `GetString(key string) string` - Get string value / 문자열 값 가져오기
+- `GetInt(key string) int` - Get int value / int 값 가져오기
+- `GetBool(key string) bool` - Get bool value / bool 값 가져오기
+- `Delete(key string)` - Remove value / 값 제거
+- `Clear()` - Clear all values / 모든 값 지우기
+
+**SessionOptions / 세션 옵션**:
+- `CookieName` - Session cookie name (default: "sessionid") / 세션 쿠키 이름
+- `MaxAge` - Session expiration (default: 24h) / 세션 만료 시간
+- `Secure` - HTTPS only (default: false) / HTTPS만 사용
+- `HttpOnly` - Prevent JavaScript access (default: true) / JavaScript 액세스 방지
+- `SameSite` - SameSite attribute (default: Lax) / SameSite 속성
+- `Path` - Cookie path (default: "/") / 쿠키 경로
+- `Domain` - Cookie domain / 쿠키 도메인
+- `CleanupTime` - Cleanup interval (default: 5m) / 정리 간격
+
+**Features / 기능**:
+- Automatic session expiration / 자동 세션 만료
+- Background cleanup of expired sessions / 만료된 세션의 백그라운드 정리
+- Cryptographically secure session IDs / 암호학적으로 안전한 세션 ID
+- Thread-safe operations / 스레드 안전 작업
+- Type-safe getters / 타입 안전 getter
 
 ### Middleware / 미들웨어
 
@@ -811,6 +851,97 @@ func main() {
         filename := ctx.Param("filename")
         filepath := fmt.Sprintf("./uploads/%s", filename)
         ctx.File(filepath)
+    })
+
+    log.Println("Server starting on :8080")
+    if err := app.Run(":8080"); err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+### Session Management / 세션 관리
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+    "time"
+    "github.com/arkd0ng/go-utils/websvrutil"
+)
+
+func main() {
+    app := websvrutil.New()
+
+    // Create session store with custom options / 커스텀 옵션으로 세션 저장소 생성
+    sessionStore := websvrutil.NewSessionStore(websvrutil.SessionOptions{
+        CookieName:  "mysession",
+        MaxAge:      24 * time.Hour,
+        HttpOnly:    true,
+        Secure:      false, // Set to true in production with HTTPS / HTTPS를 사용하는 프로덕션에서는 true로 설정
+        SameSite:    http.SameSiteLaxMode,
+        Path:        "/",
+        CleanupTime: 5 * time.Minute,
+    })
+
+    // Login handler - create session / 로그인 핸들러 - 세션 생성
+    app.POST("/login", func(w http.ResponseWriter, r *http.Request) {
+        // Get or create session / 세션 가져오기 또는 생성
+        session, _ := sessionStore.Get(r)
+
+        // Store user data in session / 세션에 사용자 데이터 저장
+        session.Set("user_id", 123)
+        session.Set("username", "john")
+        session.Set("authenticated", true)
+
+        // Save session and set cookie / 세션 저장 및 쿠키 설정
+        sessionStore.Save(w, session)
+
+        fmt.Fprintf(w, "Login successful! Session ID: %s", session.ID)
+    })
+
+    // Protected route - check session / 보호된 라우트 - 세션 확인
+    app.GET("/dashboard", func(w http.ResponseWriter, r *http.Request) {
+        session, err := sessionStore.Get(r)
+        if err != nil {
+            http.Error(w, "Session error", http.StatusInternalServerError)
+            return
+        }
+
+        // Check if user is authenticated / 사용자 인증 확인
+        authenticated := session.GetBool("authenticated")
+        if !authenticated {
+            http.Error(w, "Not authenticated", http.StatusUnauthorized)
+            return
+        }
+
+        // Get user data from session / 세션에서 사용자 데이터 가져오기
+        username := session.GetString("username")
+        userID := session.GetInt("user_id")
+
+        fmt.Fprintf(w, "Welcome %s (ID: %d)!", username, userID)
+    })
+
+    // Logout handler - destroy session / 로그아웃 핸들러 - 세션 파괴
+    app.POST("/logout", func(w http.ResponseWriter, r *http.Request) {
+        if err := sessionStore.Destroy(w, r); err != nil {
+            http.Error(w, "Logout failed", http.StatusInternalServerError)
+            return
+        }
+        fmt.Fprintf(w, "Logged out successfully")
+    })
+
+    // Session info endpoint / 세션 정보 엔드포인트
+    app.GET("/session/info", func(w http.ResponseWriter, r *http.Request) {
+        session, _ := sessionStore.Get(r)
+
+        fmt.Fprintf(w, "Session ID: %s\n", session.ID)
+        fmt.Fprintf(w, "Created: %s\n", session.CreatedAt)
+        fmt.Fprintf(w, "Expires: %s\n", session.ExpiresAt)
+        fmt.Fprintf(w, "Active Sessions: %d\n", sessionStore.Count())
     })
 
     log.Println("Server starting on :8080")

@@ -5,6 +5,74 @@
 
 ---
 
+## [v1.11.019] - 2025-10-16
+
+### Added / 추가
+- **Session Management System** / **세션 관리 시스템** (`session.go`)
+  - `NewSessionStore(opts SessionOptions) *SessionStore` - Create session store with custom options
+  - `SessionStore.Get(r *http.Request) (*Session, error)` - Get or create session from request
+  - `SessionStore.New() *Session` - Create new session with unique ID
+  - `SessionStore.Save(w http.ResponseWriter, session *Session)` - Save session and set cookie
+  - `SessionStore.Destroy(w http.ResponseWriter, r *http.Request) error` - Destroy session and clear cookie
+  - `SessionStore.Count() int` - Get active session count
+
+- **Session Data Storage** / **세션 데이터 저장소**
+  - `Session.Set(key string, value interface{})` - Store value in session
+  - `Session.Get(key string) (interface{}, bool)` - Retrieve value from session
+  - `Session.GetString(key string) string` - Get string value (type-safe)
+  - `Session.GetInt(key string) int` - Get int value (type-safe)
+  - `Session.GetBool(key string) bool` - Get bool value (type-safe)
+  - `Session.Delete(key string)` - Remove value from session
+  - `Session.Clear()` - Clear all session values
+  - Thread-safe with sync.RWMutex protection
+
+- **Session Configuration** / **세션 설정**
+  - `SessionOptions` struct with 8 configurable fields
+  - `DefaultSessionOptions()` function for quick setup
+  - CookieName, MaxAge, Secure, HttpOnly, SameSite, Path, Domain, CleanupTime
+  - Default: 24h expiration, HttpOnly=true, SameSite=Lax
+
+- **Advanced Features** / **고급 기능**
+  - Automatic session expiration with configurable MaxAge
+  - Background cleanup goroutine for expired sessions
+  - Cryptographically secure session IDs using crypto/rand
+  - Base64 URL-safe encoding for session IDs
+  - Fallback to timestamp-based IDs if crypto/rand fails
+
+- **Comprehensive Tests** / **종합 테스트** (`session_test.go`)
+  - `TestNewSessionStore` - Test session store creation
+  - `TestSessionStoreNew` - Test new session creation
+  - `TestSessionSetGet` - Test session set and get operations
+  - `TestSessionGetTyped` - Test type-safe getter methods
+  - `TestSessionDelete` - Test value deletion
+  - `TestSessionClear` - Test clearing all values
+  - `TestSessionStoreGetExisting` - Test getting existing session from cookie
+  - `TestSessionStoreGetNew` - Test creating new session when none exists
+  - `TestSessionStoreSave` - Test saving session and setting cookie
+  - `TestSessionStoreDestroy` - Test destroying session
+  - `TestSessionExpiration` - Test session expiration behavior
+  - `TestSessionCleanup` - Test automatic cleanup of expired sessions
+  - `TestSessionConcurrency` - Test concurrent access to session
+  - `BenchmarkSessionSet` - Benchmark Set operation
+  - `BenchmarkSessionGet` - Benchmark Get operation
+  - `BenchmarkSessionStoreNew` - Benchmark session creation
+  - **Total: 12 test functions + 3 benchmarks** for session management
+
+### Documentation / 문서
+- **README.md**
+  - Updated version to v1.11.019
+  - Added "Session Management" section with full API documentation
+  - SessionStore methods, Session methods, SessionOptions reference
+  - Added comprehensive Session Management example in Quick Start
+  - Example shows login, protected routes, logout, and session info
+
+### Performance / 성능
+- **Test Coverage**: 80.6% of statements / 구문의 80.6%
+- **Session Operations**: Thread-safe with minimal locking overhead
+- **Cleanup**: Background goroutine with configurable interval (default: 5m)
+
+---
+
 ## [v1.11.018] - 2025-10-16
 
 ### Added / 추가
