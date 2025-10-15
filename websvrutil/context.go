@@ -1032,3 +1032,188 @@ type CookieOptions struct {
 	// SameSite controls cross-site cookie behavior / SameSite는 크로스 사이트 쿠키 동작을 제어합니다
 	SameSite http.SameSite
 }
+
+// ====================
+// HTTP Method Helpers / HTTP 메서드 헬퍼
+// ====================
+
+// IsGET checks if the request method is GET.
+// IsGET는 요청 메서드가 GET인지 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.IsGET() {
+//	    // Handle GET request
+//	}
+func (c *Context) IsGET() bool {
+	return c.Request.Method == http.MethodGet
+}
+
+// IsPOST checks if the request method is POST.
+// IsPOST는 요청 메서드가 POST인지 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.IsPOST() {
+//	    // Handle POST request
+//	}
+func (c *Context) IsPOST() bool {
+	return c.Request.Method == http.MethodPost
+}
+
+// IsPUT checks if the request method is PUT.
+// IsPUT는 요청 메서드가 PUT인지 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.IsPUT() {
+//	    // Handle PUT request
+//	}
+func (c *Context) IsPUT() bool {
+	return c.Request.Method == http.MethodPut
+}
+
+// IsPATCH checks if the request method is PATCH.
+// IsPATCH는 요청 메서드가 PATCH인지 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.IsPATCH() {
+//	    // Handle PATCH request
+//	}
+func (c *Context) IsPATCH() bool {
+	return c.Request.Method == http.MethodPatch
+}
+
+// IsDELETE checks if the request method is DELETE.
+// IsDELETE는 요청 메서드가 DELETE인지 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.IsDELETE() {
+//	    // Handle DELETE request
+//	}
+func (c *Context) IsDELETE() bool {
+	return c.Request.Method == http.MethodDelete
+}
+
+// IsHEAD checks if the request method is HEAD.
+// IsHEAD는 요청 메서드가 HEAD인지 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.IsHEAD() {
+//	    // Handle HEAD request
+//	}
+func (c *Context) IsHEAD() bool {
+	return c.Request.Method == http.MethodHead
+}
+
+// IsOPTIONS checks if the request method is OPTIONS.
+// IsOPTIONS는 요청 메서드가 OPTIONS인지 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.IsOPTIONS() {
+//	    // Handle OPTIONS request
+//	}
+func (c *Context) IsOPTIONS() bool {
+	return c.Request.Method == http.MethodOptions
+}
+
+// IsAjax checks if the request is an AJAX request (XMLHttpRequest).
+// IsAjax는 요청이 AJAX 요청(XMLHttpRequest)인지 확인합니다.
+//
+// It checks for the X-Requested-With header set to "XMLHttpRequest".
+// X-Requested-With 헤더가 "XMLHttpRequest"로 설정되었는지 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.IsAjax() {
+//	    // Handle AJAX request
+//	}
+func (c *Context) IsAjax() bool {
+	return c.Request.Header.Get("X-Requested-With") == "XMLHttpRequest"
+}
+
+// IsWebSocket checks if the request is a WebSocket upgrade request.
+// IsWebSocket는 요청이 WebSocket 업그레이드 요청인지 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.IsWebSocket() {
+//	    // Handle WebSocket upgrade
+//	}
+func (c *Context) IsWebSocket() bool {
+	upgrade := c.Request.Header.Get("Upgrade")
+	return upgrade == "websocket"
+}
+
+// AcceptsJSON checks if the client accepts JSON responses.
+// AcceptsJSON은 클라이언트가 JSON 응답을 수락하는지 확인합니다.
+//
+// It checks the Accept header for "application/json".
+// Accept 헤더에서 "application/json"을 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.AcceptsJSON() {
+//	    ctx.JSON(http.StatusOK, data)
+//	}
+func (c *Context) AcceptsJSON() bool {
+	accept := c.Request.Header.Get("Accept")
+	return accept == "*/*" ||
+		   accept == "application/json" ||
+		   c.containsContentType(accept, "application/json")
+}
+
+// AcceptsHTML checks if the client accepts HTML responses.
+// AcceptsHTML은 클라이언트가 HTML 응답을 수락하는지 확인합니다.
+//
+// It checks the Accept header for "text/html".
+// Accept 헤더에서 "text/html"을 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.AcceptsHTML() {
+//	    ctx.HTML(http.StatusOK, "index", data)
+//	}
+func (c *Context) AcceptsHTML() bool {
+	accept := c.Request.Header.Get("Accept")
+	return accept == "*/*" ||
+		   accept == "text/html" ||
+		   c.containsContentType(accept, "text/html")
+}
+
+// AcceptsXML checks if the client accepts XML responses.
+// AcceptsXML은 클라이언트가 XML 응답을 수락하는지 확인합니다.
+//
+// It checks the Accept header for "application/xml" or "text/xml".
+// Accept 헤더에서 "application/xml" 또는 "text/xml"을 확인합니다.
+//
+// Example / 예제:
+//
+//	if ctx.AcceptsXML() {
+//	    ctx.XML(http.StatusOK, data)
+//	}
+func (c *Context) AcceptsXML() bool {
+	accept := c.Request.Header.Get("Accept")
+	return accept == "*/*" ||
+		   accept == "application/xml" ||
+		   accept == "text/xml" ||
+		   c.containsContentType(accept, "application/xml") ||
+		   c.containsContentType(accept, "text/xml")
+}
+
+// containsContentType checks if the accept header contains a specific content type.
+// containsContentType는 accept 헤더에 특정 콘텐츠 타입이 포함되어 있는지 확인합니다.
+func (c *Context) containsContentType(accept, contentType string) bool {
+	// Simple substring check for content type
+	// 콘텐츠 타입에 대한 간단한 부분 문자열 확인
+	for i := 0; i < len(accept); i++ {
+		if i+len(contentType) <= len(accept) && accept[i:i+len(contentType)] == contentType {
+			return true
+		}
+	}
+	return false
+}

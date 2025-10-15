@@ -5,6 +5,67 @@
 
 ---
 
+## [v1.11.021] - 2025-10-16
+
+### Added / 추가
+- **HTTP Method Helpers** / **HTTP 메서드 헬퍼** (`context.go`)
+  - `IsGET() bool` - Check if request method is GET
+  - `IsPOST() bool` - Check if request method is POST
+  - `IsPUT() bool` - Check if request method is PUT
+  - `IsPATCH() bool` - Check if request method is PATCH
+  - `IsDELETE() bool` - Check if request method is DELETE
+  - `IsHEAD() bool` - Check if request method is HEAD
+  - `IsOPTIONS() bool` - Check if request method is OPTIONS
+  - Simple boolean check methods for common HTTP methods
+  - No error handling needed, just true/false return
+
+- **Request Type Helpers** / **요청 타입 헬퍼** (`context.go`)
+  - `IsAjax() bool` - Check if request is AJAX (XMLHttpRequest)
+  - Checks X-Requested-With header for "XMLHttpRequest"
+  - `IsWebSocket() bool` - Check if request is WebSocket upgrade
+  - Checks Upgrade header for "websocket"
+
+- **Content Negotiation Helpers** / **콘텐츠 협상 헬퍼** (`context.go`)
+  - `AcceptsJSON() bool` - Check if client accepts JSON responses
+  - `AcceptsHTML() bool` - Check if client accepts HTML responses
+  - `AcceptsXML() bool` - Check if client accepts XML responses
+  - Checks Accept header for content type preferences
+  - Supports wildcard (*/*) and content type lists
+  - `containsContentType(accept, contentType string) bool` - Helper method
+
+- **Comprehensive Tests** / **종합 테스트** (`method_test.go`)
+  - `TestContextIsGET` - Test GET method check
+  - `TestContextIsPOST` - Test POST method check
+  - `TestContextIsPUT` - Test PUT method check
+  - `TestContextIsPATCH` - Test PATCH method check
+  - `TestContextIsDELETE` - Test DELETE method check
+  - `TestContextIsHEAD` - Test HEAD method check
+  - `TestContextIsOPTIONS` - Test OPTIONS method check
+  - `TestContextIsAjax` - Test AJAX detection
+  - `TestContextIsWebSocket` - Test WebSocket detection
+  - `TestContextAcceptsJSON` - Test JSON acceptance (6 subtests)
+  - `TestContextAcceptsHTML` - Test HTML acceptance (6 subtests)
+  - `TestContextAcceptsXML` - Test XML acceptance (7 subtests)
+  - `TestContextContainsContentType` - Test content type detection (5 subtests)
+  - `BenchmarkIsGET` - Benchmark GET check
+  - `BenchmarkIsAjax` - Benchmark AJAX check
+  - `BenchmarkAcceptsJSON` - Benchmark JSON acceptance
+  - **Total: 13 test functions (25 subtests) + 3 benchmarks** for HTTP method helpers
+
+### Documentation / 문서
+- **README.md**
+  - Updated version to v1.11.021
+  - Added "HTTP Method Helpers" section
+  - Listed all 12 new helper methods
+  - Added before "Header Helpers" section
+
+### Performance / 성능
+- **Test Coverage**: 79.2% of statements / 구문의 79.2%
+- **Method Checks**: Direct string comparison, no overhead
+- **Content Type Detection**: Simple substring search algorithm
+
+---
+
 ## [v1.11.020] - 2025-10-16
 
 ### Added / 추가

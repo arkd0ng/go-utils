@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.020
+**Version / 버전**: v1.11.021
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.020) / 현재 기능
+## Current Features (v1.11.021) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -131,6 +131,20 @@ Request context for accessing path parameters, query strings, headers, and stori
 - `SetCookieAdvanced(opts CookieOptions)` - Set cookie with advanced options / 고급 옵션으로 쿠키 설정
 - `DeleteCookie(name, path string)` - Delete cookie / 쿠키 삭제
 - `GetCookie(name string) string` - Get cookie value / 쿠키 값 가져오기
+
+**HTTP Method Helpers / HTTP 메서드 헬퍼** (v1.11.021+):
+- `IsGET() bool` - Check if request method is GET / GET 요청인지 확인
+- `IsPOST() bool` - Check if request method is POST / POST 요청인지 확인
+- `IsPUT() bool` - Check if request method is PUT / PUT 요청인지 확인
+- `IsPATCH() bool` - Check if request method is PATCH / PATCH 요청인지 확인
+- `IsDELETE() bool` - Check if request method is DELETE / DELETE 요청인지 확인
+- `IsHEAD() bool` - Check if request method is HEAD / HEAD 요청인지 확인
+- `IsOPTIONS() bool` - Check if request method is OPTIONS / OPTIONS 요청인지 확인
+- `IsAjax() bool` - Check if request is AJAX (XMLHttpRequest) / AJAX 요청인지 확인
+- `IsWebSocket() bool` - Check if request is WebSocket upgrade / WebSocket 업그레이드 요청인지 확인
+- `AcceptsJSON() bool` - Check if client accepts JSON responses / JSON 응답 수락 확인
+- `AcceptsHTML() bool` - Check if client accepts HTML responses / HTML 응답 수락 확인
+- `AcceptsXML() bool` - Check if client accepts XML responses / XML 응답 수락 확인
 
 **Header Helpers / 헤더 헬퍼** (v1.11.014+):
 - `AddHeader(key, value string)` - Add response header / 응답 헤더 추가
