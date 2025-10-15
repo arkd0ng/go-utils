@@ -1,6 +1,6 @@
 # sliceutil - Slice Utilities / 슬라이스 유틸리티
 
-**v1.7.019** - Extreme Simplicity for Slice Operations! 🎉
+**v1.7.020** - Extreme Simplicity for Slice Operations! 🎉
 
 Extreme simplicity slice utility functions for Go - reduce 10-20 lines of slice manipulation code to just 1 line.
 
@@ -11,9 +11,9 @@ Extreme simplicity slice utility functions for Go - reduce 10-20 lines of slice 
 
 ## Overview / 개요
 
-The `sliceutil` package provides **62 type-safe functions** for common slice operations in Go. Stop writing repetitive loops and start using functional programming style.
+The `sliceutil` package provides **73 type-safe functions** for common slice operations in Go. Stop writing repetitive loops and start using functional programming style.
 
-`sliceutil` 패키지는 Go에서 일반적인 슬라이스 작업을 위한 **62개의 타입 안전 함수**를 제공합니다. 반복적인 루프 작성을 멈추고 함수형 프로그래밍 스타일을 사용하세요.
+`sliceutil` 패키지는 Go에서 일반적인 슬라이스 작업을 위한 **73개의 타입 안전 함수**를 제공합니다. 반복적인 루프 작성을 멈추고 함수형 프로그래밍 스타일을 사용하세요.
 
 ### Design Philosophy: "20 lines → 1 line" / 설계 철학: "20줄 → 1줄"
 
@@ -207,7 +207,7 @@ All functions use only the standard library.
 
 ## Function Categories / 함수 카테고리
 
-### 1. Basic Operations (10 functions) / 기본 작업 (10개 함수)
+### 1. Basic Operations (11 functions) / 기본 작업 (11개 함수)
 
 Essential operations for searching and checking slices.
 
@@ -219,6 +219,7 @@ sliceutil.ContainsFunc(slice, predicate)  // Check with predicate
 sliceutil.IndexOf(slice, item)            // Find first index
 sliceutil.LastIndexOf(slice, item)        // Find last index
 sliceutil.Find(slice, predicate)          // Find first match
+sliceutil.FindLast(slice, predicate)      // Find last match
 sliceutil.FindIndex(slice, predicate)     // Find first match index
 sliceutil.Count(slice, predicate)         // Count matches
 sliceutil.IsEmpty(slice)                  // Check if empty
@@ -243,7 +244,7 @@ sliceutil.Compact(slice)                  // Remove zero values
 sliceutil.Reverse(slice)                  // Reverse order
 ```
 
-### 3. Aggregation (7 functions) / 집계 (7개 함수)
+### 3. Aggregation (11 functions) / 집계 (11개 함수)
 
 Reduce slices to single values or group items.
 
@@ -251,15 +252,19 @@ Reduce slices to single values or group items.
 
 ```go
 sliceutil.Reduce(slice, initial, reducer) // Custom aggregation
+sliceutil.ReduceRight(slice, initial, reducer) // Reduce from right
 sliceutil.Sum(slice)                      // Sum of numbers
 sliceutil.Min(slice)                      // Minimum value
 sliceutil.Max(slice)                      // Maximum value
+sliceutil.MinBy(slice, keyFunc)           // Minimum by custom key
+sliceutil.MaxBy(slice, keyFunc)           // Maximum by custom key
 sliceutil.Average(slice)                  // Average of numbers
 sliceutil.GroupBy(slice, keyFunc)         // Group by key
+sliceutil.CountBy(slice, keyFunc)         // Count occurrences by key
 sliceutil.Partition(slice, predicate)     // Split by condition
 ```
 
-### 4. Slicing (7 functions) / 슬라이싱 (7개 함수)
+### 4. Slicing (11 functions) / 슬라이싱 (11개 함수)
 
 Extract portions of slices.
 
@@ -269,10 +274,14 @@ Extract portions of slices.
 sliceutil.Chunk(slice, size)              // Split into chunks
 sliceutil.Take(slice, n)                  // Take first n items
 sliceutil.TakeLast(slice, n)              // Take last n items
+sliceutil.TakeWhile(slice, predicate)     // Take while predicate is true
 sliceutil.Drop(slice, n)                  // Skip first n items
 sliceutil.DropLast(slice, n)              // Skip last n items
+sliceutil.DropWhile(slice, predicate)     // Drop while predicate is true
 sliceutil.Slice(slice, start, end)        // Extract range
 sliceutil.Sample(slice, n)                // Random sampling
+sliceutil.Window(slice, size)             // Create sliding windows
+sliceutil.Interleave(slices...)           // Interleave multiple slices
 ```
 
 ### 5. Set Operations (6 functions) / 집합 작업 (6개 함수)
@@ -290,7 +299,7 @@ sliceutil.IsSubset(a, b)                  // Check if a ⊆ b
 sliceutil.IsSuperset(a, b)                // Check if a ⊇ b
 ```
 
-### 6. Sorting (5 functions) / 정렬 (5개 함수)
+### 6. Sorting (6 functions) / 정렬 (6개 함수)
 
 Sort and check sorting order.
 
@@ -300,6 +309,7 @@ Sort and check sorting order.
 sliceutil.Sort(slice)                     // Sort ascending
 sliceutil.SortDesc(slice)                 // Sort descending
 sliceutil.SortBy(slice, keyFunc)          // Sort by custom key
+sliceutil.SortByMulti(slice, lessFunc)    // Sort by multiple keys
 sliceutil.IsSorted(slice)                 // Check if sorted ascending
 sliceutil.IsSortedDesc(slice)             // Check if sorted descending
 ```
@@ -319,7 +329,7 @@ sliceutil.IsSortedBy(slice, keyFunc)      // Check if sorted by key
 sliceutil.ContainsAll(slice, items...)    // Check if contains all
 ```
 
-### 8. Utilities (11 functions) / 유틸리티 (11개 함수)
+### 8. Utilities (12 functions) / 유틸리티 (12개 함수)
 
 Miscellaneous helpful operations.
 
@@ -328,6 +338,7 @@ Miscellaneous helpful operations.
 ```go
 sliceutil.ForEach(slice, fn)              // Iterate with side effects
 sliceutil.ForEachIndexed(slice, fn)       // Iterate with index
+sliceutil.Tap(slice, fn)                  // Execute side effect and return slice
 sliceutil.Join(slice, separator)          // Convert to string
 sliceutil.Clone(slice)                    // Deep copy
 sliceutil.Fill(slice, value)              // Fill with value

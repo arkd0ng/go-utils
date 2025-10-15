@@ -162,3 +162,56 @@ func IsSortedDesc[T constraints.Ordered](slice []T) bool {
 
 	return true
 }
+
+// SortByMulti returns a new slice sorted by using a custom comparison function.
+// SortByMulti는 사용자 정의 비교 함수를 사용하여 정렬된 새 슬라이스를 반환합니다.
+//
+// The original slice is not modified. The less function should return true if element i
+// should sort before element j. This allows for multi-key sorting by comparing multiple fields.
+// 원본 슬라이스는 수정되지 않습니다. less 함수는 요소 i가 요소 j보다 앞에 정렬되어야 하면 true를 반환해야 합니다.
+// 이를 통해 여러 필드를 비교하여 다중 키 정렬이 가능합니다.
+//
+// Example / 예제:
+//
+//	type Person struct {
+//	    Name string
+//	    Age  int
+//	    Score float64
+//	}
+//	people := []Person{
+//	    {"Alice", 30, 95.5},
+//	    {"Bob", 25, 88.0},
+//	    {"Alice", 25, 92.0},
+//	    {"Bob", 25, 90.0},
+//	}
+//
+//	// Sort by Name (ascending), then Age (ascending), then Score (descending)
+//	// Name(오름차순), Age(오름차순), Score(내림차순) 순으로 정렬
+//	sorted := sliceutil.SortByMulti(people, func(i, j Person) bool {
+//	    if i.Name != j.Name {
+//	        return i.Name < j.Name
+//	    }
+//	    if i.Age != j.Age {
+//	        return i.Age < j.Age
+//	    }
+//	    return i.Score > j.Score // Descending
+//	})
+//	// sorted: [{Alice 25 92.0}, {Alice 30 95.5}, {Bob 25 90.0}, {Bob 25 88.0}]
+func SortByMulti[T any](slice []T, less func(i, j T) bool) []T {
+	if len(slice) == 0 {
+		return []T{}
+	}
+
+	// Clone the slice to avoid modifying the original
+	// 원본 수정을 피하기 위해 슬라이스를 복제합니다
+	result := make([]T, len(slice))
+	copy(result, slice)
+
+	// Sort using the provided less function
+	// 제공된 less 함수를 사용하여 정렬
+	sort.Slice(result, func(i, j int) bool {
+		return less(result[i], result[j])
+	})
+
+	return result
+}

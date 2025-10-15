@@ -455,3 +455,160 @@ func BenchmarkIsSortedDesc(b *testing.B) {
 		IsSortedDesc(slice)
 	}
 }
+
+
+// TestSortByMulti tests the SortByMulti function.
+// TestSortByMulti는 SortByMulti 함수를 테스트합니다.
+func TestSortByMulti(t *testing.T) {
+	type Person struct {
+		Name  string
+		Age   int
+		Score float64
+	}
+
+	t.Run("sort by single key", func(t *testing.T) {
+		people := []Person{
+			{"Charlie", 30, 95.5},
+			{"Alice", 25, 88.0},
+			{"Bob", 35, 92.0},
+		}
+		result := SortByMulti(people, func(i, j Person) bool {
+			return i.Name < j.Name
+		})
+		if result[0].Name != "Alice" || result[1].Name != "Bob" || result[2].Name != "Charlie" {
+			t.Errorf("SortByMulti() with single key failed: got %v", result)
+		}
+	})
+
+	t.Run("sort by multiple keys", func(t *testing.T) {
+		people := []Person{
+			{"Alice", 30, 95.5},
+			{"Bob", 25, 88.0},
+			{"Alice", 25, 92.0},
+			{"Bob", 25, 90.0},
+			{"Charlie", 30, 85.0},
+		}
+		// Sort by Name (asc), then Age (asc), then Score (desc)
+		// Name(오름차순), Age(오름차순), Score(내림차순) 순으로 정렬
+		result := SortByMulti(people, func(i, j Person) bool {
+			if i.Name != j.Name {
+				return i.Name < j.Name
+			}
+			if i.Age != j.Age {
+				return i.Age < j.Age
+			}
+			return i.Score > j.Score // Descending
+		})
+
+		// Expected order:
+		// Alice 25 92.0
+		// Alice 30 95.5
+		// Bob 25 90.0
+		// Bob 25 88.0
+		// Charlie 30 85.0
+		expected := []Person{
+			{"Alice", 25, 92.0},
+			{"Alice", 30, 95.5},
+			{"Bob", 25, 90.0},
+			{"Bob", 25, 88.0},
+			{"Charlie", 30, 85.0},
+		}
+
+		for i := range expected {
+			if result[i] != expected[i] {
+				t.Errorf("SortByMulti() at index %d: got %+v, want %+v", i, result[i], expected[i])
+			}
+		}
+	})
+
+	t.Run("sort by age then score", func(t *testing.T) {
+		people := []Person{
+			{"Alice", 25, 88.0},
+			{"Bob", 30, 95.0},
+			{"Charlie", 25, 92.0},
+			{"Dave", 30, 90.0},
+		}
+		// Sort by Age (asc), then Score (desc)
+		// Age(오름차순), Score(내림차순) 순으로 정렬
+		result := SortByMulti(people, func(i, j Person) bool {
+			if i.Age != j.Age {
+				return i.Age < j.Age
+			}
+			return i.Score > j.Score // Descending
+		})
+
+		// Expected order:
+		// Charlie 25 92.0
+		// Alice 25 88.0
+		// Bob 30 95.0
+		// Dave 30 90.0
+		if result[0].Name != "Charlie" || result[1].Name != "Alice" ||
+			result[2].Name != "Bob" || result[3].Name != "Dave" {
+			t.Errorf("SortByMulti() failed: got %v", result)
+		}
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		people := []Person{}
+		result := SortByMulti(people, func(i, j Person) bool {
+			return i.Name < j.Name
+		})
+		if len(result) != 0 {
+			t.Errorf("SortByMulti() with empty slice should return empty slice")
+		}
+	})
+
+	t.Run("original slice unchanged", func(t *testing.T) {
+		people := []Person{
+			{"Charlie", 30, 95.5},
+			{"Alice", 25, 88.0},
+			{"Bob", 35, 92.0},
+		}
+		original := make([]Person, len(people))
+		copy(original, people)
+
+		_ = SortByMulti(people, func(i, j Person) bool {
+			return i.Name < j.Name
+		})
+
+		// Verify original is unchanged / 원본이 변경되지 않았는지 확인
+		for i := range original {
+			if people[i] != original[i] {
+				t.Error("SortByMulti() should not modify original slice")
+			}
+		}
+	})
+}
+
+// BenchmarkSortByMulti benchmarks the SortByMulti function.
+// BenchmarkSortByMulti는 SortByMulti 함수를 벤치마크합니다.
+func BenchmarkSortByMulti(b *testing.B) {
+	type Person struct {
+		Name  string
+		Age   int
+		Score float64
+	}
+
+	people := make([]Person, 1000)
+	names := []string{"Alice", "Bob", "Charlie", "Dave", "Eve"}
+	for i := range people {
+		people[i] = Person{
+			Name:  names[i%len(names)],
+			Age:   20 + (i % 50),
+			Score: 50.0 + float64(i%50),
+		}
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		SortByMulti(people, func(i, j Person) bool {
+			if i.Name != j.Name {
+				return i.Name < j.Name
+			}
+			if i.Age != j.Age {
+				return i.Age < j.Age
+			}
+			return i.Score < j.Score
+		})
+	}
+}

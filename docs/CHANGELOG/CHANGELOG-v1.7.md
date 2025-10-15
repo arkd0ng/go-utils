@@ -8,6 +8,85 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.7.020] - 2025-10-15
+
+### Added / 추가
+
+- **NEW FUNCTION**: Added multi-key sorting function to sliceutil package / sliceutil 패키지에 다중 키 정렬 함수 추가
+  - `SortByMulti(slice, less)`: Sort by multiple keys using custom comparison function / 사용자 정의 비교 함수로 다중 키 정렬
+  - Supports complex sorting scenarios with multiple fields / 여러 필드를 사용한 복잡한 정렬 시나리오 지원
+  - Example: Sort by Name (asc), Age (asc), Score (desc) in single call / 예: 한 번의 호출로 Name(오름차순), Age(오름차순), Score(내림차순) 정렬
+
+- **COMPREHENSIVE TESTS**: Added `TestSortByMulti` with 5 subtests / 5개 서브테스트로 `TestSortByMulti` 추가
+  - Test single key sorting
+  - Test multiple key sorting (3 keys)
+  - Test age then score sorting
+  - Test empty slice handling
+  - Test original slice immutability
+  - Added `BenchmarkSortByMulti` for performance testing / 성능 테스트를 위한 `BenchmarkSortByMulti` 추가
+
+- **COMPLETE DOCUMENTATION**: Updated `sliceutil/README.md` to document ALL 73 functions / ALL 73개 함수를 문서화하도록 `sliceutil/README.md` 업데이트
+  - Updated function count from 62 to 73 (+11 functions) / 함수 개수를 62에서 73으로 업데이트 (+11개 함수)
+  - Added previously undocumented functions: / 이전에 문서화되지 않은 함수 추가:
+    * FindLast - Find last element matching predicate
+    * CountBy - Count occurrences by key
+    * ReduceRight - Reduce from right to left
+    * MinBy, MaxBy - Find minimum/maximum by custom key
+    * TakeWhile, DropWhile - Conditional take/drop operations
+    * Window - Create sliding windows
+    * Interleave - Interleave multiple slices
+    * Tap - Execute side effect and return slice
+    * SortByMulti - Sort by multiple keys
+  - Updated category counts:
+    * Basic Operations: 10 → 11 functions
+    * Aggregation: 7 → 11 functions
+    * Slicing: 7 → 11 functions
+    * Sorting: 5 → 6 functions
+    * Utilities: 11 → 12 functions
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.020 / `cfg/app.yaml` 버전을 v1.7.020으로 업데이트
+- Updated `sliceutil/sliceutil.go` Version constant to "1.7.020" / `sliceutil/sliceutil.go` 버전 상수를 "1.7.020"로 업데이트
+- Updated `sliceutil/sliceutil_test.go` expected version to "1.7.020" / `sliceutil/sliceutil_test.go` 예상 버전을 "1.7.020"로 업데이트
+- Updated `sliceutil/README.md` version to v1.7.020 / `sliceutil/README.md` 버전을 v1.7.020으로 업데이트
+- Modified `sliceutil/sort.go` to add `SortByMulti` function (53 lines) / `SortByMulti` 함수를 추가하도록 `sliceutil/sort.go` 수정 (53줄)
+- Modified `sliceutil/sort_test.go` to add comprehensive tests for `SortByMulti` (160 lines) / `SortByMulti`에 대한 종합 테스트를 추가하도록 `sliceutil/sort_test.go` 수정 (160줄)
+
+### Testing / 테스트
+
+- All tests pass successfully / 모든 테스트가 성공적으로 통과
+- Test coverage: 85.2% of statements (improved from 85.0%) / 테스트 커버리지: 85.2% (85.0%에서 개선)
+- TestSortByMulti: All 5 subtests pass / TestSortByMulti: 모든 5개 서브테스트 통과
+- All 73 functions have comprehensive test coverage / 모든 73개 함수가 종합 테스트 커버리지 보유
+- All 73 functions have working examples in `examples/sliceutil/main.go` / 모든 73개 함수가 `examples/sliceutil/main.go`에 작동하는 예제 보유
+
+### Documentation Status / 문서화 상태
+
+- ✅ ALL 73 functions documented in README.md / README.md에 모든 73개 함수 문서화
+- ✅ ALL 73 functions tested with comprehensive test cases / 모든 73개 함수가 종합 테스트 케이스로 테스트됨
+- ✅ ALL 73 functions have examples with detailed logs / 모든 73개 함수가 상세한 로그와 함께 예제 보유
+- ✅ Function categories updated and complete / 함수 카테고리 업데이트 및 완료
+- ✅ Performance notes documented / 성능 참고 사항 문서화
+
+### Summary / 요약
+
+v1.7.020 completes the comprehensive audit and documentation of all sliceutil functions:
+- Added `SortByMulti` for multi-key sorting
+- Documented all 11 previously undocumented functions
+- Verified all 73 functions have tests, examples, and documentation
+- Achieved 85.2% test coverage
+- Complete feature parity between implementation, tests, examples, and documentation
+
+v1.7.020은 모든 sliceutil 함수의 종합 감사 및 문서화를 완료합니다:
+- 다중 키 정렬을 위한 `SortByMulti` 추가
+- 이전에 문서화되지 않은 11개 함수 모두 문서화
+- 모든 73개 함수가 테스트, 예제, 문서를 보유하는지 확인
+- 85.2% 테스트 커버리지 달성
+- 구현, 테스트, 예제, 문서 간 완전한 기능 동등성 확보
+
+---
+
 ## [v1.7.019] - 2025-10-15
 
 ### Added / 추가
