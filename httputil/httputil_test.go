@@ -2,7 +2,13 @@ package httputil
 
 import (
 	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
+	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 )
@@ -452,4 +458,438 @@ func TestProgressReader(t *testing.T) {
 	if totalRead != int64(len(data)) {
 		t.Errorf("Progress callback should report %d bytes, got %d", len(data), totalRead)
 	}
+}
+
+// TestFileOperations tests file download and upload functionality.
+// TestFileOperations는 파일 다운로드 및 업로드 기능을 테스트합니다.
+func TestFileOperations(t *testing.T) {
+	t.Run("Download", func(t *testing.T) {
+		// Create test server / 테스트 서버 생성
+		testData := []byte("test file content for download")
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/octet-stream")
+			w.Header().Set("Content-Length", fmt.Sprintf("%d", len(testData)))
+			w.Write(testData)
+		}))
+		defer ts.Close()
+
+		client := NewClient()
+
+		// Test Download (to memory) / Download 테스트 (메모리로)
+		data, err := client.Download(ts.URL)
+		if err != nil {
+			t.Fatalf("Download failed: %v", err)
+		}
+
+		if !bytes.Equal(data, testData) {
+			t.Errorf("Downloaded data mismatch. Expected %s, got %s", testData, data)
+		}
+	})
+
+	t.Run("DownloadFile", func(t *testing.T) {
+		// Create test server / 테스트 서버 생성
+		testData := []byte("test file content for download to file")
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/octet-stream")
+			w.Write(testData)
+		}))
+		defer ts.Close()
+
+		client := NewClient()
+		tempFile := "/tmp/httputil_test_download.txt"
+		defer os.Remove(tempFile)
+
+		// Test DownloadFile / DownloadFile 테스트
+		err := client.DownloadFile(ts.URL, tempFile)
+		if err != nil {
+			t.Fatalf("DownloadFile failed: %v", err)
+		}
+
+		// Verify file contents / 파일 내용 확인
+		data, err := os.ReadFile(tempFile)
+		if err != nil {
+			t.Fatalf("Failed to read downloaded file: %v", err)
+		}
+
+		if !bytes.Equal(data, testData) {
+			t.Errorf("Downloaded file content mismatch. Expected %s, got %s", testData, data)
+		}
+	})
+
+	t.Run("DownloadFileContext with progress", func(t *testing.T) {
+		// Create test server / 테스트 서버 생성
+		testData := []byte(strings.Repeat("A", 1024)) // 1KB
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/octet-stream")
+			w.Header().Set("Content-Length", fmt.Sprintf("%d", len(testData)))
+			w.Write(testData)
+		}))
+		defer ts.Close()
+
+		client := NewClient()
+		tempFile := "/tmp/httputil_test_download_progress.txt"
+		defer os.Remove(tempFile)
+
+		// Track progress / 진행 상황 추적
+		var progressCalls int
+		var lastProgress int64
+		progress := func(current, total int64) {
+			progressCalls++
+			lastProgress = current
+		}
+
+		ctx := context.Background()
+		err := client.DownloadFileContext(ctx, ts.URL, tempFile, progress)
+		if err != nil {
+			t.Fatalf("DownloadFileContext failed: %v", err)
+		}
+
+		if progressCalls == 0 {
+			t.Error("Progress callback was not called")
+		}
+
+		if lastProgress != int64(len(testData)) {
+			t.Errorf("Last progress should be %d, got %d", len(testData), lastProgress)
+		}
+
+		// Verify file / 파일 확인
+		data, _ := os.ReadFile(tempFile)
+		if !bytes.Equal(data, testData) {
+			t.Error("Downloaded file content mismatch with progress")
+		}
+	})
+
+	t.Run("UploadFile", func(t *testing.T) {
+		// Create test file / 테스트 파일 생성
+		tempFile := "/tmp/httputil_test_upload.txt"
+		testData := []byte("test file content for upload")
+		err := os.WriteFile(tempFile, testData, 0644)
+		if err != nil {
+			t.Fatalf("Failed to create test file: %v", err)
+		}
+		defer os.Remove(tempFile)
+
+		// Create test server / 테스트 서버 생성
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method != "POST" {
+				t.Errorf("Expected POST method, got %s", r.Method)
+			}
+
+			// Parse multipart form / multipart form 파싱
+			err := r.ParseMultipartForm(10 << 20) // 10MB
+			if err != nil {
+				t.Errorf("Failed to parse multipart form: %v", err)
+			}
+
+			file, _, err := r.FormFile("file")
+			if err != nil {
+				t.Errorf("Failed to get form file: %v", err)
+			}
+			defer file.Close()
+
+			// Read uploaded data / 업로드된 데이터 읽기
+			uploadedData, _ := io.ReadAll(file)
+			if !bytes.Equal(uploadedData, testData) {
+				t.Errorf("Uploaded data mismatch. Expected %s, got %s", testData, uploadedData)
+			}
+
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]string{"status": "uploaded"})
+		}))
+		defer ts.Close()
+
+		client := NewClient()
+		var result map[string]string
+
+		// Test UploadFile / UploadFile 테스트
+		err = client.UploadFile(ts.URL, "file", tempFile, &result)
+		if err != nil {
+			t.Fatalf("UploadFile failed: %v", err)
+		}
+
+		if result["status"] != "uploaded" {
+			t.Errorf("Expected status 'uploaded', got '%s'", result["status"])
+		}
+	})
+
+	t.Run("UploadFiles (multiple)", func(t *testing.T) {
+		// Create test files / 테스트 파일들 생성
+		file1 := "/tmp/httputil_test_upload1.txt"
+		file2 := "/tmp/httputil_test_upload2.txt"
+		data1 := []byte("file1 content")
+		data2 := []byte("file2 content")
+
+		os.WriteFile(file1, data1, 0644)
+		os.WriteFile(file2, data2, 0644)
+		defer os.Remove(file1)
+		defer os.Remove(file2)
+
+		// Create test server / 테스트 서버 생성
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := r.ParseMultipartForm(10 << 20)
+			if err != nil {
+				t.Errorf("Failed to parse multipart form: %v", err)
+			}
+
+			// Check both files / 두 파일 모두 확인
+			fileCount := 0
+			if _, _, err := r.FormFile("file1"); err == nil {
+				fileCount++
+			}
+			if _, _, err := r.FormFile("file2"); err == nil {
+				fileCount++
+			}
+
+			if fileCount != 2 {
+				t.Errorf("Expected 2 files, got %d", fileCount)
+			}
+
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]int{"count": fileCount})
+		}))
+		defer ts.Close()
+
+		client := NewClient()
+		var result map[string]int
+
+		// Test UploadFiles / UploadFiles 테스트
+		files := map[string]string{
+			"file1": file1,
+			"file2": file2,
+		}
+
+		err := client.UploadFiles(ts.URL, files, &result)
+		if err != nil {
+			t.Fatalf("UploadFiles failed: %v", err)
+		}
+
+		if result["count"] != 2 {
+			t.Errorf("Expected count 2, got %d", result["count"])
+		}
+	})
+
+	t.Run("UploadFileContext with progress", func(t *testing.T) {
+		// Create test file / 테스트 파일 생성
+		tempFile := "/tmp/httputil_test_upload_progress.txt"
+		testData := []byte(strings.Repeat("B", 2048)) // 2KB
+		err := os.WriteFile(tempFile, testData, 0644)
+		if err != nil {
+			t.Fatalf("Failed to create test file: %v", err)
+		}
+		defer os.Remove(tempFile)
+
+		// Create test server / 테스트 서버 생성
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			r.ParseMultipartForm(10 << 20)
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+		}))
+		defer ts.Close()
+
+		client := NewClient()
+		var result map[string]string
+
+		// Track progress / 진행 상황 추적
+		var progressCalls int
+		progress := func(current, total int64) {
+			progressCalls++
+		}
+
+		ctx := context.Background()
+		err = client.UploadFileContext(ctx, ts.URL, "file", tempFile, &result, progress)
+		if err != nil {
+			t.Fatalf("UploadFileContext failed: %v", err)
+		}
+
+		if progressCalls == 0 {
+			t.Error("Progress callback was not called during upload")
+		}
+
+		if result["status"] != "ok" {
+			t.Errorf("Expected status 'ok', got '%s'", result["status"])
+		}
+	})
+}
+
+// TestSimpleAPI tests package-level simple API functions.
+// TestSimpleAPI는 패키지 레벨 Simple API 함수를 테스트합니다.
+func TestSimpleAPI(t *testing.T) {
+	// Create test server / 테스트 서버 생성
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/get":
+			json.NewEncoder(w).Encode(map[string]string{"method": "GET"})
+		case "/post":
+			json.NewEncoder(w).Encode(map[string]string{"method": "POST"})
+		case "/put":
+			json.NewEncoder(w).Encode(map[string]string{"method": "PUT"})
+		case "/patch":
+			json.NewEncoder(w).Encode(map[string]string{"method": "PATCH"})
+		case "/delete":
+			json.NewEncoder(w).Encode(map[string]string{"method": "DELETE"})
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	}))
+	defer ts.Close()
+
+	t.Run("Get", func(t *testing.T) {
+		var result map[string]string
+		err := Get(ts.URL+"/get", &result)
+		if err != nil {
+			t.Fatalf("Get failed: %v", err)
+		}
+		if result["method"] != "GET" {
+			t.Errorf("Expected method GET, got %s", result["method"])
+		}
+	})
+
+	t.Run("Post", func(t *testing.T) {
+		var result map[string]string
+		payload := map[string]string{"test": "data"}
+		err := Post(ts.URL+"/post", payload, &result)
+		if err != nil {
+			t.Fatalf("Post failed: %v", err)
+		}
+		if result["method"] != "POST" {
+			t.Errorf("Expected method POST, got %s", result["method"])
+		}
+	})
+
+	t.Run("Put", func(t *testing.T) {
+		var result map[string]string
+		payload := map[string]string{"test": "data"}
+		err := Put(ts.URL+"/put", payload, &result)
+		if err != nil {
+			t.Fatalf("Put failed: %v", err)
+		}
+		if result["method"] != "PUT" {
+			t.Errorf("Expected method PUT, got %s", result["method"])
+		}
+	})
+
+	t.Run("Patch", func(t *testing.T) {
+		var result map[string]string
+		payload := map[string]string{"test": "data"}
+		err := Patch(ts.URL+"/patch", payload, &result)
+		if err != nil {
+			t.Fatalf("Patch failed: %v", err)
+		}
+		if result["method"] != "PATCH" {
+			t.Errorf("Expected method PATCH, got %s", result["method"])
+		}
+	})
+
+	t.Run("Delete", func(t *testing.T) {
+		var result map[string]string
+		err := Delete(ts.URL+"/delete", &result)
+		if err != nil {
+			t.Fatalf("Delete failed: %v", err)
+		}
+		if result["method"] != "DELETE" {
+			t.Errorf("Expected method DELETE, got %s", result["method"])
+		}
+	})
+
+	t.Run("Context methods", func(t *testing.T) {
+		ctx := context.Background()
+		var result map[string]string
+
+		// GetContext
+		err := GetContext(ctx, ts.URL+"/get", &result)
+		if err != nil {
+			t.Errorf("GetContext failed: %v", err)
+		}
+
+		// PostContext
+		payload := map[string]string{"test": "data"}
+		err = PostContext(ctx, ts.URL+"/post", payload, &result)
+		if err != nil {
+			t.Errorf("PostContext failed: %v", err)
+		}
+
+		// PutContext
+		err = PutContext(ctx, ts.URL+"/put", payload, &result)
+		if err != nil {
+			t.Errorf("PutContext failed: %v", err)
+		}
+
+		// PatchContext
+		err = PatchContext(ctx, ts.URL+"/patch", payload, &result)
+		if err != nil {
+			t.Errorf("PatchContext failed: %v", err)
+		}
+
+		// DeleteContext
+		err = DeleteContext(ctx, ts.URL+"/delete", &result)
+		if err != nil {
+			t.Errorf("DeleteContext failed: %v", err)
+		}
+	})
+}
+
+// TestPostForm tests form posting functionality.
+// TestPostForm은 폼 전송 기능을 테스트합니다.
+func TestPostForm(t *testing.T) {
+	// Create test server / 테스트 서버 생성
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Content-Type") != "application/x-www-form-urlencoded" {
+			t.Errorf("Expected Content-Type application/x-www-form-urlencoded, got %s",
+				r.Header.Get("Content-Type"))
+		}
+
+		err := r.ParseForm()
+		if err != nil {
+			t.Errorf("Failed to parse form: %v", err)
+		}
+
+		username := r.FormValue("username")
+		email := r.FormValue("email")
+
+		json.NewEncoder(w).Encode(map[string]string{
+			"username": username,
+			"email":    email,
+		})
+	}))
+	defer ts.Close()
+
+	t.Run("PostForm", func(t *testing.T) {
+		formData := map[string]string{
+			"username": "testuser",
+			"email":    "test@example.com",
+		}
+
+		var result map[string]string
+		err := PostForm(ts.URL, formData, &result)
+		if err != nil {
+			t.Fatalf("PostForm failed: %v", err)
+		}
+
+		if result["username"] != "testuser" {
+			t.Errorf("Expected username 'testuser', got '%s'", result["username"])
+		}
+
+		if result["email"] != "test@example.com" {
+			t.Errorf("Expected email 'test@example.com', got '%s'", result["email"])
+		}
+	})
+
+	t.Run("Client.PostForm", func(t *testing.T) {
+		client := NewClient(WithBaseURL(ts.URL))
+
+		formData := map[string]string{
+			"username": "client_user",
+			"email":    "client@example.com",
+		}
+
+		var result map[string]string
+		err := client.PostForm("/", formData, &result)
+		if err != nil {
+			t.Fatalf("Client.PostForm failed: %v", err)
+		}
+
+		if result["username"] != "client_user" {
+			t.Errorf("Expected username 'client_user', got '%s'", result["username"])
+		}
+	})
 }
