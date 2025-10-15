@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 )
 
 // TemplateEngine manages HTML template rendering.
@@ -32,6 +34,14 @@ type TemplateEngine struct {
 	// delims contains custom template delimiters
 	// delims는 커스텀 템플릿 구분자를 포함합니다
 	delims [2]string
+
+	// layoutDir is the layout templates directory
+	// layoutDir는 레이아웃 템플릿 디렉토리입니다
+	layoutDir string
+
+	// layouts stores layout templates
+	// layouts는 레이아웃 템플릿을 저장합니다
+	layouts map[string]*template.Template
 }
 
 // NewTemplateEngine creates a new template engine.
@@ -41,11 +51,91 @@ type TemplateEngine struct {
 //
 //	engine := NewTemplateEngine("views")
 func NewTemplateEngine(dir string) *TemplateEngine {
-	return &TemplateEngine{
+	engine := &TemplateEngine{
 		templates: make(map[string]*template.Template),
+		layouts:   make(map[string]*template.Template),
 		dir:       dir,
+		layoutDir: filepath.Join(dir, "layouts"),
 		funcMap:   make(template.FuncMap),
 		delims:    [2]string{"{{", "}}"}, // Default delimiters
+	}
+
+	// Add built-in template functions
+	// 내장 템플릿 함수 추가
+	engine.addBuiltinFuncs()
+
+	return engine
+}
+
+// addBuiltinFuncs adds built-in template functions.
+// addBuiltinFuncs는 내장 템플릿 함수를 추가합니다.
+func (e *TemplateEngine) addBuiltinFuncs() {
+	e.funcMap["upper"] = strings.ToUpper
+	e.funcMap["lower"] = strings.ToLower
+	e.funcMap["title"] = strings.Title
+	e.funcMap["trim"] = strings.TrimSpace
+	e.funcMap["trimPrefix"] = strings.TrimPrefix
+	e.funcMap["trimSuffix"] = strings.TrimSuffix
+	e.funcMap["replace"] = strings.ReplaceAll
+	e.funcMap["contains"] = strings.Contains
+	e.funcMap["hasPrefix"] = strings.HasPrefix
+	e.funcMap["hasSuffix"] = strings.HasSuffix
+	e.funcMap["split"] = strings.Split
+	e.funcMap["join"] = strings.Join
+	e.funcMap["repeat"] = strings.Repeat
+
+	// Date/Time functions
+	// 날짜/시간 함수
+	e.funcMap["now"] = time.Now
+	e.funcMap["formatDate"] = func(t time.Time, layout string) string {
+		return t.Format(layout)
+	}
+	e.funcMap["formatDateSimple"] = func(t time.Time) string {
+		return t.Format("2006-01-02")
+	}
+	e.funcMap["formatDateTime"] = func(t time.Time) string {
+		return t.Format("2006-01-02 15:04:05")
+	}
+	e.funcMap["formatTime"] = func(t time.Time) string {
+		return t.Format("15:04:05")
+	}
+
+	// URL functions
+	// URL 함수
+	e.funcMap["urlEncode"] = url.QueryEscape
+	e.funcMap["urlDecode"] = url.QueryUnescape
+
+	// Safe HTML
+	// 안전한 HTML
+	e.funcMap["safeHTML"] = func(s string) template.HTML {
+		return template.HTML(s)
+	}
+	e.funcMap["safeURL"] = func(s string) template.URL {
+		return template.URL(s)
+	}
+	e.funcMap["safeJS"] = func(s string) template.JS {
+		return template.JS(s)
+	}
+
+	// Utility functions
+	// 유틸리티 함수
+	e.funcMap["default"] = func(defaultVal, val interface{}) interface{} {
+		if val == nil || val == "" {
+			return defaultVal
+		}
+		return val
+	}
+	e.funcMap["len"] = func(v interface{}) int {
+		switch val := v.(type) {
+		case string:
+			return len(val)
+		case []interface{}:
+			return len(val)
+		case map[string]interface{}:
+			return len(val)
+		default:
+			return 0
+		}
 	}
 }
 
@@ -328,4 +418,207 @@ func (e *TemplateEngine) Clear() {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	e.templates = make(map[string]*template.Template)
+}
+
+// SetLayoutDir sets the layout templates directory.
+// SetLayoutDir는 레이아웃 템플릿 디렉토리를 설정합니다.
+//
+// Example / 예제:
+//
+//	engine.SetLayoutDir("views/layouts")
+func (e *TemplateEngine) SetLayoutDir(dir string) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	e.layoutDir = dir
+}
+
+// LoadLayout loads a layout template.
+// LoadLayout는 레이아웃 템플릿을 로드합니다.
+//
+// Example / 예제:
+//
+//	err := engine.LoadLayout("base.html")
+func (e *TemplateEngine) LoadLayout(name string) error {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	// Build full path
+	// 전체 경로 생성
+	path := filepath.Join(e.layoutDir, name)
+
+	// Check if file exists
+	// 파일이 존재하는지 확인
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return fmt.Errorf("layout file not found: %s", path)
+	}
+
+	// Create new template
+	// 새 템플릿 생성
+	tmpl := template.New(name)
+
+	// Set custom delimiters
+	// 커스텀 구분자 설정
+	tmpl.Delims(e.delims[0], e.delims[1])
+
+	// Add custom functions
+	// 커스텀 함수 추가
+	if len(e.funcMap) > 0 {
+		tmpl.Funcs(e.funcMap)
+	}
+
+	// Parse layout file
+	// 레이아웃 파일 파싱
+	tmpl, err := tmpl.ParseFiles(path)
+	if err != nil {
+		return fmt.Errorf("failed to parse layout %s: %w", name, err)
+	}
+
+	// Store layout
+	// 레이아웃 저장
+	e.layouts[name] = tmpl
+
+	return nil
+}
+
+// LoadAllLayouts loads all layout templates from the layout directory.
+// LoadAllLayouts는 레이아웃 디렉토리에서 모든 레이아웃 템플릿을 로드합니다.
+//
+// Example / 예제:
+//
+//	err := engine.LoadAllLayouts()
+func (e *TemplateEngine) LoadAllLayouts() error {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	// Check if layout directory exists
+	// 레이아웃 디렉토리가 존재하는지 확인
+	if _, err := os.Stat(e.layoutDir); os.IsNotExist(err) {
+		// Layout directory doesn't exist, skip
+		// 레이아웃 디렉토리가 존재하지 않으면 건너뜀
+		return nil
+	}
+
+	// Walk through layout directory
+	// 레이아웃 디렉토리 순회
+	return filepath.Walk(e.layoutDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Skip directories
+		// 디렉토리 건너뛰기
+		if info.IsDir() {
+			return nil
+		}
+
+		// Only load .html, .htm, .tmpl files
+		// .html, .htm, .tmpl 파일만 로드
+		ext := strings.ToLower(filepath.Ext(path))
+		if ext != ".html" && ext != ".htm" && ext != ".tmpl" {
+			return nil
+		}
+
+		// Get relative name
+		// 상대 경로 이름 가져오기
+		name, err := filepath.Rel(e.layoutDir, path)
+		if err != nil {
+			return fmt.Errorf("failed to get relative path for %s: %w", path, err)
+		}
+
+		// Normalize path separators
+		// 경로 구분자 정규화
+		name = filepath.ToSlash(name)
+
+		// Create new template
+		// 새 템플릿 생성
+		tmpl := template.New(name)
+
+		// Set custom delimiters
+		// 커스텀 구분자 설정
+		tmpl.Delims(e.delims[0], e.delims[1])
+
+		// Add custom functions
+		// 커스텀 함수 추가
+		if len(e.funcMap) > 0 {
+			tmpl.Funcs(e.funcMap)
+		}
+
+		// Parse layout file
+		// 레이아웃 파일 파싱
+		tmpl, err = tmpl.ParseFiles(path)
+		if err != nil {
+			return fmt.Errorf("failed to parse layout %s: %w", name, err)
+		}
+
+		// Store layout
+		// 레이아웃 저장
+		e.layouts[name] = tmpl
+
+		return nil
+	})
+}
+
+// RenderWithLayout renders a template with a layout.
+// RenderWithLayout는 레이아웃과 함께 템플릿을 렌더링합니다.
+//
+// Example / 예제:
+//
+//	err := engine.RenderWithLayout(w, "base.html", "index.html", data)
+func (e *TemplateEngine) RenderWithLayout(w io.Writer, layoutName, templateName string, data interface{}) error {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+
+	// Get layout template
+	// 레이아웃 템플릿 가져오기
+	layout, ok := e.layouts[layoutName]
+	if !ok {
+		return fmt.Errorf("layout not found: %s", layoutName)
+	}
+
+	// Get content template
+	// 콘텐츠 템플릿 가져오기
+	content, ok := e.templates[templateName]
+	if !ok {
+		return fmt.Errorf("template not found: %s", templateName)
+	}
+
+	// Clone the layout
+	// 레이아웃 복제
+	layoutClone, err := layout.Clone()
+	if err != nil {
+		return fmt.Errorf("failed to clone layout: %w", err)
+	}
+
+	// Add content template as "content" to the layout
+	// 콘텐츠 템플릿을 "content"로 레이아웃에 추가
+	_, err = layoutClone.AddParseTree("content", content.Tree)
+	if err != nil {
+		return fmt.Errorf("failed to add content to layout: %w", err)
+	}
+
+	// Execute layout (execute the main template with layout name)
+	// 레이아웃 실행 (레이아웃 이름으로 메인 템플릿 실행)
+	return layoutClone.ExecuteTemplate(w, layoutName, data)
+}
+
+// HasLayout checks if a layout exists.
+// HasLayout는 레이아웃이 존재하는지 확인합니다.
+func (e *TemplateEngine) HasLayout(name string) bool {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	_, ok := e.layouts[name]
+	return ok
+}
+
+// ListLayouts returns all loaded layout names.
+// ListLayouts는 모든 로드된 레이아웃 이름을 반환합니다.
+func (e *TemplateEngine) ListLayouts() []string {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+
+	names := make([]string, 0, len(e.layouts))
+	for name := range e.layouts {
+		names = append(names, name)
+	}
+	return names
 }

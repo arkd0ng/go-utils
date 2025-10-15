@@ -5,6 +5,93 @@
 
 ---
 
+## [v1.11.011] - 2025-10-16
+
+### Added / 추가
+- **Layout System** / **레이아웃 시스템** (`template.go`)
+  - `SetLayoutDir(dir)` - Set layout directory (default: "views/layouts")
+  - `LoadLayout(name)` - Load single layout file
+  - `LoadAllLayouts()` - Load all layouts from layout directory recursively
+  - `RenderWithLayout(w, layoutName, templateName, data)` - Render template with layout
+  - `HasLayout(name)` - Check if layout exists
+  - `ListLayouts()` - List all loaded layouts
+  - Layout templates use `{{template "content" .}}` to embed content
+  - Separate storage for layouts (`layouts map[string]*template.Template`)
+  - Auto-load layouts on app creation when TemplateDir is set
+
+- **Built-in Template Functions** / **내장 템플릿 함수** (`template.go`)
+  - **String functions** (13개):
+    - `upper`, `lower`, `title` - Case conversion
+    - `trim`, `trimPrefix`, `trimSuffix` - Whitespace/prefix/suffix removal
+    - `replace` - String replacement
+    - `contains`, `hasPrefix`, `hasSuffix` - String checking
+    - `split`, `join` - String splitting/joining
+    - `repeat` - String repetition
+  - **Date/Time functions** (5개):
+    - `now` - Current time
+    - `formatDate` - Format time with layout
+    - `formatDateSimple` - Simple date format (2006-01-02)
+    - `formatDateTime` - DateTime format (2006-01-02 15:04:05)
+    - `formatTime` - Time format (15:04:05)
+  - **URL functions** (2개):
+    - `urlEncode` - URL encode string
+    - `urlDecode` - URL decode string
+  - **Safe HTML functions** (3개):
+    - `safeHTML` - Mark HTML as safe (template.HTML)
+    - `safeURL` - Mark URL as safe (template.URL)
+    - `safeJS` - Mark JavaScript as safe (template.JS)
+  - **Utility functions** (2개):
+    - `default` - Return default value if empty
+    - `len` - Return length of string/slice/map
+  - **Total: 26+ built-in functions**
+
+- **Context Layout Rendering** / **Context 레이아웃 렌더링** (`context.go`)
+  - `ctx.RenderWithLayout(code, layoutName, templateName, data)` - Render template with layout
+  - Automatic content-type and status code setting
+  - Access to template engine through request context
+
+- **App Integration** / **앱 통합** (`app.go`)
+  - Auto-load layouts on app creation (after loading templates)
+  - Logs warning if layout loading fails but doesn't stop app
+
+- **Comprehensive Tests** / **종합 테스트** (`template_test.go`)
+  - 7 new test functions + 2 benchmarks for layouts and built-in functions
+  - Tests for layout loading and rendering
+  - Tests for built-in functions (Upper, Lower, SafeHTML)
+  - Tests for SetLayoutDir
+  - Tests for ListLayouts and HasLayout
+  - Benchmark for built-in functions
+  - Benchmark for RenderWithLayout
+  - **Total: 21 test functions + 4 benchmarks** for template system
+
+### Fixed / 수정
+- Fixed `RenderWithLayout` to use `ExecuteTemplate()` instead of `Execute()`
+  - Was: `layoutClone.Execute(w, data)` (executed content template)
+  - Now: `layoutClone.ExecuteTemplate(w, layoutName, data)` (executes layout template)
+  - This ensures the layout template is properly executed with the content template embedded
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.011
+- Bumped version to v1.11.011 in `cfg/app.yaml`
+- Updated `README.md` with layout system and built-in functions documentation
+- Modified `NewTemplateEngine()` to call `addBuiltinFuncs()` on creation
+- Template engine now has both `templates` and `layouts` maps
+- Template engine now has `layoutDir` field (default: "views/layouts")
+
+### Testing Coverage / 테스트 커버리지
+- **21 test functions + 4 benchmarks** for complete template system
+- **Total: 153+ test functions**, **Total: 37 benchmark functions**
+- **80.4% test coverage** - All tests passing ✅
+
+### Notes / 참고사항
+- Built-in functions are automatically added to all templates and layouts
+- Layout system uses Go's `template.Clone()` and `AddParseTree()` for composition
+- Layout directory defaults to "views/layouts" but can be customized
+- Both templates and layouts support nested directories
+- Next: v1.11.012+ will add hot reload and additional template features
+
+---
+
 ## [v1.11.010] - 2025-10-16
 
 ### Added / 추가

@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.010
+**Version / 버전**: v1.11.011
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.010) / 현재 기능
+## Current Features (v1.11.011) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -239,6 +239,8 @@ HTML 렌더링을 위한 내장 템플릿 엔진 (자동 발견 및 커스텀 �
 **TemplateEngine / 템플릿 엔진**:
 - Automatic template loading from directory / 디렉토리에서 자동 템플릿 로딩
 - Support for nested directories / 중첩 디렉토리 지원
+- **Layout system** / **레이아웃 시스템** (v1.11.011+)
+- **26+ built-in template functions** / **26개 이상의 내장 템플릿 함수** (v1.11.011+)
 - Custom template functions / 커스텀 템플릿 함수
 - Custom delimiters / 커스텀 구분자
 - Thread-safe template caching / 스레드 안전 템플릿 캐싱
@@ -266,7 +268,23 @@ HTML 렌더링을 위한 내장 템플릿 엔진 (자동 발견 및 커스텀 �
 
 **Context Template Methods / Context 템플릿 메서드**:
 - `ctx.Render(code, name, data)` - Render template file / 템플릿 파일 렌더링
+- `ctx.RenderWithLayout(code, layout, template, data)` - Render with layout / 레이아웃과 함께 렌더링 (v1.11.011+)
 - `ctx.HTMLTemplate(code, tmpl, data)` - Render inline template / 인라인 템플릿 렌더링
+
+**Layout Methods / 레이아웃 메서드** (v1.11.011+):
+- `SetLayoutDir(dir)` - Set layout directory / 레이아웃 디렉토리 설정
+- `LoadLayout(name)` - Load single layout / 단일 레이아웃 로드
+- `LoadAllLayouts()` - Load all layouts / 모든 레이아웃 로드
+- `RenderWithLayout(w, layout, template, data)` - Render with layout / 레이아웃과 함께 렌더링
+- `HasLayout(name)` - Check if layout exists / 레이아웃 존재 확인
+- `ListLayouts()` - List all loaded layouts / 모든 로드된 레이아웃 목록
+
+**Built-in Template Functions** (v1.11.011+):
+- **String functions**: `upper`, `lower`, `title`, `trim`, `trimPrefix`, `trimSuffix`, `replace`, `contains`, `hasPrefix`, `hasSuffix`, `split`, `join`, `repeat`
+- **Date/Time functions**: `now`, `formatDate`, `formatDateSimple`, `formatDateTime`, `formatTime`
+- **URL functions**: `urlEncode`, `urlDecode`
+- **Safe HTML**: `safeHTML`, `safeURL`, `safeJS`
+- **Utility functions**: `default`, `len`
 
 ## Quick Start / 빠른 시작
 
@@ -595,6 +613,7 @@ The following features are planned for future releases:
 - ✅ v1.11.008: Advanced Middleware (RateLimiter, Compression, SecureHeaders) / 고급 미들웨어 (Rate Limiter, 압축, 보안 헤더)
 - ✅ v1.11.009: Final Middleware (BodyLimit, Static, Redirect, HTTPSRedirect, WWWRedirect) / 최종 미들웨어 (본문 제한, 정적 파일, 리디렉션)
 - ✅ v1.11.010: Template Engine Core (TemplateEngine, auto-loading, custom functions) / 템플릿 엔진 핵심 (TemplateEngine, 자동 로딩, 커스텀 함수)
+- ✅ v1.11.011: Layout System and Built-in Functions (layouts, 26+ built-in functions) / 레이아웃 시스템 및 내장 함수 (레이아웃, 26개 이상의 내장 함수)
 
 ## Documentation / 문서
 

@@ -473,3 +473,34 @@ func (c *Context) Render(code int, name string, data interface{}) error {
 	// 템플릿 렌더링
 	return engine.Render(c.ResponseWriter, name, data)
 }
+
+// RenderWithLayout renders a template with a layout.
+// RenderWithLayout는 레이아웃과 함께 템플릿을 렌더링합니다.
+//
+// Example / 예제:
+//
+//	ctx.RenderWithLayout(200, "base.html", "index.html", map[string]string{"Title": "Home"})
+func (c *Context) RenderWithLayout(code int, layoutName, templateName string, data interface{}) error {
+	// Get app from request context
+	// 요청 컨텍스트에서 앱 가져오기
+	app, ok := c.Request.Context().Value("app").(*App)
+	if !ok || app == nil {
+		return fmt.Errorf("app not found in context")
+	}
+
+	// Get template engine
+	// 템플릿 엔진 가져오기
+	engine := app.TemplateEngine()
+	if engine == nil {
+		return fmt.Errorf("template engine not initialized")
+	}
+
+	// Set content type and status
+	// Content-Type 및 상태 설정
+	c.SetHeader("Content-Type", "text/html; charset=utf-8")
+	c.Status(code)
+
+	// Render template with layout
+	// 레이아웃과 함께 템플릿 렌더링
+	return engine.RenderWithLayout(c.ResponseWriter, layoutName, templateName, data)
+}

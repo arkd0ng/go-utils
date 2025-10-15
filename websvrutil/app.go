@@ -79,6 +79,14 @@ func New(opts ...Option) *App {
 			// 에러 로그하지만 실패하지 않음 - 템플릿은 나중에 로드될 수 있음
 			fmt.Printf("Warning: failed to auto-load templates: %v\n", err)
 		}
+
+		// Auto-load layouts if layout directory exists
+		// 레이아웃 디렉토리가 존재하면 자동 로드
+		if err := templateEngine.LoadAllLayouts(); err != nil {
+			// Log error but don't fail - layouts might be loaded later
+			// 에러 로그하지만 실패하지 않음 - 레이아웃은 나중에 로드될 수 있음
+			fmt.Printf("Warning: failed to auto-load layouts: %v\n", err)
+		}
 	}
 
 	// Create the app instance / 앱 인스턴스 생성

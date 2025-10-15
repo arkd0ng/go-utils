@@ -329,3 +329,234 @@ func BenchmarkRender(b *testing.B) {
 		engine.Render(&buf, "test.html", data)
 	}
 }
+
+// TestBuiltinFuncs tests built-in template functions
+// TestBuiltinFuncs는 내장 템플릿 함수를 테스트합니다
+func TestBuiltinFuncs(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Test upper function
+	t.Run("Upper", func(t *testing.T) {
+		tmplPath := filepath.Join(tmpDir, "upper.html")
+		content := "{{upper .Name}}"
+		os.WriteFile(tmplPath, []byte(content), 0644)
+
+		engine := NewTemplateEngine(tmpDir)
+		engine.Load("upper.html")
+
+		var buf bytes.Buffer
+		data := map[string]string{"Name": "hello"}
+		err := engine.Render(&buf, "upper.html", data)
+		if err != nil {
+			t.Fatalf("Failed to render: %v", err)
+		}
+
+		if buf.String() != "HELLO" {
+			t.Errorf("Expected 'HELLO', got '%s'", buf.String())
+		}
+	})
+
+	// Test lower function
+	t.Run("Lower", func(t *testing.T) {
+		tmplPath := filepath.Join(tmpDir, "lower.html")
+		content := "{{lower .Name}}"
+		os.WriteFile(tmplPath, []byte(content), 0644)
+
+		engine := NewTemplateEngine(tmpDir)
+		engine.Load("lower.html")
+
+		var buf bytes.Buffer
+		data := map[string]string{"Name": "HELLO"}
+		err := engine.Render(&buf, "lower.html", data)
+		if err != nil {
+			t.Fatalf("Failed to render: %v", err)
+		}
+
+		if buf.String() != "hello" {
+			t.Errorf("Expected 'hello', got '%s'", buf.String())
+		}
+	})
+
+	// Test safeHTML function
+	t.Run("SafeHTML", func(t *testing.T) {
+		tmplPath := filepath.Join(tmpDir, "safe.html")
+		content := "{{safeHTML .HTML}}"
+		os.WriteFile(tmplPath, []byte(content), 0644)
+
+		engine := NewTemplateEngine(tmpDir)
+		engine.Load("safe.html")
+
+		var buf bytes.Buffer
+		data := map[string]string{"HTML": "<b>Bold</b>"}
+		err := engine.Render(&buf, "safe.html", data)
+		if err != nil {
+			t.Fatalf("Failed to render: %v", err)
+		}
+
+		if buf.String() != "<b>Bold</b>" {
+			t.Errorf("Expected '<b>Bold</b>', got '%s'", buf.String())
+		}
+	})
+}
+
+// TestLoadLayout tests loading a layout template
+// TestLoadLayout는 레이아웃 템플릿 로드를 테스트합니다
+func TestLoadLayout(t *testing.T) {
+	tmpDir := t.TempDir()
+	layoutDir := filepath.Join(tmpDir, "layouts")
+	os.Mkdir(layoutDir, 0755)
+
+	// Create layout template
+	layoutPath := filepath.Join(layoutDir, "base.html")
+	layoutContent := `<!DOCTYPE html><html><body>{{template "content" .}}</body></html>`
+	os.WriteFile(layoutPath, []byte(layoutContent), 0644)
+
+	engine := NewTemplateEngine(tmpDir)
+	err := engine.LoadLayout("base.html")
+	if err != nil {
+		t.Fatalf("Failed to load layout: %v", err)
+	}
+
+	if !engine.HasLayout("base.html") {
+		t.Error("Expected layout 'base.html' to be loaded")
+	}
+}
+
+// TestLoadAllLayouts tests loading all layouts
+// TestLoadAllLayouts는 모든 레이아웃 로드를 테스트합니다
+func TestLoadAllLayouts(t *testing.T) {
+	tmpDir := t.TempDir()
+	layoutDir := filepath.Join(tmpDir, "layouts")
+	os.Mkdir(layoutDir, 0755)
+
+	// Create multiple layouts
+	os.WriteFile(filepath.Join(layoutDir, "base.html"), []byte("Base Layout"), 0644)
+	os.WriteFile(filepath.Join(layoutDir, "admin.html"), []byte("Admin Layout"), 0644)
+
+	engine := NewTemplateEngine(tmpDir)
+	err := engine.LoadAllLayouts()
+	if err != nil {
+		t.Fatalf("Failed to load layouts: %v", err)
+	}
+
+	if !engine.HasLayout("base.html") {
+		t.Error("Expected layout 'base.html' to be loaded")
+	}
+	if !engine.HasLayout("admin.html") {
+		t.Error("Expected layout 'admin.html' to be loaded")
+	}
+}
+
+// TestRenderWithLayout tests rendering with layout
+// TestRenderWithLayout는 레이아웃과 함께 렌더링을 테스트합니다
+func TestRenderWithLayout(t *testing.T) {
+	tmpDir := t.TempDir()
+	layoutDir := filepath.Join(tmpDir, "layouts")
+	os.Mkdir(layoutDir, 0755)
+
+	// Create layout
+	layoutPath := filepath.Join(layoutDir, "base.html")
+	layoutContent := `<html><body>{{template "content" .}}</body></html>`
+	os.WriteFile(layoutPath, []byte(layoutContent), 0644)
+
+	// Create content template
+	contentPath := filepath.Join(tmpDir, "index.html")
+	contentContent := `<h1>{{.Title}}</h1>`
+	os.WriteFile(contentPath, []byte(contentContent), 0644)
+
+	engine := NewTemplateEngine(tmpDir)
+	engine.LoadLayout("base.html")
+	engine.Load("index.html")
+
+	var buf bytes.Buffer
+	data := map[string]string{"Title": "Hello"}
+	err := engine.RenderWithLayout(&buf, "base.html", "index.html", data)
+	if err != nil {
+		t.Fatalf("Failed to render with layout: %v", err)
+	}
+
+	expected := "<html><body><h1>Hello</h1></body></html>"
+	if buf.String() != expected {
+		t.Errorf("Expected '%s', got '%s'", expected, buf.String())
+	}
+}
+
+// TestSetLayoutDir tests setting layout directory
+// TestSetLayoutDir는 레이아웃 디렉토리 설정을 테스트합니다
+func TestSetLayoutDir(t *testing.T) {
+	engine := NewTemplateEngine("views")
+	engine.SetLayoutDir("custom/layouts")
+
+	if engine.layoutDir != "custom/layouts" {
+		t.Errorf("Expected layout dir 'custom/layouts', got '%s'", engine.layoutDir)
+	}
+}
+
+// TestListLayouts tests listing all layouts
+// TestListLayouts는 모든 레이아웃 목록을 테스트합니다
+func TestListLayouts(t *testing.T) {
+	tmpDir := t.TempDir()
+	layoutDir := filepath.Join(tmpDir, "layouts")
+	os.Mkdir(layoutDir, 0755)
+
+	os.WriteFile(filepath.Join(layoutDir, "one.html"), []byte("One"), 0644)
+	os.WriteFile(filepath.Join(layoutDir, "two.html"), []byte("Two"), 0644)
+
+	engine := NewTemplateEngine(tmpDir)
+	engine.LoadAllLayouts()
+
+	layouts := engine.ListLayouts()
+	if len(layouts) != 2 {
+		t.Errorf("Expected 2 layouts, got %d", len(layouts))
+	}
+}
+
+// BenchmarkBuiltinFuncs benchmarks built-in template functions
+// BenchmarkBuiltinFuncs는 내장 템플릿 함수를 벤치마크합니다
+func BenchmarkBuiltinFuncs(b *testing.B) {
+	tmpDir := b.TempDir()
+	tmplPath := filepath.Join(tmpDir, "test.html")
+	content := "{{upper .Name}}"
+	os.WriteFile(tmplPath, []byte(content), 0644)
+
+	engine := NewTemplateEngine(tmpDir)
+	engine.Load("test.html")
+
+	data := map[string]string{"Name": "hello"}
+	var buf bytes.Buffer
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		buf.Reset()
+		engine.Render(&buf, "test.html", data)
+	}
+}
+
+// BenchmarkRenderWithLayout benchmarks rendering with layout
+// BenchmarkRenderWithLayout는 레이아웃과 함께 렌더링을 벤치마크합니다
+func BenchmarkRenderWithLayout(b *testing.B) {
+	tmpDir := b.TempDir()
+	layoutDir := filepath.Join(tmpDir, "layouts")
+	os.Mkdir(layoutDir, 0755)
+
+	layoutPath := filepath.Join(layoutDir, "base.html")
+	layoutContent := `<html><body>{{template "content" .}}</body></html>`
+	os.WriteFile(layoutPath, []byte(layoutContent), 0644)
+
+	contentPath := filepath.Join(tmpDir, "index.html")
+	contentContent := `<h1>{{.Title}}</h1>`
+	os.WriteFile(contentPath, []byte(contentContent), 0644)
+
+	engine := NewTemplateEngine(tmpDir)
+	engine.LoadLayout("base.html")
+	engine.Load("index.html")
+
+	data := map[string]string{"Title": "Hello"}
+	var buf bytes.Buffer
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		buf.Reset()
+		engine.RenderWithLayout(&buf, "base.html", "index.html", data)
+	}
+}
