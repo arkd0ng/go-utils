@@ -1513,4 +1513,164 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 
 	logger.Info("   💡 Use case: Config management, user preferences + system defaults, template rendering")
 	logger.Info("")
+
+	// 10. GetNested - Navigate nested maps / 중첩 맵 탐색
+	logger.Info("🔟 GetNested() - Navigate nested maps / 중첩 맵 탐색")
+	logger.Info("   Purpose: Safely access deeply nested values")
+	logger.Info("   목적: 깊이 중첩된 값에 안전하게 접근")
+
+	nestedData := map[string]interface{}{
+		"user": map[string]interface{}{
+			"name": "Alice",
+			"address": map[string]interface{}{
+				"city":    "Seoul",
+				"zip":     "12345",
+				"country": "Korea",
+			},
+			"age": 30,
+		},
+	}
+	logger.Info("   Input map:", "nestedData", nestedData)
+
+	// Access nested value
+	city, ok := maputil.GetNested(nestedData, "user", "address", "city")
+	logger.Info("   ✅ Get nested city:", "city", city, "found", ok)
+
+	// Access missing value
+	phone, ok := maputil.GetNested(nestedData, "user", "phone")
+	logger.Info("   ❌ Get missing phone:", "phone", phone, "found", ok)
+
+	// Access deeply nested
+	zip, ok := maputil.GetNested(nestedData, "user", "address", "zip")
+	logger.Info("   ✅ Get nested zip:", "zip", zip, "found", ok)
+
+	logger.Info("   Note: Returns (value, true) if exists, (nil, false) otherwise")
+	logger.Info("   💡 Use case: JSON/YAML parsing, API response handling, config access")
+	logger.Info("")
+
+	// 11. SetNested - Set nested values / 중첩 값 설정
+	logger.Info("1️⃣1️⃣ SetNested() - Set nested values / 중첩 값 설정")
+	logger.Info("   Purpose: Create nested structures dynamically")
+	logger.Info("   목적: 중첩 구조를 동적으로 생성")
+
+	emptyNested := map[string]interface{}{}
+	logger.Info("   Input map:", "empty", emptyNested)
+
+	// Set nested value (creates intermediate maps)
+	result1 := maputil.SetNested(emptyNested, "Seoul", "user", "address", "city")
+	logger.Info("   ✅ After SetNested (city):", "result", result1)
+
+	// Add more nested values
+	result2 := maputil.SetNested(result1, "Alice", "user", "name")
+	result3 := maputil.SetNested(result2, 30, "user", "age")
+	logger.Info("   ✅ After setting name and age:", "result", result3)
+
+	// Original map unchanged
+	logger.Info("   Original map:", "empty", emptyNested)
+	logger.Info("   Note: Creates intermediate maps automatically, immutable (returns new map)")
+	logger.Info("   💡 Use case: Dynamic config building, API request construction, nested initialization")
+	logger.Info("")
+
+	// 12. HasNested - Check nested path / 중첩 경로 확인
+	logger.Info("1️⃣2️⃣ HasNested() - Check nested path / 중첩 경로 확인")
+	logger.Info("   Purpose: Validate nested key existence")
+	logger.Info("   목적: 중첩 키 존재 검증")
+
+	apiResp := map[string]interface{}{
+		"status": "success",
+		"data": map[string]interface{}{
+			"user": map[string]interface{}{
+				"id":    123,
+				"name":  "Alice",
+				"email": "alice@example.com",
+			},
+		},
+	}
+	logger.Info("   Input map:", "apiResponse", apiResp)
+
+	// Check existing paths
+	hasUser := maputil.HasNested(apiResp, "data", "user")
+	hasEmail := maputil.HasNested(apiResp, "data", "user", "email")
+	logger.Info("   ✅ Has data.user:", "exists", hasUser)
+	logger.Info("   ✅ Has data.user.email:", "exists", hasEmail)
+
+	// Check missing paths
+	hasPhone := maputil.HasNested(apiResp, "data", "user", "phone")
+	hasAdmin := maputil.HasNested(apiResp, "admin")
+	logger.Info("   ❌ Has data.user.phone:", "exists", hasPhone)
+	logger.Info("   ❌ Has admin:", "exists", hasAdmin)
+
+	logger.Info("   Note: Returns true only if entire path exists")
+	logger.Info("   💡 Use case: API validation, required field checking, safe navigation guards")
+	logger.Info("")
+
+	// 13. DeleteNested - Remove nested values / 중첩 값 제거
+	logger.Info("1️⃣3️⃣ DeleteNested() - Remove nested values / 중첩 값 제거")
+	logger.Info("   Purpose: Remove deeply nested keys")
+	logger.Info("   목적: 깊이 중첩된 키 제거")
+
+	userData := map[string]interface{}{
+		"user": map[string]interface{}{
+			"name":     "Alice",
+			"password": "secret123",
+			"email":    "alice@example.com",
+		},
+	}
+	logger.Info("   Input map:", "userData", userData)
+
+	// Delete sensitive data
+	sanitized := maputil.DeleteNested(userData, "user", "password")
+	logger.Info("   ✅ After deleting password:", "sanitized", sanitized)
+
+	// Original unchanged
+	logger.Info("   Original map:", "userData", userData)
+
+	// Delete from nested structure
+	dataWithAddress := maputil.SetNested(sanitized, "Seoul", "user", "address", "city")
+	withoutCity := maputil.DeleteNested(dataWithAddress, "user", "address", "city")
+	logger.Info("   ✅ After deleting nested city:", "result", withoutCity)
+
+	logger.Info("   Note: Returns new map with value deleted, original unchanged")
+	logger.Info("   💡 Use case: Removing sensitive data, config cleanup, API response filtering")
+	logger.Info("")
+
+	// 14. SafeGet - Safe nested access with errors / 에러가 있는 안전한 중첩 접근
+	logger.Info("1️⃣4️⃣ SafeGet() - Safe nested access with errors / 에러가 있는 안전한 중첩 접근")
+	logger.Info("   Purpose: Access nested values with detailed error messages")
+	logger.Info("   목적: 상세한 에러 메시지와 함께 중첩 값 접근")
+
+	serverConfig := map[string]interface{}{
+		"server": map[string]interface{}{
+			"host": "localhost",
+			"port": 8080,
+		},
+	}
+	logger.Info("   Input map:", "serverConfig", serverConfig)
+
+	// Successful access
+	host, err := maputil.SafeGet(serverConfig, "server", "host")
+	if err == nil {
+		logger.Info("   ✅ SafeGet host:", "host", host)
+	}
+
+	port, err := maputil.SafeGet(serverConfig, "server", "port")
+	if err == nil {
+		logger.Info("   ✅ SafeGet port:", "port", port)
+	}
+
+	// Missing key with error
+	timeout, err := maputil.SafeGet(serverConfig, "server", "timeout")
+	if err != nil {
+		logger.Info("   ❌ SafeGet timeout error:", "error", err.Error(), "value", timeout)
+	}
+
+	// Invalid path with error
+	invalid, err := maputil.SafeGet(serverConfig, "database", "host")
+	if err != nil {
+		logger.Info("   ❌ SafeGet invalid path error:", "error", err.Error(), "value", invalid)
+	}
+
+	logger.Info("   Note: Returns (value, nil) on success, (nil, error) on failure")
+	logger.Info("   💡 Use case: Error-driven config access, debugging nested data, API validation")
+	logger.Info("")
 }

@@ -6,6 +6,62 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.013] - 2025-10-15
+
+### Added / 추가
+- **New Functions** (5 functions): GetNested, SetNested, HasNested, DeleteNested, SafeGet / 새 함수 (5개)
+  - Category: Nested Map Functions / 중첩 맵 함수
+  - **GetNested**: Retrieve value from nested map using path / 경로를 사용하여 중첩 맵에서 값 검색
+    - Signature: `func GetNested(m map[string]interface{}, path ...string) (interface{}, bool)`
+    - Navigates through nested map[string]interface{} structures / 중첩 map[string]interface{} 구조 탐색
+    - Returns (value, true) if found, (nil, false) otherwise / 찾으면 (값, true), 그렇지 않으면 (nil, false) 반환
+    - Time Complexity: O(d), Space Complexity: O(1)
+  - **SetNested**: Set value in nested map, creating intermediate maps / 중첩 맵에 값 설정, 중간 맵 생성
+    - Signature: `func SetNested(m map[string]interface{}, value interface{}, path ...string) map[string]interface{}`
+    - Creates missing intermediate maps automatically / 누락된 중간 맵을 자동으로 생성
+    - Returns new map (immutable) / 새 맵 반환 (불변)
+    - Time Complexity: O(d), Space Complexity: O(n)
+  - **HasNested**: Check if nested path exists / 중첩 경로 존재 확인
+    - Signature: `func HasNested(m map[string]interface{}, path ...string) bool`
+    - Returns true only if entire path is valid / 전체 경로가 유효한 경우에만 true 반환
+    - Time Complexity: O(d), Space Complexity: O(1)
+  - **DeleteNested**: Remove value from nested map / 중첩 맵에서 값 제거
+    - Signature: `func DeleteNested(m map[string]interface{}, path ...string) map[string]interface{}`
+    - Returns new map with value deleted / 값이 삭제된 새 맵 반환
+    - Time Complexity: O(d), Space Complexity: O(n)
+  - **SafeGet**: Safe nested access with error handling / 에러 처리와 함께 안전한 중첩 접근
+    - Signature: `func SafeGet(m interface{}, path ...string) (interface{}, error)`
+    - Returns detailed error messages on failure / 실패 시 상세한 에러 메시지 반환
+    - Works with any input type / 모든 입력 타입에서 작동
+    - Time Complexity: O(d), Space Complexity: O(1)
+
+### Tests / 테스트
+- Added comprehensive tests in `maputil/nested_test.go`:
+  - **TestGetNested**: 8 sub-tests / 8개 하위 테스트
+    - simple nested, deep nested, missing key, missing intermediate, empty path, non-map intermediate, different types, single key / 간단한 중첩, 깊은 중첩, 누락된 키, 중간 누락, 빈 경로, 맵이 아닌 중간, 다양한 타입, 단일 키
+  - **TestSetNested**: 8 sub-tests / 8개 하위 테스트
+    - create new path, update existing, immutability, overwrite non-map, empty path, single key, different types, deep nesting / 새 경로 생성, 기존 업데이트, 불변성, 맵이 아닌 값 덮어쓰기, 빈 경로, 단일 키, 다양한 타입, 깊은 중첩
+  - **TestHasNested**: 7 sub-tests / 7개 하위 테스트
+    - existing path, missing path, missing intermediate, empty path, non-map intermediate, single key, deep path / 기존 경로, 누락된 경로, 중간 누락, 빈 경로, 맵이 아닌 중간, 단일 키, 깊은 경로
+  - **TestDeleteNested**: 7 sub-tests / 7개 하위 테스트
+    - delete existing, immutability, delete missing, delete missing path, empty path, single key, deep nesting / 기존 삭제, 불변성, 누락 삭제, 경로 누락 삭제, 빈 경로, 단일 키, 깊은 중첩
+  - **TestSafeGet**: 8 sub-tests / 8개 하위 테스트
+    - valid path, missing key, non-map intermediate, empty path, different types, single key, deep path, nil input / 유효한 경로, 누락된 키, 맵이 아닌 중간, 빈 경로, 다양한 타입, 단일 키, 깊은 경로, nil 입력
+  - **Benchmarks**: 5 benchmarks for all nested functions / 5개 벤치마크
+
+### Documentation / 문서
+- Created new file `maputil/nested.go` with complete bilingual documentation
+- Updated examples in `examples/maputil/main.go` (utilityFunctions section) / 예제 업데이트
+  - Added examples for GetNested, SetNested, HasNested, DeleteNested, SafeGet / 5개 함수 예제 추가
+  - Shows JSON/YAML parsing, API response handling, config access patterns / JSON/YAML 파싱, API 응답 처리, 설정 접근 패턴 표시
+- Function count: 90 → 95 (14 of 17 utility functions) / 함수 개수: 90 → 95 (17개 유틸리티 함수 중 14개)
+
+### Notes / 참고사항
+- Tenth through fourteenth of 17 new utility functions planned for maputil / maputil에 계획된 17개 신규 유틸리티 함수 중 10~14번째
+- These functions are essential for nested data structure manipulation / 이 함수들은 중첩 데이터 구조 조작에 필수적
+- Widely used in JSON/YAML config parsing and API response handling / JSON/YAML 설정 파싱 및 API 응답 처리에 널리 사용
+- Helper function deepCopyMap added for immutability support / 불변성 지원을 위한 헬퍼 함수 deepCopyMap 추가
+
 ## [v1.8.012] - 2025-10-15
 
 ### Added / 추가
