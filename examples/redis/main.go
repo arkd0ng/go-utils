@@ -97,7 +97,45 @@ func main() {
 	defer logger.Close()
 
 	// Print banner / 배너 출력
-	logger.Banner("Redis Package Examples", "go-utils/database/redis")
+	logger.Banner("Redis Package - Comprehensive Examples", "go-utils/database/redis")
+	logger.Info("")
+	logger.Info("╔════════════════════════════════════════════════════════════════════════════╗")
+	logger.Info("║            Redis Package - Comprehensive Examples                          ║")
+	logger.Info("║            Redis 패키지 - 종합 예제                                          ║")
+	logger.Info("╚════════════════════════════════════════════════════════════════════════════╝")
+	logger.Info("")
+
+	logger.Info("📋 Package Information / 패키지 정보")
+	logger.Info("   Package: github.com/arkd0ng/go-utils/database/redis")
+	logger.Info("   Description: Extremely simple Redis client (20 lines → 2 lines)")
+	logger.Info("   설명: 극도로 간단한 Redis 클라이언트 (20줄 → 2줄)")
+	logger.Info("   Total Examples: 8 comprehensive examples across 6 data types")
+	logger.Info("   60+ Methods: String, Hash, List, Set, Sorted Set, Key operations")
+	logger.Info("")
+
+	logger.Info("🌟 Key Features / 주요 기능")
+	logger.Info("   • Zero Boilerplate: 20 lines → 2 lines code reduction")
+	logger.Info("   • 6 Data Types: String, Hash, List, Set, Sorted Set, Key operations")
+	logger.Info("   • 60+ Methods: Comprehensive Redis operations")
+	logger.Info("   • Type-Safe: Generic methods (GetAs[T], HGetAllAs[T])")
+	logger.Info("   • Auto Retry: Exponential backoff with connection pooling")
+	logger.Info("   • Advanced: Pipeline, Transaction, Pub/Sub support")
+	logger.Info("   • Thread-Safe: Safe for concurrent use")
+	logger.Info("")
+
+	logger.Info("📚 Examples Covered / 다루는 예제")
+	logger.Info("   1. String Operations (11 methods) - Set, Get, Incr, Decr, Append, etc.")
+	logger.Info("   2. Hash Operations (10 methods) - HSet, HGet, HGetAll, HIncrBy, etc.")
+	logger.Info("   3. List Operations (9 methods) - LPush, RPush, LPop, RPop, LRange, etc.")
+	logger.Info("   4. Set Operations (10 methods) - SAdd, SMembers, SUnion, SInter, etc.")
+	logger.Info("   5. Sorted Set Operations (10 methods) - ZAdd, ZRange, ZRank, etc.")
+	logger.Info("   6. Key Operations (11 methods) - Del, Exists, Expire, TTL, Keys, etc.")
+	logger.Info("   7. Pipeline - Batch command execution")
+	logger.Info("   8. Pub/Sub - Message publish and subscribe")
+	logger.Info("")
+
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
 
 	// Load database configuration / 데이터베이스 설정 로드
 	logger.Info("Loading database configuration from cfg/database-redis.yaml")

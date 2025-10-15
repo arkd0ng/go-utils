@@ -6,6 +6,52 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.017] - 2025-10-15
+
+### Enhanced / 보강됨
+
+#### Enhanced Logging Header in Redis Example / Redis 예제에 향상된 로깅 헤더 추가
+
+**Changes / 변경사항:**
+- Enhanced `examples/redis/main.go` with comprehensive header
+- Added 📋 Package Information section (8 examples, 6 data types, 60+ methods)
+- Added 🌟 Key Features section (zero boilerplate, type-safe, auto retry, Pipeline/Pub-Sub)
+- Added 📚 Examples Covered section listing all 8 major example categories
+- Bilingual header throughout (English/Korean)
+- Original comprehensive example (734+ lines) retained with improved header
+- `examples/redis/main.go`를 종합 헤더로 개선
+- 📋 패키지 정보 섹션 추가 (8개 예제, 6개 데이터 타입, 60+ 메서드)
+- 🌟 주요 기능 섹션 추가 (제로 보일러플레이트, 타입 안전, 자동 재시도, Pipeline/Pub-Sub)
+- 📚 다루는 예제 섹션으로 8개 주요 예제 카테고리 나열
+- 전체 이중 언어 헤더 (영문/한글)
+- 향상된 헤더와 함께 원본 종합 예제 (734+ 줄) 유지
+
+**Header Improvements / 헤더 개선사항:**
+- Package: github.com/arkd0ng/go-utils/database/redis
+- Description: Extremely simple Redis client (20 lines → 2 lines)
+- Total Examples: 8 comprehensive examples across 6 data types
+- Key Features: Zero boilerplate, 60+ methods, Type-safe generics, Auto retry, Pipeline/Transaction/Pub-Sub, Thread-safe
+- Data Types: String, Hash, List, Set, Sorted Set, Key operations
+- Examples: Set, Get, HSet, HGetAll, LPush, LRange, SAdd, SMembers, ZAdd, ZRange, Del, Expire, Pipeline, Pub/Sub
+- 패키지, 설명, 총 예제 수, 주요 기능 정보 포함
+- 전체 이중 언어 (영문/한글)
+
+**Testing / 테스트:**
+- ✅ Example compiles successfully
+- ✅ Enhanced header code added
+- ✅ Consistent with all other example styles
+- ✅ 예제 컴파일 성공
+- ✅ 개선된 헤더 코드 추가
+- ✅ 모든 다른 예제 스타일과 일관성 유지
+
+**Note / 참고:**
+- Redis example requires running Redis server to execute fully
+- Header enhancement only, full runtime testing requires Docker Redis setup
+- Redis 예제는 완전히 실행하려면 Redis 서버가 필요합니다
+- 헤더 개선만 수행, 전체 런타임 테스트는 Docker Redis 설정 필요
+
+---
+
 ## [v1.9.016] - 2025-10-15
 
 ### Enhanced / 보강됨
