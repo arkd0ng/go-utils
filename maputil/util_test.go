@@ -431,3 +431,274 @@ func BenchmarkGetManyVsLoop(b *testing.B) {
 		}
 	})
 }
+
+// TestSetMany tests the SetMany function with various scenarios.
+// TestSetMany는 다양한 시나리오로 SetMany 함수를 테스트합니다.
+func TestSetMany(t *testing.T) {
+	t.Run("basic set", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2}
+		result := SetMany(m,
+			Entry[string, int]{Key: "c", Value: 3},
+			Entry[string, int]{Key: "d", Value: 4},
+		)
+
+		expected := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+		if len(result) != len(expected) {
+			t.Errorf("SetMany() length = %d, want %d", len(result), len(expected))
+		}
+
+		for k, v := range expected {
+			if result[k] != v {
+				t.Errorf("SetMany() result[%s] = %d, want %d", k, result[k], v)
+			}
+		}
+
+		// Original map should not be modified
+		if len(m) != 2 {
+			t.Errorf("SetMany() modified original map, length = %d, want 2", len(m))
+		}
+	})
+
+	t.Run("update existing keys", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2}
+		result := SetMany(m,
+			Entry[string, int]{Key: "a", Value: 10},
+			Entry[string, int]{Key: "c", Value: 3},
+		)
+
+		expected := map[string]int{"a": 10, "b": 2, "c": 3}
+		if len(result) != len(expected) {
+			t.Errorf("SetMany() length = %d, want %d", len(result), len(expected))
+		}
+
+		for k, v := range expected {
+			if result[k] != v {
+				t.Errorf("SetMany() result[%s] = %d, want %d", k, result[k], v)
+			}
+		}
+	})
+
+	t.Run("empty entries", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2}
+		result := SetMany(m)
+
+		if len(result) != len(m) {
+			t.Errorf("SetMany() with no entries length = %d, want %d", len(result), len(m))
+		}
+
+		for k, v := range m {
+			if result[k] != v {
+				t.Errorf("SetMany() result[%s] = %d, want %d", k, result[k], v)
+			}
+		}
+	})
+
+	t.Run("single entry", func(t *testing.T) {
+		m := map[string]int{"a": 1}
+		result := SetMany(m, Entry[string, int]{Key: "b", Value: 2})
+
+		expected := map[string]int{"a": 1, "b": 2}
+		if len(result) != len(expected) {
+			t.Errorf("SetMany() length = %d, want %d", len(result), len(expected))
+		}
+
+		for k, v := range expected {
+			if result[k] != v {
+				t.Errorf("SetMany() result[%s] = %d, want %d", k, result[k], v)
+			}
+		}
+	})
+
+	t.Run("empty map", func(t *testing.T) {
+		m := map[string]int{}
+		result := SetMany(m,
+			Entry[string, int]{Key: "a", Value: 1},
+			Entry[string, int]{Key: "b", Value: 2},
+		)
+
+		expected := map[string]int{"a": 1, "b": 2}
+		if len(result) != len(expected) {
+			t.Errorf("SetMany() length = %d, want %d", len(result), len(expected))
+		}
+
+		for k, v := range expected {
+			if result[k] != v {
+				t.Errorf("SetMany() result[%s] = %d, want %d", k, result[k], v)
+			}
+		}
+	})
+
+	t.Run("duplicate keys in entries", func(t *testing.T) {
+		m := map[string]int{"a": 1}
+		result := SetMany(m,
+			Entry[string, int]{Key: "b", Value: 2},
+			Entry[string, int]{Key: "b", Value: 3}, // Duplicate, last one wins
+			Entry[string, int]{Key: "c", Value: 4},
+		)
+
+		expected := map[string]int{"a": 1, "b": 3, "c": 4}
+		if len(result) != len(expected) {
+			t.Errorf("SetMany() length = %d, want %d", len(result), len(expected))
+		}
+
+		for k, v := range expected {
+			if result[k] != v {
+				t.Errorf("SetMany() result[%s] = %d, want %d", k, result[k], v)
+			}
+		}
+	})
+
+	t.Run("string values", func(t *testing.T) {
+		m := map[int]string{1: "one", 2: "two"}
+		result := SetMany(m,
+			Entry[int, string]{Key: 3, Value: "three"},
+			Entry[int, string]{Key: 4, Value: "four"},
+		)
+
+		expected := map[int]string{1: "one", 2: "two", 3: "three", 4: "four"}
+		if len(result) != len(expected) {
+			t.Errorf("SetMany() length = %d, want %d", len(result), len(expected))
+		}
+
+		for k, v := range expected {
+			if result[k] != v {
+				t.Errorf("SetMany() result[%d] = %s, want %s", k, result[k], v)
+			}
+		}
+	})
+
+	t.Run("complex values", func(t *testing.T) {
+		type User struct {
+			Name string
+			Age  int
+		}
+
+		m := map[string]User{
+			"user1": {Name: "Alice", Age: 25},
+		}
+
+		result := SetMany(m,
+			Entry[string, User]{Key: "user2", Value: User{Name: "Bob", Age: 30}},
+			Entry[string, User]{Key: "user3", Value: User{Name: "Charlie", Age: 35}},
+		)
+
+		if len(result) != 3 {
+			t.Errorf("SetMany() length = %d, want 3", len(result))
+		}
+
+		if result["user1"].Name != "Alice" || result["user1"].Age != 25 {
+			t.Errorf("SetMany() result[user1] = %+v, want {Alice 25}", result["user1"])
+		}
+
+		if result["user2"].Name != "Bob" || result["user2"].Age != 30 {
+			t.Errorf("SetMany() result[user2] = %+v, want {Bob 30}", result["user2"])
+		}
+
+		if result["user3"].Name != "Charlie" || result["user3"].Age != 35 {
+			t.Errorf("SetMany() result[user3] = %+v, want {Charlie 35}", result["user3"])
+		}
+	})
+
+	t.Run("large number of entries", func(t *testing.T) {
+		m := map[int]int{0: 0}
+
+		entries := make([]Entry[int, int], 100)
+		for i := 0; i < 100; i++ {
+			entries[i] = Entry[int, int]{Key: i + 1, Value: (i + 1) * 2}
+		}
+
+		result := SetMany(m, entries...)
+
+		if len(result) != 101 {
+			t.Errorf("SetMany() length = %d, want 101", len(result))
+		}
+
+		for i := 0; i <= 100; i++ {
+			expected := i * 2
+			if result[i] != expected {
+				t.Errorf("SetMany() result[%d] = %d, want %d", i, result[i], expected)
+			}
+		}
+	})
+
+	t.Run("immutability check", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2}
+		original := make(map[string]int)
+		for k, v := range m {
+			original[k] = v
+		}
+
+		_ = SetMany(m, Entry[string, int]{Key: "c", Value: 3})
+
+		// Original map should remain unchanged
+		if len(m) != len(original) {
+			t.Errorf("SetMany() modified original map, length = %d, want %d", len(m), len(original))
+		}
+
+		for k, v := range original {
+			if m[k] != v {
+				t.Errorf("SetMany() modified original map[%s] = %d, want %d", k, m[k], v)
+			}
+		}
+	})
+}
+
+// BenchmarkSetMany benchmarks the SetMany function.
+// BenchmarkSetMany는 SetMany 함수를 벤치마크합니다.
+func BenchmarkSetMany(b *testing.B) {
+	entryCounts := []int{1, 5, 10, 50, 100}
+
+	for _, entryCount := range entryCounts {
+		b.Run(fmt.Sprintf("entries_%d", entryCount), func(b *testing.B) {
+			m := make(map[int]int, 10)
+			for i := 0; i < 10; i++ {
+				m[i] = i * 2
+			}
+
+			entries := make([]Entry[int, int], entryCount)
+			for i := 0; i < entryCount; i++ {
+				entries[i] = Entry[int, int]{Key: i + 100, Value: i * 3}
+			}
+
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				_ = SetMany(m, entries...)
+			}
+		})
+	}
+}
+
+// BenchmarkSetManyVsLoop compares SetMany with manual loop.
+// BenchmarkSetManyVsLoop은 SetMany와 수동 루프를 비교합니다.
+func BenchmarkSetManyVsLoop(b *testing.B) {
+	m := make(map[int]int, 10)
+	for i := 0; i < 10; i++ {
+		m[i] = i * 2
+	}
+
+	entries := []Entry[int, int]{
+		{Key: 100, Value: 300},
+		{Key: 101, Value: 303},
+		{Key: 102, Value: 306},
+		{Key: 103, Value: 309},
+		{Key: 104, Value: 312},
+	}
+
+	b.Run("SetMany", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_ = SetMany(m, entries...)
+		}
+	})
+
+	b.Run("ManualLoop", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			result := make(map[int]int, len(m)+len(entries))
+			for k, v := range m {
+				result[k] = v
+			}
+			for _, entry := range entries {
+				result[entry.Key] = entry.Value
+			}
+		}
+	})
+}

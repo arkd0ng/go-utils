@@ -1347,4 +1347,26 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   Note: 'timeout' doesn't exist, returns empty string (zero value)")
 	logger.Info("   💡 Use case: Batch config lookups, multi-key data extraction")
 	logger.Info("")
+
+	// 3. SetMany - Set multiple key-value pairs at once / 여러 키-값 쌍을 한 번에 설정
+	logger.Info("3️⃣  SetMany() - Set multiple key-value pairs at once / 여러 키-값 쌍을 한 번에 설정")
+	logger.Info("   Purpose: Batch updates to map entries")
+	logger.Info("   목적: 맵 항목에 대한 일괄 업데이트")
+
+	settings := map[string]string{
+		"theme": "dark",
+		"lang":  "en",
+	}
+	logger.Info("   Input map:", "settings", settings)
+
+	// Add multiple settings at once
+	updated := maputil.SetMany(settings,
+		maputil.Entry[string, string]{Key: "font", Value: "monospace"},
+		maputil.Entry[string, string]{Key: "size", Value: "14"},
+		maputil.Entry[string, string]{Key: "theme", Value: "light"}, // Update existing
+	)
+	logger.Info("   ✅ Updated map:", "updated", updated)
+	logger.Info("   Note: Original map unchanged (immutable), theme value updated")
+	logger.Info("   💡 Use case: Batch config updates, map initialization, merging multiple entries")
+	logger.Info("")
 }

@@ -75,3 +75,46 @@ func GetMany[K comparable, V any](m map[K]V, keys ...K) []V {
 	}
 	return result
 }
+
+// SetMany sets multiple key-value pairs in the map at once.
+// SetMany는 맵에 여러 키-값 쌍을 한 번에 설정합니다.
+//
+// This function creates a new map with the original entries plus the new entries.
+// If a key already exists, its value is updated.
+//
+// 이 함수는 원본 항목과 새 항목을 포함하는 새 맵을 생성합니다.
+// 키가 이미 존재하면 값이 업데이트됩니다.
+//
+// Time Complexity / 시간 복잡도: O(n + e) where n is map size, e is entries / n은 맵 크기, e는 항목 개수
+// Space Complexity / 공간 복잡도: O(n + e)
+//
+// Parameters / 매개변수:
+//   - m: The input map / 입력 맵
+//   - entries: Variable number of Entry structs to set / 설정할 Entry 구조체의 가변 개수
+//
+// Returns / 반환값:
+//   - map[K]V: New map with updated entries / 업데이트된 항목이 있는 새 맵
+//
+// Example / 예제:
+//
+//	m := map[string]int{"a": 1, "b": 2}
+//	result := maputil.SetMany(m,
+//	    maputil.Entry[string, int]{Key: "c", Value: 3},
+//	    maputil.Entry[string, int]{Key: "d", Value: 4},
+//	)
+//	// result: map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+//
+// Use Case / 사용 사례:
+//   - Batch updates to configuration / 설정에 대한 일괄 업데이트
+//   - Initializing map with multiple values / 여러 값으로 맵 초기화
+//   - Merging multiple entries at once / 여러 항목을 한 번에 병합
+func SetMany[K comparable, V any](m map[K]V, entries ...Entry[K, V]) map[K]V {
+	result := make(map[K]V, len(m)+len(entries))
+	for k, v := range m {
+		result[k] = v
+	}
+	for _, entry := range entries {
+		result[entry.Key] = entry.Value
+	}
+	return result
+}

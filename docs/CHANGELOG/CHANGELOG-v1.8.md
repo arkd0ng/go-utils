@@ -6,6 +6,39 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.009] - 2025-10-15
+
+### Added / 추가
+- **New Function**: `SetMany` - Set multiple key-value pairs at once / 여러 키-값 쌍을 한 번에 설정
+  - Category: Utility Functions / 유틸리티 함수
+  - Signature: `func SetMany[K comparable, V any](m map[K]V, entries ...Entry[K, V]) map[K]V`
+  - Purpose: Batch updates to map entries / 맵 항목에 대한 일괄 업데이트
+  - Creates new map (immutable), updates existing keys / 새 맵 생성 (불변), 기존 키 업데이트
+  - Time Complexity: O(n + e), Space Complexity: O(n + e)
+
+### Tests / 테스트
+- Added comprehensive tests in `maputil/util_test.go`:
+  - TestSetMany: 10 sub-tests covering all scenarios / 모든 시나리오를 다루는 10개 하위 테스트
+    - basic set, update existing keys, empty entries, single entry / 기본 설정, 기존 키 업데이트, 빈 항목, 단일 항목
+    - empty map, duplicate keys in entries, string values, complex values / 빈 맵, 항목의 중복 키, 문자열 값, 복잡한 값
+    - large number of entries, immutability check / 많은 수의 항목, 불변성 확인
+  - BenchmarkSetMany: Performance benchmarks for 1, 5, 10, 50, 100 entries / 1, 5, 10, 50, 100개 항목에 대한 성능 벤치마크
+  - BenchmarkSetManyVsLoop: Comparison with manual loop / 수동 루프와 비교
+  - Benchmark result: ~368ns for 1 entry, ~450ns for 5 entries (comparable to manual loop) / 1개 항목에 대해 ~368ns, 5개 항목에 대해 ~450ns (수동 루프와 유사)
+
+### Examples / 예제
+- Added SetMany demonstration in `examples/maputil/main.go`
+  - Settings batch update example / 설정 일괄 업데이트 예제
+  - Shows immutability and existing key updates / 불변성 및 기존 키 업데이트 표시
+
+### Documentation / 문서
+- Added complete bilingual documentation in `maputil/util.go`
+- Function count: 83 → 84 (3 of 17 utility functions) / 함수 개수: 83 → 84 (17개 유틸리티 함수 중 3개)
+
+### Notes / 참고사항
+- Third of 17 new utility functions planned for maputil / maputil에 계획된 17개 신규 유틸리티 함수 중 세 번째
+- Useful for batch configuration updates and map initialization / 배치 설정 업데이트 및 맵 초기화에 유용
+
 ## [v1.8.008] - 2025-10-15
 
 ### Added / 추가
