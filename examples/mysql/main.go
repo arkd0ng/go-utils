@@ -107,7 +107,44 @@ func main() {
 	defer logger.Close()
 
 	// Print banner / 배너 출력
-	logger.Banner("MySQL Package Examples", "go-utils/database/mysql")
+	logger.Banner("MySQL Package - Comprehensive Examples", "go-utils/database/mysql")
+	logger.Info("")
+	logger.Info("╔════════════════════════════════════════════════════════════════════════════╗")
+	logger.Info("║            MySQL Package - Comprehensive Examples                          ║")
+	logger.Info("║            MySQL 패키지 - 종합 예제                                          ║")
+	logger.Info("╚════════════════════════════════════════════════════════════════════════════╝")
+	logger.Info("")
+
+	logger.Info("📋 Package Information / 패키지 정보")
+	logger.Info("   Package: github.com/arkd0ng/go-utils/database/mysql")
+	logger.Info("   Description: Extremely simple MySQL client (30 lines → 2 lines)")
+	logger.Info("   설명: 극도로 간단한 MySQL 클라이언트 (30줄 → 2줄)")
+	logger.Info("   Total Examples: 17 comprehensive examples across 3 API levels")
+	logger.Info("   Zero Boilerplate: Automatic connection, retry, cleanup")
+	logger.Info("")
+
+	logger.Info("🌟 Key Features / 주요 기능")
+	logger.Info("   • Zero Boilerplate: 30 lines → 2 lines code reduction")
+	logger.Info("   • 3 API Levels: Simple API, Query Builder, Raw SQL")
+	logger.Info("   • Auto Connection: Connection, retry, reconnect, cleanup")
+	logger.Info("   • Zero-Downtime Rotation: Multi-pool credential rotation")
+	logger.Info("   • Options Pattern: Flexible configuration")
+	logger.Info("   • Transaction Support: Automatic commit/rollback")
+	logger.Info("   • Thread-Safe: Safe for concurrent use")
+	logger.Info("")
+
+	logger.Info("📚 Examples Covered / 다루는 예제")
+	logger.Info("   1. Simple API (7 functions) - SelectAll, SelectOne, Insert, Update, Delete, Count, Exists")
+	logger.Info("   2. Query Builder - Complex queries with JOIN, GROUP BY, HAVING")
+	logger.Info("   3. SelectWhere API - Functional options for queries")
+	logger.Info("   4. SelectColumn/Columns - Specific column selection")
+	logger.Info("   5. Transaction Support - Automatic commit/rollback")
+	logger.Info("   6. Raw SQL - Direct query execution")
+	logger.Info("   7. Additional Examples - CSV export, batch operations, pagination, etc.")
+	logger.Info("")
+
+	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	logger.Info("")
 
 	// Load database configuration / 데이터베이스 설정 로드
 	logger.Info("Loading database configuration from cfg/database-mysql.yaml")

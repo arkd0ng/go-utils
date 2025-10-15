@@ -6,6 +6,52 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.016] - 2025-10-15
+
+### Enhanced / 보강됨
+
+#### Enhanced Logging Header in MySQL Example / MySQL 예제에 향상된 로깅 헤더 추가
+
+**Changes / 변경사항:**
+- Enhanced `examples/mysql/main.go` with comprehensive header
+- Added 📋 Package Information section (17 examples, 3 API levels)
+- Added 🌟 Key Features section (zero boilerplate, auto connection, transaction support)
+- Added 📚 Examples Covered section listing all 7 major example categories
+- Bilingual header throughout (English/Korean)
+- Original comprehensive example (1936+ lines) retained with improved header
+- `examples/mysql/main.go`를 종합 헤더로 개선
+- 📋 패키지 정보 섹션 추가 (17개 예제, 3개 API 레벨)
+- 🌟 주요 기능 섹션 추가 (제로 보일러플레이트, 자동 연결, 트랜잭션 지원)
+- 📚 다루는 예제 섹션으로 7개 주요 예제 카테고리 나열
+- 전체 이중 언어 헤더 (영문/한글)
+- 향상된 헤더와 함께 원본 종합 예제 (1936+ 줄) 유지
+
+**Header Improvements / 헤더 개선사항:**
+- Package: github.com/arkd0ng/go-utils/database/mysql
+- Description: Extremely simple MySQL client (30 lines → 2 lines)
+- Total Examples: 17 comprehensive examples across 3 API levels
+- Key Features: Zero boilerplate, 3 API levels, Auto connection, Zero-downtime rotation, Transaction support, Thread-safe
+- API Levels: Simple API (7 functions), Query Builder, Raw SQL
+- Examples: SelectAll, SelectOne, Insert, Update, Delete, Count, Exists, JOIN, GROUP BY, Transaction, etc.
+- 패키지, 설명, 총 예제 수, 주요 기능 정보 포함
+- 전체 이중 언어 (영문/한글)
+
+**Testing / 테스트:**
+- ✅ Example compiles successfully
+- ✅ Enhanced header code added
+- ✅ Consistent with other example styles (sliceutil, maputil, logging)
+- ✅ 예제 컴파일 성공
+- ✅ 개선된 헤더 코드 추가
+- ✅ 다른 예제 스타일과 일관성 유지 (sliceutil, maputil, logging)
+
+**Note / 참고:**
+- MySQL example requires running MySQL database to execute fully
+- Header enhancement only, full runtime testing requires Docker MySQL setup
+- MySQL 예제는 완전히 실행하려면 MySQL 데이터베이스가 필요합니다
+- 헤더 개선만 수행, 전체 런타임 테스트는 Docker MySQL 설정 필요
+
+---
+
 ## [v1.9.015] - 2025-10-15
 
 ### Enhanced / 보강됨
