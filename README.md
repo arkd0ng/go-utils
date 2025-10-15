@@ -43,7 +43,7 @@ go-utils/
 ├── stringutil/      # String manipulation utilities (53 functions) / 문자열 처리 유틸리티 (53개 함수)
 ├── timeutil/        # Time and date utilities (114 functions) / 시간 및 날짜 유틸리티 (114개 함수)
 ├── sliceutil/       # Slice utilities (95 functions) / 슬라이스 유틸리티 (95개 함수)
-├── maputil/         # Map utilities (81 functions) / 맵 유틸리티 (81개 함수)
+├── maputil/         # Map utilities (99 functions) / 맵 유틸리티 (99개 함수)
 └── ...
 ```
 
@@ -517,23 +517,27 @@ doubled := sliceutil.Map(evens, func(n int) int { return n * 2 })
 
 ### ✅ [maputil](./maputil/) - Map Utilities
 
-Extreme simplicity map utilities - reduce 20 lines of repetitive map manipulation code to just 1-2 lines with **81 type-safe functions**.
+Extreme simplicity map utilities - reduce 20 lines of repetitive map manipulation code to just 1-2 lines with **99 type-safe functions**.
 
-극도로 간단한 맵 유틸리티 - 20줄의 반복적인 맵 조작 코드를 단 1-2줄로 줄이며, **81개의 타입 안전 함수**를 제공합니다.
+극도로 간단한 맵 유틸리티 - 20줄의 반복적인 맵 조작 코드를 단 1-2줄로 줄이며, **99개의 타입 안전 함수**를 제공합니다.
 
-**Core Features**: 81 functions across 10 categories, Go 1.18+ generics, functional programming style, immutable operations, zero dependencies, 100% test coverage / 10개 카테고리에 걸쳐 81개 함수, Go 1.18+ 제네릭, 함수형 프로그래밍 스타일, 불변 작업, 제로 의존성, 100% 테스트 커버리지
+**Core Features**: 99 functions across 14 categories, Go 1.18+ generics, functional programming style, immutable operations, zero dependencies, 92.8% test coverage / 14개 카테고리에 걸쳐 99개 함수, Go 1.18+ 제네릭, 함수형 프로그래밍 스타일, 불변 작업, 제로 의존성, 92.8% 테스트 커버리지
 
 **Categories / 카테고리**:
 - **Basic Operations (11)**: Get, Set, Delete, Has, Clone, Equal, IsEmpty / 기본 작업
 - **Transformation (10)**: Map, MapKeys, Invert, Flatten, Partition / 변환
-- **Aggregation (9)**: Reduce, Sum, Min, Max, Average, GroupBy, CountBy / 집계
+- **Aggregation (9)**: Reduce, Sum, Min, Max, Average, GroupBy, CountBy, Median, Frequencies / 집계 및 통계
 - **Merge Operations (8)**: Merge, Union, Intersection, Difference / 병합 작업
 - **Filter Operations (7)**: Filter, Pick, Omit, Partition / 필터 작업
-- **Conversion (8)**: Keys, Values, Entries, ToJSON, FromJSON / 변환
+- **Conversion (10)**: Keys, Values, Entries, ToJSON, FromJSON, ToYAML, FromYAML / 변환 (YAML 지원)
 - **Predicate Checks (7)**: Every, Some, None, HasValue, IsSubset / 조건 검사
 - **Key Operations (8)**: KeysSorted, RenameKey, SwapKeys, FindKey / 키 작업
 - **Value Operations (7)**: ValuesSorted, UniqueValues, ReplaceValue / 값 작업
 - **Comparison (6)**: Diff, Compare, CommonKeys, AllKeys / 비교
+- **Utility Functions (6)**: ForEach, GetMany, SetMany, Tap, ContainsAllKeys, Apply / 유틸리티
+- **Default Functions (3)**: GetOrSet, SetDefault, Defaults / 기본값 관리
+- **Nested Map Functions (5)**: GetNested, SetNested, HasNested, DeleteNested, SafeGet / 중첩 맵 작업
+- **Statistics Functions (2)**: Median, Frequencies / 통계 함수
 
 ```go
 import "github.com/arkd0ng/go-utils/maputil"
@@ -570,6 +574,29 @@ m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 m2 := map[string]int{"b": 2, "c": 4, "d": 5}
 intersection := maputil.Intersection(m1, m2) // map[string]int{"b": 2}
 difference := maputil.Difference(m1, m2)     // map[string]int{"a": 1}
+
+// Nested map operations (NEW) / 중첩 맵 작업 (신규)
+config := map[string]interface{}{
+    "server": map[string]interface{}{
+        "host": "localhost",
+        "port": 8080,
+    },
+}
+host, ok := maputil.GetNested(config, "server", "host") // "localhost", true
+maputil.SetNested(config, "api.example.com", "server", "host")
+
+// Default value management (NEW) / 기본값 관리 (신규)
+cache := map[string]int{"a": 1}
+value := maputil.GetOrSet(cache, "b", 10) // Returns 10 and sets cache["b"] = 10
+
+// Statistics (NEW) / 통계 (신규)
+scores := map[string]int{"Alice": 85, "Bob": 90, "Charlie": 75}
+median, _ := maputil.Median(scores) // 85.0
+freq := maputil.Frequencies(scores) // Count occurrences of each score
+
+// YAML conversion (NEW) / YAML 변환 (신규)
+yamlStr, _ := maputil.ToYAML(config)
+parsedConfig, _ := maputil.FromYAML(yamlStr)
 ```
 
 **Before vs After**:
@@ -587,6 +614,12 @@ for k, v := range data {
 // ✅ After: 1 line with this package
 result := maputil.Filter(data, func(k string, v int) bool { return v > 2 })
 ```
+
+**Documentation / 문서**:
+- [Package README](./maputil/README.md) - Quick start and examples / 빠른 시작 및 예제
+- [User Manual](./docs/maputil/USER_MANUAL.md) - Comprehensive user guide (2,207 lines) / 포괄적인 사용자 가이드 (2,207줄)
+- [Developer Guide](./docs/maputil/DEVELOPER_GUIDE.md) - Technical documentation (2,356 lines) / 기술 문서 (2,356줄)
+- [Design Plan](./docs/maputil/DESIGN_PLAN.md) - Architecture and design decisions / 아키텍처 및 설계 결정
 
 **[→ View full documentation / 전체 문서 보기](./maputil/README.md)**
 

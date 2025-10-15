@@ -26,22 +26,28 @@ This file contains a high-level overview of major and minor versions. For detail
 
 ### Highlights / 주요 사항
 - **Complete maputil package**: 20 lines → 1-2 lines of code / 완전한 maputil 패키지: 20줄 → 1-2줄 코드
-- **81 functions across 10 categories**: Complete coverage of common map operations / 10개 카테고리에 걸쳐 81개 함수: 일반적인 맵 작업의 완전한 커버리지
+- **99 functions across 14 categories**: Complete coverage of common map operations / 14개 카테고리에 걸쳐 99개 함수: 일반적인 맵 작업의 완전한 커버리지
 - **Go 1.18+ generics**: Type-safe map operations with generic type parameters / Go 1.18+ 제네릭: 제네릭 타입 파라미터를 사용한 타입 안전 맵 작업
 - **Functional programming**: Map, Filter, Reduce, GroupBy and more / 함수형 프로그래밍: Map, Filter, Reduce, GroupBy 등
 - **Merge operations**: Merge, Union, Intersection, Difference / 병합 작업: 병합, 합집합, 교집합, 차집합
+- **Nested map support**: GetNested, SetNested, HasNested, DeleteNested, SafeGet / 중첩 맵 지원
+- **Default value management**: GetOrSet, SetDefault, Defaults / 기본값 관리
+- **Statistics functions**: Median, Frequencies / 통계 함수
+- **YAML conversion**: ToYAML, FromYAML (in addition to JSON) / YAML 변환: ToYAML, FromYAML (JSON에 추가)
 - **Comparison functions**: Diff, Compare, EqualFunc / 비교 함수: Diff, Compare, EqualFunc
 - **Immutable operations**: All functions return new maps (no mutation) / 불변 작업: 모든 함수는 새 맵을 반환 (변경 없음)
-- **Zero dependencies**: Standard library only / 제로 의존성: 표준 라이브러리만
-- **Comprehensive tests**: Full test coverage with benchmarks / 포괄적인 테스트: 벤치마크를 포함한 전체 테스트 커버리지
+- **Zero dependencies**: Standard library only (except gopkg.in/yaml.v3) / 제로 의존성: 표준 라이브러리만 (gopkg.in/yaml.v3 제외)
+- **Comprehensive tests**: 92.8% test coverage with 90+ sub-tests and 17+ benchmarks / 포괄적인 테스트: 90개 이상의 하위 테스트 및 17개 이상의 벤치마크로 92.8% 테스트 커버리지
+- **Comprehensive documentation**: USER_MANUAL (2,207 lines), DEVELOPER_GUIDE (2,356 lines), complete examples (1,676 lines) / 포괄적인 문서화: 사용자 매뉴얼 (2,207줄), 개발자 가이드 (2,356줄), 완전한 예제 (1,676줄)
 
 **Key Design Principles / 주요 설계 원칙**:
 - Extreme Simplicity: 20 lines → 1-2 lines / 극도의 간결함: 20줄 → 1-2줄
 - Type Safety: Generic type parameters for compile-time safety / 타입 안전: 컴파일 타임 안전을 위한 제네릭 타입 파라미터
 - Functional Style: Inspired by JavaScript, Lodash, Python dict methods / 함수형 스타일: JavaScript, Lodash, Python dict 메서드에서 영감
 - Zero Configuration: No setup required / 제로 설정: 설정 불필요
+- Nested Map Support: Safe navigation of deeply nested structures / 중첩 맵 지원: 깊이 중첩된 구조의 안전한 탐색
 
-**Latest Version / 최신 버전**: v1.8.001 (2025-10-15)
+**Latest Version / 최신 버전**: v1.8.017 (2025-10-15)
 
 ---
 
