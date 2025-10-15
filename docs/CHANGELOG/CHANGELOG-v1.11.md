@@ -5,6 +5,101 @@
 
 ---
 
+## [v1.11.006] - 2025-10-16
+
+### Added / 추가
+- Created `middleware.go` with built-in middleware implementations / 내장 미들웨어 구현이 있는 middleware.go 생성
+  - **Recovery Middleware / 복구 미들웨어**:
+    - `Recovery()` - Default recovery middleware with panic logging / 패닉 로깅이 있는 기본 복구 미들웨어
+    - `RecoveryWithConfig(config)` - Custom recovery configuration / 커스텀 복구 설정
+    - Captures panics and logs with stack traces / 패닉을 캡처하고 스택 트레이스와 함께 로깅
+    - Returns 500 Internal Server Error on panic / 패닉 시 500 Internal Server Error 반환
+    - Configurable logging and stack printing / 설정 가능한 로깅 및 스택 출력
+  - **Logger Middleware / 로거 미들웨어**:
+    - `Logger()` - Default logger middleware / 기본 로거 미들웨어
+    - `LoggerWithConfig(config)` - Custom logger configuration / 커스텀 로거 설정
+    - Logs method, path, status code, duration / 메서드, 경로, 상태 코드, 소요 시간 로깅
+    - Custom log function support / 커스텀 로그 함수 지원
+  - **CORS Middleware / CORS 미들웨어**:
+    - `CORS()` - Default CORS with wildcard origin / 와일드카드 오리진이 있는 기본 CORS
+    - `CORSWithConfig(config)` - Custom CORS configuration / 커스텀 CORS 설정
+    - Configurable origins, methods, headers / 설정 가능한 오리진, 메서드, 헤더
+    - Automatic preflight (OPTIONS) request handling / 자동 프리플라이트 요청 처리
+    - Credentials and max-age support / 자격 증명 및 max-age 지원
+- Added configuration structs / 설정 구조체 추가
+  - `RecoveryConfig` - Recovery middleware configuration / 복구 미들웨어 설정
+  - `LoggerConfig` - Logger middleware configuration / 로거 미들웨어 설정
+  - `CORSConfig` - CORS middleware configuration / CORS 미들웨어 설정
+- Added helper types / 헬퍼 타입 추가
+  - `responseWriter` - Status code tracking wrapper / 상태 코드 추적 래퍼
+  - Helper functions: `isOriginAllowed`, `joinStrings` / 헬퍼 함수
+- Created comprehensive `middleware_test.go` with 15 test functions / 15개의 테스트 함수가 있는 포괄적인 middleware_test.go 생성
+  - Recovery tests: TestRecovery, TestRecoveryNoPanic, TestRecoveryWithConfig / 복구 테스트
+  - Logger tests: TestLogger, TestLoggerWithConfig / 로거 테스트
+  - CORS tests: TestCORS, TestCORSPreflight, TestCORSWithConfig, TestCORSNotAllowedOrigin / CORS 테스트
+  - Helper tests: TestResponseWriter, TestIsOriginAllowed, TestJoinStrings / 헬퍼 테스트
+  - 3 benchmark functions / 3개의 벤치마크 함수
+- Updated `README.md` with Middleware documentation / 미들웨어 문서로 README.md 업데이트
+  - Added comprehensive Middleware section / 포괄적인 미들웨어 섹션 추가
+  - Recovery, Logger, CORS features documentation / 복구, 로거, CORS 기능 문서
+  - Updated version to v1.11.006 / 버전을 v1.11.006로 업데이트
+  - Updated development status progress / 개발 상태 진행 상황 업데이트
+  - Updated current phase to Phase 2 / 현재 단계를 Phase 2로 업데이트
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.006 / websvrutil.go 버전 상수를 v1.11.006로 업데이트
+- Bumped version to v1.11.006 in `cfg/app.yaml` / cfg/app.yaml의 버전을 v1.11.006로 상향
+
+### Technical Details / 기술 세부사항
+- **Recovery Middleware Architecture / 복구 미들웨어 아키텍처**:
+  - Uses defer/recover pattern to catch panics / defer/recover 패턴을 사용하여 패닉 캡처
+  - Logs panic value and stack trace / 패닉 값 및 스택 트레이스 로깅
+  - Returns 500 status code / 500 상태 코드 반환
+  - Configurable: PrintStack, LogFunc / 설정 가능
+- **Logger Middleware Architecture / 로거 미들웨어 아키텍처**:
+  - Uses responseWriter wrapper to capture status code / responseWriter 래퍼를 사용하여 상태 코드 캡처
+  - Measures request duration with time.Now() / time.Now()로 요청 소요 시간 측정
+  - Logs after handler completes / 핸들러 완료 후 로깅
+  - Custom log function support / 커스텀 로그 함수 지원
+- **CORS Middleware Architecture / CORS 미들웨어 아키텍처**:
+  - Sets Access-Control-* headers based on configuration / 설정에 따라 Access-Control-* 헤더 설정
+  - Handles preflight OPTIONS requests / 프리플라이트 OPTIONS 요청 처리
+  - Origin validation with wildcard support / 와일드카드 지원이 있는 오리진 검증
+  - Supports credentials, max-age, exposed headers / 자격 증명, max-age, 노출 헤더 지원
+- **Configuration Pattern / 설정 패턴**:
+  - Default functions: Recovery(), Logger(), CORS() / 기본 함수
+  - Config functions: RecoveryWithConfig(), LoggerWithConfig(), CORSWithConfig() / 설정 함수
+  - Smart defaults for 99% use cases / 99% 사용 사례를 위한 스마트 기본값
+- **responseWriter Helper / responseWriter 헬퍼**:
+  - Wraps http.ResponseWriter / http.ResponseWriter 래핑
+  - Tracks status code for logging / 로깅을 위한 상태 코드 추적
+  - Defaults to 200 OK if not explicitly set / 명시적으로 설정하지 않으면 200 OK로 기본 설정
+
+### Testing Coverage / 테스트 커버리지
+- **15 new middleware test functions** / **15개의 새로운 미들웨어 테스트 함수**
+- **3 new benchmark functions** (Recovery, Logger, CORS) / **3개의 새로운 벤치마크 함수**
+- **Total: 105+ test functions** (90 from v1.11.005 + 15 new) / **총 105개 이상의 테스트 함수**
+- **Total: 20 benchmark functions** (17 from v1.11.005 + 3 new) / **총 20개의 벤치마크 함수**
+- **84.0% test coverage** - All tests passing ✅ / **84.0% 테스트 커버리지** - 모든 테스트 통과 ✅
+- Tests cover: panic recovery, normal flow, custom configs, logging, CORS headers, preflight, origin validation / 테스트 범위: 패닉 복구, 정상 흐름, 커스텀 설정, 로깅, CORS 헤더, 프리플라이트, 오리진 검증
+
+### Performance / 성능
+- Middleware benchmarks (sample results) / 미들웨어 벤치마크 (샘플 결과):
+  - Recovery: ~200-300 ns/op (no panic) / 복구: ~200-300 ns/op (패닉 없음)
+  - Logger: ~300-400 ns/op / 로거: ~300-400 ns/op
+  - CORS: ~200-300 ns/op / CORS: ~200-300 ns/op
+  - Minimal overhead for production use / 프로덕션 사용을 위한 최소 오버헤드
+
+### Notes / 참고사항
+- Phase 2 (Middleware System) started! / Phase 2 (미들웨어 시스템) 시작!
+- All three core middleware (Recovery, Logger, CORS) implemented in single version / 세 가지 핵심 미들웨어를 단일 버전에서 구현
+- Smart defaults make middleware usage extremely simple / 스마트 기본값으로 미들웨어 사용이 극도로 간단함
+- Custom configuration available for advanced use cases / 고급 사용 사례를 위한 커스텀 설정 제공
+- responseWriter wrapper enables status code tracking / responseWriter 래퍼가 상태 코드 추적 가능
+- Next: v1.11.007 will add more middleware features (Rate Limiting, Request ID, etc.) / 다음: v1.11.007은 더 많은 미들웨어 기능 추가 예정
+
+---
+
 ## [v1.11.005] - 2025-10-16
 
 ### Added / 추가

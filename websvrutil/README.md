@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.005
+**Version / 버전**: v1.11.006
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.005) / 현재 기능
+## Current Features (v1.11.006) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -135,6 +135,31 @@ Flexible configuration using functional options.
 | `WithAutoReload(enable bool)` | false | Auto template reload / 자동 템플릿 재로드 |
 | `WithLogger(enable bool)` | true | Enable logger middleware / 로거 미들웨어 활성화 |
 | `WithRecovery(enable bool)` | true | Enable recovery middleware / 복구 미들웨어 활성화 |
+
+### Middleware / 미들웨어
+
+Built-in middleware for common use cases.
+
+일반적인 사용 사례를 위한 내장 미들웨어.
+
+**Recovery Middleware / 복구 미들웨어**:
+- `Recovery()` - Panic recovery with logging / 로깅과 함께 패닉 복구
+- `RecoveryWithConfig(config)` - Custom recovery configuration / 커스텀 복구 설정
+- Automatically logs panics with stack traces / 스택 트레이스와 함께 패닉 자동 로깅
+- Sends 500 Internal Server Error on panic / 패닉 시 500 Internal Server Error 전송
+
+**Logger Middleware / 로거 미들웨어**:
+- `Logger()` - HTTP request logging / HTTP 요청 로깅
+- `LoggerWithConfig(config)` - Custom logger configuration / 커스텀 로거 설정
+- Logs method, path, status code, duration / 메서드, 경로, 상태 코드, 소요 시간 로깅
+- Customizable log function / 커스터마이즈 가능한 로그 함수
+
+**CORS Middleware / CORS 미들웨어**:
+- `CORS()` - Cross-Origin Resource Sharing / Cross-Origin Resource Sharing
+- `CORSWithConfig(config)` - Custom CORS configuration / 커스텀 CORS 설정
+- Configurable origins, methods, headers / 설정 가능한 오리진, 메서드, 헤더
+- Automatic preflight request handling / 자동 프리플라이트 요청 처리
+- Credentials and max-age support / 자격 증명 및 max-age 지원
 
 ## Quick Start / 빠른 시작
 
@@ -450,7 +475,7 @@ The following features are planned for future releases:
 
 ## Development Status / 개발 상태
 
-**Current Phase / 현재 단계**: Phase 1 - Core Foundation (v1.11.001-005)
+**Current Phase / 현재 단계**: Phase 2 - Middleware System (v1.11.006-010)
 
 **Progress / 진행 상황**:
 - ✅ v1.11.001: Project setup and planning / 프로젝트 설정 및 계획
@@ -458,6 +483,7 @@ The following features are planned for future releases:
 - ✅ v1.11.003: Router / 라우터
 - ✅ v1.11.004: Context (Part 1) / 컨텍스트 (1부)
 - ✅ v1.11.005: Response Helpers / 응답 헬퍼
+- ✅ v1.11.006: Middleware (Recovery, Logger, CORS) / 미들웨어 (복구, 로거, CORS)
 
 ## Documentation / 문서
 
