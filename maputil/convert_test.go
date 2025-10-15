@@ -313,3 +313,295 @@ func BenchmarkFromSliceBy(b *testing.B) {
 		_ = FromSliceBy(slice, keyFn, valueFn)
 	}
 }
+
+// TestToYAML tests the ToYAML function with various scenarios.
+// TestToYAML는 다양한 시나리오로 ToYAML 함수를 테스트합니다.
+func TestToYAML(t *testing.T) {
+	t.Run("SimpleMap", func(t *testing.T) {
+		// Test simple map / 간단한 맵 테스트
+		data := map[string]int{"a": 1, "b": 2, "c": 3}
+		result, err := ToYAML(data)
+		if err != nil {
+			t.Errorf("ToYAML() error = %v", err)
+		}
+		if result == "" {
+			t.Error("ToYAML() returned empty string")
+		}
+		// Check that result contains keys
+		if !strings.Contains(result, "a:") || !strings.Contains(result, "b:") || !strings.Contains(result, "c:") {
+			t.Errorf("ToYAML() = %s, missing keys", result)
+		}
+	})
+
+	t.Run("NestedMap", func(t *testing.T) {
+		// Test nested map / 중첩 맵 테스트
+		data := map[string]interface{}{
+			"server": map[string]interface{}{
+				"host": "localhost",
+				"port": 8080,
+			},
+			"database": map[string]interface{}{
+				"host": "localhost",
+				"port": 5432,
+			},
+		}
+		result, err := ToYAML(data)
+		if err != nil {
+			t.Errorf("ToYAML() error = %v", err)
+		}
+		if !strings.Contains(result, "server:") || !strings.Contains(result, "database:") {
+			t.Errorf("ToYAML() = %s, missing nested keys", result)
+		}
+	})
+
+	t.Run("EmptyMap", func(t *testing.T) {
+		// Test empty map / 빈 맵 테스트
+		data := map[string]int{}
+		result, err := ToYAML(data)
+		if err != nil {
+			t.Errorf("ToYAML() error = %v", err)
+		}
+		if strings.TrimSpace(result) != "{}" {
+			t.Errorf("ToYAML(empty) = %s, want {}", result)
+		}
+	})
+
+	t.Run("StringValues", func(t *testing.T) {
+		// Test with string values / 문자열 값 테스트
+		data := map[string]string{
+			"name":  "Alice",
+			"email": "alice@example.com",
+			"role":  "admin",
+		}
+		result, err := ToYAML(data)
+		if err != nil {
+			t.Errorf("ToYAML() error = %v", err)
+		}
+		if !strings.Contains(result, "Alice") || !strings.Contains(result, "alice@example.com") {
+			t.Errorf("ToYAML() = %s, missing values", result)
+		}
+	})
+
+	t.Run("MixedTypes", func(t *testing.T) {
+		// Test with mixed types / 혼합 타입 테스트
+		data := map[string]interface{}{
+			"name":    "Alice",
+			"age":     30,
+			"active":  true,
+			"balance": 1234.56,
+		}
+		result, err := ToYAML(data)
+		if err != nil {
+			t.Errorf("ToYAML() error = %v", err)
+		}
+		if result == "" {
+			t.Error("ToYAML() returned empty string")
+		}
+	})
+
+	t.Run("ArrayValues", func(t *testing.T) {
+		// Test with array values / 배열 값 테스트
+		data := map[string]interface{}{
+			"numbers": []int{1, 2, 3},
+			"strings": []string{"a", "b", "c"},
+		}
+		result, err := ToYAML(data)
+		if err != nil {
+			t.Errorf("ToYAML() error = %v", err)
+		}
+		if result == "" {
+			t.Error("ToYAML() returned empty string")
+		}
+	})
+}
+
+// TestFromYAML tests the FromYAML function with various scenarios.
+// TestFromYAML는 다양한 시나리오로 FromYAML 함수를 테스트합니다.
+func TestFromYAML(t *testing.T) {
+	t.Run("SimpleYAML", func(t *testing.T) {
+		// Test simple YAML / 간단한 YAML 테스트
+		yamlStr := `
+a: 1
+b: 2
+c: 3
+`
+		result, err := FromYAML(yamlStr)
+		if err != nil {
+			t.Errorf("FromYAML() error = %v", err)
+		}
+		if len(result) != 3 {
+			t.Errorf("FromYAML() returned %d keys, want 3", len(result))
+		}
+		if result["a"] != 1 || result["b"] != 2 || result["c"] != 3 {
+			t.Errorf("FromYAML() = %v, values incorrect", result)
+		}
+	})
+
+	t.Run("NestedYAML", func(t *testing.T) {
+		// Test nested YAML / 중첩 YAML 테스트
+		yamlStr := `
+server:
+  host: localhost
+  port: 8080
+database:
+  host: localhost
+  port: 5432
+`
+		result, err := FromYAML(yamlStr)
+		if err != nil {
+			t.Errorf("FromYAML() error = %v", err)
+		}
+		if len(result) != 2 {
+			t.Errorf("FromYAML() returned %d keys, want 2", len(result))
+		}
+
+		server, ok := result["server"].(map[string]interface{})
+		if !ok {
+			t.Error("FromYAML() server is not a map")
+		}
+		if server["host"] != "localhost" || server["port"] != 8080 {
+			t.Errorf("FromYAML() server values incorrect: %v", server)
+		}
+	})
+
+	t.Run("EmptyYAML", func(t *testing.T) {
+		// Test empty YAML / 빈 YAML 테스트
+		yamlStr := `{}`
+		result, err := FromYAML(yamlStr)
+		if err != nil {
+			t.Errorf("FromYAML() error = %v", err)
+		}
+		if len(result) != 0 {
+			t.Errorf("FromYAML(empty) = %v, want empty map", result)
+		}
+	})
+
+	t.Run("StringValues", func(t *testing.T) {
+		// Test with string values / 문자열 값 테스트
+		yamlStr := `
+name: Alice
+email: alice@example.com
+role: admin
+`
+		result, err := FromYAML(yamlStr)
+		if err != nil {
+			t.Errorf("FromYAML() error = %v", err)
+		}
+		if result["name"] != "Alice" || result["email"] != "alice@example.com" || result["role"] != "admin" {
+			t.Errorf("FromYAML() = %v, values incorrect", result)
+		}
+	})
+
+	t.Run("MixedTypes", func(t *testing.T) {
+		// Test with mixed types / 혼합 타입 테스트
+		yamlStr := `
+name: Alice
+age: 30
+active: true
+balance: 1234.56
+`
+		result, err := FromYAML(yamlStr)
+		if err != nil {
+			t.Errorf("FromYAML() error = %v", err)
+		}
+		if result["name"] != "Alice" || result["age"] != 30 || result["active"] != true {
+			t.Errorf("FromYAML() = %v, values incorrect", result)
+		}
+	})
+
+	t.Run("ArrayValues", func(t *testing.T) {
+		// Test with array values / 배열 값 테스트
+		yamlStr := `
+numbers:
+  - 1
+  - 2
+  - 3
+strings:
+  - a
+  - b
+  - c
+`
+		result, err := FromYAML(yamlStr)
+		if err != nil {
+			t.Errorf("FromYAML() error = %v", err)
+		}
+
+		numbers, ok := result["numbers"].([]interface{})
+		if !ok {
+			t.Error("FromYAML() numbers is not a slice")
+		}
+		if len(numbers) != 3 {
+			t.Errorf("FromYAML() numbers length = %d, want 3", len(numbers))
+		}
+	})
+
+	t.Run("InvalidYAML", func(t *testing.T) {
+		// Test with invalid YAML / 유효하지 않은 YAML 테스트
+		yamlStr := `invalid: yaml: content:`
+		_, err := FromYAML(yamlStr)
+		if err == nil {
+			t.Error("FromYAML(invalid) should return error")
+		}
+	})
+
+	t.Run("RoundTrip", func(t *testing.T) {
+		// Test round-trip conversion / 왕복 변환 테스트
+		original := map[string]interface{}{
+			"name": "Alice",
+			"age":  30,
+		}
+
+		// Convert to YAML
+		yamlStr, err := ToYAML(original)
+		if err != nil {
+			t.Errorf("ToYAML() error = %v", err)
+		}
+
+		// Convert back to map
+		result, err := FromYAML(yamlStr)
+		if err != nil {
+			t.Errorf("FromYAML() error = %v", err)
+		}
+
+		// Check values
+		if result["name"] != "Alice" || result["age"] != 30 {
+			t.Errorf("Round-trip failed: got %v, want %v", result, original)
+		}
+	})
+}
+
+// BenchmarkToYAML benchmarks the ToYAML function.
+// BenchmarkToYAML는 ToYAML 함수를 벤치마크합니다.
+func BenchmarkToYAML(b *testing.B) {
+	data := map[string]interface{}{
+		"server": map[string]interface{}{
+			"host": "localhost",
+			"port": 8080,
+		},
+		"database": map[string]interface{}{
+			"host": "localhost",
+			"port": 5432,
+		},
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = ToYAML(data)
+	}
+}
+
+// BenchmarkFromYAML benchmarks the FromYAML function.
+// BenchmarkFromYAML는 FromYAML 함수를 벤치마크합니다.
+func BenchmarkFromYAML(b *testing.B) {
+	yamlStr := `
+server:
+  host: localhost
+  port: 8080
+database:
+  host: localhost
+  port: 5432
+`
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = FromYAML(yamlStr)
+	}
+}

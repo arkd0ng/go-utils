@@ -6,6 +6,41 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.014] - 2025-10-15
+
+### Added / 추가
+- **New Functions** (2 functions): ToYAML, FromYAML / 새 함수 (2개)
+  - Category: YAML Conversion Functions / YAML 변환 함수
+  - **ToYAML**: Convert map to YAML string / 맵을 YAML 문자열로 변환
+    - Signature: `func ToYAML[K comparable, V any](m map[K]V) (string, error)`
+    - Serializes map using gopkg.in/yaml.v3 package / gopkg.in/yaml.v3 패키지를 사용하여 맵 직렬화
+    - Returns YAML string representation / YAML 문자열 표현 반환
+    - Time Complexity: O(n), Space Complexity: O(n)
+  - **FromYAML**: Parse YAML string into map / YAML 문자열을 맵으로 파싱
+    - Signature: `func FromYAML(yamlStr string) (map[string]interface{}, error)`
+    - Deserializes YAML into map[string]interface{} / YAML을 map[string]interface{}로 역직렬화
+    - Returns parsed map / 파싱된 맵 반환
+    - Time Complexity: O(n), Space Complexity: O(n)
+
+### Tests / 테스트
+- Added comprehensive tests in `maputil/convert_test.go`:
+  - **TestToYAML**: 6 sub-tests / 6개 하위 테스트
+    - simple map, nested map, empty map, string values, mixed types, array values / 간단한 맵, 중첩 맵, 빈 맵, 문자열 값, 혼합 타입, 배열 값
+  - **TestFromYAML**: 8 sub-tests / 8개 하위 테스트
+    - simple YAML, nested YAML, empty YAML, string values, mixed types, array values, invalid YAML, round-trip / 간단한 YAML, 중첩 YAML, 빈 YAML, 문자열 값, 혼합 타입, 배열 값, 유효하지 않은 YAML, 왕복
+  - **Benchmarks**: 2 benchmarks for ToYAML and FromYAML / 2개 벤치마크
+
+### Documentation / 문서
+- Updated `maputil/convert.go` with complete bilingual documentation
+- Added import for gopkg.in/yaml.v3 package / gopkg.in/yaml.v3 패키지 임포트 추가
+- Function count: 95 → 97 (16 of 17 utility functions) / 함수 개수: 95 → 97 (17개 유틸리티 함수 중 16개)
+
+### Notes / 참고사항
+- Fifteenth and sixteenth of 17 new utility functions planned for maputil / maputil에 계획된 17개 신규 유틸리티 함수 중 15~16번째
+- These functions complement existing ToJSON/FromJSON for YAML support / 이 함수들은 YAML 지원을 위해 기존 ToJSON/FromJSON을 보완
+- Useful for configuration file management and API response formatting / 설정 파일 관리 및 API 응답 포맷팅에 유용
+- Dependency added: gopkg.in/yaml.v3 / 의존성 추가: gopkg.in/yaml.v3
+
 ## [v1.8.013] - 2025-10-15
 
 ### Added / 추가

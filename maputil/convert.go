@@ -1,6 +1,10 @@
 package maputil
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"gopkg.in/yaml.v3"
+)
 
 // Keys returns all keys from the map as a slice.
 // Keys는 맵의 모든 키를 슬라이스로 반환합니다.
@@ -205,4 +209,112 @@ func ToJSON[K comparable, V any](m map[K]V) (string, error) {
 //	// m = map[string]int{"a": 1, "b": 2, "c": 3}
 func FromJSON[K comparable, V any](jsonStr string, m *map[K]V) error {
 	return json.Unmarshal([]byte(jsonStr), m)
+}
+
+// ToYAML converts a map to a YAML string.
+// ToYAML은 맵을 YAML 문자열로 변환합니다.
+//
+// This function serializes a map into YAML format using the gopkg.in/yaml.v3 package.
+// Returns an error if the map cannot be marshaled to YAML.
+//
+// 이 함수는 gopkg.in/yaml.v3 패키지를 사용하여 맵을 YAML 형식으로 직렬화합니다.
+// 맵을 YAML로 마샬링할 수 없으면 에러를 반환합니다.
+//
+// Time Complexity / 시간 복잡도: O(n)
+// Space Complexity / 공간 복잡도: O(n)
+//
+// Parameters / 매개변수:
+//   - m: The map to convert / 변환할 맵
+//
+// Returns / 반환값:
+//   - string: YAML string representation / YAML 문자열 표현
+//   - error: Error if marshaling fails / 마샬링 실패 시 에러
+//
+// Example / 예제:
+//
+//	config := map[string]interface{}{
+//		"server": map[string]interface{}{
+//			"host": "localhost",
+//			"port": 8080,
+//		},
+//		"database": map[string]interface{}{
+//			"host": "localhost",
+//			"port": 5432,
+//		},
+//	}
+//	yamlStr, err := maputil.ToYAML(config)
+//	// yamlStr:
+//	// server:
+//	//   host: localhost
+//	//   port: 8080
+//	// database:
+//	//   host: localhost
+//	//   port: 5432
+//
+// Use Case / 사용 사례:
+//   - Configuration file generation / 설정 파일 생성
+//   - API response formatting / API 응답 포맷팅
+//   - Data serialization / 데이터 직렬화
+//   - Config export / 설정 내보내기
+func ToYAML[K comparable, V any](m map[K]V) (string, error) {
+	bytes, err := yaml.Marshal(m)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
+}
+
+// FromYAML parses a YAML string into a map.
+// FromYAML은 YAML 문자열을 맵으로 파싱합니다.
+//
+// This function deserializes a YAML string into a map[string]interface{}.
+// Returns an error if the YAML string cannot be unmarshaled.
+//
+// 이 함수는 YAML 문자열을 map[string]interface{}로 역직렬화합니다.
+// YAML 문자열을 언마샬링할 수 없으면 에러를 반환합니다.
+//
+// Time Complexity / 시간 복잡도: O(n)
+// Space Complexity / 공간 복잡도: O(n)
+//
+// Parameters / 매개변수:
+//   - yamlStr: YAML string to parse / 파싱할 YAML 문자열
+//
+// Returns / 반환값:
+//   - map[string]interface{}: Parsed map / 파싱된 맵
+//   - error: Error if unmarshaling fails / 언마샬링 실패 시 에러
+//
+// Example / 예제:
+//
+//	yamlStr := `
+//	server:
+//	  host: localhost
+//	  port: 8080
+//	database:
+//	  host: localhost
+//	  port: 5432
+//	`
+//	config, err := maputil.FromYAML(yamlStr)
+//	// config = map[string]interface{}{
+//	//   "server": map[string]interface{}{
+//	//     "host": "localhost",
+//	//     "port": 8080,
+//	//   },
+//	//   "database": map[string]interface{}{
+//	//     "host": "localhost",
+//	//     "port": 5432,
+//	//   },
+//	// }
+//
+// Use Case / 사용 사례:
+//   - Configuration file loading / 설정 파일 로딩
+//   - API request parsing / API 요청 파싱
+//   - Data deserialization / 데이터 역직렬화
+//   - Config import / 설정 가져오기
+func FromYAML(yamlStr string) (map[string]interface{}, error) {
+	var result map[string]interface{}
+	err := yaml.Unmarshal([]byte(yamlStr), &result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
