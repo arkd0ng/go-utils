@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.019
+**Version / 버전**: v1.11.020
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.019) / 현재 기능
+## Current Features (v1.11.020) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -124,9 +124,11 @@ Request context for accessing path parameters, query strings, headers, and stori
 - `BindForm(obj interface{}) error` - Bind form data / 폼 데이터 바인딩
 - `BindQuery(obj interface{}) error` - Bind query parameters / 쿼리 매개변수 바인딩
 
-**Cookie Helpers / 쿠키 헬퍼** (v1.11.014+):
+**Cookie Helpers / 쿠키 헬퍼** (v1.11.014+, Enhanced in v1.11.020):
 - `Cookie(name string) (*http.Cookie, error)` - Get cookie by name / 이름으로 쿠키 가져오기
+- `CookieValue(name string) string` - Get cookie value (returns empty string if not found) / 쿠키 값 가져오기 (없으면 빈 문자열)
 - `SetCookie(cookie *http.Cookie)` - Set response cookie / 응답 쿠키 설정
+- `SetCookieAdvanced(opts CookieOptions)` - Set cookie with advanced options / 고급 옵션으로 쿠키 설정
 - `DeleteCookie(name, path string)` - Delete cookie / 쿠키 삭제
 - `GetCookie(name string) string` - Get cookie value / 쿠키 값 가져오기
 

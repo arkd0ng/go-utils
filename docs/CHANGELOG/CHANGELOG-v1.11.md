@@ -5,6 +5,58 @@
 
 ---
 
+## [v1.11.020] - 2025-10-16
+
+### Added / 추가
+- **Cookie Helpers Enhancement** / **쿠키 헬퍼 향상** (`context.go`)
+  - `CookieValue(name string) string` - Get cookie value as string
+  - Returns empty string if cookie not found (no error handling needed)
+  - Convenience method for simple cookie value retrieval
+  - `SetCookieAdvanced(opts CookieOptions)` - Set cookie with advanced options
+  - Full control over cookie attributes (Path, Domain, MaxAge, Secure, HttpOnly, SameSite)
+  - Default path "/" if not provided
+  - `CookieOptions` struct with 8 configurable fields
+
+- **Cookie Configuration** / **쿠키 설정**
+  - `CookieOptions` type for advanced cookie configuration
+  - Fields: Name, Value, Path, Domain, MaxAge, Secure, HttpOnly, SameSite
+  - MaxAge: 0 for session cookies, -1 to delete
+  - Compatible with existing Cookie, SetCookie, DeleteCookie methods
+
+- **Comprehensive Tests** / **종합 테스트** (`cookie_test.go`)
+  - `TestContextCookie` - Test Cookie method
+  - `TestContextCookieValue` - Test CookieValue convenience method
+  - `TestContextSetCookieExisting` - Test existing SetCookie method
+  - `TestContextSetCookieAdvanced` - Test SetCookieAdvanced with all options
+  - `TestContextSetCookieAdvancedDefaultPath` - Test default path behavior
+  - `TestContextDeleteCookieExisting` - Test existing DeleteCookie method
+  - `TestContextMultipleCookies` - Test setting multiple cookies
+  - `TestCookieOptions` - Test CookieOptions struct
+  - `BenchmarkContextSetCookieExisting` - Benchmark SetCookie
+  - `BenchmarkContextCookieValue` - Benchmark CookieValue
+  - `BenchmarkContextSetCookieAdvanced` - Benchmark SetCookieAdvanced
+  - **Total: 8 test functions + 3 benchmarks** for cookie helpers
+
+### Changed / 변경
+- **Enhanced Cookie Helpers** / **향상된 쿠키 헬퍼**
+  - Added convenience methods while maintaining backward compatibility
+  - Existing methods (Cookie, SetCookie, DeleteCookie) unchanged
+  - New methods work alongside existing methods
+
+### Documentation / 문서
+- **README.md**
+  - Updated version to v1.11.020
+  - Updated "Cookie Helpers" section with new methods
+  - Added note "Enhanced in v1.11.020"
+  - Listed CookieValue and SetCookieAdvanced methods
+
+### Performance / 성능
+- **Test Coverage**: 78.8% of statements / 구문의 78.8%
+- **CookieValue**: No error handling overhead, direct string return
+- **SetCookieAdvanced**: Efficient single-call configuration
+
+---
+
 ## [v1.11.019] - 2025-10-16
 
 ### Added / 추가

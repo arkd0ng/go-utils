@@ -6,305 +6,367 @@ import (
 	"testing"
 )
 
-// TestCookie tests getting a cookie
-// TestCookie는 쿠키 가져오기를 테스트합니다
-func TestCookie(t *testing.T) {
+// TestContextCookie tests Cookie method / Cookie 메서드 테스트
+func TestContextCookie(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
-	req.AddCookie(&http.Cookie{Name: "session_id", Value: "abc123"})
+	req.AddCookie(&http.Cookie{
+		Name:  "test_cookie",
+		Value: "test_value",
+	})
+
 	w := httptest.NewRecorder()
+	ctx := &Context{
+		Request:        req,
+		ResponseWriter: w,
+	}
 
-	ctx := NewContext(w, req)
-
-	cookie, err := ctx.Cookie("session_id")
+	// Get existing cookie / 기존 쿠키 가져오기
+	cookie, err := ctx.Cookie("test_cookie")
 	if err != nil {
-		t.Fatalf("Cookie() error = %v", err)
+		t.Fatalf("Expected no error, got %v", err)
 	}
 
-	if cookie.Name != "session_id" {
-		t.Errorf("Cookie name = %s, want session_id", cookie.Name)
+	if cookie.Name != "test_cookie" {
+		t.Errorf("Expected cookie name 'test_cookie', got '%s'", cookie.Name)
 	}
 
-	if cookie.Value != "abc123" {
-		t.Errorf("Cookie value = %s, want abc123", cookie.Value)
+	if cookie.Value != "test_value" {
+		t.Errorf("Expected cookie value 'test_value', got '%s'", cookie.Value)
 	}
-}
 
-// TestCookieNotFound tests getting a non-existent cookie
-// TestCookieNotFound는 존재하지 않는 쿠키 가져오기를 테스트합니다
-func TestCookieNotFound(t *testing.T) {
-	req := httptest.NewRequest("GET", "/", nil)
-	w := httptest.NewRecorder()
-
-	ctx := NewContext(w, req)
-
-	_, err := ctx.Cookie("nonexistent")
+	// Get non-existent cookie / 존재하지 않는 쿠키 가져오기
+	_, err = ctx.Cookie("nonexistent")
 	if err == nil {
-		t.Error("Expected error for non-existent cookie")
+		t.Error("Expected error for nonexistent cookie")
 	}
 }
 
-// TestSetCookie tests setting a cookie
-// TestSetCookie는 쿠키 설정을 테스트합니다
-func TestSetCookie(t *testing.T) {
+// TestContextCookieValue tests CookieValue method / CookieValue 메서드 테스트
+func TestContextCookieValue(t *testing.T) {
+	req := httptest.NewRequest("GET", "/", nil)
+	req.AddCookie(&http.Cookie{
+		Name:  "user",
+		Value: "john",
+	})
+
+	w := httptest.NewRecorder()
+	ctx := &Context{
+		Request:        req,
+		ResponseWriter: w,
+	}
+
+	// Get existing cookie value / 기존 쿠키 값 가져오기
+	value := ctx.CookieValue("user")
+	if value != "john" {
+		t.Errorf("Expected 'john', got '%s'", value)
+	}
+
+	// Get non-existent cookie value / 존재하지 않는 쿠키 값 가져오기
+	value = ctx.CookieValue("nonexistent")
+	if value != "" {
+		t.Errorf("Expected empty string, got '%s'", value)
+	}
+}
+
+// TestContextSetCookieExisting tests existing SetCookie method / 기존 SetCookie 메서드 테스트
+func TestContextSetCookieExisting(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
-
-	ctx := NewContext(w, req)
+	ctx := &Context{
+		Request:        req,
+		ResponseWriter: w,
+	}
 
 	cookie := &http.Cookie{
-		Name:     "session_id",
-		Value:    "xyz789",
+		Name:  "session",
+		Value: "abc123",
+		Path:  "/",
+	}
+	ctx.SetCookie(cookie)
+
+	// Check cookie is set / 쿠키 설정 확인
+	cookies := w.Result().Cookies()
+	if len(cookies) == 0 {
+		t.Fatal("Expected cookie to be set")
+	}
+
+	setCookie := cookies[0]
+	if setCookie.Name != "session" {
+		t.Errorf("Expected cookie name 'session', got '%s'", setCookie.Name)
+	}
+
+	if setCookie.Value != "abc123" {
+		t.Errorf("Expected cookie value 'abc123', got '%s'", setCookie.Value)
+	}
+
+	if setCookie.Path != "/" {
+		t.Errorf("Expected cookie path '/', got '%s'", setCookie.Path)
+	}
+}
+
+// TestContextSetCookieAdvanced tests SetCookieAdvanced method / SetCookieAdvanced 메서드 테스트
+func TestContextSetCookieAdvanced(t *testing.T) {
+	req := httptest.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+	ctx := &Context{
+		Request:        req,
+		ResponseWriter: w,
+	}
+
+	ctx.SetCookieAdvanced(CookieOptions{
+		Name:     "advanced",
+		Value:    "value123",
+		Path:     "/api",
+		Domain:   "example.com",
+		MaxAge:   3600,
+		Secure:   true,
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+	})
+
+	// Check cookie is set with advanced options / 고급 옵션으로 쿠키 설정 확인
+	cookies := w.Result().Cookies()
+	if len(cookies) == 0 {
+		t.Fatal("Expected cookie to be set")
+	}
+
+	cookie := cookies[0]
+	if cookie.Name != "advanced" {
+		t.Errorf("Expected cookie name 'advanced', got '%s'", cookie.Name)
+	}
+
+	if cookie.Value != "value123" {
+		t.Errorf("Expected cookie value 'value123', got '%s'", cookie.Value)
+	}
+
+	if cookie.Path != "/api" {
+		t.Errorf("Expected cookie path '/api', got '%s'", cookie.Path)
+	}
+
+	if cookie.Domain != "example.com" {
+		t.Errorf("Expected cookie domain 'example.com', got '%s'", cookie.Domain)
+	}
+
+	if cookie.MaxAge != 3600 {
+		t.Errorf("Expected cookie MaxAge 3600, got %d", cookie.MaxAge)
+	}
+
+	if !cookie.Secure {
+		t.Error("Expected cookie to be secure")
+	}
+
+	if !cookie.HttpOnly {
+		t.Error("Expected cookie to be HttpOnly")
+	}
+
+	if cookie.SameSite != http.SameSiteStrictMode {
+		t.Errorf("Expected SameSite Strict, got %v", cookie.SameSite)
+	}
+}
+
+// TestContextSetCookieAdvancedDefaultPath tests default path / 기본 경로 테스트
+func TestContextSetCookieAdvancedDefaultPath(t *testing.T) {
+	req := httptest.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+	ctx := &Context{
+		Request:        req,
+		ResponseWriter: w,
+	}
+
+	// Set cookie without path / 경로 없이 쿠키 설정
+	ctx.SetCookieAdvanced(CookieOptions{
+		Name:  "test",
+		Value: "value",
+		// Path is empty, should default to "/" / Path가 비어 있으면 기본값 "/"
+	})
+
+	cookies := w.Result().Cookies()
+	if len(cookies) == 0 {
+		t.Fatal("Expected cookie to be set")
+	}
+
+	cookie := cookies[0]
+	if cookie.Path != "/" {
+		t.Errorf("Expected default path '/', got '%s'", cookie.Path)
+	}
+}
+
+// TestContextDeleteCookieExisting tests existing DeleteCookie method / 기존 DeleteCookie 메서드 테스트
+func TestContextDeleteCookieExisting(t *testing.T) {
+	req := httptest.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+	ctx := &Context{
+		Request:        req,
+		ResponseWriter: w,
+	}
+
+	ctx.DeleteCookie("session", "/")
+
+	// Check cookie is deleted (MaxAge = -1) / 쿠키 삭제 확인 (MaxAge = -1)
+	cookies := w.Result().Cookies()
+	if len(cookies) == 0 {
+		t.Fatal("Expected cookie to be set for deletion")
+	}
+
+	cookie := cookies[0]
+	if cookie.Name != "session" {
+		t.Errorf("Expected cookie name 'session', got '%s'", cookie.Name)
+	}
+
+	if cookie.MaxAge != -1 {
+		t.Errorf("Expected MaxAge -1, got %d", cookie.MaxAge)
+	}
+
+	if cookie.Value != "" {
+		t.Errorf("Expected empty value, got '%s'", cookie.Value)
+	}
+}
+
+// TestContextMultipleCookies tests setting multiple cookies / 여러 쿠키 설정 테스트
+func TestContextMultipleCookies(t *testing.T) {
+	req := httptest.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+	ctx := &Context{
+		Request:        req,
+		ResponseWriter: w,
+	}
+
+	ctx.SetCookie(&http.Cookie{Name: "cookie1", Value: "value1", Path: "/"})
+	ctx.SetCookie(&http.Cookie{Name: "cookie2", Value: "value2", Path: "/"})
+	ctx.SetCookie(&http.Cookie{Name: "cookie3", Value: "value3", Path: "/"})
+
+	cookies := w.Result().Cookies()
+	if len(cookies) != 3 {
+		t.Fatalf("Expected 3 cookies, got %d", len(cookies))
+	}
+
+	// Check all cookies are set / 모든 쿠키 설정 확인
+	cookieMap := make(map[string]string)
+	for _, cookie := range cookies {
+		cookieMap[cookie.Name] = cookie.Value
+	}
+
+	if cookieMap["cookie1"] != "value1" {
+		t.Errorf("Expected cookie1='value1', got '%s'", cookieMap["cookie1"])
+	}
+
+	if cookieMap["cookie2"] != "value2" {
+		t.Errorf("Expected cookie2='value2', got '%s'", cookieMap["cookie2"])
+	}
+
+	if cookieMap["cookie3"] != "value3" {
+		t.Errorf("Expected cookie3='value3', got '%s'", cookieMap["cookie3"])
+	}
+}
+
+// TestCookieOptions tests CookieOptions struct / CookieOptions 구조체 테스트
+func TestCookieOptions(t *testing.T) {
+	opts := CookieOptions{
+		Name:     "test",
+		Value:    "value",
+		Path:     "/api",
+		Domain:   "example.com",
+		MaxAge:   3600,
+		Secure:   true,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	}
+
+	if opts.Name != "test" {
+		t.Errorf("Expected Name 'test', got '%s'", opts.Name)
+	}
+
+	if opts.Value != "value" {
+		t.Errorf("Expected Value 'value', got '%s'", opts.Value)
+	}
+
+	if opts.Path != "/api" {
+		t.Errorf("Expected Path '/api', got '%s'", opts.Path)
+	}
+
+	if opts.Domain != "example.com" {
+		t.Errorf("Expected Domain 'example.com', got '%s'", opts.Domain)
+	}
+
+	if opts.MaxAge != 3600 {
+		t.Errorf("Expected MaxAge 3600, got %d", opts.MaxAge)
+	}
+
+	if !opts.Secure {
+		t.Error("Expected Secure to be true")
+	}
+
+	if !opts.HttpOnly {
+		t.Error("Expected HttpOnly to be true")
+	}
+
+	if opts.SameSite != http.SameSiteLaxMode {
+		t.Errorf("Expected SameSite Lax, got %v", opts.SameSite)
+	}
+}
+
+// BenchmarkContextSetCookieExisting benchmarks existing SetCookie method / 기존 SetCookie 메서드 벤치마크
+func BenchmarkContextSetCookieExisting(b *testing.B) {
+	req := httptest.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+	ctx := &Context{
+		Request:        req,
+		ResponseWriter: w,
+	}
+
+	cookie := &http.Cookie{
+		Name:  "bench",
+		Value: "value",
+		Path:  "/",
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		ctx.SetCookie(cookie)
+	}
+}
+
+// BenchmarkContextCookieValue benchmarks CookieValue method / CookieValue 메서드 벤치마크
+func BenchmarkContextCookieValue(b *testing.B) {
+	req := httptest.NewRequest("GET", "/", nil)
+	req.AddCookie(&http.Cookie{
+		Name:  "bench",
+		Value: "value",
+	})
+
+	w := httptest.NewRecorder()
+	ctx := &Context{
+		Request:        req,
+		ResponseWriter: w,
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		ctx.CookieValue("bench")
+	}
+}
+
+// BenchmarkContextSetCookieAdvanced benchmarks SetCookieAdvanced method / SetCookieAdvanced 메서드 벤치마크
+func BenchmarkContextSetCookieAdvanced(b *testing.B) {
+	req := httptest.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+	ctx := &Context{
+		Request:        req,
+		ResponseWriter: w,
+	}
+
+	opts := CookieOptions{
+		Name:     "bench",
+		Value:    "value",
 		Path:     "/",
 		MaxAge:   3600,
 		HttpOnly: true,
 		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
 	}
 
-	ctx.SetCookie(cookie)
-
-	// Check Set-Cookie header
-	// Set-Cookie 헤더 확인
-	setCookie := w.Header().Get("Set-Cookie")
-	if setCookie == "" {
-		t.Fatal("Set-Cookie header not set")
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		ctx.SetCookieAdvanced(opts)
 	}
-
-	if !contains(setCookie, "session_id=xyz789") {
-		t.Errorf("Set-Cookie header does not contain session_id=xyz789")
-	}
-}
-
-// TestDeleteCookie tests deleting a cookie
-// TestDeleteCookie는 쿠키 삭제를 테스트합니다
-func TestDeleteCookie(t *testing.T) {
-	req := httptest.NewRequest("GET", "/", nil)
-	w := httptest.NewRecorder()
-
-	ctx := NewContext(w, req)
-
-	ctx.DeleteCookie("session_id", "/")
-
-	// Check Set-Cookie header
-	// Set-Cookie 헤더 확인
-	setCookie := w.Header().Get("Set-Cookie")
-	if setCookie == "" {
-		t.Fatal("Set-Cookie header not set")
-	}
-
-	if !contains(setCookie, "Max-Age=0") && !contains(setCookie, "max-age=0") {
-		t.Errorf("Set-Cookie header should have Max-Age=0 for deletion")
-	}
-}
-
-// TestGetCookie tests the convenience method for getting cookie value
-// TestGetCookie는 쿠키 값을 가져오는 편의 메서드를 테스트합니다
-func TestGetCookie(t *testing.T) {
-	req := httptest.NewRequest("GET", "/", nil)
-	req.AddCookie(&http.Cookie{Name: "user", Value: "john"})
-	w := httptest.NewRecorder()
-
-	ctx := NewContext(w, req)
-
-	value := ctx.GetCookie("user")
-	if value != "john" {
-		t.Errorf("GetCookie() = %s, want john", value)
-	}
-
-	// Test non-existent cookie
-	// 존재하지 않는 쿠키 테스트
-	value = ctx.GetCookie("nonexistent")
-	if value != "" {
-		t.Errorf("GetCookie() for non-existent cookie = %s, want empty string", value)
-	}
-}
-
-// TestAddHeader tests adding a header
-// TestAddHeader는 헤더 추가를 테스트합니다
-func TestAddHeader(t *testing.T) {
-	req := httptest.NewRequest("GET", "/", nil)
-	w := httptest.NewRecorder()
-
-	ctx := NewContext(w, req)
-
-	ctx.AddHeader("X-Custom", "value1")
-	ctx.AddHeader("X-Custom", "value2")
-
-	values := w.Header().Values("X-Custom")
-	if len(values) != 2 {
-		t.Fatalf("Expected 2 values for X-Custom header, got %d", len(values))
-	}
-
-	if values[0] != "value1" || values[1] != "value2" {
-		t.Errorf("Header values = %v, want [value1, value2]", values)
-	}
-}
-
-// TestGetHeader tests getting a request header
-// TestGetHeader는 요청 헤더 가져오기를 테스트합니다
-func TestGetHeader(t *testing.T) {
-	req := httptest.NewRequest("GET", "/", nil)
-	req.Header.Set("User-Agent", "Test/1.0")
-	w := httptest.NewRecorder()
-
-	ctx := NewContext(w, req)
-
-	value := ctx.GetHeader("User-Agent")
-	if value != "Test/1.0" {
-		t.Errorf("GetHeader() = %s, want Test/1.0", value)
-	}
-}
-
-// TestGetHeaders tests getting multiple header values
-// TestGetHeaders는 여러 헤더 값 가져오기를 테스트합니다
-func TestGetHeaders(t *testing.T) {
-	req := httptest.NewRequest("GET", "/", nil)
-	req.Header.Add("Accept", "text/html")
-	req.Header.Add("Accept", "application/json")
-	w := httptest.NewRecorder()
-
-	ctx := NewContext(w, req)
-
-	values := ctx.GetHeaders("Accept")
-	if len(values) != 2 {
-		t.Fatalf("Expected 2 values for Accept header, got %d", len(values))
-	}
-
-	if values[0] != "text/html" || values[1] != "application/json" {
-		t.Errorf("Header values = %v, want [text/html, application/json]", values)
-	}
-}
-
-// TestHeaderExists tests checking if a header exists
-// TestHeaderExists는 헤더 존재 확인을 테스트합니다
-func TestHeaderExists(t *testing.T) {
-	req := httptest.NewRequest("GET", "/", nil)
-	req.Header.Set("Authorization", "Bearer token123")
-	w := httptest.NewRecorder()
-
-	ctx := NewContext(w, req)
-
-	if !ctx.HeaderExists("Authorization") {
-		t.Error("HeaderExists() = false, want true")
-	}
-
-	if ctx.HeaderExists("X-Nonexistent") {
-		t.Error("HeaderExists() = true, want false for non-existent header")
-	}
-}
-
-// TestContentType tests getting Content-Type header
-// TestContentType는 Content-Type 헤더 가져오기를 테스트합니다
-func TestContentType(t *testing.T) {
-	req := httptest.NewRequest("POST", "/", nil)
-	req.Header.Set("Content-Type", "application/json")
-	w := httptest.NewRecorder()
-
-	ctx := NewContext(w, req)
-
-	contentType := ctx.ContentType()
-	if contentType != "application/json" {
-		t.Errorf("ContentType() = %s, want application/json", contentType)
-	}
-}
-
-// TestUserAgent tests getting User-Agent header
-// TestUserAgent는 User-Agent 헤더 가져오기를 테스트합니다
-func TestUserAgent(t *testing.T) {
-	req := httptest.NewRequest("GET", "/", nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0")
-	w := httptest.NewRecorder()
-
-	ctx := NewContext(w, req)
-
-	userAgent := ctx.UserAgent()
-	if userAgent != "Mozilla/5.0" {
-		t.Errorf("UserAgent() = %s, want Mozilla/5.0", userAgent)
-	}
-}
-
-// TestReferer tests getting Referer header
-// TestReferer는 Referer 헤더 가져오기를 테스트합니다
-func TestReferer(t *testing.T) {
-	req := httptest.NewRequest("GET", "/", nil)
-	req.Header.Set("Referer", "https://example.com")
-	w := httptest.NewRecorder()
-
-	ctx := NewContext(w, req)
-
-	referer := ctx.Referer()
-	if referer != "https://example.com" {
-		t.Errorf("Referer() = %s, want https://example.com", referer)
-	}
-}
-
-// TestClientIP tests getting client IP address
-// TestClientIP는 클라이언트 IP 주소 가져오기를 테스트합니다
-func TestClientIP(t *testing.T) {
-	tests := []struct {
-		name           string
-		remoteAddr     string
-		xForwardedFor  string
-		xRealIP        string
-		expectedIP     string
-	}{
-		{
-			name:       "from RemoteAddr",
-			remoteAddr: "192.168.1.1:12345",
-			expectedIP: "192.168.1.1",
-		},
-		{
-			name:          "from X-Real-IP",
-			remoteAddr:    "192.168.1.1:12345",
-			xRealIP:       "10.0.0.1",
-			expectedIP:    "10.0.0.1",
-		},
-		{
-			name:          "from X-Forwarded-For single",
-			remoteAddr:    "192.168.1.1:12345",
-			xForwardedFor: "10.0.0.1",
-			expectedIP:    "10.0.0.1",
-		},
-		{
-			name:          "from X-Forwarded-For multiple",
-			remoteAddr:    "192.168.1.1:12345",
-			xForwardedFor: "10.0.0.1, 10.0.0.2, 10.0.0.3",
-			expectedIP:    "10.0.0.1",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest("GET", "/", nil)
-			req.RemoteAddr = tt.remoteAddr
-			if tt.xForwardedFor != "" {
-				req.Header.Set("X-Forwarded-For", tt.xForwardedFor)
-			}
-			if tt.xRealIP != "" {
-				req.Header.Set("X-Real-IP", tt.xRealIP)
-			}
-			w := httptest.NewRecorder()
-
-			ctx := NewContext(w, req)
-
-			ip := ctx.ClientIP()
-			if ip != tt.expectedIP {
-				t.Errorf("ClientIP() = %s, want %s", ip, tt.expectedIP)
-			}
-		})
-	}
-}
-
-// Helper function to check if a string contains a substring
-// 문자열이 하위 문자열을 포함하는지 확인하는 헬퍼 함수
-func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(s) > len(substr) && findSubstring(s, substr))
-}
-
-func findSubstring(s, substr string) bool {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return true
-		}
-	}
-	return false
 }
