@@ -213,3 +213,102 @@ func Sample[T any](slice []T, n int) []T {
 
 	return result[:n]
 }
+
+// TakeWhile returns elements from the beginning while predicate is true.
+// Stops at the first element that doesn't satisfy the predicate.
+// TakeWhile은 조건이 참인 동안 처음부터 요소를 반환합니다.
+// 조건을 만족하지 않는 첫 번째 요소에서 중지합니다.
+//
+// Example / 예제:
+//
+//	numbers := []int{1, 2, 3, 4, 1, 2}
+//	result := sliceutil.TakeWhile(numbers, func(n int) bool {
+//	    return n < 4
+//	}) // [1, 2, 3]
+//
+//	words := []string{"apple", "apricot", "banana", "avocado"}
+//	result := sliceutil.TakeWhile(words, func(s string) bool {
+//	    return len(s) > 0 && s[0] == 'a'
+//	}) // ["apple", "apricot"]
+func TakeWhile[T any](slice []T, predicate func(T) bool) []T {
+	result := make([]T, 0, len(slice))
+	for _, v := range slice {
+		if !predicate(v) {
+			break
+		}
+		result = append(result, v)
+	}
+	return result
+}
+
+// DropWhile returns elements after dropping the beginning while predicate is true.
+// Starts including elements from the first one that doesn't satisfy the predicate.
+// DropWhile은 조건이 참인 동안 처음 요소를 제거한 후 요소를 반환합니다.
+// 조건을 만족하지 않는 첫 번째 요소부터 포함하기 시작합니다.
+//
+// Example / 예제:
+//
+//	numbers := []int{1, 2, 3, 4, 1, 2}
+//	result := sliceutil.DropWhile(numbers, func(n int) bool {
+//	    return n < 4
+//	}) // [4, 1, 2]
+//
+//	words := []string{"apple", "apricot", "banana", "avocado"}
+//	result := sliceutil.DropWhile(words, func(s string) bool {
+//	    return len(s) > 0 && s[0] == 'a'
+//	}) // ["banana", "avocado"]
+func DropWhile[T any](slice []T, predicate func(T) bool) []T {
+	for i, v := range slice {
+		if !predicate(v) {
+			return append([]T{}, slice[i:]...)
+		}
+	}
+	return []T{}
+}
+
+// Interleave merges multiple slices by taking one element from each in turn.
+// Continues until all slices are exhausted.
+// Interleave은 각 슬라이스에서 차례로 하나씩 요소를 가져와 여러 슬라이스를 병합합니다.
+// 모든 슬라이스가 소진될 때까지 계속합니다.
+//
+// Example / 예제:
+//
+//	a := []int{1, 2, 3}
+//	b := []int{10, 20, 30}
+//	c := []int{100, 200}
+//	result := sliceutil.Interleave(a, b, c)
+//	// result: [1, 10, 100, 2, 20, 200, 3, 30]
+//
+//	words1 := []string{"a", "b"}
+//	words2 := []string{"x", "y", "z"}
+//	result := sliceutil.Interleave(words1, words2)
+//	// result: ["a", "x", "b", "y", "z"]
+func Interleave[T any](slices ...[]T) []T {
+	if len(slices) == 0 {
+		return []T{}
+	}
+
+	// Calculate total length
+	totalLen := 0
+	for _, s := range slices {
+		totalLen += len(s)
+	}
+
+	result := make([]T, 0, totalLen)
+	maxLen := 0
+	for _, s := range slices {
+		if len(s) > maxLen {
+			maxLen = len(s)
+		}
+	}
+
+	for i := 0; i < maxLen; i++ {
+		for _, s := range slices {
+			if i < len(s) {
+				result = append(result, s[i])
+			}
+		}
+	}
+
+	return result
+}

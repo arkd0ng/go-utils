@@ -104,6 +104,36 @@ func Find[T any](slice []T, predicate func(T) bool) (T, bool) {
 	return zero, false
 }
 
+// FindLast returns the last item in slice that satisfies the predicate.
+// Returns the found item and true if found, zero value and false otherwise.
+//
+// FindLast는 조건을 만족하는 슬라이스의 마지막 항목을 반환합니다.
+// 찾은 경우 항목과 true를 반환하고, 그렇지 않으면 제로 값과 false를 반환합니다.
+//
+// Similar to Find, but searches from right to left.
+// Find와 유사하지만 오른쪽에서 왼쪽으로 검색합니다.
+//
+// Example / 예제:
+//
+//	numbers := []int{1, 2, 3, 4, 5, 6}
+//	even, found := sliceutil.FindLast(numbers, func(n int) bool {
+//	    return n%2 == 0
+//	}) // even = 6, found = true (last even number)
+//
+//	words := []string{"apple", "banana", "apricot", "cherry"}
+//	startsWithA, found := sliceutil.FindLast(words, func(s string) bool {
+//	    return len(s) > 0 && s[0] == 'a'
+//	}) // startsWithA = "apricot", found = true
+func FindLast[T any](slice []T, predicate func(T) bool) (T, bool) {
+	for i := len(slice) - 1; i >= 0; i-- {
+		if predicate(slice[i]) {
+			return slice[i], true
+		}
+	}
+	var zero T
+	return zero, false
+}
+
 // FindIndex returns the index of the first item that satisfies the predicate.
 // Returns -1 if no item is found.
 //

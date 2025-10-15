@@ -62,11 +62,12 @@ func main() {
 	sortingExamples(logger)
 	predicateExamples(logger)
 	utilityExamples(logger)
+	combinatorialExamples(logger)
 	realWorldExamples(logger)
 
 	logger.Info("")
-	logger.Info("=== All 60 Functions Demonstrated! ===")
-	logger.Info("=== 모든 60개 함수 시연 완료! ===")
+	logger.Info("=== All 62 Functions Demonstrated! ===")
+	logger.Info("=== 모든 62개 함수 시연 완료! ===")
 }
 
 // ============================================================================
@@ -448,12 +449,85 @@ func utilityExamples(logger *logging.Logger) {
 }
 
 // ============================================================================
-// 9. Real-World Scenarios / 실제 시나리오
+// 9. Combinatorial Operations Examples (2 functions) / 조합 작업 예제 (2개 함수)
+// ============================================================================
+
+func combinatorialExamples(logger *logging.Logger) {
+	logger.Info("")
+	logger.Info("9. COMBINATORIAL OPERATIONS / 조합 작업")
+	logger.Info("========================================================================")
+
+	// Permutations - Small example
+	logger.Info("")
+	logger.Info("Permutations Example / Permutations 예제")
+	logger.Info("------------------------------------------------------------------------")
+
+	letters := []string{"A", "B", "C"}
+	perms := sliceutil.Permutations(letters)
+	logger.Info("Permutations input", "letters", letters)
+	logger.Info("Permutations count", "count", len(perms), "expected", "3! = 6")
+	for i, perm := range perms {
+		logger.Info("Permutation", "index", i+1, "value", perm)
+	}
+
+	// Permutations - Numeric example
+	logger.Info("")
+	numbers := []int{1, 2, 3, 4}
+	numPerms := sliceutil.Permutations(numbers)
+	logger.Info("Numeric permutations", "input", numbers, "count", len(numPerms), "expected", "4! = 24")
+	// Show first 5 permutations only
+	for i := 0; i < 5 && i < len(numPerms); i++ {
+		logger.Info("Permutation", "index", i+1, "value", numPerms[i])
+	}
+	logger.Info("... (showing first 5 of 24 permutations)")
+
+	// Combinations
+	logger.Info("")
+	logger.Info("Combinations Example / Combinations 예제")
+	logger.Info("------------------------------------------------------------------------")
+
+	items := []int{1, 2, 3, 4}
+	k := 2
+	combs := sliceutil.Combinations(items, k)
+	logger.Info("Combinations input", "items", items, "k", k)
+	logger.Info("Combinations count", "count", len(combs), "expected", "C(4,2) = 6")
+	for i, comb := range combs {
+		logger.Info("Combination", "index", i+1, "value", comb)
+	}
+
+	// Combinations - Another example
+	logger.Info("")
+	colors := []string{"Red", "Green", "Blue", "Yellow"}
+	colorCombs := sliceutil.Combinations(colors, 3)
+	logger.Info("Color combinations", "colors", colors, "k", 3)
+	logger.Info("Color combinations count", "count", len(colorCombs), "expected", "C(4,3) = 4")
+	for i, comb := range colorCombs {
+		logger.Info("Color combination", "index", i+1, "value", comb)
+	}
+
+	// Performance warning example
+	logger.Info("")
+	logger.Info("Performance Warning / 성능 경고")
+	logger.Info("------------------------------------------------------------------------")
+	logger.Info("Permutations grow factorially:")
+	logger.Info("  n=5  → 120 permutations")
+	logger.Info("  n=10 → 3,628,800 permutations")
+	logger.Info("")
+	logger.Info("Combinations:")
+	logger.Info("  C(10,5)  → 252 combinations")
+	logger.Info("  C(20,10) → 184,756 combinations")
+	logger.Info("")
+	logger.Info("Use with caution for large slices!")
+	logger.Info("큰 슬라이스에는 주의해서 사용하세요!")
+}
+
+// ============================================================================
+// 10. Real-World Scenarios / 실제 시나리오
 // ============================================================================
 
 func realWorldExamples(logger *logging.Logger) {
 	logger.Info("")
-	logger.Info("9. REAL-WORLD SCENARIOS / 실제 사용 시나리오")
+	logger.Info("10. REAL-WORLD SCENARIOS / 실제 사용 시나리오")
 	logger.Info("========================================================================")
 
 	// Scenario 1: User Data Processing / 사용자 데이터 처리

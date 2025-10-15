@@ -8,6 +8,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.7.019] - 2025-10-15
+
+### Added / 추가
+
+- **NEW FUNCTIONS**: Added 2 combinatorial operation functions to sliceutil package / sliceutil 패키지에 2개의 조합 작업 함수 추가
+  - `Permutations(slice)`: Generate all possible permutations (n!) / 모든 가능한 순열 생성 (n!)
+  - `Combinations(slice, k)`: Generate all k-combinations C(n,k) / 모든 k-조합 생성 C(n,k)
+- **NEW FILE**: Created `sliceutil/combinatorial.go` with Heap's algorithm for permutations / Heap의 알고리즘으로 순열을 위한 `sliceutil/combinatorial.go` 생성
+- **COMPREHENSIVE TESTS**: Created `sliceutil/combinatorial_test.go` with 10 test functions / 10개 테스트 함수로 `sliceutil/combinatorial_test.go` 생성
+  - TestPermutations (5 subtests: empty, single, two, three, four elements)
+  - TestPermutationsString (string slices)
+  - TestPermutationsUniqueness (verify all permutations unique)
+  - TestCombinations (7 subtests: edge cases and various C(n,k))
+  - TestCombinationsString (string slices)
+  - TestCombinationsUniqueness (verify all combinations unique)
+  - TestCombinationsContent (verify specific combinations)
+  - BenchmarkPermutations
+  - BenchmarkCombinations
+- **UPDATED EXAMPLES**: Added `combinatorialExamples()` function to `examples/sliceutil/main.go` (~70 lines) / `examples/sliceutil/main.go`에 `combinatorialExamples()` 함수 추가 (~70줄)
+  - Permutations with string slices (A, B, C)
+  - Permutations with numeric slices (1, 2, 3, 4)
+  - Combinations with numeric slices C(4,2)
+  - Combinations with string slices C(4,3)
+  - Performance warning examples
+- **UPDATED DOCUMENTATION**: Updated `sliceutil/README.md` with new category / 새 카테고리로 `sliceutil/README.md` 업데이트
+  - Added "9. Combinatorial Operations (2 functions)" section / "9. 조합 작업 (2개 함수)" 섹션 추가
+  - Added performance warnings for factorial growth / 팩토리얼 증가에 대한 성능 경고 추가
+  - Updated function count from 60 to 62 / 함수 개수를 60에서 62로 업데이트
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.019 / `cfg/app.yaml` 버전을 v1.7.019로 업데이트
+- Updated `sliceutil/sliceutil.go` Version constant to "1.7.019" / `sliceutil/sliceutil.go` 버전 상수를 "1.7.019"로 업데이트
+- Updated `sliceutil/sliceutil_test.go` expected version to "1.7.019" / `sliceutil/sliceutil_test.go` 예상 버전을 "1.7.019"로 업데이트
+- Updated `sliceutil/README.md` version to v1.7.019 / `sliceutil/README.md` 버전을 v1.7.019로 업데이트
+- Updated `examples/sliceutil/main.go` function count display to "All 62 Functions" / `examples/sliceutil/main.go` 함수 개수 표시를 "All 62 Functions"로 업데이트
+
+### Testing / 테스트
+
+- All combinatorial tests pass successfully / 모든 조합 테스트가 성공적으로 통과
+- Test coverage: 85.0% of statements / 테스트 커버리지: 85.0%
+- TestPermutations: All 5 subtests pass / TestPermutations: 모든 5개 서브테스트 통과
+- TestCombinations: All 7 subtests pass / TestCombinations: 모든 7개 서브테스트 통과
+- Benchmarks available for both functions / 두 함수 모두 벤치마크 사용 가능
+
+### Performance Notes / 성능 참고
+
+- Permutations use Heap's algorithm (optimal O(n!) time) / Permutations는 Heap의 알고리즘 사용 (최적 O(n!) 시간)
+- Combinations use recursive generation (O(C(n,k)) time) / Combinations는 재귀 생성 사용 (O(C(n,k)) 시간)
+- Performance warnings documented in code comments and README / 성능 경고는 코드 주석과 README에 문서화됨
+
+---
+
 ## [v1.7.018] - 2025-10-15
 
 ### Added / 추가

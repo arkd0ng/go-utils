@@ -31,6 +31,37 @@ func Reduce[T any, R any](slice []T, initial R, reducer func(R, T) R) R {
 	return result
 }
 
+// ReduceRight applies a reducer function from right to left to accumulate a single value.
+// ReduceRight는 오른쪽에서 왼쪽으로 reducer 함수를 적용하여 단일 값을 누적합니다.
+//
+// Similar to Reduce, but processes elements from right to left.
+// Reduce와 유사하지만 요소를 오른쪽에서 왼쪽으로 처리합니다.
+//
+// Example / 예제:
+//
+//	numbers := []int{1, 2, 3, 4, 5}
+//	result := sliceutil.ReduceRight(numbers, 0, func(acc, n int) int {
+//	    return acc + n
+//	}) // 15 (same as Reduce for commutative operations)
+//
+//	words := []string{"hello", "world"}
+//	combined := sliceutil.ReduceRight(words, "", func(acc, w string) string {
+//	    return acc + w
+//	}) // "worldhello" (reversed compared to Reduce)
+//
+//	// Useful for operations where order matters / 순서가 중요한 작업에 유용
+//	nested := [][]int{{1, 2}, {3, 4}, {5}}
+//	flattened := sliceutil.ReduceRight(nested, []int{}, func(acc, slice []int) []int {
+//	    return append(slice, acc...)
+//	}) // [5, 3, 4, 1, 2]
+func ReduceRight[T any, R any](slice []T, initial R, reducer func(R, T) R) R {
+	result := initial
+	for i := len(slice) - 1; i >= 0; i-- {
+		result = reducer(result, slice[i])
+	}
+	return result
+}
+
 // Sum returns the sum of all elements in the slice.
 // Sum은 슬라이스의 모든 요소의 합을 반환합니다.
 //
@@ -184,4 +215,113 @@ func Partition[T any](slice []T, predicate func(T) bool) ([]T, []T) {
 		}
 	}
 	return trueSlice, falseSlice
+}
+
+// CountBy counts elements by a key function and returns a map with counts.
+// CountBy는 키 함수로 요소를 세고 개수를 포함한 맵을 반환합니다.
+//
+// Similar to GroupBy, but returns counts instead of grouped elements.
+// GroupBy와 유사하지만 그룹화된 요소 대신 개수를 반환합니다.
+//
+// Example / 예제:
+//
+//	type Person struct {
+//	    Name string
+//	    Age  int
+//	}
+//	people := []Person{
+//	    {"Alice", 25},
+//	    {"Bob", 30},
+//	    {"Charlie", 25},
+//	}
+//	counts := sliceutil.CountBy(people, func(p Person) int {
+//	    return p.Age
+//	}) // map[25:2 30:1]
+//
+//	numbers := []int{1, 2, 3, 4, 5, 6}
+//	counts := sliceutil.CountBy(numbers, func(n int) string {
+//	    if n%2 == 0 {
+//	        return "even"
+//	    }
+//	    return "odd"
+//	}) // map["even":3 "odd":3]
+func CountBy[T any, K comparable](slice []T, keyFunc func(T) K) map[K]int {
+	result := make(map[K]int)
+	for _, v := range slice {
+		key := keyFunc(v)
+		result[key]++
+	}
+	return result
+}
+
+// MinBy returns the element with the minimum key extracted by keyFunc.
+// Returns an error if the slice is empty.
+// MinBy는 keyFunc으로 추출한 키가 최소인 요소를 반환합니다.
+// 슬라이스가 비어있으면 에러를 반환합니다.
+//
+// Example / 예제:
+//
+//	type Person struct {
+//	    Name string
+//	    Age  int
+//	}
+//	people := []Person{
+//	    {"Alice", 30},
+//	    {"Bob", 25},
+//	    {"Charlie", 35},
+//	}
+//	youngest, _ := sliceutil.MinBy(people, func(p Person) int {
+//	    return p.Age
+//	}) // {Bob 25}
+func MinBy[T any, K constraints.Ordered](slice []T, keyFunc func(T) K) (T, error) {
+	var zero T
+	if len(slice) == 0 {
+		return zero, errors.New("cannot find min of empty slice")
+	}
+	minItem := slice[0]
+	minKey := keyFunc(slice[0])
+	for i := 1; i < len(slice); i++ {
+		key := keyFunc(slice[i])
+		if key < minKey {
+			minKey = key
+			minItem = slice[i]
+		}
+	}
+	return minItem, nil
+}
+
+// MaxBy returns the element with the maximum key extracted by keyFunc.
+// Returns an error if the slice is empty.
+// MaxBy는 keyFunc으로 추출한 키가 최대인 요소를 반환합니다.
+// 슬라이스가 비어있으면 에러를 반환합니다.
+//
+// Example / 예제:
+//
+//	type Person struct {
+//	    Name string
+//	    Age  int
+//	}
+//	people := []Person{
+//	    {"Alice", 30},
+//	    {"Bob", 25},
+//	    {"Charlie", 35},
+//	}
+//	oldest, _ := sliceutil.MaxBy(people, func(p Person) int {
+//	    return p.Age
+//	}) // {Charlie 35}
+func MaxBy[T any, K constraints.Ordered](slice []T, keyFunc func(T) K) (T, error) {
+	var zero T
+	if len(slice) == 0 {
+		return zero, errors.New("cannot find max of empty slice")
+	}
+	maxItem := slice[0]
+	maxKey := keyFunc(slice[0])
+	for i := 1; i < len(slice); i++ {
+		key := keyFunc(slice[i])
+		if key > maxKey {
+			maxKey = key
+			maxItem = slice[i]
+		}
+	}
+	return maxItem, nil
 }

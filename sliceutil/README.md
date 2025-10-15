@@ -1,6 +1,6 @@
 # sliceutil - Slice Utilities / 슬라이스 유틸리티
 
-**v1.7.018** - Extreme Simplicity for Slice Operations! 🎉
+**v1.7.019** - Extreme Simplicity for Slice Operations! 🎉
 
 Extreme simplicity slice utility functions for Go - reduce 10-20 lines of slice manipulation code to just 1 line.
 
@@ -11,9 +11,9 @@ Extreme simplicity slice utility functions for Go - reduce 10-20 lines of slice 
 
 ## Overview / 개요
 
-The `sliceutil` package provides **60 type-safe functions** for common slice operations in Go. Stop writing repetitive loops and start using functional programming style.
+The `sliceutil` package provides **62 type-safe functions** for common slice operations in Go. Stop writing repetitive loops and start using functional programming style.
 
-`sliceutil` 패키지는 Go에서 일반적인 슬라이스 작업을 위한 **60개의 타입 안전 함수**를 제공합니다. 반복적인 루프 작성을 멈추고 함수형 프로그래밍 스타일을 사용하세요.
+`sliceutil` 패키지는 Go에서 일반적인 슬라이스 작업을 위한 **62개의 타입 안전 함수**를 제공합니다. 반복적인 루프 작성을 멈추고 함수형 프로그래밍 스타일을 사용하세요.
 
 ### Design Philosophy: "20 lines → 1 line" / 설계 철학: "20줄 → 1줄"
 
@@ -338,6 +338,27 @@ sliceutil.Shuffle(slice)                  // Randomize order
 sliceutil.Zip(a, b)                       // Combine two slices
 sliceutil.Unzip(slice)                    // Split pairs
 ```
+
+### 9. Combinatorial Operations (2 functions) / 조합 작업 (2개 함수)
+
+Generate permutations and combinations from slices.
+
+슬라이스에서 순열과 조합 생성.
+
+```go
+sliceutil.Permutations(slice)             // All possible permutations (n!)
+sliceutil.Combinations(slice, k)          // All k-combinations C(n,k)
+```
+
+**Performance Warning / 성능 경고**:
+- Permutations grow factorially: n=5 → 120, n=10 → 3,628,800
+- Combinations: C(10,5) = 252, C(20,10) = 184,756
+- Use with caution for large slices!
+
+**성능 경고**:
+- 순열은 팩토리얼로 증가: n=5 → 120, n=10 → 3,628,800
+- 조합: C(10,5) = 252, C(20,10) = 184,756
+- 큰 슬라이스에는 주의해서 사용하세요!
 
 ## Real-World Examples / 실제 사용 예제
 

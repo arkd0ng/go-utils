@@ -306,3 +306,73 @@ func Unzip[T, U any](slice [][2]any) ([]T, []U) {
 
 	return first, second
 }
+
+// Window returns a slice of sliding windows of the specified size.
+// Window는 지정된 크기의 슬라이딩 윈도우 슬라이스를 반환합니다.
+//
+// Returns a slice of slices, where each sub-slice is a window of the specified size.
+// 각 하위 슬라이스가 지정된 크기의 윈도우인 슬라이스의 슬라이스를 반환합니다.
+//
+// If size is less than or equal to 0, or greater than slice length, returns empty slice.
+// size가 0 이하이거나 슬라이스 길이보다 크면 빈 슬라이스를 반환합니다.
+//
+// Example / 예제:
+//
+//	numbers := []int{1, 2, 3, 4, 5}
+//	windows := sliceutil.Window(numbers, 3)
+//	// windows: [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
+//
+//	words := []string{"a", "b", "c", "d"}
+//	windows2 := sliceutil.Window(words, 2)
+//	// windows2: [["a", "b"], ["b", "c"], ["c", "d"]]
+func Window[T any](slice []T, size int) [][]T {
+	if size <= 0 || size > len(slice) {
+		return [][]T{}
+	}
+
+	numWindows := len(slice) - size + 1
+	result := make([][]T, numWindows)
+
+	for i := 0; i < numWindows; i++ {
+		window := make([]T, size)
+		copy(window, slice[i:i+size])
+		result[i] = window
+	}
+
+	return result
+}
+
+// Tap executes a function on the slice and returns the slice unchanged.
+// Tap은 슬라이스에 함수를 실행하고 슬라이스를 변경하지 않고 반환합니다.
+//
+// Useful for debugging or side effects in method chains.
+// 메서드 체인에서 디버깅이나 부수 효과에 유용합니다.
+//
+// The function receives the entire slice and can perform any operation,
+// but the original slice is returned unchanged.
+// 함수는 전체 슬라이스를 받고 모든 작업을 수행할 수 있지만
+// 원본 슬라이스는 변경되지 않고 반환됩니다.
+//
+// Example / 예제:
+//
+//	numbers := []int{1, 2, 3, 4, 5}
+//	result := sliceutil.Tap(numbers, func(s []int) {
+//	    fmt.Printf("Current slice: %v\n", s)
+//	})
+//	// Output: Current slice: [1 2 3 4 5]
+//	// result: [1, 2, 3, 4, 5]
+//
+//	// Useful in chains / 체인에서 유용
+//	result2 := sliceutil.Map(
+//	    sliceutil.Tap(
+//	        sliceutil.Filter(numbers, func(n int) bool { return n%2 == 0 }),
+//	        func(s []int) { fmt.Printf("Filtered: %v\n", s) },
+//	    ),
+//	    func(n int) int { return n * 2 },
+//	)
+//	// Output: Filtered: [2 4]
+//	// result2: [4, 8]
+func Tap[T any](slice []T, fn func([]T)) []T {
+	fn(slice)
+	return slice
+}
