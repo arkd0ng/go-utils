@@ -6,6 +6,44 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.011] - 2025-10-15
+
+### Added / 추가
+- **New Functions** (2 functions): ContainsAllKeys, Apply / 새 함수 (2개): ContainsAllKeys, Apply
+  - Category: Utility Functions / 유틸리티 함수
+  - **ContainsAllKeys**: Check if map contains all specified keys / 맵에 지정된 모든 키가 포함되어 있는지 확인
+    - Signature: `func ContainsAllKeys[K comparable, V any](m map[K]V, keys []K) bool`
+    - Returns true only if all keys exist / 모든 키가 존재하는 경우에만 true 반환
+    - Empty keys slice returns true (vacuous truth) / 빈 키 슬라이스는 true 반환 (공허한 진리)
+    - Time Complexity: O(k), Space Complexity: O(1)
+  - **Apply**: Transform all values by applying function / 함수를 적용하여 모든 값 변환
+    - Signature: `func Apply[K comparable, V any](m map[K]V, fn func(K, V) V) map[K]V`
+    - Creates new map with transformed values / 변환된 값으로 새 맵 생성
+    - Keys remain same, values transformed / 키는 동일하게 유지, 값 변환
+    - Time Complexity: O(n), Space Complexity: O(n)
+
+### Tests / 테스트
+- Added comprehensive tests in `maputil/util_test.go`:
+  - **TestContainsAllKeys**: 10 sub-tests / 10개 하위 테스트
+    - all keys exist, some keys missing, all keys missing, empty keys slice / 모든 키 존재, 일부 키 누락, 모든 키 누락, 빈 키 슬라이스
+    - nil keys slice, empty map, single key exists/missing, duplicate keys, integer keys / nil 키 슬라이스, 빈 맵, 단일 키 존재/누락, 중복 키, 정수 키
+  - **TestApply**: 9 sub-tests / 9개 하위 테스트
+    - basic transformation, empty map, single entry, key-dependent transformation / 기본 변환, 빈 맵, 단일 항목, 키 의존 변환
+    - string transformation, zero values, complex values, negative values, large map, immutability / 문자열 변환, 제로 값, 복잡한 값, 음수 값, 큰 맵, 불변성
+  - **BenchmarkContainsAllKeys**: Performance benchmarks for keys 1, 5, 10, 50, 100 / 키 1, 5, 10, 50, 100에 대한 성능 벤치마크
+  - **BenchmarkApply**: Performance benchmarks for sizes 10, 100, 1000 / 크기 10, 100, 1000에 대한 성능 벤치마크
+  - **Comparison Benchmarks**: vs Manual Loop / 수동 루프와 비교
+
+### Documentation / 문서
+- Added complete bilingual documentation in `maputil/util.go`
+- Updated examples in `examples/maputil/main.go` (utilityFunctions section) / 예제 업데이트
+  - Added examples for Tap, ContainsAllKeys, Apply / Tap, ContainsAllKeys, Apply 예제 추가
+- Function count: 85 → 87 (6 of 17 utility functions) / 함수 개수: 85 → 87 (17개 유틸리티 함수 중 6개)
+
+### Notes / 참고사항
+- Fifth and sixth of 17 new utility functions planned for maputil / maputil에 계획된 17개 신규 유틸리티 함수 중 다섯 번째와 여섯 번째
+- ContainsAllKeys useful for validation, Apply useful for bulk transformations / ContainsAllKeys는 검증에, Apply는 일괄 변환에 유용
+
 ## [v1.8.010] - 2025-10-15
 
 ### Added / 추가

@@ -164,3 +164,84 @@ func Tap[K comparable, V any](m map[K]V, fn func(map[K]V)) map[K]V {
 	fn(m)
 	return m
 }
+
+// ContainsAllKeys checks if the map contains all the specified keys.
+// ContainsAllKeys는 맵에 지정된 모든 키가 포함되어 있는지 확인합니다.
+//
+// This function returns true only if all provided keys exist in the map.
+// If the keys slice is empty, it returns true (vacuous truth).
+//
+// 이 함수는 제공된 모든 키가 맵에 존재하는 경우에만 true를 반환합니다.
+// 키 슬라이스가 비어 있으면 true를 반환합니다 (공허한 진리).
+//
+// Time Complexity / 시간 복잡도: O(k) where k is the number of keys / k는 키의 개수
+// Space Complexity / 공간 복잡도: O(1)
+//
+// Parameters / 매개변수:
+//   - m: The input map / 입력 맵
+//   - keys: Slice of keys to check / 확인할 키의 슬라이스
+//
+// Returns / 반환값:
+//   - bool: true if all keys exist, false otherwise / 모든 키가 존재하면 true, 그렇지 않으면 false
+//
+// Example / 예제:
+//
+//	m := map[string]int{"a": 1, "b": 2, "c": 3}
+//	maputil.ContainsAllKeys(m, []string{"a", "b"})      // true
+//	maputil.ContainsAllKeys(m, []string{"a", "d"})      // false
+//	maputil.ContainsAllKeys(m, []string{})              // true (empty keys)
+//
+// Use Case / 사용 사례:
+//   - Validating required configuration keys / 필수 설정 키 검증
+//   - Checking API response completeness / API 응답 완전성 확인
+//   - Ensuring all dependencies are present / 모든 종속성이 존재하는지 확인
+//   - Form validation / 폼 검증
+func ContainsAllKeys[K comparable, V any](m map[K]V, keys []K) bool {
+	for _, key := range keys {
+		if _, exists := m[key]; !exists {
+			return false
+		}
+	}
+	return true
+}
+
+// Apply modifies the map by applying a function to each key-value pair.
+// Apply는 각 키-값 쌍에 함수를 적용하여 맵을 수정합니다.
+//
+// This function creates a new map where each value is the result of applying
+// the transformation function to the original key-value pair. The keys remain
+// the same, but the values are transformed.
+//
+// 이 함수는 각 값이 원본 키-값 쌍에 변환 함수를 적용한 결과인 새 맵을 생성합니다.
+// 키는 동일하게 유지되지만 값이 변환됩니다.
+//
+// Time Complexity / 시간 복잡도: O(n)
+// Space Complexity / 공간 복잡도: O(n)
+//
+// Parameters / 매개변수:
+//   - m: The input map / 입력 맵
+//   - fn: Transformation function / 변환 함수
+//
+// Returns / 반환값:
+//   - map[K]V: New map with transformed values / 변환된 값이 있는 새 맵
+//
+// Example / 예제:
+//
+//	m := map[string]int{"a": 1, "b": 2, "c": 3}
+//	result := maputil.Apply(m, func(k string, v int) int {
+//	    return v * 2
+//	})
+//	// result: map[string]int{"a": 2, "b": 4, "c": 6}
+//
+// Use Case / 사용 사례:
+//   - Transforming all values in a map / 맵의 모든 값 변환
+//   - Applying discounts to prices / 가격에 할인 적용
+//   - Normalizing data values / 데이터 값 정규화
+//   - Converting units (e.g., km to miles) / 단위 변환 (예: km를 마일로)
+func Apply[K comparable, V any](m map[K]V, fn func(K, V) V) map[K]V {
+	result := make(map[K]V, len(m))
+	for k, v := range m {
+		result[k] = fn(k, v)
+	}
+	return result
+}

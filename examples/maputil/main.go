@@ -1369,4 +1369,81 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   Note: Original map unchanged (immutable), theme value updated")
 	logger.Info("   💡 Use case: Batch config updates, map initialization, merging multiple entries")
 	logger.Info("")
+
+	// 4. Tap - Execute side effect and return map / 부수 효과를 실행하고 맵 반환
+	logger.Info("4️⃣  Tap() - Execute side effect and return map / 부수 효과를 실행하고 맵 반환")
+	logger.Info("   Purpose: Debugging in method chains without breaking the chain")
+	logger.Info("   목적: 체인을 끊지 않고 메서드 체인에서 디버깅")
+
+	prices := map[string]int{"apple": 100, "banana": 80, "cherry": 150}
+	logger.Info("   Input map:", "prices", prices)
+
+	// Use Tap for debugging in a chain
+	result := maputil.Tap(prices, func(m map[string]int) {
+		logger.Info("   [Tap] Intermediate state:", "map", m)
+		sum := 0
+		for _, v := range m {
+			sum += v
+		}
+		logger.Info("   [Tap] Total price:", "sum", sum)
+	})
+
+	logger.Info("   ✅ Returned map (unchanged):", "result", result)
+	logger.Info("   Note: Original map passed through, side effect performed")
+	logger.Info("   💡 Use case: Logging in pipelines, collecting stats, validation in chains")
+	logger.Info("")
+
+	// 5. ContainsAllKeys - Check if all keys exist / 모든 키가 존재하는지 확인
+	logger.Info("5️⃣  ContainsAllKeys() - Check if all keys exist / 모든 키가 존재하는지 확인")
+	logger.Info("   Purpose: Validate required keys in a map")
+	logger.Info("   목적: 맵에서 필수 키 검증")
+
+	apiResponse := map[string]interface{}{
+		"status": "success",
+		"data":   map[string]interface{}{"id": 123, "name": "Alice"},
+		"code":   200,
+	}
+	logger.Info("   Input map:", "apiResponse", apiResponse)
+
+	requiredKeys := []string{"status", "data", "code"}
+	hasAll := maputil.ContainsAllKeys(apiResponse, requiredKeys)
+	logger.Info("   ✅ Contains all required keys:", "hasAll", hasAll)
+
+	missingKeys := []string{"status", "data", "timestamp"}
+	hasAllMissing := maputil.ContainsAllKeys(apiResponse, missingKeys)
+	logger.Info("   ❌ Contains all keys (with missing 'timestamp'):", "hasAll", hasAllMissing)
+
+	emptyKeys := []string{}
+	hasEmpty := maputil.ContainsAllKeys(apiResponse, emptyKeys)
+	logger.Info("   ✅ Empty keys slice (vacuous truth):", "hasAll", hasEmpty)
+
+	logger.Info("   💡 Use case: API response validation, required config checks, form validation")
+	logger.Info("")
+
+	// 6. Apply - Transform all values in place / 모든 값을 제자리에서 변환
+	logger.Info("6️⃣  Apply() - Transform all values / 모든 값 변환")
+	logger.Info("   Purpose: Apply a function to all values in the map")
+	logger.Info("   목적: 맵의 모든 값에 함수 적용")
+
+	productPrices := map[string]int{"laptop": 1000, "mouse": 20, "keyboard": 50}
+	logger.Info("   Input map:", "productPrices", productPrices)
+
+	// Apply 10% discount
+	discounted := maputil.Apply(productPrices, func(k string, v int) int {
+		return int(float64(v) * 0.9) // 10% discount
+	})
+	logger.Info("   ✅ After 10% discount:", "discounted", discounted)
+
+	// Apply key-dependent transformation
+	adjusted := maputil.Apply(productPrices, func(k string, v int) int {
+		if k == "laptop" {
+			return v + 100 // Add $100 to laptop
+		}
+		return v
+	})
+	logger.Info("   ✅ After key-dependent adjustment:", "adjusted", adjusted)
+
+	logger.Info("   Note: Original map unchanged (immutable)")
+	logger.Info("   💡 Use case: Bulk price adjustments, data normalization, unit conversions")
+	logger.Info("")
 }

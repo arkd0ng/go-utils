@@ -953,3 +953,423 @@ func BenchmarkTapVsInline(b *testing.B) {
 		}
 	})
 }
+
+// TestContainsAllKeys tests the ContainsAllKeys function with various scenarios.
+// TestContainsAllKeys는 다양한 시나리오로 ContainsAllKeys 함수를 테스트합니다.
+func TestContainsAllKeys(t *testing.T) {
+	t.Run("all keys exist", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+		keys := []string{"a", "b", "c"}
+
+		result := ContainsAllKeys(m, keys)
+
+		if !result {
+			t.Errorf("ContainsAllKeys() = false, want true")
+		}
+	})
+
+	t.Run("some keys missing", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3}
+		keys := []string{"a", "d"}
+
+		result := ContainsAllKeys(m, keys)
+
+		if result {
+			t.Errorf("ContainsAllKeys() = true, want false")
+		}
+	})
+
+	t.Run("all keys missing", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2}
+		keys := []string{"x", "y", "z"}
+
+		result := ContainsAllKeys(m, keys)
+
+		if result {
+			t.Errorf("ContainsAllKeys() = true, want false")
+		}
+	})
+
+	t.Run("empty keys slice", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2}
+		keys := []string{}
+
+		result := ContainsAllKeys(m, keys)
+
+		if !result {
+			t.Errorf("ContainsAllKeys() with empty keys = false, want true (vacuous truth)")
+		}
+	})
+
+	t.Run("nil keys slice", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2}
+		var keys []string
+
+		result := ContainsAllKeys(m, keys)
+
+		if !result {
+			t.Errorf("ContainsAllKeys() with nil keys = false, want true")
+		}
+	})
+
+	t.Run("empty map", func(t *testing.T) {
+		m := map[string]int{}
+		keys := []string{"a", "b"}
+
+		result := ContainsAllKeys(m, keys)
+
+		if result {
+			t.Errorf("ContainsAllKeys() on empty map = true, want false")
+		}
+	})
+
+	t.Run("single key exists", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3}
+		keys := []string{"b"}
+
+		result := ContainsAllKeys(m, keys)
+
+		if !result {
+			t.Errorf("ContainsAllKeys() = false, want true")
+		}
+	})
+
+	t.Run("single key missing", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3}
+		keys := []string{"d"}
+
+		result := ContainsAllKeys(m, keys)
+
+		if result {
+			t.Errorf("ContainsAllKeys() = true, want false")
+		}
+	})
+
+	t.Run("duplicate keys in slice", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3}
+		keys := []string{"a", "a", "b"}
+
+		result := ContainsAllKeys(m, keys)
+
+		if !result {
+			t.Errorf("ContainsAllKeys() = false, want true")
+		}
+	})
+
+	t.Run("integer keys", func(t *testing.T) {
+		m := map[int]string{1: "one", 2: "two", 3: "three"}
+		keys := []int{1, 2}
+
+		result := ContainsAllKeys(m, keys)
+
+		if !result {
+			t.Errorf("ContainsAllKeys() = false, want true")
+		}
+	})
+}
+
+// BenchmarkContainsAllKeys benchmarks the ContainsAllKeys function.
+// BenchmarkContainsAllKeys는 ContainsAllKeys 함수를 벤치마크합니다.
+func BenchmarkContainsAllKeys(b *testing.B) {
+	keyCounts := []int{1, 5, 10, 50, 100}
+
+	for _, keyCount := range keyCounts {
+		b.Run(fmt.Sprintf("keys_%d", keyCount), func(b *testing.B) {
+			m := make(map[int]int, 1000)
+			for i := 0; i < 1000; i++ {
+				m[i] = i * 2
+			}
+
+			keys := make([]int, keyCount)
+			for i := 0; i < keyCount; i++ {
+				keys[i] = i
+			}
+
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				_ = ContainsAllKeys(m, keys)
+			}
+		})
+	}
+}
+
+// BenchmarkContainsAllKeysVsLoop compares ContainsAllKeys with manual loop.
+// BenchmarkContainsAllKeysVsLoop은 ContainsAllKeys와 수동 루프를 비교합니다.
+func BenchmarkContainsAllKeysVsLoop(b *testing.B) {
+	m := make(map[int]int, 1000)
+	for i := 0; i < 1000; i++ {
+		m[i] = i * 2
+	}
+
+	keys := make([]int, 10)
+	for i := 0; i < 10; i++ {
+		keys[i] = i
+	}
+
+	b.Run("ContainsAllKeys", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_ = ContainsAllKeys(m, keys)
+		}
+	})
+
+	b.Run("ManualLoop", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			result := true
+			for _, key := range keys {
+				if _, exists := m[key]; !exists {
+					result = false
+					break
+				}
+			}
+			_ = result
+		}
+	})
+}
+
+// TestApply tests the Apply function with various scenarios.
+// TestApply는 다양한 시나리오로 Apply 함수를 테스트합니다.
+func TestApply(t *testing.T) {
+	t.Run("basic transformation", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3}
+		result := Apply(m, func(k string, v int) int {
+			return v * 2
+		})
+
+		expected := map[string]int{"a": 2, "b": 4, "c": 6}
+		if len(result) != len(expected) {
+			t.Errorf("Apply() length = %d, want %d", len(result), len(expected))
+		}
+
+		for k, v := range expected {
+			if result[k] != v {
+				t.Errorf("Apply() result[%s] = %d, want %d", k, result[k], v)
+			}
+		}
+
+		// Original map should not be modified
+		if m["a"] != 1 || m["b"] != 2 || m["c"] != 3 {
+			t.Errorf("Apply() modified original map")
+		}
+	})
+
+	t.Run("empty map", func(t *testing.T) {
+		m := map[string]int{}
+		result := Apply(m, func(k string, v int) int {
+			return v * 2
+		})
+
+		if len(result) != 0 {
+			t.Errorf("Apply() on empty map length = %d, want 0", len(result))
+		}
+	})
+
+	t.Run("single entry", func(t *testing.T) {
+		m := map[string]int{"only": 42}
+		result := Apply(m, func(k string, v int) int {
+			return v + 8
+		})
+
+		if len(result) != 1 {
+			t.Errorf("Apply() length = %d, want 1", len(result))
+		}
+
+		if result["only"] != 50 {
+			t.Errorf("Apply() result[only] = %d, want 50", result["only"])
+		}
+	})
+
+	t.Run("key-dependent transformation", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3}
+		result := Apply(m, func(k string, v int) int {
+			if k == "b" {
+				return v * 10
+			}
+			return v
+		})
+
+		expected := map[string]int{"a": 1, "b": 20, "c": 3}
+		if len(result) != len(expected) {
+			t.Errorf("Apply() length = %d, want %d", len(result), len(expected))
+		}
+
+		for k, v := range expected {
+			if result[k] != v {
+				t.Errorf("Apply() result[%s] = %d, want %d", k, result[k], v)
+			}
+		}
+	})
+
+	t.Run("string transformation", func(t *testing.T) {
+		m := map[string]string{"name": "alice", "city": "seoul"}
+		result := Apply(m, func(k, v string) string {
+			return strings.ToUpper(v)
+		})
+
+		expected := map[string]string{"name": "ALICE", "city": "SEOUL"}
+		if len(result) != len(expected) {
+			t.Errorf("Apply() length = %d, want %d", len(result), len(expected))
+		}
+
+		for k, v := range expected {
+			if result[k] != v {
+				t.Errorf("Apply() result[%s] = %s, want %s", k, result[k], v)
+			}
+		}
+	})
+
+	t.Run("zero values", func(t *testing.T) {
+		m := map[string]int{"a": 0, "b": 0, "c": 0}
+		result := Apply(m, func(k string, v int) int {
+			return v + 1
+		})
+
+		expected := map[string]int{"a": 1, "b": 1, "c": 1}
+		if len(result) != len(expected) {
+			t.Errorf("Apply() length = %d, want %d", len(result), len(expected))
+		}
+
+		for k, v := range expected {
+			if result[k] != v {
+				t.Errorf("Apply() result[%s] = %d, want %d", k, result[k], v)
+			}
+		}
+	})
+
+	t.Run("complex values", func(t *testing.T) {
+		type User struct {
+			Name string
+			Age  int
+		}
+
+		m := map[string]User{
+			"user1": {Name: "Alice", Age: 25},
+			"user2": {Name: "Bob", Age: 30},
+		}
+
+		result := Apply(m, func(k string, u User) User {
+			return User{Name: u.Name, Age: u.Age + 5}
+		})
+
+		if len(result) != 2 {
+			t.Errorf("Apply() length = %d, want 2", len(result))
+		}
+
+		if result["user1"].Age != 30 {
+			t.Errorf("Apply() result[user1].Age = %d, want 30", result["user1"].Age)
+		}
+
+		if result["user2"].Age != 35 {
+			t.Errorf("Apply() result[user2].Age = %d, want 35", result["user2"].Age)
+		}
+	})
+
+	t.Run("negative values", func(t *testing.T) {
+		m := map[string]int{"a": -1, "b": -2, "c": -3}
+		result := Apply(m, func(k string, v int) int {
+			return -v
+		})
+
+		expected := map[string]int{"a": 1, "b": 2, "c": 3}
+		if len(result) != len(expected) {
+			t.Errorf("Apply() length = %d, want %d", len(result), len(expected))
+		}
+
+		for k, v := range expected {
+			if result[k] != v {
+				t.Errorf("Apply() result[%s] = %d, want %d", k, result[k], v)
+			}
+		}
+	})
+
+	t.Run("large map", func(t *testing.T) {
+		m := make(map[int]int, 1000)
+		for i := 0; i < 1000; i++ {
+			m[i] = i
+		}
+
+		result := Apply(m, func(k, v int) int {
+			return v * 2
+		})
+
+		if len(result) != 1000 {
+			t.Errorf("Apply() length = %d, want 1000", len(result))
+		}
+
+		for i := 0; i < 1000; i++ {
+			if result[i] != i*2 {
+				t.Errorf("Apply() result[%d] = %d, want %d", i, result[i], i*2)
+			}
+		}
+	})
+
+	t.Run("immutability check", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3}
+		original := make(map[string]int)
+		for k, v := range m {
+			original[k] = v
+		}
+
+		_ = Apply(m, func(k string, v int) int {
+			return v * 10
+		})
+
+		// Original map should remain unchanged
+		if len(m) != len(original) {
+			t.Errorf("Apply() modified original map, length = %d, want %d", len(m), len(original))
+		}
+
+		for k, v := range original {
+			if m[k] != v {
+				t.Errorf("Apply() modified original map[%s] = %d, want %d", k, m[k], v)
+			}
+		}
+	})
+}
+
+// BenchmarkApply benchmarks the Apply function.
+// BenchmarkApply는 Apply 함수를 벤치마크합니다.
+func BenchmarkApply(b *testing.B) {
+	sizes := []int{10, 100, 1000}
+
+	for _, size := range sizes {
+		b.Run(fmt.Sprintf("size_%d", size), func(b *testing.B) {
+			m := make(map[int]int, size)
+			for i := 0; i < size; i++ {
+				m[i] = i
+			}
+
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				_ = Apply(m, func(k, v int) int {
+					return v * 2
+				})
+			}
+		})
+	}
+}
+
+// BenchmarkApplyVsLoop compares Apply with manual loop.
+// BenchmarkApplyVsLoop은 Apply와 수동 루프를 비교합니다.
+func BenchmarkApplyVsLoop(b *testing.B) {
+	m := make(map[int]int, 100)
+	for i := 0; i < 100; i++ {
+		m[i] = i
+	}
+
+	b.Run("Apply", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_ = Apply(m, func(k, v int) int {
+				return v * 2
+			})
+		}
+	})
+
+	b.Run("ManualLoop", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			result := make(map[int]int, len(m))
+			for k, v := range m {
+				result[k] = v * 2
+			}
+		}
+	})
+}
