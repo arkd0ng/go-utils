@@ -357,6 +357,31 @@ func TestSlice(t *testing.T) {
 			t.Errorf("Slice() with empty slice should return empty, got %v", result)
 		}
 	})
+
+	t.Run("start beyond length", func(t *testing.T) {
+		numbers := []int{1, 2, 3}
+		result := Slice(numbers, 10, 20)
+		if len(result) != 0 {
+			t.Errorf("Slice() with start beyond length should return empty, got %v", result)
+		}
+	})
+
+	t.Run("negative start beyond bounds", func(t *testing.T) {
+		numbers := []int{1, 2, 3}
+		result := Slice(numbers, -10, 2)
+		expected := []int{1, 2}
+		if !Equal(result, expected) {
+			t.Errorf("Slice() = %v, want %v", result, expected)
+		}
+	})
+
+	t.Run("negative end beyond bounds", func(t *testing.T) {
+		numbers := []int{1, 2, 3}
+		result := Slice(numbers, 1, -10)
+		if len(result) != 0 {
+			t.Errorf("Slice() with negative end beyond bounds should return empty, got %v", result)
+		}
+	})
 }
 
 // BenchmarkSlice benchmarks the Slice function.
@@ -443,4 +468,127 @@ func BenchmarkSample(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		Sample(numbers, 100)
 	}
+}
+
+// TestTakeWhile tests the TakeWhile function.
+// TestTakeWhile는 TakeWhile 함수를 테스트합니다.
+func TestTakeWhile(t *testing.T) {
+	t.Run("take while less than 5", func(t *testing.T) {
+		numbers := []int{1, 2, 3, 4, 5, 6, 7}
+		result := TakeWhile(numbers, func(n int) bool { return n < 5 })
+		expected := []int{1, 2, 3, 4}
+		if !Equal(result, expected) {
+			t.Errorf("TakeWhile() = %v, want %v", result, expected)
+		}
+	})
+
+	t.Run("take all", func(t *testing.T) {
+		numbers := []int{1, 2, 3}
+		result := TakeWhile(numbers, func(n int) bool { return n < 10 })
+		if !Equal(result, numbers) {
+			t.Errorf("TakeWhile() should return all elements")
+		}
+	})
+
+	t.Run("take none", func(t *testing.T) {
+		numbers := []int{5, 6, 7}
+		result := TakeWhile(numbers, func(n int) bool { return n < 5 })
+		if len(result) != 0 {
+			t.Errorf("TakeWhile() should return empty slice, got %v", result)
+		}
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		numbers := []int{}
+		result := TakeWhile(numbers, func(n int) bool { return n < 5 })
+		if len(result) != 0 {
+			t.Errorf("TakeWhile() with empty slice should return empty slice")
+		}
+	})
+}
+
+// TestDropWhile tests the DropWhile function.
+// TestDropWhile는 DropWhile 함수를 테스트합니다.
+func TestDropWhile(t *testing.T) {
+	t.Run("drop while less than 5", func(t *testing.T) {
+		numbers := []int{1, 2, 3, 4, 5, 6, 7}
+		result := DropWhile(numbers, func(n int) bool { return n < 5 })
+		expected := []int{5, 6, 7}
+		if !Equal(result, expected) {
+			t.Errorf("DropWhile() = %v, want %v", result, expected)
+		}
+	})
+
+	t.Run("drop all", func(t *testing.T) {
+		numbers := []int{1, 2, 3}
+		result := DropWhile(numbers, func(n int) bool { return n < 10 })
+		if len(result) != 0 {
+			t.Errorf("DropWhile() should return empty slice, got %v", result)
+		}
+	})
+
+	t.Run("drop none", func(t *testing.T) {
+		numbers := []int{5, 6, 7}
+		result := DropWhile(numbers, func(n int) bool { return n < 5 })
+		if !Equal(result, numbers) {
+			t.Errorf("DropWhile() should return all elements")
+		}
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		numbers := []int{}
+		result := DropWhile(numbers, func(n int) bool { return n < 5 })
+		if len(result) != 0 {
+			t.Errorf("DropWhile() with empty slice should return empty slice")
+		}
+	})
+}
+
+// TestInterleave tests the Interleave function.
+// TestInterleave는 Interleave 함수를 테스트합니다.
+func TestInterleave(t *testing.T) {
+	t.Run("interleave two slices", func(t *testing.T) {
+		a := []int{1, 2, 3}
+		b := []int{4, 5, 6}
+		result := Interleave(a, b)
+		expected := []int{1, 4, 2, 5, 3, 6}
+		if !Equal(result, expected) {
+			t.Errorf("Interleave() = %v, want %v", result, expected)
+		}
+	})
+
+	t.Run("interleave three slices", func(t *testing.T) {
+		a := []int{1, 2}
+		b := []int{3, 4}
+		c := []int{5, 6}
+		result := Interleave(a, b, c)
+		expected := []int{1, 3, 5, 2, 4, 6}
+		if !Equal(result, expected) {
+			t.Errorf("Interleave() = %v, want %v", result, expected)
+		}
+	})
+
+	t.Run("interleave different lengths", func(t *testing.T) {
+		a := []int{1, 2, 3, 4}
+		b := []int{5, 6}
+		result := Interleave(a, b)
+		expected := []int{1, 5, 2, 6, 3, 4}
+		if !Equal(result, expected) {
+			t.Errorf("Interleave() = %v, want %v", result, expected)
+		}
+	})
+
+	t.Run("empty slices", func(t *testing.T) {
+		result := Interleave([]int{}, []int{})
+		if len(result) != 0 {
+			t.Errorf("Interleave() with empty slices should return empty slice")
+		}
+	})
+
+	t.Run("no arguments", func(t *testing.T) {
+		result := Interleave[int]()
+		if len(result) != 0 {
+			t.Errorf("Interleave() with no arguments should return empty slice")
+		}
+	})
 }

@@ -503,3 +503,45 @@ func BenchmarkEqual(b *testing.B) {
 		Equal(a, c)
 	}
 }
+
+// TestFindLast tests the FindLast function.
+// TestFindLast는 FindLast 함수를 테스트합니다.
+func TestFindLast(t *testing.T) {
+	t.Run("find last even number", func(t *testing.T) {
+		numbers := []int{1, 2, 3, 4, 5, 6}
+		result, found := FindLast(numbers, func(n int) bool { return n%2 == 0 })
+		if !found {
+			t.Fatal("FindLast() should find last even number")
+		}
+		if result != 6 {
+			t.Errorf("FindLast() = %v, want 6", result)
+		}
+	})
+
+	t.Run("find last match in strings", func(t *testing.T) {
+		words := []string{"apple", "banana", "apricot", "avocado"}
+		result, found := FindLast(words, func(s string) bool { return s[0] == 'a' })
+		if !found {
+			t.Fatal("FindLast() should find last word starting with 'a'")
+		}
+		if result != "avocado" {
+			t.Errorf("FindLast() = %v, want avocado", result)
+		}
+	})
+
+	t.Run("no match", func(t *testing.T) {
+		numbers := []int{1, 3, 5, 7}
+		_, found := FindLast(numbers, func(n int) bool { return n%2 == 0 })
+		if found {
+			t.Error("FindLast() should not find any match")
+		}
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		numbers := []int{}
+		_, found := FindLast(numbers, func(n int) bool { return n > 0 })
+		if found {
+			t.Error("FindLast() with empty slice should return false")
+		}
+	})
+}

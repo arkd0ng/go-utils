@@ -8,6 +8,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v1.7.021] - 2025-10-15
+
+### Added / 추가
+
+- **100% TEST COVERAGE ACHIEVED**: Added comprehensive edge case tests to achieve 100% code coverage / 100% 코드 커버리지를 달성하기 위한 종합적인 엣지 케이스 테스트 추가
+  - Added tests for `ReduceRight`, `CountBy`, `MinBy`, `MaxBy`, `FindLast` / `ReduceRight`, `CountBy`, `MinBy`, `MaxBy`, `FindLast`에 대한 테스트 추가
+  - Added tests for `TakeWhile`, `DropWhile`, `Interleave`, `Window`, `Tap` / `TakeWhile`, `DropWhile`, `Interleave`, `Window`, `Tap`에 대한 테스트 추가
+  - Added edge case tests for `Slice` function:
+    * Negative start beyond bounds (`-10` on 3-element slice)
+    * Negative end beyond bounds (`-10` on 3-element slice)
+    * Start beyond length (line 162-164 coverage)
+  - Added edge case test for `Interleave` function:
+    * No arguments case (`Interleave[int]()`)
+  - All 10 previously untested functions (0% coverage) now have comprehensive tests / 이전에 테스트되지 않은 10개 함수 (0% 커버리지)가 이제 종합 테스트 보유
+
+### Changed / 변경
+
+- Updated `cfg/app.yaml` version to v1.7.021 / `cfg/app.yaml` 버전을 v1.7.021로 업데이트
+- Updated `sliceutil/sliceutil.go` Version constant to "1.7.021" / `sliceutil/sliceutil.go` 버전 상수를 "1.7.021"로 업데이트
+- Modified `sliceutil/aggregate_test.go` to fix `MinBy`/`MaxBy` test return types (error not bool) / `MinBy`/`MaxBy` 테스트 반환 타입을 수정하도록 `sliceutil/aggregate_test.go` 수정 (error, bool 아님)
+
+### Fixed / 수정
+
+- Fixed `MinBy`/`MaxBy` test errors: changed from `result, ok := MinBy(...)` to `result, err := MinBy(...)` / `MinBy`/`MaxBy` 테스트 에러 수정: `result, ok := MinBy(...)`에서 `result, err := MinBy(...)`로 변경
+- Fixed duplicate variable declarations in test files / 테스트 파일의 중복 변수 선언 수정
+
+### Testing / 테스트
+
+- **Test coverage: 100.0% of statements** (improved from 85.2% → 99.4% → 99.6% → 100.0%) / **테스트 커버리지: 100.0%** (85.2% → 99.4% → 99.6% → 100.0%로 개선)
+- All 73 functions have 100% test coverage / 모든 73개 함수가 100% 테스트 커버리지 보유
+- All edge cases covered / 모든 엣지 케이스 커버
+- All tests pass successfully / 모든 테스트가 성공적으로 통과
+
+### Summary / 요약
+
+v1.7.021 achieves the ultimate goal of 100% test coverage for sliceutil package:
+- Added edge case tests for all previously untested code paths
+- Fixed test errors in `MinBy`/`MaxBy` functions
+- Achieved 100.0% test coverage (from 85.2% in v1.7.020)
+- All 73 functions fully tested and documented
+- Production-ready with complete test coverage
+
+v1.7.021은 sliceutil 패키지의 100% 테스트 커버리지라는 궁극적인 목표를 달성합니다:
+- 이전에 테스트되지 않은 모든 코드 경로에 대한 엣지 케이스 테스트 추가
+- `MinBy`/`MaxBy` 함수의 테스트 에러 수정
+- 100.0% 테스트 커버리지 달성 (v1.7.020의 85.2%에서)
+- 모든 73개 함수가 완전히 테스트되고 문서화됨
+- 완전한 테스트 커버리지로 프로덕션 준비 완료
+
+---
+
 ## [v1.7.020] - 2025-10-15
 
 ### Added / 추가

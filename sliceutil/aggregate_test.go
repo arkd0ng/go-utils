@@ -507,3 +507,189 @@ func BenchmarkPartition(b *testing.B) {
 		})
 	}
 }
+
+// TestReduceRight tests the ReduceRight function.
+// TestReduceRight는 ReduceRight 함수를 테스트합니다.
+func TestReduceRight(t *testing.T) {
+	t.Run("reduce right sum", func(t *testing.T) {
+		numbers := []int{1, 2, 3, 4, 5}
+		result := ReduceRight(numbers, 0, func(acc, n int) int {
+			return acc + n
+		})
+		expected := 15
+		if result != expected {
+			t.Errorf("ReduceRight() = %v, want %v", result, expected)
+		}
+	})
+
+	t.Run("reduce right concat strings", func(t *testing.T) {
+		words := []string{"a", "b", "c"}
+		result := ReduceRight(words, "", func(acc, w string) string {
+			return acc + w
+		})
+		expected := "cba" // Reversed order
+		if result != expected {
+			t.Errorf("ReduceRight() concat = %v, want %v", result, expected)
+		}
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		numbers := []int{}
+		result := ReduceRight(numbers, 10, func(acc, n int) int {
+			return acc + n
+		})
+		if result != 10 {
+			t.Errorf("ReduceRight() with empty slice should return initial value, got %v", result)
+		}
+	})
+}
+
+// TestCountBy tests the CountBy function.
+// TestCountBy는 CountBy 함수를 테스트합니다.
+func TestCountBy(t *testing.T) {
+	type Person struct {
+		Name string
+		Age  int
+		City string
+	}
+
+	t.Run("count by city", func(t *testing.T) {
+		people := []Person{
+			{"Alice", 30, "Seoul"},
+			{"Bob", 25, "Busan"},
+			{"Charlie", 35, "Seoul"},
+			{"Dave", 28, "Seoul"},
+			{"Eve", 32, "Busan"},
+		}
+		result := CountBy(people, func(p Person) string { return p.City })
+		if result["Seoul"] != 3 {
+			t.Errorf("CountBy() Seoul count = %v, want 3", result["Seoul"])
+		}
+		if result["Busan"] != 2 {
+			t.Errorf("CountBy() Busan count = %v, want 2", result["Busan"])
+		}
+	})
+
+	t.Run("count by age group", func(t *testing.T) {
+		people := []Person{
+			{"Alice", 25, "Seoul"},
+			{"Bob", 35, "Busan"},
+			{"Charlie", 28, "Seoul"},
+			{"Dave", 32, "Seoul"},
+		}
+		result := CountBy(people, func(p Person) string {
+			if p.Age < 30 {
+				return "20s"
+			}
+			return "30s"
+		})
+		if result["20s"] != 2 {
+			t.Errorf("CountBy() 20s count = %v, want 2", result["20s"])
+		}
+		if result["30s"] != 2 {
+			t.Errorf("CountBy() 30s count = %v, want 2", result["30s"])
+		}
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		people := []Person{}
+		result := CountBy(people, func(p Person) string { return p.City })
+		if len(result) != 0 {
+			t.Errorf("CountBy() with empty slice should return empty map, got %v", result)
+		}
+	})
+}
+
+// TestMinBy tests the MinBy function.
+// TestMinBy는 MinBy 함수를 테스트합니다.
+func TestMinBy(t *testing.T) {
+	type Person struct {
+		Name string
+		Age  int
+	}
+
+	t.Run("find youngest person", func(t *testing.T) {
+		people := []Person{
+			{"Alice", 30},
+			{"Bob", 25},
+			{"Charlie", 35},
+		}
+		result, err := MinBy(people, func(p Person) int { return p.Age })
+		if err != nil {
+			t.Fatalf("MinBy() unexpected error: %v", err)
+		}
+		if result.Name != "Bob" || result.Age != 25 {
+			t.Errorf("MinBy() = %+v, want Bob age 25", result)
+		}
+	})
+
+	t.Run("find shortest name", func(t *testing.T) {
+		people := []Person{
+			{"Alexander", 30},
+			{"Bo", 25},
+			{"Charlie", 35},
+		}
+		result, err := MinBy(people, func(p Person) int { return len(p.Name) })
+		if err != nil {
+			t.Fatalf("MinBy() unexpected error: %v", err)
+		}
+		if result.Name != "Bo" {
+			t.Errorf("MinBy() = %+v, want Bo", result)
+		}
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		people := []Person{}
+		_, err := MinBy(people, func(p Person) int { return p.Age })
+		if err == nil {
+			t.Error("MinBy() with empty slice should return error")
+		}
+	})
+}
+
+// TestMaxBy tests the MaxBy function.
+// TestMaxBy는 MaxBy 함수를 테스트합니다.
+func TestMaxBy(t *testing.T) {
+	type Person struct {
+		Name string
+		Age  int
+	}
+
+	t.Run("find oldest person", func(t *testing.T) {
+		people := []Person{
+			{"Alice", 30},
+			{"Bob", 25},
+			{"Charlie", 35},
+		}
+		result, err := MaxBy(people, func(p Person) int { return p.Age })
+		if err != nil {
+			t.Fatalf("MaxBy() unexpected error: %v", err)
+		}
+		if result.Name != "Charlie" || result.Age != 35 {
+			t.Errorf("MaxBy() = %+v, want Charlie age 35", result)
+		}
+	})
+
+	t.Run("find longest name", func(t *testing.T) {
+		people := []Person{
+			{"Alexander", 30},
+			{"Bo", 25},
+			{"Charlie", 35},
+		}
+		result, err := MaxBy(people, func(p Person) int { return len(p.Name) })
+		if err != nil {
+			t.Fatalf("MaxBy() unexpected error: %v", err)
+		}
+		if result.Name != "Alexander" {
+			t.Errorf("MaxBy() = %+v, want Alexander", result)
+		}
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		people := []Person{}
+		_, err := MaxBy(people, func(p Person) int { return p.Age })
+		if err == nil {
+			t.Error("MaxBy() with empty slice should return error")
+		}
+	})
+}

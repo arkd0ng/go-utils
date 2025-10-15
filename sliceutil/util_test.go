@@ -663,3 +663,129 @@ func BenchmarkUnzip(b *testing.B) {
 		Unzip[int, string](zipped)
 	}
 }
+
+// TestWindow tests the Window function.
+// TestWindow는 Window 함수를 테스트합니다.
+func TestWindow(t *testing.T) {
+	t.Run("window size 2", func(t *testing.T) {
+		numbers := []int{1, 2, 3, 4, 5}
+		result := Window(numbers, 2)
+		expected := [][]int{{1, 2}, {2, 3}, {3, 4}, {4, 5}}
+		if len(result) != len(expected) {
+			t.Fatalf("Window() length = %v, want %v", len(result), len(expected))
+		}
+		for i := range expected {
+			if !Equal(result[i], expected[i]) {
+				t.Errorf("Window() window %d = %v, want %v", i, result[i], expected[i])
+			}
+		}
+	})
+
+	t.Run("window size 3", func(t *testing.T) {
+		numbers := []int{1, 2, 3, 4, 5}
+		result := Window(numbers, 3)
+		expected := [][]int{{1, 2, 3}, {2, 3, 4}, {3, 4, 5}}
+		if len(result) != len(expected) {
+			t.Fatalf("Window() length = %v, want %v", len(result), len(expected))
+		}
+		for i := range expected {
+			if !Equal(result[i], expected[i]) {
+				t.Errorf("Window() window %d = %v, want %v", i, result[i], expected[i])
+			}
+		}
+	})
+
+	t.Run("window size equals slice length", func(t *testing.T) {
+		numbers := []int{1, 2, 3}
+		result := Window(numbers, 3)
+		expected := [][]int{{1, 2, 3}}
+		if len(result) != 1 {
+			t.Fatalf("Window() should return 1 window, got %v", len(result))
+		}
+		if !Equal(result[0], expected[0]) {
+			t.Errorf("Window() = %v, want %v", result[0], expected[0])
+		}
+	})
+
+	t.Run("window size 0", func(t *testing.T) {
+		numbers := []int{1, 2, 3}
+		result := Window(numbers, 0)
+		if len(result) != 0 {
+			t.Errorf("Window() with size 0 should return empty slice, got %v", result)
+		}
+	})
+
+	t.Run("window size greater than slice", func(t *testing.T) {
+		numbers := []int{1, 2, 3}
+		result := Window(numbers, 5)
+		if len(result) != 0 {
+			t.Errorf("Window() with size > length should return empty slice, got %v", result)
+		}
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		numbers := []int{}
+		result := Window(numbers, 2)
+		if len(result) != 0 {
+			t.Errorf("Window() with empty slice should return empty slice")
+		}
+	})
+}
+
+// TestTap tests the Tap function.
+// TestTap는 Tap 함수를 테스트합니다.
+func TestTap(t *testing.T) {
+	t.Run("tap executes function", func(t *testing.T) {
+		numbers := []int{1, 2, 3}
+		executed := false
+		result := Tap(numbers, func(s []int) {
+			executed = true
+		})
+		if !executed {
+			t.Error("Tap() should execute the provided function")
+		}
+		if !Equal(result, numbers) {
+			t.Errorf("Tap() should return original slice unchanged")
+		}
+	})
+
+	t.Run("tap with side effect", func(t *testing.T) {
+		numbers := []int{1, 2, 3, 4, 5}
+		var sum int
+		result := Tap(numbers, func(s []int) {
+			for _, n := range s {
+				sum += n
+			}
+		})
+		if sum != 15 {
+			t.Errorf("Tap() side effect: sum = %v, want 15", sum)
+		}
+		if !Equal(result, numbers) {
+			t.Errorf("Tap() should return original slice unchanged")
+		}
+	})
+
+	t.Run("tap returns same slice reference", func(t *testing.T) {
+		numbers := []int{1, 2, 3}
+		result := Tap(numbers, func(s []int) {})
+		// Check if it's the same slice (not a copy)
+		numbers[0] = 999
+		if result[0] != 999 {
+			t.Error("Tap() should return the same slice reference, not a copy")
+		}
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		numbers := []int{}
+		executed := false
+		result := Tap(numbers, func(s []int) {
+			executed = true
+		})
+		if !executed {
+			t.Error("Tap() should execute function even for empty slice")
+		}
+		if len(result) != 0 {
+			t.Error("Tap() with empty slice should return empty slice")
+		}
+	})
+}
