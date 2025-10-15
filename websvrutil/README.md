@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.015
+**Version / 버전**: v1.11.016
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.015) / 현재 기능
+## Current Features (v1.11.016) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -136,6 +136,11 @@ Request context for accessing path parameters, query strings, headers, and stori
 - `FormFile(name string) (*multipart.FileHeader, error)` - Get uploaded file / 업로드된 파일 가져오기
 - `MultipartForm() (*multipart.Form, error)` - Get parsed multipart form / 파싱된 multipart 폼 가져오기
 - `SaveUploadedFile(file *multipart.FileHeader, dst string) error` - Save uploaded file / 업로드된 파일 저장
+
+**Static File Serving / 정적 파일 서빙** (v1.11.016+):
+- `File(filepath string) error` - Send file response to client / 클라이언트에게 파일 응답 전송
+- `FileAttachment(filepath, filename string) error` - Send file as downloadable attachment / 다운로드 가능한 첨부 파일로 전송
+- `Static(prefix, dir string) *App` (App method) - Serve static files from directory / 디렉토리에서 정적 파일 제공
 
 **Helper Function / 헬퍼 함수**:
 - `GetContext(r *http.Request) *Context` - Get Context from request / 요청에서 Context 가져오기
@@ -726,6 +731,58 @@ func main() {
 }
 ```
 
+### Static File Serving / 정적 파일 서빙
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+    "github.com/arkd0ng/go-utils/websvrutil"
+)
+
+func main() {
+    app := websvrutil.New()
+
+    // Serve static files from ./public directory at /static/* URLs
+    // ./public 디렉토리의 파일을 /static/* URL에서 제공
+    app.Static("/static", "./public")
+
+    // Serve static files from multiple directories
+    // 여러 디렉토리에서 정적 파일 제공
+    app.Static("/css", "./assets/css")
+    app.Static("/js", "./assets/js")
+    app.Static("/images", "./assets/images")
+
+    // Serve a specific file / 특정 파일 제공
+    app.GET("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+        ctx := websvrutil.GetContext(r)
+        ctx.File("./public/favicon.ico")
+    })
+
+    // Serve file as download / 파일을 다운로드로 제공
+    app.GET("/download/report", func(w http.ResponseWriter, r *http.Request) {
+        ctx := websvrutil.GetContext(r)
+        ctx.FileAttachment("./reports/monthly.pdf", "monthly-report.pdf")
+    })
+
+    // Dynamic file serving based on parameter / 매개변수 기반 동적 파일 제공
+    app.GET("/files/:filename", func(w http.ResponseWriter, r *http.Request) {
+        ctx := websvrutil.GetContext(r)
+        filename := ctx.Param("filename")
+        filepath := fmt.Sprintf("./uploads/%s", filename)
+        ctx.File(filepath)
+    })
+
+    log.Println("Server starting on :8080")
+    if err := app.Run(":8080"); err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
 ## Upcoming Features / 예정된 기능
 
 The following features are planned for future releases:
@@ -756,6 +813,7 @@ The following features are planned for future releases:
 - ✅ v1.11.013: Request Binding (Bind, BindJSON, BindForm, BindQuery) / 요청 바인딩 (Bind, BindJSON, BindForm, BindQuery)
 - ✅ v1.11.014: Cookie & Header Helpers (Cookie, SetCookie, DeleteCookie, GetCookie, AddHeader, GetHeaders, ClientIP) / 쿠키 및 헤더 헬퍼
 - ✅ v1.11.015: File Upload (FormFile, MultipartForm, SaveUploadedFile, MaxUploadSize) / 파일 업로드 (FormFile, MultipartForm, SaveUploadedFile, MaxUploadSize)
+- ✅ v1.11.016: Static File Serving (Static, File, FileAttachment) / 정적 파일 서빙 (Static, File, FileAttachment)
 
 ## Documentation / 문서
 

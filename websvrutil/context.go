@@ -836,3 +836,36 @@ func (c *Context) SaveUploadedFile(file *multipart.FileHeader, dst string) error
 	_, err = io.Copy(out, src)
 	return err
 }
+
+// ============================================================================
+// Static File Serving / 정적 파일 서빙
+// ============================================================================
+
+// File sends a file response to the client.
+// File은 클라이언트에게 파일 응답을 전송합니다.
+//
+// The filepath should be the absolute or relative path to the file.
+// filepath는 파일의 절대 경로 또는 상대 경로여야 합니다.
+//
+// Example / 예제:
+//
+//	ctx.File("./public/index.html")
+func (c *Context) File(filepath string) error {
+	http.ServeFile(c.ResponseWriter, c.Request, filepath)
+	return nil
+}
+
+// FileAttachment sends a file as a downloadable attachment.
+// FileAttachment는 파일을 다운로드 가능한 첨부 파일로 전송합니다.
+//
+// The filename parameter sets the name shown in the download dialog.
+// filename 매개변수는 다운로드 대화상자에 표시되는 이름을 설정합니다.
+//
+// Example / 예제:
+//
+//	ctx.FileAttachment("./reports/report.pdf", "monthly-report.pdf")
+func (c *Context) FileAttachment(filepath, filename string) error {
+	c.SetHeader("Content-Disposition", fmt.Sprintf("attachment; filename=%q", filename))
+	http.ServeFile(c.ResponseWriter, c.Request, filepath)
+	return nil
+}

@@ -273,6 +273,42 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 	return a
 }
 
+// Static registers a route to serve static files from a directory.
+// Static은 디렉토리에서 정적 파일을 제공하는 라우트를 등록합니다.
+//
+// The prefix is the URL path prefix (e.g., "/static"), and dir is the directory path.
+// prefix는 URL 경로 접두사(예: "/static")이고, dir은 디렉토리 경로입니다.
+//
+// Example / 예제:
+//
+//	app.Static("/static", "./public")
+//	// Serves files from ./public directory at /static/* URLs
+//	// ./public 디렉토리의 파일을 /static/* URL에서 제공
+func (a *App) Static(prefix, dir string) *App {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.running {
+		panic("cannot add routes while server is running")
+	}
+
+	// Create file server handler
+	// 파일 서버 핸들러 생성
+	fileServer := http.StripPrefix(prefix, http.FileServer(http.Dir(dir)))
+
+	// Register wildcard route for all files under prefix
+	// prefix 하위의 모든 파일에 대한 와일드카드 라우트 등록
+	pattern := prefix + "/*"
+
+	if router, ok := a.router.(*Router); ok {
+		router.GET(pattern, func(w http.ResponseWriter, r *http.Request) {
+			fileServer.ServeHTTP(w, r)
+		})
+	}
+
+	return a
+}
+
 // Run starts the HTTP server on the specified address.
 // Run은 지정된 주소에서 HTTP 서버를 시작합니다.
 //

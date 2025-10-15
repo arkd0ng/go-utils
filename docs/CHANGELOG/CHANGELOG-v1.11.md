@@ -5,6 +5,58 @@
 
 ---
 
+## [v1.11.016] - 2025-10-16
+
+### Added / 추가
+- **Static File Serving** / **정적 파일 서빙** (`app.go`, `context.go`)
+  - `Static(prefix, dir string) *App` (App method) - Serve static files from directory
+  - `File(filepath string) error` (Context method) - Send file response to client
+  - `FileAttachment(filepath, filename string) error` (Context method) - Send file as downloadable attachment
+  - Automatic Content-Type detection based on file extension
+  - Support for multiple static directories with different prefixes
+  - Built on standard library http.FileServer and http.ServeFile
+
+- **File Serving Features** / **파일 서빙 기능**
+  - Static directory serving with URL prefix stripping
+  - Direct file serving with automatic MIME type detection
+  - Download attachment with custom filename
+  - Wildcard route registration for static files
+  - Subdirectory support in static file serving
+
+- **Comprehensive Tests** / **종합 테스트** (`static_test.go`)
+  - `TestStaticFileServing` - Test serving files from directory
+  - `TestStaticNotFound` - Test 404 for non-existent files
+  - `TestStaticMultiplePrefixes` - Test multiple static directories
+  - `TestFile` - Test File method with automatic Content-Type
+  - `TestFileNotFound` - Test 404 for non-existent file
+  - `TestFileAttachment` - Test file download with Content-Disposition
+  - `TestFileAttachmentDifferentTypes` - Test various file types (PDF, ZIP, TXT, JPG)
+  - `BenchmarkStaticFileServing` - Benchmark static file serving
+  - `BenchmarkFile` - Benchmark File method
+  - **Total: 7 test functions + 2 benchmarks** for static file serving
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.016
+- Bumped version to v1.11.016 in `cfg/app.yaml`
+- Updated `README.md` with Static File Serving section and examples
+- Added new file: `static_test.go`
+
+### Testing Coverage / 테스트 커버리지
+- **7 new test functions + 2 benchmarks** for static file serving
+- **Total: 190+ test functions**, **Total: 43 benchmark functions**
+- **78.6% test coverage** - All tests passing ✅
+
+### Notes / 참고사항
+- Static() method uses http.FileServer for efficient file serving
+- File() and FileAttachment() use http.ServeFile with automatic MIME detection
+- Multiple static directories can be served with different URL prefixes
+- FileAttachment() sets Content-Disposition header for download
+- All file operations support subdirectories
+- Examples include multiple static directories, specific files, and dynamic file serving
+- Next: v1.11.017+ will add context storage and middleware enhancements
+
+---
+
 ## [v1.11.015] - 2025-10-16
 
 ### Added / 추가
