@@ -210,8 +210,8 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 	logger.Info("   Step 3: Writing content to file...")
 	logger.Info("   단계 3: 파일에 내용 쓰기 중...")
-	logger.Info(fmt.Sprintf("   → Writing %d bytes (characters)", len(content1)))
-	logger.Info(fmt.Sprintf("   → %d 바이트(문자) 쓰기 중", len(content1)))
+	logger.Info("   → Writing %d bytes (characters)", len(content1))
+	logger.Info("   → %d 바이트(문자) 쓰기 중", len(content1))
 	logger.Info("")
 
 	// Verify the write
@@ -228,11 +228,11 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 		logger.Info("")
 		logger.Info("🔍 Verification / 검증:")
 		readBack, _ := fileutil.ReadString(file1)
-		logger.Info(fmt.Sprintf("   • File exists: %v (파일 존재 여부)", fileutil.Exists(file1)))
-		logger.Info(fmt.Sprintf("   • Is file: %v (파일 타입 확인)", fileutil.IsFile(file1)))
-		logger.Info(fmt.Sprintf("   • Is readable: %v (읽기 가능 여부)", fileutil.IsReadable(file1)))
-		logger.Info(fmt.Sprintf("   • Is writable: %v (쓰기 가능 여부)", fileutil.IsWritable(file1)))
-		logger.Info(fmt.Sprintf("   • Content matches: %v (내용 일치 여부)", readBack == content1))
+		logger.Info("   • File exists: %v (파일 존재 여부)", fileutil.Exists(file1))
+		logger.Info("   • Is file: %v (파일 타입 확인)", fileutil.IsFile(file1))
+		logger.Info("   • Is readable: %v (읽기 가능 여부)", fileutil.IsReadable(file1))
+		logger.Info("   • Is writable: %v (쓰기 가능 여부)", fileutil.IsWritable(file1))
+		logger.Info("   • Content matches: %v (내용 일치 여부)", readBack == content1)
 		logger.Info("")
 	} else {
 		logger.Error("❌ File was not created successfully")
@@ -339,7 +339,7 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	logger.Info("   }")
 	logger.Info(fmt.Sprintf("   fileutil.WriteLines(\"%s\", lines)", filepath.Base(file3)))
 	logger.Info("")
-	logger.Info(fmt.Sprintf("   Array Details / 배열 상세 정보:"))
+	logger.Info("   Array Details / 배열 상세 정보:")
 	logger.Info(fmt.Sprintf("   • Total lines: %d", len(lines)))
 	logger.Info(fmt.Sprintf("   • Total characters: %d", len("First line of text")+len("Second line of text")+len("Third line of text")))
 	logger.Info("   • Each line will be separated by newline character")
@@ -409,8 +409,8 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	logger.Info(fmt.Sprintf("   fileutil.WriteJSON(\"%s\", user)", filepath.Base(file4)))
 	logger.Info("")
 	logger.Info("   Struct Details / 구조체 상세 정보:")
-	logger.Info(fmt.Sprintf("   • Type: User"))
-	logger.Info(fmt.Sprintf("   • Fields: 3 (ID, Name, Age)"))
+	logger.Info("   • Type: User")
+	logger.Info("   • Fields: 3 (ID, Name, Age)")
 	jsonBytes, _ := json.MarshalIndent(user, "", "  ")
 	logger.Info(fmt.Sprintf("   • JSON size: %d bytes", len(jsonBytes)))
 	logger.Info("")
@@ -625,7 +625,7 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	logger.Info("✅ Append Operation Successful / 추가 작업 성공")
 	logger.Info(fmt.Sprintf("   📄 File: %s", filepath.Base(file1)))
 	logger.Info(fmt.Sprintf("   📏 Size change: %d → %d bytes (+%d)", originalSize, newSize, newSize-originalSize))
-	logger.Info(fmt.Sprintf("   📝 Lines appended: 2"))
+	logger.Info("   📝 Lines appended: 2")
 	logger.Info("")
 	logger.Info("   📄 Updated Content / 업데이트된 내용:")
 	logger.Info("   " + strings.Repeat("─", 70))
@@ -702,9 +702,9 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	logger.Info("   7. AppendString - Text appending")
 	logger.Info("   8. AppendLines  - Multi-line appending")
 	logger.Info("")
-	logger.Info(fmt.Sprintf("   📁 Files created: 6"))
-	logger.Info(fmt.Sprintf("   📝 Files appended: 2"))
-	logger.Info(fmt.Sprintf("   💾 Total operations: 8"))
+	logger.Info("   📁 Files created: 6")
+	logger.Info("   📝 Files appended: 2")
+	logger.Info("   💾 Total operations: 8")
 	logger.Info("")
 }
 
@@ -1004,14 +1004,16 @@ func example02_FileReading(logger *logging.Logger, tempDir string) {
 	logger.Info("   5. ReadYAML   - YAML deserialization")
 	logger.Info("   6. ReadCSV    - CSV parsing")
 	logger.Info("")
-	logger.Info(fmt.Sprintf("   📁 Files read: 6"))
-	logger.Info(fmt.Sprintf("   📦 Data formats: String, Bytes, Lines, JSON, YAML, CSV"))
-	logger.Info(fmt.Sprintf("   💾 Total operations: 6"))
+	logger.Info("   📁 Files read: 6")
+	logger.Info("   📦 Data formats: String, Bytes, Lines, JSON, YAML, CSV")
+	logger.Info("   💾 Total operations: 6")
 	logger.Info("")
 }
 
 // Example 3: Path Operations / 예제 3: 경로 작업
 func example03_PathOperations(logger *logging.Logger, tempDir string) {
+	_ = tempDir // Path operations don't require tempDir / 경로 작업은 tempDir이 필요하지 않습니다
+
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🛤️  Example 3: Path Operations")
 	logger.Info("   예제 3: 경로 작업")
@@ -1068,9 +1070,9 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info(fmt.Sprintf("   🔧 Separator used: OS-specific (%s)", string(filepath.Separator)))
 	logger.Info("")
 	logger.Info("🔍 Verification / 검증:")
-	logger.Info(fmt.Sprintf("   • Contains all elements: true"))
-	logger.Info(fmt.Sprintf("   • Properly separated: true"))
-	logger.Info(fmt.Sprintf("   • Cross-platform safe: true"))
+	logger.Info("   • Contains all elements: true")
+	logger.Info("   • Properly separated: true")
+	logger.Info("   • Cross-platform safe: true")
 	logger.Info("")
 
 	// 2. Split - Split path into directory and file / 경로를 디렉토리와 파일로 분리
@@ -1585,13 +1587,6 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Helper function to get minimum of two integers
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
 
 // Example 4: File Information / 예제 4: 파일 정보
 func example04_FileInformation(logger *logging.Logger, tempDir string) {
@@ -2217,6 +2212,8 @@ func example13_SymlinksAndSpecialFiles(logger *logging.Logger, tempDir string) {
 
 // Example 14: Walking & Filtering (already covered in Example 8)
 func example14_WalkAndFilter(logger *logging.Logger, tempDir string) {
+	_ = tempDir // This example refers to Example 8 / 이 예제는 예제 8을 참조합니다
+
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🚶 Example 14: Walking & Filtering (Advanced)")
 	logger.Info("   예제 14: 디렉토리 순회 및 필터링 (고급)")
