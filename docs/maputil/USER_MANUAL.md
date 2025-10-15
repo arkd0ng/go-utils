@@ -1020,7 +1020,1188 @@ counts := maputil.CountBy(txns, func(t Transaction) string {
 
 ---
 
-*[The USER_MANUAL continues with Categories 4-10, Usage Patterns, Common Use Cases, Best Practices, Performance Considerations, Troubleshooting, FAQ, and Additional Resources sections...]*
+### Category 4: Merge Operations / 병합 작업
 
-*Due to length limitations, this is the first part of the USER_MANUAL. The complete document would continue with the remaining categories and sections following the same detailed format.*
+Functions for merging and combining maps.
+맵을 병합하고 결합하는 함수입니다.
 
+#### 4.1 Merge
+
+```go
+func Merge[K comparable, V any](maps ...map[K]V) map[K]V
+```
+
+Merges multiple maps into a single map. If duplicate keys exist, the value from the last map wins.
+여러 맵을 단일 맵으로 병합합니다. 중복 키가 있으면 마지막 맵의 값이 우선합니다.
+
+**Example / 예제:**
+```go
+m1 := map[string]int{"a": 1, "b": 2}
+m2 := map[string]int{"b": 3, "c": 4}
+m3 := map[string]int{"c": 5, "d": 6}
+result := maputil.Merge(m1, m2, m3)
+// Result: map[string]int{"a": 1, "b": 3, "c": 5, "d": 6}
+```
+
+**Use Case / 사용 사례**: Merge configuration from multiple sources (defaults, environment, user settings) / 여러 소스의 설정 병합 (기본값, 환경, 사용자 설정)
+
+---
+
+#### 4.2 MergeWith
+
+```go
+func MergeWith[K comparable, V any](fn func(V, V) V, maps ...map[K]V) map[K]V
+```
+
+Merges multiple maps using a custom resolver function for duplicate keys. The resolver receives the old and new values and returns the value to use.
+중복 키에 대해 사용자 정의 해결 함수를 사용하여 여러 맵을 병합합니다. 해결 함수는 이전 값과 새 값을 받아 사용할 값을 반환합니다.
+
+**Example / 예제:**
+```go
+m1 := map[string]int{"a": 1, "b": 2}
+m2 := map[string]int{"b": 3, "c": 4}
+result := maputil.MergeWith(
+    func(old, new int) int { return old + new }, // Sum on conflict
+    m1, m2,
+)
+// Result: map[string]int{"a": 1, "b": 5, "c": 4}
+```
+
+**Use Case / 사용 사례**: Aggregate metrics from multiple sources (sum counters, take max, etc.) / 여러 소스의 메트릭 집계 (카운터 합산, 최댓값 선택 등)
+
+---
+
+#### 4.3 DeepMerge
+
+```go
+func DeepMerge(maps ...map[string]interface{}) map[string]interface{}
+```
+
+Performs a deep merge of nested string maps. Nested maps are recursively merged. For non-map values, the last value wins.
+중첩된 문자열 맵을 깊이 병합합니다. 중첩된 맵은 재귀적으로 병합됩니다. 맵이 아닌 값의 경우 마지막 값이 우선합니다.
+
+**Example / 예제:**
+```go
+m1 := map[string]interface{}{
+    "user": map[string]interface{}{"name": "Alice", "age": 25},
+}
+m2 := map[string]interface{}{
+    "user": map[string]interface{}{"age": 26, "city": "Seoul"},
+}
+result := maputil.DeepMerge(m1, m2)
+// Result: {"user": {"name": "Alice", "age": 26, "city": "Seoul"}}
+```
+
+**Use Case / 사용 사례**: Merge nested configuration objects / 중첩된 설정 객체 병합
+
+---
+
+#### 4.4 Union
+
+```go
+func Union[K comparable, V any](maps ...map[K]V) map[K]V
+```
+
+Alias for Merge. Returns a union of all input maps.
+Merge의 별칭입니다. 모든 입력 맵의 합집합을 반환합니다.
+
+**Example / 예제:**
+```go
+m1 := map[string]int{"a": 1, "b": 2}
+m2 := map[string]int{"c": 3, "d": 4}
+result := maputil.Union(m1, m2)
+// Result: map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+```
+
+**Use Case / 사용 사례**: Combine feature flags, permissions, or tags from multiple sources / 여러 소스의 기능 플래그, 권한 또는 태그 결합
+
+---
+
+#### 4.5 Intersection
+
+```go
+func Intersection[K comparable, V any](maps ...map[K]V) map[K]V
+```
+
+Returns a map containing only keys that exist in all input maps. Values are taken from the first map.
+모든 입력 맵에 존재하는 키만 포함하는 맵을 반환합니다. 값은 첫 번째 맵에서 가져옵니다.
+
+**Example / 예제:**
+```go
+m1 := map[string]int{"a": 1, "b": 2, "c": 3}
+m2 := map[string]int{"b": 20, "c": 30, "d": 40}
+m3 := map[string]int{"c": 100, "d": 200}
+result := maputil.Intersection(m1, m2, m3)
+// Result: map[string]int{"c": 3}
+```
+
+**Use Case / 사용 사례**: Find common permissions across roles, or shared feature flags / 역할 간 공통 권한 찾기 또는 공유 기능 플래그
+
+---
+
+#### 4.6 Difference
+
+```go
+func Difference[K comparable, V any](m1, m2 map[K]V) map[K]V
+```
+
+Returns a map containing keys from the first map that are not in the second map.
+첫 번째 맵에는 있지만 두 번째 맵에는 없는 키를 포함하는 맵을 반환합니다.
+
+**Example / 예제:**
+```go
+m1 := map[string]int{"a": 1, "b": 2, "c": 3}
+m2 := map[string]int{"b": 20, "d": 40}
+result := maputil.Difference(m1, m2)
+// Result: map[string]int{"a": 1, "c": 3}
+```
+
+**Use Case / 사용 사례**: Find removed items, deprecated keys, or revoked permissions / 제거된 항목, 더 이상 사용되지 않는 키 또는 취소된 권한 찾기
+
+---
+
+#### 4.7 SymmetricDifference
+
+```go
+func SymmetricDifference[K comparable, V any](m1, m2 map[K]V) map[K]V
+```
+
+Returns a map containing keys that exist in either map but not in both (XOR operation).
+어느 한 맵에는 있지만 두 맵 모두에는 없는 키를 포함하는 맵을 반환합니다 (XOR 연산).
+
+**Example / 예제:**
+```go
+m1 := map[string]int{"a": 1, "b": 2, "c": 3}
+m2 := map[string]int{"b": 20, "c": 30, "d": 40}
+result := maputil.SymmetricDifference(m1, m2)
+// Result: map[string]int{"a": 1, "d": 40}
+```
+
+**Use Case / 사용 사례**: Find unique features between two systems, or exclusive permissions / 두 시스템 간 고유 기능 또는 배타적 권한 찾기
+
+---
+
+#### 4.8 Assign
+
+```go
+func Assign[K comparable, V any](target map[K]V, sources ...map[K]V) map[K]V
+```
+
+Merges source maps into the target map (mutating operation). **WARNING**: This function modifies the target map in place.
+소스 맵을 대상 맵에 병합합니다 (변경 작업). **경고**: 이 함수는 대상 맵을 직접 수정합니다.
+
+**Example / 예제:**
+```go
+target := map[string]int{"a": 1, "b": 2}
+source := map[string]int{"b": 3, "c": 4}
+result := maputil.Assign(target, source)
+// target is modified: map[string]int{"a": 1, "b": 3, "c": 4}
+// result points to the same map as target
+```
+
+**Use Case / 사용 사례**: Performance-critical code where mutation is acceptable and memory allocation should be minimized / 변경이 허용되고 메모리 할당을 최소화해야 하는 성능 중심 코드
+
+---
+
+### Category 5: Filter Operations / 필터 작업
+
+Functions for filtering map entries based on predicates.
+조건에 따라 맵 항목을 필터링하는 함수입니다.
+
+#### 5.1 Filter
+
+```go
+func Filter[K comparable, V any](m map[K]V, fn func(K, V) bool) map[K]V
+```
+
+Returns a new map containing only the entries that satisfy the predicate.
+조건을 만족하는 항목만 포함하는 새 맵을 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+result := maputil.Filter(m, func(k string, v int) bool {
+    return v > 2
+})
+// Result: map[string]int{"c": 3, "d": 4}
+```
+
+**Use Case / 사용 사례**: Filter user data by criteria, extract active sessions, or remove invalid entries / 기준에 따라 사용자 데이터 필터링, 활성 세션 추출 또는 잘못된 항목 제거
+
+---
+
+#### 5.2 FilterKeys
+
+```go
+func FilterKeys[K comparable, V any](m map[K]V, fn func(K) bool) map[K]V
+```
+
+Returns a new map containing only the entries with keys that satisfy the predicate.
+조건을 만족하는 키를 가진 항목만 포함하는 새 맵을 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"apple": 1, "banana": 2, "cherry": 3}
+result := maputil.FilterKeys(m, func(k string) bool {
+    return len(k) > 5
+})
+// Result: map[string]int{"banana": 2, "cherry": 3}
+```
+
+**Use Case / 사용 사례**: Filter by naming patterns, extract prefixed keys, or select keys matching regex / 명명 패턴으로 필터링, 접두사가 있는 키 추출 또는 정규식과 일치하는 키 선택
+
+---
+
+#### 5.3 FilterValues
+
+```go
+func FilterValues[K comparable, V any](m map[K]V, fn func(V) bool) map[K]V
+```
+
+Returns a new map containing only the entries with values that satisfy the predicate.
+조건을 만족하는 값을 가진 항목만 포함하는 새 맵을 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+result := maputil.FilterValues(m, func(v int) bool {
+    return v%2 == 0
+})
+// Result: map[string]int{"b": 2, "d": 4}
+```
+
+**Use Case / 사용 사례**: Filter even/odd values, extract values within range, or select by value type / 짝수/홀수 값 필터링, 범위 내 값 추출 또는 값 타입으로 선택
+
+---
+
+#### 5.4 Pick
+
+```go
+func Pick[K comparable, V any](m map[K]V, keys ...K) map[K]V
+```
+
+Returns a new map containing only the specified keys. Keys that don't exist in the original map are ignored.
+지정된 키만 포함하는 새 맵을 반환합니다. 원본 맵에 존재하지 않는 키는 무시됩니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+result := maputil.Pick(m, "a", "c", "e")
+// Result: map[string]int{"a": 1, "c": 3}
+```
+
+**Use Case / 사용 사례**: Extract public fields from user data, select specific columns, or whitelist keys / 사용자 데이터에서 공개 필드 추출, 특정 열 선택 또는 화이트리스트 키
+
+---
+
+#### 5.5 Omit
+
+```go
+func Omit[K comparable, V any](m map[K]V, keys ...K) map[K]V
+```
+
+Returns a new map excluding the specified keys.
+지정된 키를 제외한 새 맵을 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+result := maputil.Omit(m, "b", "d")
+// Result: map[string]int{"a": 1, "c": 3}
+```
+
+**Use Case / 사용 사례**: Remove sensitive fields (password, token), exclude internal fields, or blacklist keys / 민감한 필드 제거 (비밀번호, 토큰), 내부 필드 제외 또는 블랙리스트 키
+
+---
+
+#### 5.6 PickBy
+
+```go
+func PickBy[K comparable, V any](m map[K]V, fn func(K, V) bool) map[K]V
+```
+
+Returns a new map containing only entries that satisfy the predicate. This is an alias for Filter.
+조건을 만족하는 항목만 포함하는 새 맵을 반환합니다. 이것은 Filter의 별칭입니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+result := maputil.PickBy(m, func(k string, v int) bool {
+    return v > 2
+})
+// Result: map[string]int{"c": 3, "d": 4}
+```
+
+**Use Case / 사용 사례**: Same as Filter - conditional data selection / Filter와 동일 - 조건부 데이터 선택
+
+---
+
+#### 5.7 OmitBy
+
+```go
+func OmitBy[K comparable, V any](m map[K]V, fn func(K, V) bool) map[K]V
+```
+
+Returns a new map excluding entries that satisfy the predicate. This is the inverse of Filter.
+조건을 만족하는 항목을 제외한 새 맵을 반환합니다. 이것은 Filter의 반대입니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+result := maputil.OmitBy(m, func(k string, v int) bool {
+    return v%2 == 0
+})
+// Result: map[string]int{"a": 1, "c": 3}
+```
+
+**Use Case / 사용 사례**: Remove entries matching criteria, filter out invalid data, or exclude by condition / 기준과 일치하는 항목 제거, 잘못된 데이터 필터링 또는 조건별 제외
+
+---
+
+### Category 6: Conversion / 변환
+
+Functions for converting between maps, slices, and JSON.
+맵, 슬라이스 및 JSON 간 변환을 위한 함수입니다.
+
+#### 6.1 Keys
+
+```go
+func Keys[K comparable, V any](m map[K]V) []K
+```
+
+Returns all keys from the map as a slice. The order is not guaranteed (maps are unordered).
+맵의 모든 키를 슬라이스로 반환합니다. 순서는 보장되지 않습니다 (맵은 순서가 없음).
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+keys := maputil.Keys(m)
+// Result: []string{"a", "b", "c"} (order may vary)
+```
+
+**Use Case / 사용 사례**: Extract all keys for iteration, validation, or display / 반복, 검증 또는 표시를 위해 모든 키 추출
+
+---
+
+#### 6.2 Values
+
+```go
+func Values[K comparable, V any](m map[K]V) []V
+```
+
+Returns all values from the map as a slice. The order is not guaranteed.
+맵의 모든 값을 슬라이스로 반환합니다. 순서는 보장되지 않습니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+values := maputil.Values(m)
+// Result: []int{1, 2, 3} (order may vary)
+```
+
+**Use Case / 사용 사례**: Extract all values for aggregation, statistics, or bulk operations / 집계, 통계 또는 대량 작업을 위해 모든 값 추출
+
+---
+
+#### 6.3 Entries
+
+```go
+func Entries[K comparable, V any](m map[K]V) []Entry[K, V]
+```
+
+Returns all key-value pairs from the map as a slice of Entry structs.
+맵의 모든 키-값 쌍을 Entry 구조체의 슬라이스로 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2}
+entries := maputil.Entries(m)
+// Result: []Entry[string, int]{
+//     {Key: "a", Value: 1},
+//     {Key: "b", Value: 2},
+// } (order may vary)
+```
+
+**Use Case / 사용 사례**: Convert map to sortable slice, serialize to structured format / 맵을 정렬 가능한 슬라이스로 변환, 구조화된 형식으로 직렬화
+
+---
+
+#### 6.4 FromEntries
+
+```go
+func FromEntries[K comparable, V any](entries []Entry[K, V]) map[K]V
+```
+
+Creates a map from a slice of Entry structs. If duplicate keys exist, the last entry wins.
+Entry 구조체의 슬라이스로부터 맵을 생성합니다. 중복 키가 있으면 마지막 항목이 우선합니다.
+
+**Example / 예제:**
+```go
+entries := []Entry[string, int]{
+    {Key: "a", Value: 1},
+    {Key: "b", Value: 2},
+}
+m := maputil.FromEntries(entries)
+// Result: map[string]int{"a": 1, "b": 2}
+```
+
+**Use Case / 사용 사례**: Reconstruct map from sorted entries, deserialize structured data / 정렬된 항목에서 맵 재구성, 구조화된 데이터 역직렬화
+
+---
+
+#### 6.5 ToJSON
+
+```go
+func ToJSON[K comparable, V any](m map[K]V) (string, error)
+```
+
+Converts a map to a JSON string. Returns an error if the map cannot be marshaled to JSON.
+맵을 JSON 문자열로 변환합니다. 맵을 JSON으로 마샬링할 수 없으면 에러를 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+json, err := maputil.ToJSON(m)
+// Result: `{"a":1,"b":2,"c":3}`
+```
+
+**Use Case / 사용 사례**: Serialize map for API response, logging, or storage / API 응답, 로깅 또는 저장소를 위해 맵 직렬화
+
+---
+
+#### 6.6 FromJSON
+
+```go
+func FromJSON[K comparable, V any](jsonStr string, m *map[K]V) error
+```
+
+Parses a JSON string into a map. Returns an error if the JSON string cannot be unmarshaled.
+JSON 문자열을 맵으로 파싱합니다. JSON 문자열을 언마샬링할 수 없으면 에러를 반환합니다.
+
+**Example / 예제:**
+```go
+var m map[string]int
+err := maputil.FromJSON(`{"a":1,"b":2,"c":3}`, &m)
+// m = map[string]int{"a": 1, "b": 2, "c": 3}
+```
+
+**Use Case / 사용 사례**: Parse API request body, configuration files, or stored data / API 요청 본문, 설정 파일 또는 저장된 데이터 파싱
+
+---
+
+#### 6.7 ToSlice
+
+```go
+func ToSlice[K comparable, V any, R any](m map[K]V, fn func(K, V) R) []R
+```
+
+Converts a map to a slice using a transformation function.
+변환 함수를 사용하여 맵을 슬라이스로 변환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+slice := maputil.ToSlice(m, func(k string, v int) string {
+    return fmt.Sprintf("%s=%d", k, v)
+})
+// Result: []string{"a=1", "b=2", "c=3"} (order may vary)
+```
+
+**Use Case / 사용 사례**: Convert map to formatted strings, create display list, or transform to DTOs / 맵을 형식화된 문자열로 변환, 표시 목록 생성 또는 DTO로 변환
+
+---
+
+#### 6.8 FromSlice
+
+```go
+func FromSlice[K comparable, V any](slice []V, fn func(V) K) map[K]V
+```
+
+Creates a map from a slice using a key extraction function. If duplicate keys exist, the last value wins.
+키 추출 함수를 사용하여 슬라이스로부터 맵을 생성합니다. 중복 키가 있으면 마지막 값이 우선합니다.
+
+**Example / 예제:**
+```go
+type User struct { ID int; Name string }
+users := []User{{ID: 1, Name: "Alice"}, {ID: 2, Name: "Bob"}}
+m := maputil.FromSlice(users, func(u User) int {
+    return u.ID
+})
+// Result: map[int]User{1: {ID: 1, Name: "Alice"}, 2: {ID: 2, Name: "Bob"}}
+```
+
+**Use Case / 사용 사례**: Index slice by ID, create lookup tables, or convert list to map / ID로 슬라이스 인덱싱, 조회 테이블 생성 또는 목록을 맵으로 변환
+
+---
+
+#### 6.9 FromSliceBy
+
+```go
+func FromSliceBy[K comparable, V any, R any](slice []V, keyFn func(V) K, valueFn func(V) R) map[K]R
+```
+
+Creates a map from a slice using key and value extraction functions.
+키와 값 추출 함수를 사용하여 슬라이스로부터 맵을 생성합니다.
+
+**Example / 예제:**
+```go
+type User struct { ID int; Name string; Age int }
+users := []User{{ID: 1, Name: "Alice", Age: 25}, {ID: 2, Name: "Bob", Age: 30}}
+m := maputil.FromSliceBy(users,
+    func(u User) int { return u.ID },
+    func(u User) string { return u.Name },
+)
+// Result: map[int]string{1: "Alice", 2: "Bob"}
+```
+
+**Use Case / 사용 사례**: Create ID-to-name mappings, extract specific fields, or build custom indexes / ID-이름 매핑 생성, 특정 필드 추출 또는 사용자 정의 인덱스 구축
+
+---
+
+### Category 7: Predicate Checks / 조건 검사
+
+Functions for checking conditions on map entries.
+맵 항목에 대한 조건을 확인하는 함수입니다.
+
+#### 7.1 Every
+
+```go
+func Every[K comparable, V any](m map[K]V, fn func(K, V) bool) bool
+```
+
+Checks whether all entries in the map satisfy the predicate. Returns true for empty maps.
+맵의 모든 항목이 조건을 만족하는지 확인합니다. 빈 맵의 경우 true를 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 2, "b": 4, "c": 6}
+allEven := maputil.Every(m, func(k string, v int) bool {
+    return v%2 == 0
+})
+// Result: true
+```
+
+**Use Case / 사용 사례**: Validate all entries meet criteria, check all users are active, or verify data integrity / 모든 항목이 기준을 충족하는지 검증, 모든 사용자가 활성인지 확인 또는 데이터 무결성 확인
+
+---
+
+#### 7.2 Some
+
+```go
+func Some[K comparable, V any](m map[K]V, fn func(K, V) bool) bool
+```
+
+Checks whether at least one entry in the map satisfies the predicate. Returns false for empty maps.
+맵의 최소 하나의 항목이 조건을 만족하는지 확인합니다. 빈 맵의 경우 false를 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+hasEven := maputil.Some(m, func(k string, v int) bool {
+    return v%2 == 0
+})
+// Result: true (because of "b": 2)
+```
+
+**Use Case / 사용 사례**: Check if any entry meets criteria, detect at least one error, or find any match / 항목이 기준을 충족하는지 확인, 최소 하나의 오류 감지 또는 일치 항목 찾기
+
+---
+
+#### 7.3 None
+
+```go
+func None[K comparable, V any](m map[K]V, fn func(K, V) bool) bool
+```
+
+Checks whether no entries in the map satisfy the predicate. Returns true for empty maps.
+맵의 어떤 항목도 조건을 만족하지 않는지 확인합니다. 빈 맵의 경우 true를 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 3, "c": 5}
+noEven := maputil.None(m, func(k string, v int) bool {
+    return v%2 == 0
+})
+// Result: true
+```
+
+**Use Case / 사용 사례**: Verify no errors exist, check no invalid entries, or confirm absence of condition / 오류가 없는지 확인, 잘못된 항목이 없는지 확인 또는 조건의 부재 확인
+
+---
+
+#### 7.4 HasValue
+
+```go
+func HasValue[K comparable, V comparable](m map[K]V, value V) bool
+```
+
+Checks whether a value exists in the map.
+맵에 값이 존재하는지 확인합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+exists := maputil.HasValue(m, 2)  // true
+exists = maputil.HasValue(m, 5)   // false
+```
+
+**Use Case / 사용 사례**: Check if specific value is present, validate value existence, or search by value / 특정 값이 있는지 확인, 값 존재 검증 또는 값으로 검색
+
+---
+
+#### 7.5 HasEntry
+
+```go
+func HasEntry[K comparable, V comparable](m map[K]V, key K, value V) bool
+```
+
+Checks whether a specific key-value pair exists in the map.
+특정 키-값 쌍이 맵에 존재하는지 확인합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+exists := maputil.HasEntry(m, "b", 2)  // true
+exists = maputil.HasEntry(m, "b", 3)   // false
+```
+
+**Use Case / 사용 사례**: Validate exact key-value match, check configuration setting, or verify state / 정확한 키-값 일치 검증, 설정 확인 또는 상태 확인
+
+---
+
+#### 7.6 IsSubset
+
+```go
+func IsSubset[K comparable, V comparable](subset, superset map[K]V) bool
+```
+
+Checks whether the first map is a subset of the second map. A map is a subset if all its key-value pairs exist in the superset.
+첫 번째 맵이 두 번째 맵의 부분집합인지 확인합니다. 모든 키-값 쌍이 상위집합에 존재하면 부분집합입니다.
+
+**Example / 예제:**
+```go
+subset := map[string]int{"a": 1, "b": 2}
+superset := map[string]int{"a": 1, "b": 2, "c": 3}
+result := maputil.IsSubset(subset, superset)
+// Result: true
+```
+
+**Use Case / 사용 사례**: Verify permissions are subset of allowed permissions, check feature subset, or validate configuration / 권한이 허용된 권한의 부분집합인지 확인, 기능 부분집합 확인 또는 설정 검증
+
+---
+
+#### 7.7 IsSuperset
+
+```go
+func IsSuperset[K comparable, V comparable](superset, subset map[K]V) bool
+```
+
+Checks whether a map is a superset of another map. A map is a superset if it contains all key-value pairs from the subset.
+맵이 다른 맵의 상위집합인지 확인합니다. 맵이 subset의 모든 키-값 쌍을 포함하면 상위집합입니다.
+
+**Example / 예제:**
+```go
+superset := map[string]int{"a": 1, "b": 2, "c": 3}
+subset := map[string]int{"a": 1, "b": 2}
+result := maputil.IsSuperset(superset, subset)
+// Result: true
+```
+
+**Use Case / 사용 사례**: Check if permissions include required set, verify feature availability, or validate coverage / 권한에 필수 세트가 포함되어 있는지 확인, 기능 가용성 확인 또는 범위 검증
+
+---
+
+### Category 8: Key Operations / 키 작업
+
+Functions for manipulating and querying map keys.
+맵 키를 조작하고 쿼리하는 함수입니다.
+
+#### 8.1 KeysSorted
+
+```go
+func KeysSorted[K Ordered, V any](m map[K]V) []K
+```
+
+Returns all keys from the map as a sorted slice.
+맵의 모든 키를 정렬된 슬라이스로 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"c": 3, "a": 1, "b": 2}
+keys := maputil.KeysSorted(m)
+// Result: []string{"a", "b", "c"}
+```
+
+**Use Case / 사용 사례**: Sorted iteration, deterministic output, or ordered display / 정렬된 반복, 결정적 출력 또는 정렬된 표시
+
+---
+
+#### 8.2 FindKey
+
+```go
+func FindKey[K comparable, V any](m map[K]V, fn func(K, V) bool) (K, bool)
+```
+
+Finds the first key that satisfies the predicate. Returns the key and true if found, or zero value and false otherwise.
+조건을 만족하는 첫 번째 키를 찾습니다. 찾으면 키와 true를 반환하고, 그렇지 않으면 zero 값과 false를 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+key, found := maputil.FindKey(m, func(k string, v int) bool {
+    return v > 2
+})
+// key = "c", found = true (may vary due to map iteration order)
+```
+
+**Use Case / 사용 사례**: Find first match, search by condition, or locate specific entry / 첫 번째 일치 항목 찾기, 조건으로 검색 또는 특정 항목 찾기
+
+---
+
+#### 8.3 FindKeys
+
+```go
+func FindKeys[K comparable, V any](m map[K]V, fn func(K, V) bool) []K
+```
+
+Finds all keys that satisfy the predicate.
+조건을 만족하는 모든 키를 찾습니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+keys := maputil.FindKeys(m, func(k string, v int) bool {
+    return v > 2
+})
+// Result: []string{"c", "d"} (order may vary)
+```
+
+**Use Case / 사용 사례**: Find all matching keys, extract keys by criteria, or filter key set / 일치하는 모든 키 찾기, 기준별 키 추출 또는 키 세트 필터링
+
+---
+
+#### 8.4 RenameKey
+
+```go
+func RenameKey[K comparable, V any](m map[K]V, oldKey, newKey K) map[K]V
+```
+
+Creates a new map with a key renamed. If the old key doesn't exist, returns a clone. If the new key already exists, it will be overwritten.
+키의 이름이 변경된 새 맵을 생성합니다. 이전 키가 존재하지 않으면 복사본을 반환합니다. 새 키가 이미 존재하면 덮어씁니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+result := maputil.RenameKey(m, "b", "B")
+// Result: map[string]int{"a": 1, "B": 2, "c": 3}
+```
+
+**Use Case / 사용 사례**: Standardize key names, migrate field names, or rename API fields / 키 이름 표준화, 필드 이름 마이그레이션 또는 API 필드 이름 변경
+
+---
+
+#### 8.5 SwapKeys
+
+```go
+func SwapKeys[K comparable, V any](m map[K]V, key1, key2 K) map[K]V
+```
+
+Creates a new map with two keys swapped. If either key doesn't exist, returns a clone.
+두 키가 교환된 새 맵을 생성합니다. 어느 한 키라도 존재하지 않으면 복사본을 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+result := maputil.SwapKeys(m, "a", "b")
+// Result: map[string]int{"a": 2, "b": 1, "c": 3}
+```
+
+**Use Case / 사용 사례**: Swap configuration values, exchange priorities, or reorder entries / 설정 값 교환, 우선순위 교환 또는 항목 재정렬
+
+---
+
+#### 8.6 PrefixKeys
+
+```go
+func PrefixKeys[V any](m map[string]V, prefix string) map[string]V
+```
+
+Adds a prefix to all keys in a map.
+맵의 모든 키에 접두사를 추가합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2}
+result := maputil.PrefixKeys(m, "key_")
+// Result: map[string]int{"key_a": 1, "key_b": 2}
+```
+
+**Use Case / 사용 사례**: Namespace keys, add environment prefix, or categorize entries / 키 네임스페이스 지정, 환경 접두사 추가 또는 항목 분류
+
+---
+
+#### 8.7 SuffixKeys
+
+```go
+func SuffixKeys[V any](m map[string]V, suffix string) map[string]V
+```
+
+Adds a suffix to all keys in a map.
+맵의 모든 키에 접미사를 추가합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2}
+result := maputil.SuffixKeys(m, "_key")
+// Result: map[string]int{"a_key": 1, "b_key": 2}
+```
+
+**Use Case / 사용 사례**: Add version suffix, append unit suffix, or tag entries / 버전 접미사 추가, 단위 접미사 추가 또는 항목 태그 지정
+
+---
+
+#### 8.8 TransformKeys
+
+```go
+func TransformKeys[K comparable, V any](m map[K]V, fn func(K) K) map[K]V
+```
+
+Transforms all keys in a map using a function. If multiple keys map to the same transformed key, the last value wins.
+함수를 사용하여 맵의 모든 키를 변환합니다. 여러 키가 같은 변환된 키로 매핑되면 마지막 값이 우선합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+result := maputil.TransformKeys(m, func(k string) string {
+    return strings.ToUpper(k)
+})
+// Result: map[string]int{"A": 1, "B": 2, "C": 3}
+```
+
+**Use Case / 사용 사례**: Normalize key casing, sanitize keys, or apply key transformations / 키 대소문자 정규화, 키 정리 또는 키 변환 적용
+
+---
+
+### Category 9: Value Operations / 값 작업
+
+Functions for manipulating and querying map values.
+맵 값을 조작하고 쿼리하는 함수입니다.
+
+#### 9.1 ValuesSorted
+
+```go
+func ValuesSorted[K comparable, V Ordered](m map[K]V) []V
+```
+
+Returns all values from the map as a sorted slice.
+맵의 모든 값을 정렬된 슬라이스로 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 3, "b": 1, "c": 2}
+values := maputil.ValuesSorted(m)
+// Result: []int{1, 2, 3}
+```
+
+**Use Case / 사용 사례**: Sorted statistics, ordered display, or ranked lists / 정렬된 통계, 정렬된 표시 또는 순위 목록
+
+---
+
+#### 9.2 UniqueValues
+
+```go
+func UniqueValues[K comparable, V comparable](m map[K]V) []V
+```
+
+Returns a slice of unique values from the map.
+맵의 고유한 값들의 슬라이스를 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 1, "d": 3, "e": 2}
+unique := maputil.UniqueValues(m)
+// Result: []int{1, 2, 3} (order may vary)
+```
+
+**Use Case / 사용 사례**: Find distinct values, remove duplicates, or get value set / 고유 값 찾기, 중복 제거 또는 값 세트 가져오기
+
+---
+
+#### 9.3 ReplaceValue
+
+```go
+func ReplaceValue[K comparable, V comparable](m map[K]V, oldValue, newValue V) map[K]V
+```
+
+Creates a new map with all occurrences of a value replaced.
+특정 값의 모든 발생을 대체한 새 맵을 생성합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 1, "d": 3}
+result := maputil.ReplaceValue(m, 1, 10)
+// Result: map[string]int{"a": 10, "b": 2, "c": 10, "d": 3}
+```
+
+**Use Case / 사용 사례**: Replace default values, normalize data, or fix incorrect values / 기본값 교체, 데이터 정규화 또는 잘못된 값 수정
+
+---
+
+#### 9.4 UpdateValues
+
+```go
+func UpdateValues[K comparable, V any](m map[K]V, fn func(K, V) V) map[K]V
+```
+
+Creates a new map with all values transformed by the function.
+함수로 모든 값을 변환한 새 맵을 생성합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+result := maputil.UpdateValues(m, func(k string, v int) int {
+    return v * 10
+})
+// Result: map[string]int{"a": 10, "b": 20, "c": 30}
+```
+
+**Use Case / 사용 사례**: Bulk value updates, apply transformations, or recalculate values / 대량 값 업데이트, 변환 적용 또는 값 재계산
+
+---
+
+#### 9.5 MinValue
+
+```go
+func MinValue[K comparable, V Ordered](m map[K]V) (V, bool)
+```
+
+Returns the minimum value from a map. Returns the value and true if found, or zero value and false if map is empty.
+맵에서 최솟값을 반환합니다. 찾은 경우 값과 true를, 맵이 비어있으면 제로값과 false를 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 3, "b": 1, "c": 2}
+min, found := maputil.MinValue(m)
+// min = 1, found = true
+```
+
+**Use Case / 사용 사례**: Find lowest price, minimum score, or smallest quantity / 최저 가격, 최소 점수 또는 최소 수량 찾기
+
+---
+
+#### 9.6 MaxValue
+
+```go
+func MaxValue[K comparable, V Ordered](m map[K]V) (V, bool)
+```
+
+Returns the maximum value from a map. Returns the value and true if found, or zero value and false if map is empty.
+맵에서 최댓값을 반환합니다. 찾은 경우 값과 true를, 맵이 비어있으면 제로값과 false를 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 3, "b": 1, "c": 2}
+max, found := maputil.MaxValue(m)
+// max = 3, found = true
+```
+
+**Use Case / 사용 사례**: Find highest price, maximum score, or largest quantity / 최고 가격, 최대 점수 또는 최대 수량 찾기
+
+---
+
+#### 9.7 SumValues
+
+```go
+func SumValues[K comparable, V Number](m map[K]V) V
+```
+
+Returns the sum of all values in a map. Returns zero if the map is empty.
+맵의 모든 값의 합을 반환합니다. 맵이 비어있으면 0을 반환합니다.
+
+**Example / 예제:**
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+sum := maputil.SumValues(m)
+// sum = 6
+```
+
+**Use Case / 사용 사례**: Total sales, aggregate counts, or sum metrics / 총 판매, 집계 개수 또는 메트릭 합계
+
+---
+
+### Category 10: Comparison / 비교
+
+Functions for comparing maps and finding differences.
+맵을 비교하고 차이를 찾는 함수입니다.
+
+#### 10.1 Diff
+
+```go
+func Diff[K comparable, V comparable](m1, m2 map[K]V) map[K]V
+```
+
+Returns a map containing entries that differ between two maps. An entry differs if the key exists in both maps but values are different, or the key exists in only one map.
+두 맵 간에 다른 항목을 포함하는 맵을 반환합니다. 키가 두 맵 모두에 존재하지만 값이 다르거나, 키가 한 맵에만 존재하면 항목이 다릅니다.
+
+**Example / 예제:**
+```go
+m1 := map[string]int{"a": 1, "b": 2, "c": 3}
+m2 := map[string]int{"a": 1, "b": 20, "d": 4}
+diff := maputil.Diff(m1, m2)
+// Result: map[string]int{"b": 20, "c": 3, "d": 4}
+```
+
+**Use Case / 사용 사례**: Detect configuration changes, track state differences, or find updates / 설정 변경 감지, 상태 차이 추적 또는 업데이트 찾기
+
+---
+
+#### 10.2 DiffKeys
+
+```go
+func DiffKeys[K comparable, V comparable](m1, m2 map[K]V) []K
+```
+
+Returns a slice of keys that differ between two maps. A key differs if it exists in one map but not the other, or if it exists in both maps but values are different.
+두 맵 간에 다른 키를 슬라이스로 반환합니다. 한 맵에는 존재하지만 다른 맵에는 없거나, 두 맵 모두에 존재하지만 값이 다르면 키가 다릅니다.
+
+**Example / 예제:**
+```go
+m1 := map[string]int{"a": 1, "b": 2, "c": 3}
+m2 := map[string]int{"a": 1, "b": 20, "d": 4}
+keys := maputil.DiffKeys(m1, m2)
+// Result: []string{"b", "c", "d"} (order may vary)
+```
+
+**Use Case / 사용 사례**: Find changed keys, detect schema differences, or identify updates / 변경된 키 찾기, 스키마 차이 감지 또는 업데이트 식별
+
+---
+
+#### 10.3 Compare
+
+```go
+func Compare[K comparable, V comparable](m1, m2 map[K]V) (added, removed, modified map[K]V)
+```
+
+Performs a detailed comparison of two maps. Returns three maps: added (entries in m2 but not m1), removed (entries in m1 but not m2), and modified (entries in both but with different values from m2).
+두 맵을 상세하게 비교합니다. 세 개의 맵을 반환합니다: added (m2에는 있지만 m1에는 없음), removed (m1에는 있지만 m2에는 없음), modified (두 맵 모두에 존재하지만 m2의 값이 다름).
+
+**Example / 예제:**
+```go
+m1 := map[string]int{"a": 1, "b": 2, "c": 3}
+m2 := map[string]int{"a": 1, "b": 20, "d": 4}
+added, removed, modified := maputil.Compare(m1, m2)
+// added = {"d": 4}
+// removed = {"c": 3}
+// modified = {"b": 20}
+```
+
+**Use Case / 사용 사례**: Generate change logs, track data migrations, or show before/after differences / 변경 로그 생성, 데이터 마이그레이션 추적 또는 이전/이후 차이 표시
+
+---
+
+#### 10.4 CommonKeys
+
+```go
+func CommonKeys[K comparable, V any](maps ...map[K]V) []K
+```
+
+Returns a slice of keys that exist in all input maps.
+모든 입력 맵에 존재하는 키를 슬라이스로 반환합니다.
+
+**Example / 예제:**
+```go
+m1 := map[string]int{"a": 1, "b": 2, "c": 3}
+m2 := map[string]int{"b": 20, "c": 30, "d": 40}
+m3 := map[string]int{"c": 100, "d": 200}
+common := maputil.CommonKeys(m1, m2, m3)
+// Result: []string{"c"}
+```
+
+**Use Case / 사용 사례**: Find shared keys, intersection analysis, or common fields / 공유 키 찾기, 교집합 분석 또는 공통 필드
+
+---
+
+#### 10.5 AllKeys
+
+```go
+func AllKeys[K comparable, V any](maps ...map[K]V) []K
+```
+
+Returns a slice of all unique keys from all input maps.
+모든 입력 맵의 고유한 키를 슬라이스로 반환합니다.
+
+**Example / 예제:**
+```go
+m1 := map[string]int{"a": 1, "b": 2}
+m2 := map[string]int{"b": 20, "c": 30}
+m3 := map[string]int{"c": 100, "d": 200}
+all := maputil.AllKeys(m1, m2, m3)
+// Result: []string{"a", "b", "c", "d"} (order may vary)
+```
+
+**Use Case / 사용 사례**: Get complete key set, union analysis, or all fields / 완전한 키 세트 가져오기, 합집합 분석 또는 모든 필드
+
+---
+
+#### 10.6 EqualMaps
+
+```go
+func EqualMaps[K comparable, V comparable](m1, m2 map[K]V) bool
+```
+
+Checks whether two maps are equal. Two maps are equal if they have the same keys and values.
+두 맵이 동일한지 확인합니다. 두 맵은 같은 키와 값을 가지면 동일합니다.
+
+**Example / 예제:**
+```go
+m1 := map[string]int{"a": 1, "b": 2, "c": 3}
+m2 := map[string]int{"a": 1, "b": 2, "c": 3}
+equal := maputil.EqualMaps(m1, m2)
+// Result: true
+```
+
+**Use Case / 사용 사례**: Testing, cache validation, or state comparison / 테스트, 캐시 검증 또는 상태 비교
+
+---
+
+## Usage Patterns / 사용 패턴
+
+*[Content to be added in full version]*
+
+---
+
+## Common Use Cases / 일반적인 사용 사례
+
+*[Content to be added in full version]*
+
+---
+
+## Best Practices / 모범 사례
+
+*[Content to be added in full version]*
+
+---
+
+## Performance Considerations / 성능 고려사항
+
+*[Content to be added in full version]*
+
+---
+
+## Troubleshooting / 문제 해결
+
+*[Content to be added in full version]*
+
+---
+
+## FAQ / 자주 묻는 질문
+
+*[Content to be added in full version]*
+
+---
+
+## Additional Resources / 추가 자료
+
+*[Content to be added in full version]*
+
+---
