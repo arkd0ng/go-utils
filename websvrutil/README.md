@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.009
+**Version / 버전**: v1.11.010
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.009) / 현재 기능
+## Current Features (v1.11.010) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -229,6 +229,44 @@ Built-in middleware for common use cases.
 - `WWWRedirect(addWWW)` - Adds or removes www prefix / www 접두사 추가 또는 제거
 - Default: 301 Moved Permanently / 기본값: 301 Moved Permanently
 - Configurable status code / 설정 가능한 상태 코드
+
+### Template System / 템플릿 시스템
+
+Built-in template engine for HTML rendering with auto-discovery and custom functions.
+
+HTML 렌더링을 위한 내장 템플릿 엔진 (자동 발견 및 커스텀 함수 지원).
+
+**TemplateEngine / 템플릿 엔진**:
+- Automatic template loading from directory / 디렉토리에서 자동 템플릿 로딩
+- Support for nested directories / 중첩 디렉토리 지원
+- Custom template functions / 커스텀 템플릿 함수
+- Custom delimiters / 커스텀 구분자
+- Thread-safe template caching / 스레드 안전 템플릿 캐싱
+
+**Template Methods / 템플릿 메서드**:
+- `NewTemplateEngine(dir)` - Create new template engine / 새 템플릿 엔진 생성
+- `Load(name)` - Load single template / 단일 템플릿 로드
+- `LoadGlob(pattern)` - Load templates by pattern / 패턴으로 템플릿 로드
+- `LoadAll()` - Load all templates recursively / 모든 템플릿 재귀적 로드
+- `Render(w, name, data)` - Render template to writer / writer에 템플릿 렌더링
+- `AddFunc(name, fn)` - Add custom template function / 커스텀 템플릿 함수 추가
+- `AddFuncs(funcs)` - Add multiple functions / 여러 함수 추가
+- `SetDelimiters(left, right)` - Set custom delimiters / 커스텀 구분자 설정
+- `Has(name)` - Check if template exists / 템플릿 존재 확인
+- `List()` - List all loaded templates / 모든 로드된 템플릿 목록
+- `Clear()` - Remove all templates / 모든 템플릿 제거
+
+**App Template Methods / 앱 템플릿 메서드**:
+- `app.TemplateEngine()` - Get template engine instance / 템플릿 엔진 인스턴스 가져오기
+- `app.LoadTemplate(name)` - Load single template / 단일 템플릿 로드
+- `app.LoadTemplates(pattern)` - Load templates by pattern / 패턴으로 템플릿 로드
+- `app.ReloadTemplates()` - Reload all templates / 모든 템플릿 다시 로드
+- `app.AddTemplateFunc(name, fn)` - Add custom function / 커스텀 함수 추가
+- `app.AddTemplateFuncs(funcs)` - Add multiple functions / 여러 함수 추가
+
+**Context Template Methods / Context 템플릿 메서드**:
+- `ctx.Render(code, name, data)` - Render template file / 템플릿 파일 렌더링
+- `ctx.HTMLTemplate(code, tmpl, data)` - Render inline template / 인라인 템플릿 렌더링
 
 ## Quick Start / 빠른 시작
 
@@ -556,6 +594,7 @@ The following features are planned for future releases:
 - ✅ v1.11.007: Additional Middleware (RequestID, Timeout, BasicAuth) / 추가 미들웨어 (요청 ID, 타임아웃, Basic 인증)
 - ✅ v1.11.008: Advanced Middleware (RateLimiter, Compression, SecureHeaders) / 고급 미들웨어 (Rate Limiter, 압축, 보안 헤더)
 - ✅ v1.11.009: Final Middleware (BodyLimit, Static, Redirect, HTTPSRedirect, WWWRedirect) / 최종 미들웨어 (본문 제한, 정적 파일, 리디렉션)
+- ✅ v1.11.010: Template Engine Core (TemplateEngine, auto-loading, custom functions) / 템플릿 엔진 핵심 (TemplateEngine, 자동 로딩, 커스텀 함수)
 
 ## Documentation / 문서
 

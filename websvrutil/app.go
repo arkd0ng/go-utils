@@ -19,9 +19,9 @@ type App struct {
 	// middleware는 미들웨어 체인을 저장합니다
 	middleware []MiddlewareFunc
 
-	// templates is the template engine (placeholder for now, will be implemented in Phase 3)
-	// templates는 템플릿 엔진입니다 (현재는 임시, Phase 3에서 구현 예정)
-	templates interface{}
+	// templates is the template engine
+	// templates는 템플릿 엔진입니다
+	templates *TemplateEngine
 
 	// options holds the configuration options
 	// options는 설정 옵션을 보유합니다
@@ -66,11 +66,26 @@ func New(opts ...Option) *App {
 	// Create the router / 라우터 생성
 	router := newRouter()
 
+	// Create template engine if template directory is set
+	// 템플릿 디렉토리가 설정된 경우 템플릿 엔진 생성
+	var templateEngine *TemplateEngine
+	if options.TemplateDir != "" {
+		templateEngine = NewTemplateEngine(options.TemplateDir)
+
+		// Auto-load templates if enabled
+		// 활성화된 경우 템플릿 자동 로드
+		if err := templateEngine.LoadAll(); err != nil {
+			// Log error but don't fail - templates might be loaded later
+			// 에러 로그하지만 실패하지 않음 - 템플릿은 나중에 로드될 수 있음
+			fmt.Printf("Warning: failed to auto-load templates: %v\n", err)
+		}
+	}
+
 	// Create the app instance / 앱 인스턴스 생성
 	app := &App{
 		router:     router,
 		middleware: make([]MiddlewareFunc, 0),
-		templates:  nil, // Will be set in Phase 3 / Phase 3에서 설정 예정
+		templates:  templateEngine,
 		options:    options,
 		server:     nil, // Will be created in Run() / Run()에서 생성 예정
 		running:    false,
@@ -367,5 +382,103 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	handler := a.buildHandler()
 	a.mu.RUnlock()
 
+	// Store app in request context for template rendering
+	// 템플릿 렌더링을 위해 요청 컨텍스트에 app 저장
+	ctx := context.WithValue(r.Context(), "app", a)
+	r = r.WithContext(ctx)
+
 	handler.ServeHTTP(w, r)
+}
+
+// TemplateEngine returns the template engine instance.
+// TemplateEngine은 템플릿 엔진 인스턴스를 반환합니다.
+func (a *App) TemplateEngine() *TemplateEngine {
+	a.mu.RLock()
+	defer a.mu.RUnlock()
+	return a.templates
+}
+
+// LoadTemplate loads a single template file.
+// LoadTemplate은 단일 템플릿 파일을 로드합니다.
+//
+// Example / 예제:
+//
+//	err := app.LoadTemplate("index.html")
+func (a *App) LoadTemplate(name string) error {
+	a.mu.RLock()
+	defer a.mu.RUnlock()
+
+	if a.templates == nil {
+		return fmt.Errorf("template engine not initialized (set TemplateDir option)")
+	}
+
+	return a.templates.Load(name)
+}
+
+// LoadTemplates loads all templates matching the pattern.
+// LoadTemplates는 패턴과 일치하는 모든 템플릿을 로드합니다.
+//
+// Example / 예제:
+//
+//	err := app.LoadTemplates("*.html")
+func (a *App) LoadTemplates(pattern string) error {
+	a.mu.RLock()
+	defer a.mu.RUnlock()
+
+	if a.templates == nil {
+		return fmt.Errorf("template engine not initialized (set TemplateDir option)")
+	}
+
+	return a.templates.LoadGlob(pattern)
+}
+
+// ReloadTemplates reloads all templates from the template directory.
+// ReloadTemplates는 템플릿 디렉토리에서 모든 템플릿을 다시 로드합니다.
+//
+// Example / 예제:
+//
+//	err := app.ReloadTemplates()
+func (a *App) ReloadTemplates() error {
+	a.mu.RLock()
+	defer a.mu.RUnlock()
+
+	if a.templates == nil {
+		return fmt.Errorf("template engine not initialized (set TemplateDir option)")
+	}
+
+	a.templates.Clear()
+	return a.templates.LoadAll()
+}
+
+// AddTemplateFunc adds a custom template function.
+// AddTemplateFunc는 커스텀 템플릿 함수를 추가합니다.
+//
+// Example / 예제:
+//
+//	app.AddTemplateFunc("upper", strings.ToUpper)
+func (a *App) AddTemplateFunc(name string, fn interface{}) {
+	a.mu.RLock()
+	defer a.mu.RUnlock()
+
+	if a.templates != nil {
+		a.templates.AddFunc(name, fn)
+	}
+}
+
+// AddTemplateFuncs adds multiple custom template functions.
+// AddTemplateFuncs는 여러 커스텀 템플릿 함수를 추가합니다.
+//
+// Example / 예제:
+//
+//	app.AddTemplateFuncs(template.FuncMap{
+//	    "upper": strings.ToUpper,
+//	    "lower": strings.ToLower,
+//	})
+func (a *App) AddTemplateFuncs(funcs map[string]interface{}) {
+	a.mu.RLock()
+	defer a.mu.RUnlock()
+
+	if a.templates != nil {
+		a.templates.AddFuncs(funcs)
+	}
 }

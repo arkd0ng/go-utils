@@ -5,6 +5,68 @@
 
 ---
 
+## [v1.11.010] - 2025-10-16
+
+### Added / 추가
+- **Template Engine Core** / **템플릿 엔진 핵심** (`template.go`)
+  - `TemplateEngine` struct with thread-safe template management
+  - Automatic template loading from directory (`LoadAll()`)
+  - Single template loading (`Load()`) and glob pattern loading (`LoadGlob()`)
+  - Template rendering to io.Writer (`Render()`)
+  - Custom template functions support (`AddFunc()`, `AddFuncs()`)
+  - Custom delimiter support (`SetDelimiters()`)
+  - Template existence check (`Has()`)
+  - List all loaded templates (`List()`)
+  - Clear all templates (`Clear()`)
+  - Support for .html, .htm, .tmpl files
+  - Nested directory support for recursive template loading
+
+- **App Template Integration** / **앱 템플릿 통합** (`app.go`)
+  - Changed `templates` field from `interface{}` to `*TemplateEngine`
+  - Auto-initialize template engine when `TemplateDir` option is set
+  - Auto-load all templates on app creation
+  - `TemplateEngine()` - Get template engine instance
+  - `LoadTemplate(name)` - Load single template
+  - `LoadTemplates(pattern)` - Load templates by pattern
+  - `ReloadTemplates()` - Reload all templates
+  - `AddTemplateFunc(name, fn)` - Add custom template function
+  - `AddTemplateFuncs(funcs)` - Add multiple custom functions
+  - Store app in request context for template access
+
+- **Context Template Rendering** / **Context 템플릿 렌더링** (`context.go`)
+  - `ctx.Render(code, name, data)` - Render template file with data
+  - Automatic content-type and status code setting
+  - Access to template engine through request context
+
+- **Comprehensive Tests** / **종합 테스트** (`template_test.go`)
+  - 14 test functions + 2 benchmarks
+  - Tests for all template engine methods
+  - Tests for custom functions and delimiters
+  - Tests for glob loading and recursive loading
+  - Tests for rendering with data
+  - Benchmark for Load and Render operations
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.010
+- Bumped version to v1.11.010 in `cfg/app.yaml`
+- Updated `README.md` with comprehensive template system documentation
+- Updated `app.go` ServeHTTP to store app in request context
+
+### Testing Coverage / 테스트 커버리지
+- **14 new test functions + 2 benchmarks** for template engine
+- **Total: 146+ test functions**, **Total: 33 benchmark functions**
+- **81.6% test coverage** - All tests passing ✅
+
+### Notes / 참고사항
+- **Phase 3 (Template System) started!** / Phase 3 (템플릿 시스템) 시작!
+- Template engine is automatically initialized when `TemplateDir` option is set
+- Templates are auto-loaded on app creation for convenience
+- Thread-safe template caching with sync.RWMutex
+- Support for custom template functions and delimiters
+- Next: v1.11.011+ will add layout system, hot reload, and built-in template functions
+
+---
+
 ## [v1.11.009] - 2025-10-16
 
 ### Added / 추가
