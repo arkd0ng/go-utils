@@ -63,9 +63,12 @@ func New(opts ...Option) *App {
 		opt(options)
 	}
 
+	// Create the router / 라우터 생성
+	router := newRouter()
+
 	// Create the app instance / 앱 인스턴스 생성
 	app := &App{
-		router:     nil, // Will be set in v1.11.003 / v1.11.003에서 설정 예정
+		router:     router,
 		middleware: make([]MiddlewareFunc, 0),
 		templates:  nil, // Will be set in Phase 3 / Phase 3에서 설정 예정
 		options:    options,
@@ -97,6 +100,143 @@ func (a *App) Use(middleware ...MiddlewareFunc) *App {
 	}
 
 	a.middleware = append(a.middleware, middleware...)
+	return a
+}
+
+// GET registers a GET route.
+// GET은 GET 라우트를 등록합니다.
+//
+// Example / 예제:
+//
+//	app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
+//	    // Handler implementation
+//	})
+func (a *App) GET(pattern string, handler http.HandlerFunc) *App {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.running {
+		panic("cannot add routes while server is running")
+	}
+
+	if router, ok := a.router.(*Router); ok {
+		router.GET(pattern, handler)
+	}
+	return a
+}
+
+// POST registers a POST route.
+// POST는 POST 라우트를 등록합니다.
+func (a *App) POST(pattern string, handler http.HandlerFunc) *App {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.running {
+		panic("cannot add routes while server is running")
+	}
+
+	if router, ok := a.router.(*Router); ok {
+		router.POST(pattern, handler)
+	}
+	return a
+}
+
+// PUT registers a PUT route.
+// PUT은 PUT 라우트를 등록합니다.
+func (a *App) PUT(pattern string, handler http.HandlerFunc) *App {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.running {
+		panic("cannot add routes while server is running")
+	}
+
+	if router, ok := a.router.(*Router); ok {
+		router.PUT(pattern, handler)
+	}
+	return a
+}
+
+// PATCH registers a PATCH route.
+// PATCH는 PATCH 라우트를 등록합니다.
+func (a *App) PATCH(pattern string, handler http.HandlerFunc) *App {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.running {
+		panic("cannot add routes while server is running")
+	}
+
+	if router, ok := a.router.(*Router); ok {
+		router.PATCH(pattern, handler)
+	}
+	return a
+}
+
+// DELETE registers a DELETE route.
+// DELETE는 DELETE 라우트를 등록합니다.
+func (a *App) DELETE(pattern string, handler http.HandlerFunc) *App {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.running {
+		panic("cannot add routes while server is running")
+	}
+
+	if router, ok := a.router.(*Router); ok {
+		router.DELETE(pattern, handler)
+	}
+	return a
+}
+
+// OPTIONS registers an OPTIONS route.
+// OPTIONS는 OPTIONS 라우트를 등록합니다.
+func (a *App) OPTIONS(pattern string, handler http.HandlerFunc) *App {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.running {
+		panic("cannot add routes while server is running")
+	}
+
+	if router, ok := a.router.(*Router); ok {
+		router.OPTIONS(pattern, handler)
+	}
+	return a
+}
+
+// HEAD registers a HEAD route.
+// HEAD는 HEAD 라우트를 등록합니다.
+func (a *App) HEAD(pattern string, handler http.HandlerFunc) *App {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.running {
+		panic("cannot add routes while server is running")
+	}
+
+	if router, ok := a.router.(*Router); ok {
+		router.HEAD(pattern, handler)
+	}
+	return a
+}
+
+// NotFound sets the handler for 404 Not Found responses.
+// NotFound는 404 Not Found 응답에 대한 핸들러를 설정합니다.
+//
+// Example / 예제:
+//
+//	app.NotFound(func(w http.ResponseWriter, r *http.Request) {
+//	    w.WriteHeader(http.StatusNotFound)
+//	    fmt.Fprintf(w, "Custom 404 page")
+//	})
+func (a *App) NotFound(handler http.HandlerFunc) *App {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if router, ok := a.router.(*Router); ok {
+		router.NotFound(handler)
+	}
 	return a
 }
 

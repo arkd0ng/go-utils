@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,8 +15,8 @@ import (
 )
 
 func main() {
-	fmt.Println("=== websvrutil Package Examples (v1.11.002) ===")
-	fmt.Println("=== websvrutil 패키지 예제 (v1.11.002) ===\n")
+	fmt.Println("=== websvrutil Package Examples (v1.11.003) ===")
+	fmt.Println("=== websvrutil 패키지 예제 (v1.11.003) ===\n")
 
 	// Example 1: Basic Server / 기본 서버
 	fmt.Println("Example 1: Basic Server / 기본 서버")
@@ -25,21 +26,37 @@ func main() {
 	fmt.Println("\nExample 2: Server with Custom Options / 커스텀 옵션을 사용한 서버")
 	example2CustomOptions()
 
-	// Example 3: Graceful Shutdown / 정상 종료
-	fmt.Println("\nExample 3: Graceful Shutdown / 정상 종료")
-	example3GracefulShutdown()
+	// Example 3: Routing with GET/POST / GET/POST 라우팅
+	fmt.Println("\nExample 3: Routing with GET/POST / GET/POST 라우팅")
+	example3Routing()
 
-	// Example 4: Custom Middleware / 커스텀 미들웨어
-	fmt.Println("\nExample 4: Custom Middleware / 커스텀 미들웨어")
-	example4CustomMiddleware()
+	// Example 4: Path Parameters / 경로 매개변수
+	fmt.Println("\nExample 4: Path Parameters / 경로 매개변수")
+	example4PathParameters()
 
-	// Example 5: Multiple Middleware / 다중 미들웨어
-	fmt.Println("\nExample 5: Multiple Middleware / 다중 미들웨어")
-	example5MultipleMiddleware()
+	// Example 5: Wildcard Routes / 와일드카드 라우트
+	fmt.Println("\nExample 5: Wildcard Routes / 와일드카드 라우트")
+	example5WildcardRoutes()
 
-	// Example 6: Production Configuration / 프로덕션 설정
-	fmt.Println("\nExample 6: Production Configuration / 프로덕션 설정")
-	example6ProductionConfig()
+	// Example 6: Custom 404 Handler / 커스텀 404 핸들러
+	fmt.Println("\nExample 6: Custom 404 Handler / 커스텀 404 핸들러")
+	example6Custom404()
+
+	// Example 7: Graceful Shutdown / 정상 종료
+	fmt.Println("\nExample 7: Graceful Shutdown / 정상 종료")
+	example7GracefulShutdown()
+
+	// Example 8: Custom Middleware / 커스텀 미들웨어
+	fmt.Println("\nExample 8: Custom Middleware / 커스텀 미들웨어")
+	example8CustomMiddleware()
+
+	// Example 9: Multiple Middleware / 다중 미들웨어
+	fmt.Println("\nExample 9: Multiple Middleware / 다중 미들웨어")
+	example9MultipleMiddleware()
+
+	// Example 10: Production Configuration / 프로덕션 설정
+	fmt.Println("\nExample 10: Production Configuration / 프로덕션 설정")
+	example10ProductionConfig()
 
 	fmt.Println("\n=== All Examples Completed ===")
 	fmt.Println("=== 모든 예제 완료 ===")
@@ -103,9 +120,186 @@ func example2CustomOptions() {
 	_ = app // Suppress unused variable warning / 미사용 변수 경고 억제
 }
 
-// example3GracefulShutdown demonstrates graceful server shutdown.
-// example3GracefulShutdown은 정상적인 서버 종료를 시연합니다.
-func example3GracefulShutdown() {
+// example3Routing demonstrates basic routing with GET and POST.
+// example3Routing은 GET 및 POST를 사용한 기본 라우팅을 시연합니다.
+func example3Routing() {
+	app := websvrutil.New()
+
+	getCount := 0
+	postCount := 0
+
+	// Register GET route
+	// GET 라우트 등록
+	app.GET("/users", func(w http.ResponseWriter, r *http.Request) {
+		getCount++
+		w.WriteHeader(http.StatusOK)
+	})
+
+	// Register POST route
+	// POST 라우트 등록
+	app.POST("/users", func(w http.ResponseWriter, r *http.Request) {
+		postCount++
+		w.WriteHeader(http.StatusCreated)
+	})
+
+	fmt.Println("✓ Registered routes:")
+	fmt.Println("✓ 등록된 라우트:")
+	fmt.Println("  - GET /users")
+	fmt.Println("  - POST /users")
+
+	// Simulate requests
+	// 요청 시뮬레이션
+	fmt.Println("\n  Simulating requests:")
+	fmt.Println("  요청 시뮬레이션:")
+
+	testGet := httptest.NewRequest("GET", "/users", nil)
+	testPost := httptest.NewRequest("POST", "/users", nil)
+
+	app.ServeHTTP(httptest.NewRecorder(), testGet)
+	app.ServeHTTP(httptest.NewRecorder(), testPost)
+
+	fmt.Printf("  - GET requests: %d\n", getCount)
+	fmt.Printf("  - POST requests: %d\n", postCount)
+
+	fmt.Println("\n✓ Routes working correctly")
+	fmt.Println("✓ 라우트가 올바르게 작동합니다")
+}
+
+// example4PathParameters demonstrates path parameter extraction.
+// example4PathParameters는 경로 매개변수 추출을 시연합니다.
+func example4PathParameters() {
+	app := websvrutil.New()
+
+	// Register route with parameter
+	// 매개변수가 있는 라우트 등록
+	app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
+		// Parameters will be accessible via Context in v1.11.004
+		// 매개변수는 v1.11.004에서 Context를 통해 액세스 가능
+		w.WriteHeader(http.StatusOK)
+	})
+
+	app.GET("/users/:userId/posts/:postId", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	fmt.Println("✓ Registered routes with parameters:")
+	fmt.Println("✓ 매개변수가 있는 라우트 등록됨:")
+	fmt.Println("  - GET /users/:id")
+	fmt.Println("  - GET /users/:userId/posts/:postId")
+
+	// Test parameter matching
+	// 매개변수 일치 테스트
+	testPaths := []string{
+		"/users/123",
+		"/users/456/posts/789",
+	}
+
+	fmt.Println("\n  Testing parameter matching:")
+	fmt.Println("  매개변수 일치 테스트:")
+
+	for _, path := range testPaths {
+		req := httptest.NewRequest("GET", path, nil)
+		rec := httptest.NewRecorder()
+		app.ServeHTTP(rec, req)
+
+		if rec.Code == http.StatusOK {
+			fmt.Printf("  ✓ Matched: %s\n", path)
+		}
+	}
+
+	fmt.Println("\n✓ Parameter extraction working (values accessible in v1.11.004)")
+	fmt.Println("✓ 매개변수 추출 작동 중 (값은 v1.11.004에서 액세스 가능)")
+}
+
+// example5WildcardRoutes demonstrates wildcard route matching.
+// example5WildcardRoutes는 와일드카드 라우트 일치를 시연합니다.
+func example5WildcardRoutes() {
+	app := websvrutil.New()
+
+	// Register wildcard route
+	// 와일드카드 라우트 등록
+	app.GET("/files/*", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	fmt.Println("✓ Registered wildcard route:")
+	fmt.Println("✓ 와일드카드 라우트 등록됨:")
+	fmt.Println("  - GET /files/*")
+
+	// Test wildcard matching
+	// 와일드카드 일치 테스트
+	testPaths := []string{
+		"/files/images/logo.png",
+		"/files/docs/manual.pdf",
+		"/files/a/b/c/d/e.txt",
+	}
+
+	fmt.Println("\n  Testing wildcard matching:")
+	fmt.Println("  와일드카드 일치 테스트:")
+
+	for _, path := range testPaths {
+		req := httptest.NewRequest("GET", path, nil)
+		rec := httptest.NewRecorder()
+		app.ServeHTTP(rec, req)
+
+		if rec.Code == http.StatusOK {
+			fmt.Printf("  ✓ Matched: %s\n", path)
+		}
+	}
+
+	fmt.Println("\n✓ Wildcard routes working correctly")
+	fmt.Println("✓ 와일드카드 라우트가 올바르게 작동합니다")
+}
+
+// example6Custom404 demonstrates custom 404 handler.
+// example6Custom404는 커스텀 404 핸들러를 시연합니다.
+func example6Custom404() {
+	app := websvrutil.New()
+
+	// Register normal route
+	// 일반 라우트 등록
+	app.GET("/users", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	// Register custom 404 handler
+	// 커스텀 404 핸들러 등록
+	custom404Called := false
+	app.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		custom404Called = true
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, "Custom 404: %s not found", r.URL.Path)
+	})
+
+	fmt.Println("✓ Custom 404 handler registered")
+	fmt.Println("✓ 커스텀 404 핸들러 등록됨")
+
+	// Test existing route
+	// 기존 라우트 테스트
+	fmt.Println("\n  Testing existing route (/users):")
+	fmt.Println("  기존 라우트 테스트 (/users):")
+	req := httptest.NewRequest("GET", "/users", nil)
+	rec := httptest.NewRecorder()
+	app.ServeHTTP(rec, req)
+	fmt.Printf("  Status: %d\n", rec.Code)
+
+	// Test non-existent route
+	// 존재하지 않는 라우트 테스트
+	fmt.Println("\n  Testing non-existent route (/nonexistent):")
+	fmt.Println("  존재하지 않는 라우트 테스트 (/nonexistent):")
+	req = httptest.NewRequest("GET", "/nonexistent", nil)
+	rec = httptest.NewRecorder()
+	app.ServeHTTP(rec, req)
+	fmt.Printf("  Status: %d\n", rec.Code)
+	fmt.Printf("  Custom handler called: %v\n", custom404Called)
+
+	fmt.Println("\n✓ Custom 404 handler working correctly")
+	fmt.Println("✓ 커스텀 404 핸들러가 올바르게 작동합니다")
+}
+
+// example7GracefulShutdown demonstrates graceful server shutdown.
+// example7GracefulShutdown은 정상적인 서버 종료를 시연합니다.
+func example7GracefulShutdown() {
 	app := websvrutil.New()
 
 	// Setup signal handling
@@ -156,9 +350,9 @@ func example3GracefulShutdown() {
 	fmt.Println("✓ 서버가 정상적으로 종료됩니다")
 }
 
-// example4CustomMiddleware demonstrates adding custom middleware.
-// example4CustomMiddleware는 커스텀 미들웨어 추가를 시연합니다.
-func example4CustomMiddleware() {
+// example8CustomMiddleware demonstrates adding custom middleware.
+// example8CustomMiddleware는 커스텀 미들웨어 추가를 시연합니다.
+func example8CustomMiddleware() {
 	app := websvrutil.New()
 
 	// Create a logging middleware
@@ -195,9 +389,9 @@ func example4CustomMiddleware() {
 	fmt.Println("✓ 미들웨어 실행 성공")
 }
 
-// example5MultipleMiddleware demonstrates adding multiple middleware.
-// example5MultipleMiddleware는 다중 미들웨어 추가를 시연합니다.
-func example5MultipleMiddleware() {
+// example9MultipleMiddleware demonstrates adding multiple middleware.
+// example9MultipleMiddleware는 다중 미들웨어 추가를 시연합니다.
+func example9MultipleMiddleware() {
 	app := websvrutil.New()
 
 	// First middleware: Request ID
@@ -261,9 +455,9 @@ func example5MultipleMiddleware() {
 	fmt.Println("✓ 모든 미들웨어가 순서대로 실행됨")
 }
 
-// example6ProductionConfig demonstrates a production-ready configuration.
-// example6ProductionConfig는 프로덕션 준비 설정을 시연합니다.
-func example6ProductionConfig() {
+// example10ProductionConfig demonstrates a production-ready configuration.
+// example10ProductionConfig는 프로덕션 준비 설정을 시연합니다.
+func example10ProductionConfig() {
 	app := websvrutil.New(
 		// Security timeouts / 보안 타임아웃
 		websvrutil.WithReadTimeout(10*time.Second),

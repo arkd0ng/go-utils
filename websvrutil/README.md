@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.002
+**Version / 버전**: v1.11.003
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.002) / 현재 기능
+## Current Features (v1.11.003) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -34,9 +34,29 @@ The main application instance that manages your web server.
 **Methods / 메서드**:
 - `New(opts ...Option) *App` - Create new app instance / 새 앱 인스턴스 생성
 - `Use(middleware ...MiddlewareFunc) *App` - Add middleware / 미들웨어 추가
+- `GET/POST/PUT/PATCH/DELETE/OPTIONS/HEAD(pattern, handler)` - Register routes / 라우트 등록
+- `NotFound(handler)` - Custom 404 handler / 커스텀 404 핸들러
 - `Run(addr string) error` - Start server / 서버 시작
 - `Shutdown(ctx context.Context) error` - Graceful shutdown / 정상 종료
 - `ServeHTTP(w http.ResponseWriter, r *http.Request)` - Implement http.Handler / http.Handler 구현
+
+### Router / 라우터
+
+Fast HTTP request router with parameter and wildcard support.
+
+매개변수 및 와일드카드 지원을 갖춘 빠른 HTTP 요청 라우터.
+
+**Features / 기능**:
+- HTTP method routing (GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD) / HTTP 메서드 라우팅
+- Path parameters (`:id`, `:name`) / 경로 매개변수
+- Wildcard routes (`*`) / 와일드카드 라우트
+- Custom 404 handler / 커스텀 404 핸들러
+- Thread-safe / 스레드 안전
+
+**Pattern Syntax / 패턴 구문**:
+- `/users` - Exact match / 정확한 일치
+- `/users/:id` - Parameter (e.g., `/users/123`) / 매개변수
+- `/files/*` - Wildcard (matches everything) / 와일드카드 (모든 것과 일치)
 
 ### Options Pattern / 옵션 패턴
 
@@ -61,13 +81,15 @@ Flexible configuration using functional options.
 
 ## Quick Start / 빠른 시작
 
-### Basic Server / 기본 서버
+### Basic Server with Routes / 라우트가 있는 기본 서버
 
 ```go
 package main
 
 import (
+    "fmt"
     "log"
+    "net/http"
     "github.com/arkd0ng/go-utils/websvrutil"
 )
 
@@ -75,6 +97,23 @@ func main() {
     // Create app with defaults
     // 기본값으로 앱 생성
     app := websvrutil.New()
+
+    // Register routes
+    // 라우트 등록
+    app.GET("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "Welcome!")
+    })
+
+    app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
+        // Parameters will be accessible via Context in v1.11.004
+        // 매개변수는 v1.11.004에서 Context를 통해 액세스 가능
+        fmt.Fprintf(w, "User page")
+    })
+
+    app.POST("/users", func(w http.ResponseWriter, r *http.Request) {
+        w.WriteHeader(http.StatusCreated)
+        fmt.Fprintf(w, "User created")
+    })
 
     // Start server
     // 서버 시작
@@ -220,13 +259,58 @@ func main() {
 }
 ```
 
+### Wildcard and Custom 404 / 와일드카드 및 커스텀 404
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+    "github.com/arkd0ng/go-utils/websvrutil"
+)
+
+func main() {
+    app := websvrutil.New()
+
+    // Exact match
+    // 정확한 일치
+    app.GET("/users", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "Users list")
+    })
+
+    // Parameter match
+    // 매개변수 일치
+    app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "User details")
+    })
+
+    // Wildcard match (catches all paths starting with /files/)
+    // 와일드카드 일치 (/files/로 시작하는 모든 경로 포착)
+    app.GET("/files/*", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "File: %s", r.URL.Path)
+    })
+
+    // Custom 404 handler
+    // 커스텀 404 핸들러
+    app.NotFound(func(w http.ResponseWriter, r *http.Request) {
+        w.WriteHeader(http.StatusNotFound)
+        fmt.Fprintf(w, "Page not found: %s", r.URL.Path)
+    })
+
+    if err := app.Run(":8080"); err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
 ## Upcoming Features / 예정된 기능
 
 The following features are planned for future releases:
 
 다음 기능이 향후 릴리스에 계획되어 있습니다:
 
-- **Router** (v1.11.003): HTTP routing with path parameters / 경로 매개변수가 있는 HTTP 라우팅
 - **Context** (v1.11.004-005): Request context with parameter binding / 매개변수 바인딩이 있는 요청 컨텍스트
 - **Middleware System** (v1.11.006-010): Built-in middleware (recovery, logger, CORS, auth) / 내장 미들웨어
 - **Template System** (v1.11.011-015): Auto-discovery, layouts, hot reload / 자동 발견, 레이아웃, 핫 리로드
@@ -239,7 +323,7 @@ The following features are planned for future releases:
 **Progress / 진행 상황**:
 - ✅ v1.11.001: Project setup and planning / 프로젝트 설정 및 계획
 - ✅ v1.11.002: App & Options / 앱 및 옵션
-- 📝 v1.11.003: Router / 라우터
+- ✅ v1.11.003: Router / 라우터
 - 📝 v1.11.004: Context (Part 1) / 컨텍스트 (1부)
 - 📝 v1.11.005: Response Helpers / 응답 헬퍼
 

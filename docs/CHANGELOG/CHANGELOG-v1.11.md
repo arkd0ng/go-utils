@@ -5,6 +5,88 @@
 
 ---
 
+## [v1.11.003] - 2025-10-16
+
+### Added / 추가
+- Created `router.go` with Router implementation / Router 구현이 있는 router.go 생성
+  - HTTP method routing (GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD) / HTTP 메서드 라우팅
+  - Path parameter extraction (`:id`, `:name`) / 경로 매개변수 추출
+  - Wildcard route matching (`*`) / 와일드카드 라우트 일치
+  - Custom 404 handler support / 커스텀 404 핸들러 지원
+  - Thread-safe route registration / 스레드 안전 라우트 등록
+- Added routing methods to App struct / App 구조체에 라우팅 메서드 추가
+  - `GET(pattern, handler)` - Register GET route / GET 라우트 등록
+  - `POST(pattern, handler)` - Register POST route / POST 라우트 등록
+  - `PUT(pattern, handler)` - Register PUT route / PUT 라우트 등록
+  - `PATCH(pattern, handler)` - Register PATCH route / PATCH 라우트 등록
+  - `DELETE(pattern, handler)` - Register DELETE route / DELETE 라우트 등록
+  - `OPTIONS(pattern, handler)` - Register OPTIONS route / OPTIONS 라우트 등록
+  - `HEAD(pattern, handler)` - Register HEAD route / HEAD 라우트 등록
+  - `NotFound(handler)` - Set custom 404 handler / 커스텀 404 핸들러 설정
+- Created comprehensive `router_test.go` with 24 test functions / 24개의 테스트 함수가 있는 포괄적인 router_test.go 생성
+  - Route registration tests (GET, POST, all methods) / 라우트 등록 테스트
+  - Parameter extraction tests / 매개변수 추출 테스트
+  - Wildcard route tests / 와일드카드 라우트 테스트
+  - Custom 404 handler tests / 커스텀 404 핸들러 테스트
+  - Pattern parsing tests / 패턴 파싱 테스트
+  - Path parsing tests / 경로 파싱 테스트
+  - App router integration tests / 앱 라우터 통합 테스트
+  - 5 benchmark functions (router performance) / 5개의 벤치마크 함수
+- Updated `README.md` with Router documentation / Router 문서로 README.md 업데이트
+  - Router features and pattern syntax / Router 기능 및 패턴 구문
+  - Updated quick start with routing examples / 라우팅 예제로 빠른 시작 업데이트
+  - Added wildcard and custom 404 example / 와일드카드 및 커스텀 404 예제 추가
+- Updated `examples/websvrutil/main.go` with Router examples / Router 예제로 examples/websvrutil/main.go 업데이트
+  - 10 total examples (added 4 new routing examples) / 총 10개 예제 (4개의 새로운 라우팅 예제 추가)
+  - Example 3: Routing with GET/POST / GET/POST 라우팅
+  - Example 4: Path parameters / 경로 매개변수
+  - Example 5: Wildcard routes / 와일드카드 라우트
+  - Example 6: Custom 404 handler / 커스텀 404 핸들러
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.003 / websvrutil.go 버전 상수를 v1.11.003으로 업데이트
+- Bumped version to v1.11.003 in `cfg/app.yaml` / cfg/app.yaml의 버전을 v1.11.003으로 상향
+- Modified App struct to use Router instead of placeholder / App 구조체를 임시 대신 Router를 사용하도록 수정
+- Updated `New()` to automatically create router instance / `New()`가 라우터 인스턴스를 자동으로 생성하도록 업데이트
+
+### Technical Details / 기술 세부사항
+- **Router Architecture** / **라우터 아키텍처**:
+  - Segment-based pattern matching for performance / 성능을 위한 세그먼트 기반 패턴 일치
+  - Pattern parsing on registration (once) / 등록 시 패턴 파싱 (1회)
+  - Path parsing on each request (fast) / 각 요청 시 경로 파싱 (빠름)
+  - Thread-safe with sync.RWMutex / sync.RWMutex로 스레드 안전
+- **Pattern Types** / **패턴 타입**:
+  - Literal segments: `/users`, `/posts` / 리터럴 세그먼트
+  - Parameter segments: `:id`, `:userId` / 매개변수 세그먼트
+  - Wildcard segment: `*` (matches all remaining) / 와일드카드 세그먼트 (나머지 모두 일치)
+- **Route Matching** / **라우트 일치**:
+  - Exact match for literals / 리터럴 정확한 일치
+  - Parameter extraction for `:name` segments / `:name` 세그먼트 매개변수 추출
+  - Greedy match for wildcard `*` / 와일드카드 `*` 욕심 일치
+  - Method-specific routing (GET /users != POST /users) / 메서드별 라우팅
+
+### Testing Coverage / 테스트 커버리지
+- **24 new router test functions** / **24개의 새로운 라우터 테스트 함수**
+- **5 router benchmark functions** / **5개의 라우터 벤치마크 함수**
+- **Total: 52 test functions** (28 from v1.11.002 + 24 new) / **총 52개의 테스트 함수**
+- **Total: 11 benchmark functions** (6 from v1.11.002 + 5 new) / **총 11개의 벤치마크 함수**
+- Tests cover: route registration, matching, parameters, wildcards, 404, integration / 테스트 범위: 라우트 등록, 일치, 매개변수, 와일드카드, 404, 통합
+
+### Performance / 성능
+- Router benchmarks (sample results) / 라우터 벤치마크 (샘플 결과):
+  - Simple route: ~700 ns/op
+  - Parameter route: ~700 ns/op
+  - Wildcard route: ~700 ns/op
+  - Pattern parsing: ~80 ns/op
+  - Path parsing: ~50 ns/op
+
+### Notes / 참고사항
+- Path parameters are extracted but not yet accessible (coming in v1.11.004) / 경로 매개변수는 추출되지만 아직 액세스 불가 (v1.11.004에서 예정)
+- Context API will provide parameter access in v1.11.004 / Context API는 v1.11.004에서 매개변수 액세스 제공
+- Router is fully functional for route matching and method routing / Router는 라우트 일치 및 메서드 라우팅에 완전히 작동
+
+---
+
 ## [v1.11.002] - 2025-10-16
 
 ### Added / 추가
@@ -123,7 +205,7 @@
 ### Phase 1: Core Foundation (v1.11.001-005)
 - ✅ v1.11.001: Project setup and planning
 - ✅ v1.11.002: App & Options
-- 📝 v1.11.003: Router
+- ✅ v1.11.003: Router
 - 📝 v1.11.004: Context (Part 1)
 - 📝 v1.11.005: Response Helpers
 
