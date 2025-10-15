@@ -152,6 +152,8 @@ func main() {
 // Category 1: Basic Operations (11 functions) / 기본 작업 (11개 함수)
 // ============================================================================
 func basicOperations(ctx context.Context, logger *logging.Logger) {
+	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+
 	logger.Info("")
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("📦 Category 1: Basic Operations (11 functions)")
@@ -279,6 +281,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 // Category 2: Transformation (10 functions) / 변환 (10개 함수)
 // ============================================================================
 func transformations(ctx context.Context, logger *logging.Logger) {
+	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔄 Category 2: Transformation (10 functions)")
 	logger.Info("🔄 카테고리 2: 변환 (10개 함수)")
@@ -417,6 +421,8 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 // Category 3: Aggregation (9 functions) / 집계 (9개 함수)
 // ============================================================================
 func aggregations(ctx context.Context, logger *logging.Logger) {
+	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("📊 Category 3: Aggregation (9 functions)")
 	logger.Info("📊 카테고리 3: 집계 (9개 함수)")
@@ -543,6 +549,8 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 // Category 4: Merge Operations (8 functions) / 병합 작업 (8개 함수)
 // ============================================================================
 func mergeOperations(ctx context.Context, logger *logging.Logger) {
+	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔗 Category 4: Merge Operations (8 functions)")
 	logger.Info("🔗 카테고리 4: 병합 작업 (8개 함수)")
@@ -657,6 +665,8 @@ func mergeOperations(ctx context.Context, logger *logging.Logger) {
 // Category 5: Filter Operations (7 functions) / 필터 작업 (7개 함수)
 // ============================================================================
 func filterOperations(ctx context.Context, logger *logging.Logger) {
+	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔍 Category 5: Filter Operations (7 functions)")
 	logger.Info("🔍 카테고리 5: 필터 작업 (7개 함수)")
@@ -751,6 +761,8 @@ func filterOperations(ctx context.Context, logger *logging.Logger) {
 // Category 6: Conversion (8 functions) / 변환 (8개 함수)
 // ============================================================================
 func conversions(ctx context.Context, logger *logging.Logger) {
+	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔄 Category 6: Conversion (8 functions)")
 	logger.Info("🔄 카테고리 6: 변환 (8개 함수)")
@@ -861,6 +873,8 @@ func conversions(ctx context.Context, logger *logging.Logger) {
 // Category 7: Predicate Checks (7 functions) / 조건 검사 (7개 함수)
 // ============================================================================
 func predicates(ctx context.Context, logger *logging.Logger) {
+	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("✅ Category 7: Predicate Checks (7 functions)")
 	logger.Info("✅ 카테고리 7: 조건 검사 (7개 함수)")
@@ -953,6 +967,8 @@ func predicates(ctx context.Context, logger *logging.Logger) {
 // Category 8: Key Operations (8 functions) / 키 작업 (8개 함수)
 // ============================================================================
 func keyOperations(ctx context.Context, logger *logging.Logger) {
+	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔑 Category 8: Key Operations (8 functions)")
 	logger.Info("🔑 카테고리 8: 키 작업 (8개 함수)")
@@ -1046,6 +1062,8 @@ func keyOperations(ctx context.Context, logger *logging.Logger) {
 // Category 9: Value Operations (7 functions) / 값 작업 (7개 함수)
 // ============================================================================
 func valueOperations(ctx context.Context, logger *logging.Logger) {
+	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("💎 Category 9: Value Operations (7 functions)")
 	logger.Info("💎 카테고리 9: 값 작업 (7개 함수)")
@@ -1130,6 +1148,8 @@ func valueOperations(ctx context.Context, logger *logging.Logger) {
 // Category 10: Comparison (6 functions) / 비교 (6개 함수)
 // ============================================================================
 func comparisons(ctx context.Context, logger *logging.Logger) {
+	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("⚖️  Category 10: Comparison (6 functions)")
 	logger.Info("⚖️  카테고리 10: 비교 (6개 함수)")
@@ -1208,6 +1228,8 @@ func comparisons(ctx context.Context, logger *logging.Logger) {
 // Advanced: Real-World Use Cases / 고급: 실제 사용 사례
 // ============================================================================
 func realWorldExamples(ctx context.Context, logger *logging.Logger) {
+	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🌟 Advanced: Real-World Use Cases")
 	logger.Info("🌟 고급: 실제 사용 사례")
@@ -1372,6 +1394,8 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 // Category 11: Utility Functions (NEW) / 유틸리티 함수 (신규)
 // ============================================================================
 func utilityFunctions(ctx context.Context, logger *logging.Logger) {
+	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+
 	logger.Info("")
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("Category 11: Utility Functions (NEW) / 유틸리티 함수 (신규)")
