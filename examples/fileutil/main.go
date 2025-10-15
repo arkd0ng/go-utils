@@ -2,65 +2,79 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/arkd0ng/go-utils/fileutil"
+	"github.com/arkd0ng/go-utils/logging"
 )
 
 func main() {
+	// Initialize logger / 로거 초기화
+	logger, err := logging.New(
+		logging.WithFilePath(fmt.Sprintf("logs/fileutil-examples-%s.log", time.Now().Format("20060102-150405"))),
+		logging.WithLevel(logging.INFO),
+		logging.WithStdout(true),
+	)
+	if err != nil {
+		fmt.Printf("Failed to initialize logger: %v\n", err)
+		os.Exit(1)
+	}
+	defer logger.Close()
+
+	logger.Info("=== fileutil Package Examples Started ===")
 	fmt.Println("=== fileutil Package Examples ===")
 	fmt.Println()
 
 	// Create temp directory for examples / 예제를 위한 임시 디렉토리 생성
 	tempDir, err := fileutil.CreateTempDir("", "fileutil-examples-*")
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	defer fileutil.DeleteRecursive(tempDir)
 
 	fmt.Printf("Using temp directory: %s\n\n", tempDir)
 
 	// Example 1: File Writing and Reading / 파일 쓰기 및 읽기
-	example1FileOperations(tempDir)
+	example1FileOperations(logger, tempDir)
 
 	// Example 2: Path Operations / 경로 작업
 	example2PathOperations()
 
 	// Example 3: File Information / 파일 정보
-	example3FileInfo(tempDir)
+	example3FileInfo(logger, tempDir)
 
 	// Example 4: File Copying / 파일 복사
-	example4FileCopy(tempDir)
+	example4FileCopy(logger, tempDir)
 
 	// Example 5: File Hashing / 파일 해싱
-	example5FileHash(tempDir)
+	example5FileHash(logger, tempDir)
 
 	// Example 6: Directory Operations / 디렉토리 작업
-	example6DirectoryOperations(tempDir)
+	example6DirectoryOperations(logger, tempDir)
 
 	// Example 7: File Deletion / 파일 삭제
-	example7FileDeletion(tempDir)
+	example7FileDeletion(logger, tempDir)
 
 	fmt.Println("\n=== All Examples Completed Successfully! ===")
 }
 
 // Example 1: File Writing and Reading / 파일 쓰기 및 읽기
-func example1FileOperations(tempDir string) {
+func example1FileOperations(logger *logging.Logger, tempDir string) {
 	fmt.Println("--- Example 1: File Writing and Reading ---")
 
 	// Write string to file / 파일에 문자열 쓰기
 	file1 := filepath.Join(tempDir, "example1", "hello.txt")
 	if err := fileutil.WriteString(file1, "Hello, World!"); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Written to %s\n", file1)
 
 	// Read string from file / 파일에서 문자열 읽기
 	content, err := fileutil.ReadString(file1)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Read: %s\n", content)
 
@@ -68,20 +82,20 @@ func example1FileOperations(tempDir string) {
 	file2 := filepath.Join(tempDir, "example1", "lines.txt")
 	lines := []string{"Line 1", "Line 2", "Line 3"}
 	if err := fileutil.WriteLines(file2, lines); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Written %d lines to %s\n", len(lines), file2)
 
 	// Read lines from file / 파일에서 줄 읽기
 	readLines, err := fileutil.ReadLines(file2)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Read %d lines from %s\n", len(readLines), file2)
 
 	// Append to file / 파일에 추가
 	if err := fileutil.AppendString(file1, "\nAppended line"); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Appended to %s\n", file1)
 
@@ -120,13 +134,13 @@ func example2PathOperations() {
 }
 
 // Example 3: File Information / 파일 정보
-func example3FileInfo(tempDir string) {
+func example3FileInfo(logger *logging.Logger, tempDir string) {
 	fmt.Println("--- Example 3: File Information ---")
 
 	// Create test file / 테스트 파일 생성
 	testFile := filepath.Join(tempDir, "example3", "info.txt")
 	if err := fileutil.WriteString(testFile, "File information test"); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 
 	// Check if file exists / 파일 존재 확인
@@ -140,27 +154,27 @@ func example3FileInfo(tempDir string) {
 	// Get file size / 파일 크기 가져오기
 	size, err := fileutil.Size(testFile)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ File size: %d bytes\n", size)
 
 	// Get human-readable size / 사람이 읽기 쉬운 크기 가져오기
 	sizeHuman, err := fileutil.SizeHuman(testFile)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ File size (human): %s\n", sizeHuman)
 
 	// Get modification time / 수정 시간 가져오기
 	modTime, err := fileutil.ModTime(testFile)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Modified time: %s\n", modTime.Format("2006-01-02 15:04:05"))
 
 	// Touch file (update modification time) / 파일 터치 (수정 시간 업데이트)
 	if err := fileutil.Touch(testFile); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Touched file (updated modification time)\n")
 
@@ -168,27 +182,27 @@ func example3FileInfo(tempDir string) {
 }
 
 // Example 4: File Copying / 파일 복사
-func example4FileCopy(tempDir string) {
+func example4FileCopy(logger *logging.Logger, tempDir string) {
 	fmt.Println("--- Example 4: File Copying ---")
 
 	// Create source file / 소스 파일 생성
 	srcFile := filepath.Join(tempDir, "example4", "source.txt")
 	if err := fileutil.WriteString(srcFile, "Content to copy"); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Created source file: %s\n", srcFile)
 
 	// Copy file / 파일 복사
 	dstFile := filepath.Join(tempDir, "example4", "destination.txt")
 	if err := fileutil.CopyFile(srcFile, dstFile); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Copied to: %s\n", dstFile)
 
 	// Verify copy / 복사 확인
 	content, err := fileutil.ReadString(dstFile)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Verified content: %s\n", content)
 
@@ -199,7 +213,7 @@ func example4FileCopy(tempDir string) {
 			percent := float64(written) / float64(total) * 100
 			fmt.Printf("  Progress: %d/%d bytes (%.1f%%)\n", written, total, percent)
 		})); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 
 	// Create directory to copy / 복사할 디렉토리 생성
@@ -211,7 +225,7 @@ func example4FileCopy(tempDir string) {
 	// Copy directory / 디렉토리 복사
 	dstDir := filepath.Join(tempDir, "example4", "dst-dir")
 	if err := fileutil.CopyDir(srcDir, dstDir); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Copied directory to: %s\n", dstDir)
 
@@ -219,47 +233,47 @@ func example4FileCopy(tempDir string) {
 }
 
 // Example 5: File Hashing / 파일 해싱
-func example5FileHash(tempDir string) {
+func example5FileHash(logger *logging.Logger, tempDir string) {
 	fmt.Println("--- Example 5: File Hashing ---")
 
 	// Create test file / 테스트 파일 생성
 	testFile := filepath.Join(tempDir, "example5", "hash-test.txt")
 	if err := fileutil.WriteString(testFile, "Content to hash"); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 
 	// Calculate MD5 hash / MD5 해시 계산
 	md5Hash, err := fileutil.MD5(testFile)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ MD5:    %s\n", md5Hash)
 
 	// Calculate SHA1 hash / SHA1 해시 계산
 	sha1Hash, err := fileutil.SHA1(testFile)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ SHA1:   %s\n", sha1Hash)
 
 	// Calculate SHA256 hash / SHA256 해시 계산
 	sha256Hash, err := fileutil.SHA256(testFile)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ SHA256: %s\n", sha256Hash)
 
 	// Calculate checksum / 체크섬 계산
 	checksum, err := fileutil.Checksum(testFile)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Checksum: %s\n", checksum)
 
 	// Verify checksum / 체크섬 검증
 	valid, err := fileutil.VerifyChecksum(testFile, checksum)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Checksum valid: %t\n", valid)
 
@@ -268,7 +282,7 @@ func example5FileHash(tempDir string) {
 	fileutil.WriteString(file2, "Content to hash")
 	same, err := fileutil.CompareHash(testFile, file2)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Files have same hash: %t\n", same)
 
@@ -276,13 +290,13 @@ func example5FileHash(tempDir string) {
 }
 
 // Example 6: Directory Operations / 디렉토리 작업
-func example6DirectoryOperations(tempDir string) {
+func example6DirectoryOperations(logger *logging.Logger, tempDir string) {
 	fmt.Println("--- Example 6: Directory Operations ---")
 
 	// Create nested directory / 중첩 디렉토리 생성
 	nestedDir := filepath.Join(tempDir, "example6", "a", "b", "c")
 	if err := fileutil.MkdirAll(nestedDir); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Created nested directory: %s\n", nestedDir)
 
@@ -296,7 +310,7 @@ func example6DirectoryOperations(tempDir string) {
 	// List files / 파일 나열
 	files, err := fileutil.ListFiles(testDir)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Found %d files:\n", len(files))
 	for _, file := range files {
@@ -308,7 +322,7 @@ func example6DirectoryOperations(tempDir string) {
 		return fileutil.Ext(path) == ".txt"
 	})
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Found %d .txt files\n", len(txtFiles))
 
@@ -317,14 +331,14 @@ func example6DirectoryOperations(tempDir string) {
 	fileutil.MkdirAll(emptyDir)
 	isEmpty, err := fileutil.IsEmpty(emptyDir)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Empty directory is empty: %t\n", isEmpty)
 
 	// Calculate directory size / 디렉토리 크기 계산
 	dirSize, err := fileutil.DirSize(testDir)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Directory size: %d bytes\n", dirSize)
 
@@ -332,7 +346,7 @@ func example6DirectoryOperations(tempDir string) {
 }
 
 // Example 7: File Deletion / 파일 삭제
-func example7FileDeletion(tempDir string) {
+func example7FileDeletion(logger *logging.Logger, tempDir string) {
 	fmt.Println("--- Example 7: File Deletion ---")
 
 	// Create test files / 테스트 파일 생성
@@ -342,7 +356,7 @@ func example7FileDeletion(tempDir string) {
 
 	// Delete file / 파일 삭제
 	if err := fileutil.DeleteFile(file1); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Deleted file\n")
 
@@ -357,7 +371,7 @@ func example7FileDeletion(tempDir string) {
 
 	// Delete directory recursively / 디렉토리 재귀적으로 삭제
 	if err := fileutil.DeleteRecursive(deleteDir); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Deleted directory recursively\n")
 
@@ -368,7 +382,7 @@ func example7FileDeletion(tempDir string) {
 	fmt.Printf("✓ Created directory with files: %s\n", cleanDir)
 
 	if err := fileutil.Clean(cleanDir); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("✓ Cleaned directory (removed all contents)\n")
 

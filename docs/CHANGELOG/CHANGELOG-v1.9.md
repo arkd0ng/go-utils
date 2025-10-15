@@ -6,6 +6,29 @@ This file contains detailed change logs for the v1.9.x releases of go-utils, foc
 
 ---
 
+## [v1.9.003] - 2025-10-15
+
+### Enhanced / 보강됨
+
+#### Example Files Logging Integration / 예제 파일 로깅 통합
+
+**Updated Files / 업데이트된 파일:**
+- `examples/fileutil/main.go` - Integrated logging package with timestamped log files / 타임스탬프가 있는 로그 파일로 logging 패키지 통합
+
+**Key Changes / 주요 변경사항:**
+- Replaced all `log.Fatal` calls with `logger.Fatalf` in fileutil example / fileutil 예제의 모든 `log.Fatal` 호출을 `logger.Fatalf`로 교체
+- Updated all example functions to accept `logger *logging.Logger` parameter / 모든 예제 함수에서 `logger *logging.Logger` 매개변수를 받도록 업데이트
+- Removed unused `log` package import / 사용하지 않는 `log` 패키지 import 제거
+- Log files now saved to `logs/` directory with pattern: `logs/fileutil-examples-{timestamp}.log` / 로그 파일이 이제 `logs/` 디렉토리에 `logs/fileutil-examples-{timestamp}.log` 패턴으로 저장됨
+- Added `WithStdout(true)` for console output alongside file logging / 파일 로깅과 함께 콘솔 출력을 위한 `WithStdout(true)` 추가
+
+**Verified / 확인됨:**
+- All utility package examples (stringutil, timeutil, sliceutil, maputil) already use logging package correctly / 모든 유틸리티 패키지 예제(stringutil, timeutil, sliceutil, maputil)가 이미 logging 패키지를 올바르게 사용함
+- All examples build successfully / 모든 예제가 성공적으로 빌드됨
+- Fileutil example tested and confirmed working with logging package / Fileutil 예제가 logging 패키지와 함께 테스트되고 작동 확인됨
+
+---
+
 ## [v1.9.002] - 2025-10-15
 
 ### Enhanced / 보강됨
