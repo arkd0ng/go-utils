@@ -6,6 +6,31 @@ maputil 패키지 (v1.8.x)의 모든 주요 변경사항이 이 파일에 기록
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.8.006] - 2025-10-15
+
+### Added / 추가
+- Created comprehensive `docs/maputil/DEVELOPER_GUIDE.md` with 2,356 lines / 2,356줄의 포괄적인 `docs/maputil/DEVELOPER_GUIDE.md` 생성
+  - Section 1: Architecture Overview - Design principles, high-level architecture, component interaction / 아키텍처 개요 - 설계 원칙, 상위 수준 아키텍처, 컴포넌트 상호작용
+  - Section 2: Package Structure - File organization (11 files), responsibilities, category breakdown / 패키지 구조 - 파일 구성 (11개 파일), 책임, 카테고리 분류
+  - Section 3: Core Components - Entry struct, Number/Ordered constraints, all 81 functions / 핵심 컴포넌트 - Entry 구조체, Number/Ordered 제약조건, 81개 모든 함수
+  - Section 4: Design Patterns - Generic type parameters, functional programming, immutability / 디자인 패턴 - 제네릭 타입 파라미터, 함수형 프로그래밍, 불변성
+  - Section 5: Internal Implementation - Flow diagrams and code examples for Map, Filter, Reduce, GroupBy, Intersection / 내부 구현 - Map, Filter, Reduce, GroupBy, Intersection의 흐름도 및 코드 예제
+  - Section 6: Adding New Features - Step-by-step guide with real example (Tap function) / 새 기능 추가 - 실제 예제(Tap 함수)가 포함된 단계별 가이드
+  - Section 7: Testing Guide - Test structure, running tests, writing tests, coverage goals / 테스트 가이드 - 테스트 구조, 테스트 실행, 테스트 작성, 커버리지 목표
+  - Section 8: Performance - Complete time/space complexity tables for all 81 functions, optimization tips / 성능 - 81개 함수 모두의 시간/공간 복잡도 표, 최적화 팁
+  - Section 9: Contributing Guidelines - PR process, comprehensive checklist, code review / 기여 가이드라인 - PR 프로세스, 포괄적인 체크리스트, 코드 리뷰
+  - Section 10: Code Style - Naming conventions, documentation standards, best practices / 코드 스타일 - 명명 규칙, 문서화 표준, 모범 사례
+
+### Documentation / 문서
+- DEVELOPER_GUIDE.md provides complete technical documentation for contributors / DEVELOPER_GUIDE.md는 기여자를 위한 완전한 기술 문서 제공
+- All content in bilingual format (English/Korean) following sliceutil template / sliceutil 템플릿을 따르는 이중 언어 형식 (영문/한글)의 모든 내용
+- Includes ASCII architecture diagrams, flow diagrams, and working code examples / ASCII 아키텍처 다이어그램, 흐름도, 작동하는 코드 예제 포함
+- Comprehensive performance analysis with complexity tables for all functions / 모든 함수에 대한 복잡도 표가 포함된 포괄적인 성능 분석
+
+### Notes / 참고사항
+- Documentation suite now complete with USER_MANUAL (2,207 lines) and DEVELOPER_GUIDE (2,356 lines) / 문서 모음이 USER_MANUAL (2,207줄) 및 DEVELOPER_GUIDE (2,356줄)로 완성
+- Total documentation: 4,563 lines covering all 81 functions from both user and developer perspectives / 총 문서: 사용자와 개발자 관점 모두에서 81개 함수를 다루는 4,563줄
+
 ## [v1.8.005] - 2025-10-15
 
 ### Added / 추가
