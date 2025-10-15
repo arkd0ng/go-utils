@@ -1,7 +1,7 @@
 # httputil Package - Developer Guide
 # httputil 패키지 - 개발자 가이드
 
-**Version / 버전**: v1.10.001
+**Version / 버전**: v1.10.002
 **Last Updated / 최종 업데이트**: 2025-10-15
 
 ---
@@ -125,6 +125,10 @@ httputil/
 ├── simple.go         # Package-level convenience functions / 패키지 레벨 편의 함수
 ├── options.go        # Functional options pattern / 함수형 옵션 패턴
 ├── errors.go         # Error types / 에러 타입
+├── response.go       # Response wrapper with helpers / 헬퍼가 있는 응답 래퍼
+├── file.go           # File download/upload operations / 파일 다운로드/업로드 작업
+├── url.go            # URL builder and utilities / URL 빌더 및 유틸리티
+├── form.go           # Form builder and utilities / Form 빌더 및 유틸리티
 ├── httputil_test.go  # Tests / 테스트
 └── README.md         # Package documentation / 패키지 문서
 ```
@@ -181,13 +185,69 @@ httputil/
 - TimeoutError 타입
 - 헬퍼 함수
 
-#### httputil_test.go (149 lines)
-- Unit tests for all public API
+#### response.go (280 lines) **[Phase 2]**
+- `Response` wrapper struct embedding *http.Response
+- Body methods (Body(), String(), JSON())
+- Status check methods (IsSuccess(), IsOK(), IsNotFound(), etc. - 15 methods)
+- Header methods (Header(), Headers(), ContentType())
+- Cached body for multiple reads
+- Response 래퍼 구조체 (*http.Response 임베딩)
+- 본문 메서드 (Body(), String(), JSON())
+- 상태 확인 메서드 (IsSuccess(), IsOK(), IsNotFound() 등 - 15개 메서드)
+- 헤더 메서드 (Header(), Headers(), ContentType())
+- 여러 번 읽기를 위한 캐시된 본문
+
+#### file.go (340 lines) **[Phase 3]**
+- `ProgressFunc` callback type for progress tracking
+- `progressReader` for progress callbacks
+- File download methods (DownloadFile, DownloadFileContext, Download, DownloadContext)
+- File upload methods (UploadFile, UploadFileContext, UploadFiles, UploadFilesContext)
+- Multipart form data handling
+- 진행 상황 추적을 위한 ProgressFunc 콜백 타입
+- 진행 상황 콜백을 위한 progressReader
+- 파일 다운로드 메서드
+- 파일 업로드 메서드
+- multipart form data 처리
+
+#### url.go (180 lines) **[Phase 4]**
+- `URLBuilder` fluent API struct
+- URL building methods (Path(), Param(), ParamIf(), Build())
+- URL utility functions (JoinURL, AddQueryParams, GetDomain, GetScheme, etc. - 6 functions)
+- URLBuilder Fluent API 구조체
+- URL 구축 메서드 (Path(), Param(), ParamIf(), Build())
+- URL 유틸리티 함수 (JoinURL, AddQueryParams, GetDomain, GetScheme 등 - 6개 함수)
+
+#### form.go (200 lines) **[Phase 4]**
+- `FormBuilder` fluent API struct
+- Form building methods (Set(), Add(), AddIf(), AddMultiple(), etc.)
+- Form utility functions (ParseForm, EncodeForm)
+- PostForm methods for Client and package-level
+- FormBuilder Fluent API 구조체
+- 폼 구축 메서드 (Set(), Add(), AddIf(), AddMultiple() 등)
+- 폼 유틸리티 함수 (ParseForm, EncodeForm)
+- Client 및 패키지 레벨용 PostForm 메서드
+
+#### httputil_test.go (456 lines)
+- Unit tests for all public API (Phase 1-4)
 - Error type tests
 - Configuration tests
-- 모든 공개 API에 대한 단위 테스트
+- Response wrapper tests (17 sub-tests)
+- URL Builder tests (3 sub-tests)
+- Form Builder tests (5 sub-tests)
+- URL utilities tests (6 sub-tests)
+- Form utilities tests (2 sub-tests)
+- Progress reader tests
+- Total: 13 tests, 43+ sub-tests
+- 모든 공개 API에 대한 단위 테스트 (1-4단계)
 - 에러 타입 테스트
 - 설정 테스트
+- Response 래퍼 테스트 (17개 하위 테스트)
+- URL Builder 테스트 (3개 하위 테스트)
+- Form Builder 테스트 (5개 하위 테스트)
+- URL 유틸리티 테스트 (6개 하위 테스트)
+- Form 유틸리티 테스트 (2개 하위 테스트)
+- Progress reader 테스트
+- 총 13개 테스트, 43개 이상 하위 테스트
 
 ---
 
@@ -365,6 +425,151 @@ type Option func(*config)
    - `WithBaseURL(string)`
    - `WithFollowRedirects(bool)`
    - `WithMaxRedirects(int)`
+
+### 3.5 Response Wrapper / Response 래퍼 **[Phase 2]**
+
+The `Response` type wraps `*http.Response` with additional helper methods:
+
+Response 타입은 추가 헬퍼 메서드로 *http.Response를 래핑합니다:
+
+```go
+type Response struct {
+    *http.Response
+    body []byte  // Cached for multiple reads / 여러 번 읽기를 위해 캐시됨
+}
+```
+
+**Key Methods / 주요 메서드:**
+
+1. **Body Access / 본문 접근:**
+   - `Body() []byte` - Get body as bytes
+   - `String() string` - Get body as string
+   - `JSON(result interface{}) error` - Decode JSON
+
+2. **Status Checks / 상태 확인:**
+   - `IsSuccess() bool` - 2xx status codes
+   - `IsError() bool` - 4xx or 5xx
+   - `IsClientError() bool` - 4xx
+   - `IsServerError() bool` - 5xx
+   - Plus 11 specific status checks (IsOK, IsNotFound, etc.)
+
+3. **Header Access / 헤더 접근:**
+   - `Header(key string) string` - Single header
+   - `Headers() map[string]string` - All headers
+   - `ContentType() string` - Content-Type header
+
+**Design Benefits / 설계 이점:**
+- Body caching allows multiple reads without re-fetching
+- Intuitive status check methods reduce boilerplate
+- Type-safe JSON decoding
+- 본문 캐싱으로 다시 가져오지 않고 여러 번 읽기 가능
+- 직관적인 상태 확인 메서드로 보일러플레이트 감소
+- 타입 안전 JSON 디코딩
+
+### 3.6 File Operations / 파일 작업 **[Phase 3]**
+
+File download and upload with progress tracking:
+
+진행 상황 추적과 함께 파일 다운로드 및 업로드:
+
+```go
+type ProgressFunc func(bytesRead, totalBytes int64)
+
+type progressReader struct {
+    reader   io.Reader
+    progress ProgressFunc
+    total    int64
+    read     int64
+}
+```
+
+**Download Methods / 다운로드 메서드:**
+- `DownloadFile(url, filepath string, opts ...Option) error`
+- `DownloadFileContext(ctx, url, filepath string, progress ProgressFunc, opts ...Option) error`
+- `Download(url string, opts ...Option) ([]byte, error)`
+- `DownloadContext(ctx, url string, opts ...Option) ([]byte, error)`
+
+**Upload Methods / 업로드 메서드:**
+- `UploadFile(url, fieldName, filepath string, result interface{}, opts ...Option) error`
+- `UploadFileContext(ctx, url, fieldName, filepath string, result interface{}, opts ...Option) error`
+- `UploadFiles(url string, files map[string]string, result interface{}, opts ...Option) error`
+- `UploadFilesContext(ctx, url string, files map[string]string, result interface{}, opts ...Option) error`
+
+**Progress Tracking / 진행 상황 추적:**
+The `progressReader` wraps an `io.Reader` and calls the progress callback after each read, allowing real-time progress monitoring for large file operations.
+
+progressReader는 io.Reader를 래핑하고 각 읽기 후 진행 상황 콜백을 호출하여 대용량 파일 작업에 대한 실시간 진행 상황 모니터링을 가능하게 합니다.
+
+### 3.7 URL Builder / URL 빌더 **[Phase 4]**
+
+Fluent API for building URLs with parameters:
+
+매개변수와 함께 URL을 구축하기 위한 Fluent API:
+
+```go
+type URLBuilder struct {
+    baseURL string
+    path    []string
+    params  url.Values
+}
+```
+
+**Builder Methods / 빌더 메서드:**
+- `NewURL(baseURL string) *URLBuilder` - Create builder
+- `Path(segments ...string) *URLBuilder` - Add path segments
+- `Param(key, value string) *URLBuilder` - Add single parameter
+- `Params(map[string]string) *URLBuilder` - Add multiple parameters
+- `ParamIf(condition bool, key, value string) *URLBuilder` - Conditional parameter
+- `Build() string` - Build final URL
+
+**Utility Functions / 유틸리티 함수:**
+- `JoinURL(baseURL string, paths ...string) string`
+- `AddQueryParams(urlStr string, params map[string]string) (string, error)`
+- `GetDomain(urlStr string) (string, error)`
+- `GetScheme(urlStr string) (string, error)`
+- `IsAbsoluteURL(urlStr string) bool`
+- `NormalizeURL(urlStr string) string`
+
+**Design Pattern / 디자인 패턴:**
+Method chaining (Fluent API) allows building complex URLs in a readable, declarative way.
+
+메서드 체이닝 (Fluent API)은 읽기 쉽고 선언적인 방식으로 복잡한 URL을 구축할 수 있게 합니다.
+
+### 3.8 Form Builder / Form 빌더 **[Phase 4]**
+
+Fluent API for building form data:
+
+폼 데이터를 구축하기 위한 Fluent API:
+
+```go
+type FormBuilder struct {
+    values url.Values
+}
+```
+
+**Builder Methods / 빌더 메서드:**
+- `NewForm() *FormBuilder` - Create builder
+- `Add(key, value string) *FormBuilder` - Add value (allows duplicates)
+- `Set(key, value string) *FormBuilder` - Set value (replaces existing)
+- `AddMultiple(key string, values ...string) *FormBuilder` - Add multiple values
+- `AddIf(condition bool, key, value string) *FormBuilder` - Conditional add
+- `Get(key string) string` - Get single value
+- `GetAll(key string) []string` - Get all values
+- `Has(key string) bool` - Check if key exists
+- `Del(key string) *FormBuilder` - Delete key
+- `Clone() *FormBuilder` - Clone form
+- `Map() map[string]string` - Convert to map
+- `Encode() string` - Encode as URL-encoded string
+
+**Utility Functions / 유틸리티 함수:**
+- `ParseForm(data string) (map[string]string, error)` - Parse URL-encoded string
+- `EncodeForm(data map[string]string) string` - Encode map to URL-encoded string
+
+**PostForm Methods / PostForm 메서드:**
+- `PostForm(url string, data map[string]string, result interface{}, opts ...Option) error`
+- `PostFormContext(ctx, url string, data map[string]string, result interface{}, opts ...Option) error`
+- `Client.PostForm(path string, data map[string]string, result interface{}, opts ...Option) error`
+- `Client.PostFormContext(ctx, path string, data map[string]string, result interface{}, opts ...Option) error`
 
 ---
 

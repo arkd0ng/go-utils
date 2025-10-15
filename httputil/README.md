@@ -4,7 +4,7 @@ Extremely simple HTTP client utilities that reduce 30+ lines to 2-3 lines.
 
 극도로 간단한 HTTP 클라이언트 유틸리티로 30줄 이상의 코드를 2-3줄로 줄입니다.
 
-**Version / 버전**: v1.10.001
+**Version / 버전**: v1.10.002
 **Package Path / 패키지 경로**: `github.com/arkd0ng/go-utils/httputil`
 
 ---
@@ -54,6 +54,30 @@ Extremely simple HTTP client utilities that reduce 30+ lines to 2-3 lines.
 - 지터가 있는 지수 백오프
 - 네트워크 오류 및 5xx 응답 시 자동 재시도
 
+✅ **Response Helpers** / **응답 헬퍼**
+- Rich Response wrapper with 20+ helper methods
+- Status code checks (IsSuccess, IsOK, IsNotFound, etc.)
+- Body access (Body(), String(), JSON())
+- 20개 이상의 헬퍼 메서드를 가진 풍부한 Response 래퍼
+- 상태 코드 확인 (IsSuccess, IsOK, IsNotFound 등)
+- 본문 접근 (Body(), String(), JSON())
+
+✅ **File Operations** / **파일 작업**
+- File download with progress tracking
+- File upload with multipart form data
+- Progress callbacks for large files
+- 진행 상황 추적과 함께 파일 다운로드
+- multipart form data를 사용한 파일 업로드
+- 대용량 파일을 위한 진행 상황 콜백
+
+✅ **URL & Form Builders** / **URL 및 Form 빌더**
+- Fluent API for building URLs and forms
+- Conditional parameters (ParamIf, AddIf)
+- URL utilities (JoinURL, AddQueryParams, GetDomain, etc.)
+- URL 및 폼 구축을 위한 Fluent API
+- 조건부 매개변수 (ParamIf, AddIf)
+- URL 유틸리티 (JoinURL, AddQueryParams, GetDomain 등)
+
 ✅ **Rich Configuration** / **풍부한 설정**
 - Functional options pattern for flexible configuration
 - 12 built-in options (timeout, headers, auth, retry, etc.)
@@ -69,8 +93,8 @@ Extremely simple HTTP client utilities that reduce 30+ lines to 2-3 lines.
 - TimeoutError (타임아웃 감지)
 
 ✅ **Zero External Dependencies** / **제로 외부 의존성**
-- Standard library only (net/http, encoding/json)
-- 표준 라이브러리만 사용 (net/http, encoding/json)
+- Standard library only (net/http, encoding/json, mime/multipart)
+- 표준 라이브러리만 사용 (net/http, encoding/json, mime/multipart)
 
 ---
 
@@ -178,6 +202,111 @@ var created User
 err = client.Post("/users", payload, &created)
 ```
 
+### 4. Response Helpers / 응답 헬퍼
+
+```go
+// Get raw response with helper methods / 헬퍼 메서드와 함께 원시 응답 가져오기
+resp, err := httputil.DoRaw("GET", "https://api.example.com/users", nil,
+    httputil.WithBearerToken("token123"))
+if err != nil {
+    log.Fatal(err)
+}
+
+// Check status / 상태 확인
+if resp.IsSuccess() {
+    log.Println("Request successful")
+}
+
+// Access body / 본문 접근
+bodyString := resp.String()
+bodyBytes := resp.Body()
+
+// Decode JSON / JSON 디코딩
+var users []User
+err = resp.JSON(&users)
+```
+
+### 5. File Download with Progress / 진행 상황과 함께 파일 다운로드
+
+```go
+// Download file with progress tracking / 진행 상황 추적과 함께 파일 다운로드
+err := httputil.DownloadFile(
+    "https://example.com/large-file.zip",
+    "./downloads/file.zip",
+    httputil.WithProgress(func(bytesRead, totalBytes int64) {
+        progress := float64(bytesRead) / float64(totalBytes) * 100
+        fmt.Printf("\rDownloading: %.2f%%", progress)
+    }),
+)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+### 6. File Upload / 파일 업로드
+
+```go
+// Upload single file / 단일 파일 업로드
+var result map[string]interface{}
+err := httputil.UploadFile(
+    "https://api.example.com/upload",
+    "file",
+    "./document.pdf",
+    &result,
+    httputil.WithBearerToken("token123"),
+)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Upload multiple files / 여러 파일 업로드
+err = httputil.UploadFiles(
+    "https://api.example.com/upload-multiple",
+    map[string]string{
+        "file1": "./image1.jpg",
+        "file2": "./image2.jpg",
+    },
+    &result,
+    httputil.WithBearerToken("token123"),
+)
+```
+
+### 7. URL Builder / URL 빌더
+
+```go
+// Build URL with fluent API / Fluent API로 URL 구축
+url := httputil.NewURL("https://api.example.com").
+    Path("users", "search").
+    Param("q", "golang").
+    Param("page", "1").
+    ParamIf(includeInactive, "status", "inactive").
+    Build()
+// Result: https://api.example.com/users/search?q=golang&page=1
+
+// Join URL paths / URL 경로 결합
+url = httputil.JoinURL("https://api.example.com", "v1", "users", "123")
+// Result: https://api.example.com/v1/users/123
+```
+
+### 8. Form Builder / Form 빌더
+
+```go
+// Build form data with fluent API / Fluent API로 폼 데이터 구축
+form := httputil.NewForm().
+    Set("username", "john").
+    Set("email", "john@example.com").
+    AddIf(hasPromoCode, "promo_code", "SAVE20").
+    AddMultiple("tags", "go", "http", "api")
+
+// Post form data / 폼 데이터 전송
+var result map[string]interface{}
+err := httputil.PostForm(
+    "https://api.example.com/submit",
+    form.Map(),
+    &result,
+)
+```
+
 ---
 
 ## API Reference / API 참조
@@ -274,6 +403,98 @@ httputil.SetDefaultClient(httputil.NewClient(
 ))
 ```
 
+#### Raw Response / 원시 응답
+
+```go
+func DoRaw(method, url string, body interface{}, opts ...Option) (*Response, error)
+func DoRawContext(ctx context.Context, method, url string, body interface{}, opts ...Option) (*Response, error)
+```
+
+Get raw Response with helper methods instead of auto-decoding JSON.
+
+JSON 자동 디코딩 대신 헬퍼 메서드가 있는 원시 Response를 가져옵니다.
+
+**Example / 예제:**
+```go
+resp, err := httputil.DoRaw("GET", "https://api.example.com/data", nil)
+if resp.IsSuccess() {
+    bodyString := resp.String()
+}
+```
+
+#### File Operations / 파일 작업
+
+```go
+func DownloadFile(url, filepath string, opts ...Option) error
+func DownloadFileContext(ctx context.Context, url, filepath string, progress ProgressFunc, opts ...Option) error
+func Download(url string, opts ...Option) ([]byte, error)
+func DownloadContext(ctx context.Context, url string, opts ...Option) ([]byte, error)
+```
+
+Download files from URL with optional progress tracking.
+
+선택적 진행 상황 추적과 함께 URL에서 파일을 다운로드합니다.
+
+**Example / 예제:**
+```go
+// Download to file / 파일로 다운로드
+err := httputil.DownloadFile("https://example.com/file.zip", "./file.zip")
+
+// Download to memory / 메모리로 다운로드
+data, err := httputil.Download("https://example.com/data.json")
+
+// With progress callback / 진행 상황 콜백과 함께
+ctx := context.Background()
+err = httputil.DownloadFileContext(ctx, url, filepath,
+    func(read, total int64) {
+        fmt.Printf("Progress: %.2f%%\n", float64(read)/float64(total)*100)
+    })
+```
+
+```go
+func UploadFile(url, fieldName, filepath string, result interface{}, opts ...Option) error
+func UploadFileContext(ctx context.Context, url, fieldName, filepath string, result interface{}, opts ...Option) error
+func UploadFiles(url string, files map[string]string, result interface{}, opts ...Option) error
+func UploadFilesContext(ctx context.Context, url string, files map[string]string, result interface{}, opts ...Option) error
+```
+
+Upload files using multipart form data.
+
+multipart form data를 사용하여 파일을 업로드합니다.
+
+**Example / 예제:**
+```go
+// Upload single file / 단일 파일 업로드
+var result map[string]interface{}
+err := httputil.UploadFile(url, "document", "./file.pdf", &result)
+
+// Upload multiple files / 여러 파일 업로드
+err = httputil.UploadFiles(url, map[string]string{
+    "file1": "./image1.jpg",
+    "file2": "./image2.jpg",
+}, &result)
+```
+
+#### Form Operations / Form 작업
+
+```go
+func PostForm(url string, data map[string]string, result interface{}, opts ...Option) error
+func PostFormContext(ctx context.Context, url string, data map[string]string, result interface{}, opts ...Option) error
+```
+
+Post form data with `application/x-www-form-urlencoded` encoding.
+
+`application/x-www-form-urlencoded` 인코딩으로 폼 데이터를 전송합니다.
+
+**Example / 예제:**
+```go
+var result map[string]interface{}
+err := httputil.PostForm(url, map[string]string{
+    "username": "john",
+    "email": "john@example.com",
+}, &result)
+```
+
 ---
 
 ### Client API
@@ -320,6 +541,254 @@ func (c *Client) Delete(path string, result interface{}, opts ...Option) error
 func (c *Client) DeleteContext(ctx context.Context, path string, result interface{}, opts ...Option) error
 ```
 
+#### Client File Operations / 클라이언트 파일 작업
+
+```go
+func (c *Client) DownloadFile(url, filepath string, opts ...Option) error
+func (c *Client) DownloadFileContext(ctx context.Context, url, filepath string, progress ProgressFunc, opts ...Option) error
+func (c *Client) Download(url string, opts ...Option) ([]byte, error)
+func (c *Client) DownloadContext(ctx context.Context, url string, opts ...Option) ([]byte, error)
+
+func (c *Client) UploadFile(url, fieldName, filepath string, result interface{}, opts ...Option) error
+func (c *Client) UploadFileContext(ctx context.Context, url, fieldName, filepath string, result interface{}, opts ...Option) error
+func (c *Client) UploadFiles(url string, files map[string]string, result interface{}, opts ...Option) error
+func (c *Client) UploadFilesContext(ctx context.Context, url string, files map[string]string, result interface{}, opts ...Option) error
+```
+
+#### Client Form Operations / 클라이언트 Form 작업
+
+```go
+func (c *Client) PostForm(path string, data map[string]string, result interface{}, opts ...Option) error
+func (c *Client) PostFormContext(ctx context.Context, path string, data map[string]string, result interface{}, opts ...Option) error
+```
+
+---
+
+### Response API / Response API
+
+Rich response wrapper with helper methods for easier response handling.
+
+더 쉬운 응답 처리를 위한 헬퍼 메서드가 있는 풍부한 응답 래퍼.
+
+```go
+type Response struct {
+    *http.Response
+    // ... cached body
+}
+```
+
+#### Body Methods / 본문 메서드
+
+```go
+func (r *Response) Body() []byte                          // Get response body as bytes
+func (r *Response) String() string                        // Get response body as string
+func (r *Response) JSON(result interface{}) error         // Decode JSON into result
+```
+
+**Example / 예제:**
+```go
+resp, _ := httputil.DoRaw("GET", url, nil)
+bodyBytes := resp.Body()
+bodyString := resp.String()
+
+var data MyStruct
+resp.JSON(&data)
+```
+
+#### Status Check Methods / 상태 확인 메서드
+
+```go
+func (r *Response) IsSuccess() bool        // 2xx status codes
+func (r *Response) IsError() bool          // 4xx or 5xx status codes
+func (r *Response) IsClientError() bool    // 4xx status codes
+func (r *Response) IsServerError() bool    // 5xx status codes
+
+// Specific status codes / 특정 상태 코드
+func (r *Response) IsOK() bool             // 200 OK
+func (r *Response) IsCreated() bool        // 201 Created
+func (r *Response) IsAccepted() bool       // 202 Accepted
+func (r *Response) IsNoContent() bool      // 204 No Content
+func (r *Response) IsMovedPermanently() bool    // 301 Moved Permanently
+func (r *Response) IsFound() bool          // 302 Found
+func (r *Response) IsBadRequest() bool     // 400 Bad Request
+func (r *Response) IsUnauthorized() bool   // 401 Unauthorized
+func (r *Response) IsForbidden() bool      // 403 Forbidden
+func (r *Response) IsNotFound() bool       // 404 Not Found
+func (r *Response) IsInternalServerError() bool  // 500 Internal Server Error
+```
+
+**Example / 예제:**
+```go
+resp, _ := httputil.DoRaw("GET", url, nil)
+
+if resp.IsSuccess() {
+    log.Println("Request successful")
+} else if resp.IsNotFound() {
+    log.Println("Resource not found")
+} else if resp.IsServerError() {
+    log.Println("Server error")
+}
+```
+
+#### Header Methods / 헤더 메서드
+
+```go
+func (r *Response) Header(key string) string           // Get single header value
+func (r *Response) Headers() map[string]string        // Get all headers as map
+func (r *Response) ContentType() string               // Get Content-Type header
+```
+
+**Example / 예제:**
+```go
+resp, _ := httputil.DoRaw("GET", url, nil)
+contentType := resp.ContentType()
+allHeaders := resp.Headers()
+customHeader := resp.Header("X-Custom-Header")
+```
+
+---
+
+### URL Builder API / URL Builder API
+
+Fluent API for building URLs with parameters.
+
+매개변수와 함께 URL을 구축하기 위한 Fluent API.
+
+```go
+type URLBuilder struct { /* ... */ }
+```
+
+#### Methods / 메서드
+
+```go
+func NewURL(baseURL string) *URLBuilder
+func (u *URLBuilder) Path(segments ...string) *URLBuilder
+func (u *URLBuilder) Param(key, value string) *URLBuilder
+func (u *URLBuilder) Params(params map[string]string) *URLBuilder
+func (u *URLBuilder) ParamIf(condition bool, key, value string) *URLBuilder
+func (u *URLBuilder) Build() string
+```
+
+**Example / 예제:**
+```go
+// Build complex URL / 복잡한 URL 구축
+url := httputil.NewURL("https://api.example.com").
+    Path("v1", "users", "search").
+    Param("q", "golang").
+    Param("page", "1").
+    Param("limit", "20").
+    ParamIf(includeInactive, "status", "inactive").
+    Build()
+
+// Result: https://api.example.com/v1/users/search?q=golang&page=1&limit=20
+```
+
+#### URL Utility Functions / URL 유틸리티 함수
+
+```go
+func JoinURL(baseURL string, paths ...string) string
+func AddQueryParams(urlStr string, params map[string]string) (string, error)
+func GetDomain(urlStr string) (string, error)
+func GetScheme(urlStr string) (string, error)
+func IsAbsoluteURL(urlStr string) bool
+func NormalizeURL(urlStr string) string
+```
+
+**Example / 예제:**
+```go
+// Join URL parts / URL 부분 결합
+url := httputil.JoinURL("https://api.example.com", "v1", "users", "123")
+// Result: https://api.example.com/v1/users/123
+
+// Add query parameters / 쿼리 매개변수 추가
+url, _ = httputil.AddQueryParams(url, map[string]string{
+    "fields": "name,email",
+})
+
+// Get domain / 도메인 가져오기
+domain, _ := httputil.GetDomain("https://api.example.com:8080/path")
+// Result: api.example.com:8080
+
+// Check if absolute / 절대 URL인지 확인
+isAbsolute := httputil.IsAbsoluteURL("https://example.com")  // true
+isAbsolute = httputil.IsAbsoluteURL("/relative/path")        // false
+```
+
+---
+
+### Form Builder API / Form Builder API
+
+Fluent API for building form data.
+
+폼 데이터를 구축하기 위한 Fluent API.
+
+```go
+type FormBuilder struct { /* ... */ }
+```
+
+#### Methods / 메서드
+
+```go
+func NewForm() *FormBuilder
+func (f *FormBuilder) Add(key, value string) *FormBuilder
+func (f *FormBuilder) Set(key, value string) *FormBuilder
+func (f *FormBuilder) AddMultiple(key string, values ...string) *FormBuilder
+func (f *FormBuilder) AddIf(condition bool, key, value string) *FormBuilder
+func (f *FormBuilder) Get(key string) string
+func (f *FormBuilder) GetAll(key string) []string
+func (f *FormBuilder) Has(key string) bool
+func (f *FormBuilder) Del(key string) *FormBuilder
+func (f *FormBuilder) Clone() *FormBuilder
+func (f *FormBuilder) Map() map[string]string
+func (f *FormBuilder) Encode() string
+```
+
+**Example / 예제:**
+```go
+// Build form with conditional fields / 조건부 필드가 있는 폼 구축
+hasPromo := true
+form := httputil.NewForm().
+    Set("username", "john").
+    Set("email", "john@example.com").
+    Set("age", "30").
+    AddIf(hasPromo, "promo_code", "SAVE20").
+    AddIf(false, "referrer", "none").
+    AddMultiple("tags", "go", "http", "api")
+
+// Check if field exists / 필드 존재 확인
+if form.Has("promo_code") {
+    log.Println("Promo code applied")
+}
+
+// Get form data / 폼 데이터 가져오기
+formMap := form.Map()
+encoded := form.Encode()
+
+// Clone form / 폼 복제
+form2 := form.Clone().Set("email", "jane@example.com")
+```
+
+#### Form Utility Functions / Form 유틸리티 함수
+
+```go
+func ParseForm(data string) (map[string]string, error)
+func EncodeForm(data map[string]string) string
+```
+
+**Example / 예제:**
+```go
+// Parse form data / 폼 데이터 파싱
+formData, _ := httputil.ParseForm("name=John&city=Seoul&age=30")
+// Result: map[string]string{"name": "John", "city": "Seoul", "age": "30"}
+
+// Encode form data / 폼 데이터 인코딩
+encoded := httputil.EncodeForm(map[string]string{
+    "username": "john",
+    "password": "secret",
+})
+// Result: "password=secret&username=john"
+```
+
 ---
 
 ### Configuration Options / 설정 옵션
@@ -333,6 +802,7 @@ func (c *Client) DeleteContext(ctx context.Context, path string, result interfac
 | `WithHeader(key, value)` | `string, string` | - | Single header / 단일 헤더 |
 | `WithQueryParams(map)` | `map[string]string` | Empty / 빈 맵 | Query parameters / 쿼리 매개변수 |
 | `WithUserAgent(agent)` | `string` | "go-utils/httputil v{version}" | User-Agent header |
+| `WithProgress(callback)` | `ProgressFunc` | `nil` | Progress callback for file operations / 파일 작업을 위한 진행 상황 콜백 |
 
 **Example / 예제:**
 ```go
@@ -779,6 +1249,19 @@ go run examples/httputil/main.go
 ---
 
 ## Version History / 버전 히스토리
+
+### v1.10.002 - 2025-10-15
+
+**Phase 2-4 Features Added / 2-4단계 기능 추가**
+
+- Response helpers (20+ methods) / 응답 헬퍼 (20개 이상 메서드)
+- File operations (download/upload with progress) / 파일 작업 (진행 상황과 함께 다운로드/업로드)
+- URL Builder (fluent API) / URL 빌더 (Fluent API)
+- Form Builder (fluent API) / Form 빌더 (Fluent API)
+- URL utilities (6 functions) / URL 유틸리티 (6개 함수)
+- Form utilities (2 functions) / Form 유틸리티 (2개 함수)
+- Extended Simple API (26+ functions) / 확장된 간단한 API (26개 이상 함수)
+- Comprehensive tests (13 tests, 43+ sub-tests) / 종합 테스트 (13개 테스트, 43개 이상 하위 테스트)
 
 ### v1.10.001 - 2025-10-15
 

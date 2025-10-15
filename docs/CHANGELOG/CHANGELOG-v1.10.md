@@ -6,6 +6,92 @@ This file contains detailed change logs for the v1.10.x releases of go-utils, fo
 
 ---
 
+## [v1.10.003] - 2025-10-15
+
+### Added / 추가됨
+
+#### Documentation and Examples / 문서 및 예제
+
+**Documentation Updates / 문서 업데이트**:
+- Updated `httputil/README.md` with Phase 2-4 features and examples
+- Updated `docs/httputil/USER_MANUAL.md` with comprehensive Phase 2-4 usage patterns (섹션 5.6-5.9, 6.6-6.7 추가)
+- Updated `docs/httputil/DEVELOPER_GUIDE.md` with architecture details for Phase 2-4 components (섹션 3.5-3.8 추가)
+- All documentation fully bilingual (English/Korean)
+- httputil/README.md를 Phase 2-4 기능 및 예제로 업데이트
+- 종합적인 Phase 2-4 사용 패턴으로 USER_MANUAL.md 업데이트
+- Phase 2-4 컴포넌트를 위한 아키텍처 세부 정보로 DEVELOPER_GUIDE.md 업데이트
+- 모든 문서 완전히 이중 언어 (영문/한글)
+
+**Examples / 예제**:
+- Created comprehensive example program (`examples/httputil/main.go`)
+- 10 complete examples demonstrating all Phase 1-4 features:
+  - Example 1: Basic HTTP Methods (Phase 1)
+  - Example 2: Client with Base URL (Phase 1)
+  - Example 3: Context and Timeout (Phase 1)
+  - Example 4: Error Handling (Phase 1)
+  - Example 5: Response Helpers (Phase 2)
+  - Example 6: File Download (Phase 3)
+  - Example 7: File Upload (Phase 3)
+  - Example 8: URL Builder (Phase 4)
+  - Example 9: Form Builder (Phase 4)
+  - Example 10: Comprehensive Workflow (All Phases)
+- Fully bilingual comments and explanations
+- Example compiles and runs successfully
+- 종합 예제 프로그램 생성
+- 모든 Phase 1-4 기능을 보여주는 10개의 완전한 예제
+- 완전히 이중 언어 주석 및 설명
+- 예제 컴파일 및 실행 성공
+
+**README Updates / README 업데이트**:
+- Added 5 new Quick Start examples (4-8) for Phase 2-4
+- Added API Reference sections for Response, URL Builder, Form Builder
+- Added WithProgress option to configuration table
+- Updated version history with v1.10.002 changelog
+- Phase 2-4를 위한 5개의 새로운 빠른 시작 예제 추가
+- Response, URL Builder, Form Builder를 위한 API 참조 섹션 추가
+- 설정 테이블에 WithProgress 옵션 추가
+- v1.10.002 변경 로그로 버전 히스토리 업데이트
+
+**USER_MANUAL Updates / USER_MANUAL 업데이트**:
+- Added subsections 5.6-5.9 in Usage Patterns section:
+  - 5.6: Response Helpers
+  - 5.7: File Download
+  - 5.8: File Upload
+  - 5.9: URL and Form Builders
+- Added subsections 6.6-6.7 in Common Use Cases section:
+  - 6.6: File Download Service with Progress (완전한 예제)
+  - 6.7: File Upload Service (완전한 예제)
+- 사용 패턴 섹션에 하위 섹션 5.6-5.9 추가
+- 일반적인 사용 사례 섹션에 하위 섹션 6.6-6.7 추가
+
+**DEVELOPER_GUIDE Updates / DEVELOPER_GUIDE 업데이트**:
+- Updated file organization and responsibilities sections
+- Added subsections 3.5-3.8 in Core Components section:
+  - 3.5: Response Wrapper (Phase 2)
+  - 3.6: File Operations (Phase 3)
+  - 3.7: URL Builder (Phase 4)
+  - 3.8: Form Builder (Phase 4)
+- Complete architecture diagrams and design patterns
+- 파일 구성 및 책임 섹션 업데이트
+- 핵심 컴포넌트 섹션에 하위 섹션 3.5-3.8 추가
+- 완전한 아키텍처 다이어그램 및 디자인 패턴
+
+**Test Statistics / 테스트 통계**:
+- Updated httputil_test.go: 456 lines
+- Total: 13 tests, 43+ sub-tests
+- All tests passing (0.643s execution time)
+- httputil_test.go 업데이트: 456줄
+- 총 13개 테스트, 43개 이상 하위 테스트
+- 모든 테스트 통과 (0.643초 실행 시간)
+
+### Changed / 변경됨
+- None / 없음
+
+### Fixed / 수정됨
+- None / 없음
+
+---
+
 ## [v1.10.002] - 2025-10-15
 
 ### Added / 추가됨

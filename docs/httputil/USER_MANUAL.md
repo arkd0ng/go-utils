@@ -1,7 +1,7 @@
 # httputil Package - User Manual
 # httputil 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.10.001
+**Version / 버전**: v1.10.002
 **Last Updated / 최종 업데이트**: 2025-10-15
 
 ---
@@ -55,6 +55,30 @@
 - 설정 가능한 재시도 횟수
 - 지터가 있는 지수 백오프
 - 실패 시 자동 재시도
+
+✅ **Response Helpers** / **응답 헬퍼**
+- Rich Response wrapper with 20+ helper methods
+- Status code checks (IsSuccess, IsOK, IsNotFound, etc.)
+- Body access (Body(), String(), JSON())
+- 20개 이상의 헬퍼 메서드를 가진 풍부한 Response 래퍼
+- 상태 코드 확인 (IsSuccess, IsOK, IsNotFound 등)
+- 본문 접근 (Body(), String(), JSON())
+
+✅ **File Operations** / **파일 작업**
+- File download with progress tracking
+- File upload with multipart form data
+- Progress callbacks for large files
+- 진행 상황 추적과 함께 파일 다운로드
+- multipart form data를 사용한 파일 업로드
+- 대용량 파일을 위한 진행 상황 콜백
+
+✅ **URL & Form Builders** / **URL 및 Form 빌더**
+- Fluent API for building URLs and forms
+- Conditional parameters (ParamIf, AddIf)
+- URL utilities (JoinURL, AddQueryParams, etc.)
+- URL 및 폼 구축을 위한 Fluent API
+- 조건부 매개변수 (ParamIf, AddIf)
+- URL 유틸리티 (JoinURL, AddQueryParams 등)
 
 ✅ **Rich Error Types** / **풍부한 에러 타입**
 - HTTPError (status code, body, URL)
@@ -644,6 +668,155 @@ err := httputil.Get(url, &result,
 )
 ```
 
+### 5.6 Response Helpers / 응답 헬퍼
+
+Use DoRaw to get Response with helper methods instead of auto-decoding JSON.
+
+JSON 자동 디코딩 대신 헬퍼 메서드가 있는 Response를 가져오려면 DoRaw를 사용하세요.
+
+```go
+// Get raw response / 원시 응답 가져오기
+resp, err := httputil.DoRaw("GET", "https://api.example.com/users", nil,
+    httputil.WithBearerToken("token123"))
+if err != nil {
+    log.Fatal(err)
+}
+
+// Check status with helper methods / 헬퍼 메서드로 상태 확인
+if resp.IsSuccess() {
+    log.Println("Request successful")
+}
+
+if resp.IsNotFound() {
+    log.Println("Resource not found")
+}
+
+// Access body in different formats / 다양한 형식으로 본문 접근
+bodyBytes := resp.Body()        // []byte
+bodyString := resp.String()     // string
+
+// Decode JSON when ready / 준비되었을 때 JSON 디코딩
+var users []User
+err = resp.JSON(&users)
+
+// Get headers / 헤더 가져오기
+contentType := resp.ContentType()
+customHeader := resp.Header("X-Custom-Header")
+allHeaders := resp.Headers()
+```
+
+### 5.7 File Download / 파일 다운로드
+
+Download files with optional progress tracking.
+
+선택적 진행 상황 추적과 함께 파일을 다운로드합니다.
+
+```go
+// Simple file download / 간단한 파일 다운로드
+err := httputil.DownloadFile(
+    "https://example.com/file.zip",
+    "./downloads/file.zip")
+if err != nil {
+    log.Fatal(err)
+}
+
+// Download with progress callback / 진행 상황 콜백과 함께 다운로드
+ctx := context.Background()
+err = httputil.DownloadFileContext(ctx,
+    "https://example.com/large-file.zip",
+    "./downloads/large-file.zip",
+    func(bytesRead, totalBytes int64) {
+        progress := float64(bytesRead) / float64(totalBytes) * 100
+        fmt.Printf("\rDownloading: %.2f%%", progress)
+    })
+
+// Download to memory / 메모리로 다운로드
+data, err := httputil.Download("https://example.com/data.json")
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+### 5.8 File Upload / 파일 업로드
+
+Upload files using multipart form data.
+
+multipart form data를 사용하여 파일을 업로드합니다.
+
+```go
+// Upload single file / 단일 파일 업로드
+var result map[string]interface{}
+err := httputil.UploadFile(
+    "https://api.example.com/upload",
+    "document",                    // Field name / 필드 이름
+    "./files/report.pdf",          // File path / 파일 경로
+    &result,
+    httputil.WithBearerToken("token123"))
+if err != nil {
+    log.Fatal(err)
+}
+log.Printf("Upload result: %+v", result)
+
+// Upload multiple files / 여러 파일 업로드
+err = httputil.UploadFiles(
+    "https://api.example.com/upload-multiple",
+    map[string]string{
+        "file1": "./images/image1.jpg",
+        "file2": "./images/image2.jpg",
+        "file3": "./documents/doc.pdf",
+    },
+    &result,
+    httputil.WithBearerToken("token123"))
+```
+
+### 5.9 URL and Form Builders / URL 및 Form 빌더
+
+Build URLs and forms using fluent API.
+
+Fluent API를 사용하여 URL과 폼을 구축합니다.
+
+```go
+// URL Builder / URL 빌더
+includeInactive := false
+url := httputil.NewURL("https://api.example.com").
+    Path("v1", "users", "search").
+    Param("q", "golang").
+    Param("page", "1").
+    Param("limit", "20").
+    ParamIf(includeInactive, "status", "inactive").
+    Build()
+// Result: https://api.example.com/v1/users/search?q=golang&page=1&limit=20
+
+// URL utilities / URL 유틸리티
+baseURL := "https://api.example.com"
+fullURL := httputil.JoinURL(baseURL, "v1", "users", "123")
+// Result: https://api.example.com/v1/users/123
+
+domain, _ := httputil.GetDomain(fullURL)
+// Result: api.example.com
+
+// Form Builder / Form 빌더
+hasPromoCode := true
+form := httputil.NewForm().
+    Set("username", "john").
+    Set("email", "john@example.com").
+    Set("age", "30").
+    AddIf(hasPromoCode, "promo_code", "SAVE20").
+    AddMultiple("tags", "go", "http", "api")
+
+// Check if field exists / 필드 존재 확인
+if form.Has("promo_code") {
+    log.Println("Promo code applied")
+}
+
+// Post form data / 폼 데이터 전송
+var result map[string]interface{}
+err := httputil.PostForm(
+    "https://api.example.com/submit",
+    form.Map(),
+    &result)
+```
+
 ---
 
 ## 6. Common Use Cases / 일반적인 사용 사례
@@ -1222,6 +1395,251 @@ func main() {
             continue
         }
         fmt.Printf("Fetched user %d: %s\n", i, user.Name)
+    }
+}
+```
+
+### 6.6 File Download Service with Progress / 진행 상황과 함께 파일 다운로드 서비스
+
+Complete example of a file download service with progress tracking:
+
+진행 상황 추적과 함께 파일 다운로드 서비스의 완전한 예제:
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "log"
+    "time"
+
+    "github.com/arkd0ng/go-utils/httputil"
+)
+
+// FileDownloader handles file downloads with progress tracking
+// FileDownloader는 진행 상황 추적과 함께 파일 다운로드를 처리합니다
+type FileDownloader struct {
+    client *httputil.Client
+}
+
+// NewFileDownloader creates a new file downloader
+// NewFileDownloader는 새 파일 다운로더를 생성합니다
+func NewFileDownloader(timeout time.Duration) *FileDownloader {
+    return &FileDownloader{
+        client: httputil.NewClient(
+            httputil.WithTimeout(timeout),
+            httputil.WithRetry(3),
+        ),
+    }
+}
+
+// DownloadWithProgress downloads a file with progress tracking
+// DownloadWithProgress는 진행 상황 추적과 함께 파일을 다운로드합니다
+func (fd *FileDownloader) DownloadWithProgress(ctx context.Context, url, filePath string) error {
+    startTime := time.Now()
+
+    err := fd.client.DownloadFileContext(ctx, url, filePath,
+        func(bytesRead, totalBytes int64) {
+            if totalBytes > 0 {
+                progress := float64(bytesRead) / float64(totalBytes) * 100
+                speed := float64(bytesRead) / time.Since(startTime).Seconds() / 1024 / 1024 // MB/s
+                fmt.Printf("\rProgress: %.2f%% (%.2f MB/s)", progress, speed)
+            }
+        })
+
+    if err != nil {
+        return fmt.Errorf("download failed: %w", err)
+    }
+
+    fmt.Printf("\nDownload completed in %v\n", time.Since(startTime))
+    return nil
+}
+
+// DownloadMultiple downloads multiple files concurrently
+// DownloadMultiple은 여러 파일을 동시에 다운로드합니다
+func (fd *FileDownloader) DownloadMultiple(ctx context.Context, files map[string]string) error {
+    errCh := make(chan error, len(files))
+
+    for url, filePath := range files {
+        go func(u, fp string) {
+            fmt.Printf("Starting download: %s\n", fp)
+            errCh <- fd.DownloadWithProgress(ctx, u, fp)
+        }(url, filePath)
+    }
+
+    // Wait for all downloads / 모든 다운로드 대기
+    for i := 0; i < len(files); i++ {
+        if err := <-errCh; err != nil {
+            return err
+        }
+    }
+
+    fmt.Println("All downloads completed")
+    return nil
+}
+
+func main() {
+    downloader := NewFileDownloader(5 * time.Minute)
+    ctx := context.Background()
+
+    // Single file download / 단일 파일 다운로드
+    err := downloader.DownloadWithProgress(ctx,
+        "https://example.com/large-file.zip",
+        "./downloads/file.zip")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Multiple files download / 여러 파일 다운로드
+    files := map[string]string{
+        "https://example.com/file1.zip": "./downloads/file1.zip",
+        "https://example.com/file2.zip": "./downloads/file2.zip",
+        "https://example.com/file3.zip": "./downloads/file3.zip",
+    }
+
+    err = downloader.DownloadMultiple(ctx, files)
+    if err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+### 6.7 File Upload Service / 파일 업로드 서비스
+
+Complete example of a file upload service:
+
+파일 업로드 서비스의 완전한 예제:
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "log"
+    "path/filepath"
+    "time"
+
+    "github.com/arkd0ng/go-utils/httputil"
+)
+
+// UploadResult represents the result of a file upload
+// UploadResult는 파일 업로드의 결과를 나타냅니다
+type UploadResult struct {
+    FileID   string `json:"file_id"`
+    FileName string `json:"file_name"`
+    FileSize int64  `json:"file_size"`
+    URL      string `json:"url"`
+}
+
+// FileUploader handles file uploads
+// FileUploader는 파일 업로드를 처리합니다
+type FileUploader struct {
+    client *httputil.Client
+}
+
+// NewFileUploader creates a new file uploader
+// NewFileUploader는 새 파일 업로더를 생성합니다
+func NewFileUploader(apiURL, token string) *FileUploader {
+    return &FileUploader{
+        client: httputil.NewClient(
+            httputil.WithBaseURL(apiURL),
+            httputil.WithBearerToken(token),
+            httputil.WithTimeout(10*time.Minute),
+            httputil.WithRetry(3),
+        ),
+    }
+}
+
+// UploadSingle uploads a single file
+// UploadSingle은 단일 파일을 업로드합니다
+func (fu *FileUploader) UploadSingle(ctx context.Context, filePath string) (*UploadResult, error) {
+    var result UploadResult
+
+    err := fu.client.UploadFileContext(ctx,
+        "/upload",
+        "file",
+        filePath,
+        &result)
+
+    if err != nil {
+        return nil, fmt.Errorf("upload failed: %w", err)
+    }
+
+    return &result, nil
+}
+
+// UploadBatch uploads multiple files in a single request
+// UploadBatch는 단일 요청으로 여러 파일을 업로드합니다
+func (fu *FileUploader) UploadBatch(ctx context.Context, filePaths []string) ([]UploadResult, error) {
+    // Build file map / 파일 맵 구축
+    files := make(map[string]string)
+    for i, fp := range filePaths {
+        fieldName := fmt.Sprintf("file%d", i+1)
+        files[fieldName] = fp
+    }
+
+    var results []UploadResult
+    err := fu.client.UploadFilesContext(ctx, "/upload-batch", files, &results)
+    if err != nil {
+        return nil, fmt.Errorf("batch upload failed: %w", err)
+    }
+
+    return results, nil
+}
+
+// UploadDirectory uploads all files in a directory
+// UploadDirectory는 디렉토리의 모든 파일을 업로드합니다
+func (fu *FileUploader) UploadDirectory(ctx context.Context, dirPath string, pattern string) error {
+    matches, err := filepath.Glob(filepath.Join(dirPath, pattern))
+    if err != nil {
+        return fmt.Errorf("failed to list files: %w", err)
+    }
+
+    fmt.Printf("Found %d files to upload\n", len(matches))
+
+    for i, filePath := range matches {
+        fmt.Printf("Uploading %d/%d: %s\n", i+1, len(matches), filePath)
+
+        result, err := fu.UploadSingle(ctx, filePath)
+        if err != nil {
+            return fmt.Errorf("failed to upload %s: %w", filePath, err)
+        }
+
+        fmt.Printf("  Uploaded: %s (ID: %s)\n", result.FileName, result.FileID)
+    }
+
+    fmt.Println("All files uploaded successfully")
+    return nil
+}
+
+func main() {
+    uploader := NewFileUploader("https://api.example.com", "your-token")
+    ctx := context.Background()
+
+    // Upload single file / 단일 파일 업로드
+    result, err := uploader.UploadSingle(ctx, "./documents/report.pdf")
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Printf("Uploaded: %s (URL: %s)\n", result.FileName, result.URL)
+
+    // Upload batch / 배치 업로드
+    results, err := uploader.UploadBatch(ctx, []string{
+        "./images/image1.jpg",
+        "./images/image2.jpg",
+        "./images/image3.jpg",
+    })
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Printf("Uploaded %d files\n", len(results))
+
+    // Upload directory / 디렉토리 업로드
+    err = uploader.UploadDirectory(ctx, "./documents", "*.pdf")
+    if err != nil {
+        log.Fatal(err)
     }
 }
 ```
