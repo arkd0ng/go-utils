@@ -46,6 +46,10 @@ type Options struct {
 	// EnableRecovery enables built-in panic recovery middleware.
 	// EnableRecovery는 내장 패닉 복구 미들웨어를 활성화합니다.
 	EnableRecovery bool
+
+	// MaxUploadSize is the maximum allowed file upload size in bytes.
+	// MaxUploadSize는 허용되는 최대 파일 업로드 크기(바이트)입니다.
+	MaxUploadSize int64
 }
 
 // Option is a functional option for configuring the App.
@@ -66,6 +70,7 @@ func defaultOptions() *Options {
 		EnableAutoReload: false,
 		EnableLogger:     true,
 		EnableRecovery:   true,
+		MaxUploadSize:    32 << 20, // 32 MB default
 	}
 }
 
@@ -146,5 +151,13 @@ func WithLogger(enable bool) Option {
 func WithRecovery(enable bool) Option {
 	return func(o *Options) {
 		o.EnableRecovery = enable
+	}
+}
+
+// WithMaxUploadSize sets the maximum file upload size in bytes.
+// WithMaxUploadSize는 최대 파일 업로드 크기(바이트)를 설정합니다.
+func WithMaxUploadSize(size int64) Option {
+	return func(o *Options) {
+		o.MaxUploadSize = size
 	}
 }

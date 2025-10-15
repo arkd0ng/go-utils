@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.014
+**Version / 버전**: v1.11.015
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.014) / 현재 기능
+## Current Features (v1.11.015) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -132,6 +132,11 @@ Request context for accessing path parameters, query strings, headers, and stori
 - `Referer() string` - Get Referer header / Referer 헤더 가져오기
 - `ClientIP() string` - Get client IP address / 클라이언트 IP 주소 가져오기
 
+**File Upload / 파일 업로드** (v1.11.015+):
+- `FormFile(name string) (*multipart.FileHeader, error)` - Get uploaded file / 업로드된 파일 가져오기
+- `MultipartForm() (*multipart.Form, error)` - Get parsed multipart form / 파싱된 multipart 폼 가져오기
+- `SaveUploadedFile(file *multipart.FileHeader, dst string) error` - Save uploaded file / 업로드된 파일 저장
+
 **Helper Function / 헬퍼 함수**:
 - `GetContext(r *http.Request) *Context` - Get Context from request / 요청에서 Context 가져오기
 
@@ -157,6 +162,7 @@ Flexible configuration using functional options.
 | `WithAutoReload(enable bool)` | false | Auto template reload / 자동 템플릿 재로드 |
 | `WithLogger(enable bool)` | true | Enable logger middleware / 로거 미들웨어 활성화 |
 | `WithRecovery(enable bool)` | true | Enable recovery middleware / 복구 미들웨어 활성화 |
+| `WithMaxUploadSize(size int64)` | 32 MB | Maximum file upload size / 최대 파일 업로드 크기 |
 
 ### Middleware / 미들웨어
 
@@ -616,6 +622,110 @@ func main() {
 }
 ```
 
+### File Upload / 파일 업로드
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+    "path/filepath"
+    "github.com/arkd0ng/go-utils/websvrutil"
+)
+
+func main() {
+    // Create app with custom max upload size (10 MB)
+    // 커스텀 최대 업로드 크기(10 MB)로 앱 생성
+    app := websvrutil.New(
+        websvrutil.WithMaxUploadSize(10 << 20), // 10 MB
+    )
+
+    // Single file upload / 단일 파일 업로드
+    app.POST("/upload", func(w http.ResponseWriter, r *http.Request) {
+        ctx := websvrutil.GetContext(r)
+
+        // Get uploaded file / 업로드된 파일 가져오기
+        file, err := ctx.FormFile("file")
+        if err != nil {
+            http.Error(w, "Failed to get file: "+err.Error(), http.StatusBadRequest)
+            return
+        }
+
+        // Save file to disk / 파일을 디스크에 저장
+        dstPath := filepath.Join("uploads", file.Filename)
+        if err := ctx.SaveUploadedFile(file, dstPath); err != nil {
+            http.Error(w, "Failed to save file: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+
+        fmt.Fprintf(w, "File uploaded successfully: %s (%d bytes)",
+            file.Filename, file.Size)
+    })
+
+    // Multiple file upload / 여러 파일 업로드
+    app.POST("/upload-multiple", func(w http.ResponseWriter, r *http.Request) {
+        ctx := websvrutil.GetContext(r)
+
+        // Get multipart form / multipart 폼 가져오기
+        form, err := ctx.MultipartForm()
+        if err != nil {
+            http.Error(w, "Failed to parse form: "+err.Error(), http.StatusBadRequest)
+            return
+        }
+
+        // Get all uploaded files / 모든 업로드된 파일 가져오기
+        files := form.File["files"]
+
+        for _, file := range files {
+            dstPath := filepath.Join("uploads", file.Filename)
+
+            // Save each file / 각 파일 저장
+            if err := ctx.SaveUploadedFile(file, dstPath); err != nil {
+                fmt.Fprintf(w, "Failed to save %s: %v\n", file.Filename, err)
+                continue
+            }
+
+            fmt.Fprintf(w, "Saved: %s (%d bytes)\n", file.Filename, file.Size)
+        }
+    })
+
+    // File upload with form fields / 폼 필드와 함께 파일 업로드
+    app.POST("/upload-with-data", func(w http.ResponseWriter, r *http.Request) {
+        ctx := websvrutil.GetContext(r)
+
+        // Get multipart form / multipart 폼 가져오기
+        form, err := ctx.MultipartForm()
+        if err != nil {
+            http.Error(w, "Failed to parse form: "+err.Error(), http.StatusBadRequest)
+            return
+        }
+
+        // Get form fields / 폼 필드 가져오기
+        title := form.Value["title"][0]
+        description := form.Value["description"][0]
+
+        // Get uploaded file / 업로드된 파일 가져오기
+        file := form.File["file"][0]
+        dstPath := filepath.Join("uploads", file.Filename)
+
+        if err := ctx.SaveUploadedFile(file, dstPath); err != nil {
+            http.Error(w, "Failed to save file: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+
+        fmt.Fprintf(w, "Title: %s\nDescription: %s\nFile: %s (%d bytes)",
+            title, description, file.Filename, file.Size)
+    })
+
+    log.Println("Server starting on :8080")
+    if err := app.Run(":8080"); err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
 ## Upcoming Features / 예정된 기능
 
 The following features are planned for future releases:
@@ -645,6 +755,7 @@ The following features are planned for future releases:
 - ✅ v1.11.012: Hot Reload (automatic template reloading, file watching) / 핫 리로드 (자동 템플릿 재로드, 파일 감시)
 - ✅ v1.11.013: Request Binding (Bind, BindJSON, BindForm, BindQuery) / 요청 바인딩 (Bind, BindJSON, BindForm, BindQuery)
 - ✅ v1.11.014: Cookie & Header Helpers (Cookie, SetCookie, DeleteCookie, GetCookie, AddHeader, GetHeaders, ClientIP) / 쿠키 및 헤더 헬퍼
+- ✅ v1.11.015: File Upload (FormFile, MultipartForm, SaveUploadedFile, MaxUploadSize) / 파일 업로드 (FormFile, MultipartForm, SaveUploadedFile, MaxUploadSize)
 
 ## Documentation / 문서
 

@@ -5,6 +5,64 @@
 
 ---
 
+## [v1.11.015] - 2025-10-16
+
+### Added / 추가
+- **File Upload Support** / **파일 업로드 지원** (`context.go`)
+  - `FormFile(name string) (*multipart.FileHeader, error)` - Get uploaded file by form field name
+  - `MultipartForm() (*multipart.Form, error)` - Get parsed multipart form (files + fields)
+  - `SaveUploadedFile(file *multipart.FileHeader, dst string) error` - Save uploaded file to destination
+  - Automatic file size limit enforcement using `MaxUploadSize` option
+  - Default 32 MB upload limit (configurable)
+
+- **MaxUploadSize Option** / **MaxUploadSize 옵션** (`options.go`)
+  - `WithMaxUploadSize(size int64)` - Set maximum file upload size in bytes
+  - Default: 32 MB (32 << 20 bytes)
+  - Configurable per App instance
+  - Enforced in MultipartForm() method
+
+- **Context App Reference** / **Context 앱 참조** (`context.go`)
+  - Added `app *App` field to Context struct
+  - Enables Context to access App options (e.g., MaxUploadSize)
+  - Thread-safe access to app configuration
+
+- **Comprehensive Tests** / **종합 테스트** (`upload_test.go`)
+  - `TestFormFile` - Test getting uploaded file
+  - `TestFormFileNotFound` - Test non-existent file field
+  - `TestMultipartForm` - Test getting multipart form with files and fields
+  - `TestMultipartFormMultipleFiles` - Test multiple file uploads
+  - `TestSaveUploadedFile` - Test saving uploaded file to disk
+  - `TestSaveUploadedFileLargeFile` - Test saving 1MB file
+  - `TestSaveUploadedFileError` - Test error handling (invalid path)
+  - `TestMultipartFormWithMaxUploadSize` - Test custom max upload size
+  - `BenchmarkFormFile` - Benchmark file retrieval
+  - `BenchmarkSaveUploadedFile` - Benchmark file saving (1KB file)
+  - **Total: 8 test functions + 2 benchmarks** for file upload
+
+### Changed / 변경
+- Updated `websvrutil.go` version constant to v1.11.015
+- Bumped version to v1.11.015 in `cfg/app.yaml`
+- Updated `README.md` with file upload section and examples
+- Added new file: `upload_test.go`
+- Added imports to `context.go`: `io`, `mime/multipart`, `os`
+- Updated Options table in README with MaxUploadSize option
+
+### Testing Coverage / 테스트 커버리지
+- **8 new test functions + 2 benchmarks** for file upload
+- **Total: 183+ test functions**, **Total: 41 benchmark functions**
+- **78.4% test coverage** - All tests passing ✅
+
+### Notes / 참고사항
+- File upload supports single and multiple files
+- MultipartForm() returns both files and form fields
+- SaveUploadedFile() automatically creates parent directories if needed
+- MaxUploadSize is configurable per App instance (default 32 MB)
+- All file operations are thread-safe
+- Examples include single file, multiple files, and files with form data
+- Next: v1.11.016+ will add static file serving
+
+---
+
 ## [v1.11.014] - 2025-10-16
 
 ### Added / 추가

@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
+	"mime/multipart"
 	"net/http"
+	"os"
 	"sync"
 )
 
@@ -27,6 +30,10 @@ type Context struct {
 	// values stores custom context values
 	// values는 커스텀 컨텍스트 값을 저장합니다
 	values map[string]interface{}
+
+	// app is a reference to the App instance
+	// app는 App 인스턴스에 대한 참조입니다
+	app *App
 
 	// mu protects concurrent access to values
 	// mu는 values에 대한 동시 액세스를 보호합니다
@@ -781,4 +788,51 @@ func (c *Context) ClientIP() string {
 		}
 	}
 	return c.Request.RemoteAddr
+}
+
+// ============================================================================
+// File Upload / 파일 업로드
+// ============================================================================
+
+// FormFile retrieves the first file for the provided form key.
+// FormFile은 제공된 폼 키에 대한 첫 번째 파일을 가져옵니다.
+func (c *Context) FormFile(name string) (*multipart.FileHeader, error) {
+	file, header, err := c.Request.FormFile(name)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	return header, nil
+}
+
+// MultipartForm returns the parsed multipart form, including file uploads.
+// MultipartForm은 파일 업로드를 포함한 파싱된 multipart 폼을 반환합니다.
+func (c *Context) MultipartForm() (*multipart.Form, error) {
+	maxSize := int64(32 << 20) // 32 MB default
+	if c.app != nil && c.app.options != nil {
+		maxSize = c.app.options.MaxUploadSize
+	}
+	if err := c.Request.ParseMultipartForm(maxSize); err != nil {
+		return nil, err
+	}
+	return c.Request.MultipartForm, nil
+}
+
+// SaveUploadedFile saves the uploaded file to the destination path.
+// SaveUploadedFile은 업로드된 파일을 대상 경로에 저장합니다.
+func (c *Context) SaveUploadedFile(file *multipart.FileHeader, dst string) error {
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, src)
+	return err
 }
