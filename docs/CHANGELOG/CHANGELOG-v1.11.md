@@ -1,3 +1,21 @@
+## [v1.11.045] - 2025-10-16
+
+### Added / 추가
+- Added comprehensive Development Workflow Guide (`docs/DEVELOPMENT_WORKFLOW_GUIDE.md`) / 포괄적인 개발 워크플로우 가이드 추가 (`docs/DEVELOPMENT_WORKFLOW_GUIDE.md`)
+- Integrated and consolidated content from CLAUDE.md and PACKAGE_DEVELOPMENT_GUIDE.md / CLAUDE.md와 PACKAGE_DEVELOPMENT_GUIDE.md의 내용을 통합 및 정리
+- Added clear workflow rules: Version Bump → Work → Test → CHANGELOG → Commit → Push / 명확한 워크플로우 규칙 추가: 버전 증가 → 작업 → 테스트 → CHANGELOG → 커밋 → 푸시
+
+### Documentation / 문서화
+- Structured guide with 10 major sections covering all development aspects / 모든 개발 측면을 다루는 10개 주요 섹션으로 구성된 가이드
+- Includes critical rules, standard work cycle, branch strategy, version management / 핵심 규칙, 표준 작업 사이클, 브랜치 전략, 버전 관리 포함
+- Comprehensive examples for package development, documentation, testing, and Git workflow / 패키지 개발, 문서화, 테스트, Git 워크플로우에 대한 포괄적인 예제
+- Quick reference section for common tasks and commands / 일반적인 작업 및 명령어를 위한 빠른 참조 섹션
+
+### Testing / 테스트
+- `go test ./... -v` - All tests passed / 모든 테스트 통과
+
+---
+
 ## [v1.11.044] - 2025-10-16
 
 ### Changed / 변경
