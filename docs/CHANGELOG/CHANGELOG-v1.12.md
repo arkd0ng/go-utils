@@ -6,6 +6,66 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.002] - 2025-10-16
+
+### Added / 추가
+- Created errorutil package DESIGN_PLAN.md with full bilingual format / 완전한 이중 언어 형식의 errorutil 패키지 DESIGN_PLAN.md 생성
+- Comprehensive package design documentation (14 sections) / 포괄적인 패키지 설계 문서 (14개 섹션)
+- Error types hierarchy and architecture / 에러 타입 계층 및 아키텍처
+- Six feature modules with detailed API design / 상세한 API 설계를 포함한 6개 기능 모듈
+- Performance considerations and optimization strategies / 성능 고려사항 및 최적화 전략
+- Testing strategy with 80%+ coverage target / 80% 이상 커버리지 목표를 가진 테스트 전략
+- Migration path from standard library / 표준 라이브러리에서의 마이그레이션 경로
+- Version plan (v1.12.001-070) / 버전 계획
+
+### Changed / 변경
+- N/A
+
+### Fixed / 수정
+- N/A
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bumped from v1.12.001 to v1.12.002 / 버전을 v1.12.001에서 v1.12.002로 증가
+- `docs/errorutil/DESIGN_PLAN.md` - Created comprehensive design plan with bilingual documentation / 이중 언어 문서로 포괄적인 설계 계획서 생성
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - Added v1.12.002 entry / v1.12.002 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**: 
+"errorutil 패키지의 DESIGN_PLAN.md를 영문/한글 병기 형식으로 작성해주세요"
+"Please create errorutil package DESIGN_PLAN.md with bilingual (English/Korean) format"
+
+**Why / 이유**: 
+- Follow the newly established bilingual documentation standards / 새로 수립된 이중 언어 문서화 표준 준수
+- Provide comprehensive design documentation before implementation / 구현 전 포괄적인 설계 문서 제공
+- Define clear architecture and API design for errorutil package / errorutil 패키지의 명확한 아키텍처 및 API 설계 정의
+- Ensure all stakeholders can understand the design (English and Korean speakers) / 모든 이해관계자가 설계를 이해할 수 있도록 보장 (영어 및 한국어 사용자)
+
+**Impact / 영향**: 
+- Clear roadmap for errorutil package development / errorutil 패키지 개발을 위한 명확한 로드맵
+- Comprehensive design serves as reference during implementation / 포괄적인 설계가 구현 중 참조 자료로 활용
+- Bilingual format ensures accessibility for international contributors / 이중 언어 형식으로 국제 기여자의 접근성 보장
+- Follows all project documentation standards / 모든 프로젝트 문서화 표준 준수
+- Ready to proceed with WORK_PLAN.md creation / WORK_PLAN.md 생성 준비 완료
+
+**Design Highlights / 설계 주요 사항**:
+- 6 feature modules: Creation, Wrapping, Inspection, Classification, Formatting, Assertion / 6개 기능 모듈
+- 5 error types: Wrapped, Coded, Stack, Context, Composite / 5개 에러 타입
+- 40+ planned functions / 40개 이상 계획된 함수
+- Zero external dependencies / 외부 의존성 없음
+- Standard library compatible / 표준 라이브러리 호환
+- 80%+ test coverage target / 80% 이상 테스트 커버리지 목표
+
+### Commits / 커밋
+
+1. **9f67011** - `Chore: Bump version to v1.12.002 / v1.12.002로 버전 증가`
+   - Version bump only / 버전 증가만
+
+2. **(pending)** - `Docs: Create errorutil DESIGN_PLAN.md with bilingual format / 이중 언어 형식의 errorutil DESIGN_PLAN.md 생성 (v1.12.002)`
+   - Created comprehensive design documentation / 포괄적인 설계 문서 생성
+
+---
+
 ## [v1.12.001] - 2025-10-16
 
 ### Added / 추가
