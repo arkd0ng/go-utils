@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
-	"log"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -21,7 +23,40 @@ import (
 
 const logBaseName = "websvrutil-example"
 
-var exampleLogger *logging.Logger
+var (
+	exampleLogger *logging.Logger
+	sectionIndex  int
+)
+
+func main() {
+	exampleLogger = setupLogger()
+	if exampleLogger != nil {
+		defer exampleLogger.Close()
+	}
+
+	logSection("Initialization", "초기 설정")
+	logDual("websvrutil package version: "+websvrutil.Version, "websvrutil 패키지 버전: "+websvrutil.Version)
+	logDual("Shared log file: logs/"+logBaseName+".log", "공용 로그 파일: logs/"+logBaseName+".log")
+
+	runBasicServerExamples()
+	runRoutingExamples()
+	runContextExamples()
+	runBindingExamples()
+	runResponseExamples()
+	runMiddlewareExamples()
+	runSessionExamples()
+	runTemplateExamples()
+	runCSRFExamples()
+	runValidatorExamples()
+	runFileUploadExamples()
+	runStaticFileExamples()
+	runTestingExamples()
+	runGracefulShutdownExample()
+	runProductionConfigExample()
+
+	logSection("All Examples Completed", "모든 예제 완료")
+	logDual("Every example finished successfully.", "모든 예제가 성공적으로 완료되었습니다.")
+}
 
 func setupLogger() *logging.Logger {
 	if err := os.MkdirAll("logs", 0o755); err != nil {
@@ -75,10 +110,24 @@ func setupLogger() *logging.Logger {
 	}
 
 	logger.Banner("websvrutil Package Examples", websvrutil.Version)
-	logger.Info("Logs mirror console output / 로그는 콘솔 출력을 반영합니다")
+	logger.Info("Logs mirror console output", "message", "로그가 콘솔 출력을 그대로 반영합니다")
 	logger.Info("")
 
 	return logger
+}
+
+func logSection(titleEn, titleKo string) {
+	sectionIndex++
+	divider := strings.Repeat("━", 78)
+	logPrintln(divider)
+	logPrintln(fmt.Sprintf("Section %02d: %s", sectionIndex, titleEn))
+	logPrintln(fmt.Sprintf("섹션 %02d: %s", sectionIndex, titleKo))
+	logPrintln(divider)
+}
+
+func logDual(messageEn, messageKo string) {
+	logPrintln(messageEn)
+	logPrintln(messageKo)
 }
 
 func logPrintln(args ...interface{}) {
@@ -92,130 +141,22 @@ func logPrintln(args ...interface{}) {
 func logPrintf(format string, args ...interface{}) {
 	fmt.Fprintf(os.Stdout, format, args...)
 	if exampleLogger != nil {
-		msg := strings.TrimSuffix(fmt.Sprintf(format, args...), "\n")
-		exampleLogger.Info(msg)
+		exampleLogger.Info(strings.TrimSuffix(fmt.Sprintf(format, args...), "\n"))
 	}
 }
 
-func main() {
-	exampleLogger = setupLogger()
-	if exampleLogger != nil {
-		defer exampleLogger.Close()
-	}
+func runBasicServerExamples() {
+	logSection("Basic Server", "기본 서버")
 
-	logPrintf("=== websvrutil Package Examples (%s) ===\n", websvrutil.Version)
-	logPrintf("=== websvrutil 패키지 예제 (%s) ===\n", websvrutil.Version)
-	logPrintln()
-
-	// Example 1: Basic Server / 기본 서버
-	logPrintln("Example 1: Basic Server / 기본 서버")
-	example1BasicServer()
-
-	// Example 2: Server with Custom Options / 커스텀 옵션을 사용한 서버
-	logPrintln()
-	logPrintln("Example 2: Server with Custom Options / 커스텀 옵션을 사용한 서버")
-	example2CustomOptions()
-
-	// Example 3: Routing with GET/POST / GET/POST 라우팅
-	logPrintln()
-	logPrintln("Example 3: Routing with GET/POST / GET/POST 라우팅")
-	example3Routing()
-
-	// Example 4: Path Parameters / 경로 매개변수
-	logPrintln()
-	logPrintln("Example 4: Path Parameters / 경로 매개변수")
-	example4PathParameters()
-
-	// Example 5: Wildcard Routes / 와일드카드 라우트
-	logPrintln()
-	logPrintln("Example 5: Wildcard Routes / 와일드카드 라우트")
-	example5WildcardRoutes()
-
-	// Example 6: Custom 404 Handler / 커스텀 404 핸들러
-	logPrintln()
-	logPrintln("Example 6: Custom 404 Handler / 커스텀 404 핸들러")
-	example6Custom404()
-
-	// Example 7: Context - Path Parameters / Context - 경로 매개변수
-	logPrintln()
-	logPrintln("Example 7: Context - Path Parameters / Context - 경로 매개변수")
-	example7ContextPathParameters()
-
-	// Example 8: Context - Query Parameters / Context - 쿼리 매개변수
-	logPrintln()
-	logPrintln("Example 8: Context - Query Parameters / Context - 쿼리 매개변수")
-	example8ContextQueryParameters()
-
-	// Example 9: Context - Custom Values / Context - 커스텀 값
-	logPrintln()
-	logPrintln("Example 9: Context - Custom Values / Context - 커스텀 값")
-	example9ContextCustomValues()
-
-	// Example 10: Context - Request Headers / Context - 요청 헤더
-	logPrintln()
-	logPrintln("Example 10: Context - Request Headers / Context - 요청 헤더")
-	example10ContextHeaders()
-
-	// Example 11: Graceful Shutdown / 정상 종료
-	logPrintln()
-	logPrintln("Example 11: Graceful Shutdown / 정상 종료")
-	example11GracefulShutdown()
-
-	// Example 12: Custom Middleware / 커스텀 미들웨어
-	logPrintln()
-	logPrintln("Example 12: Custom Middleware / 커스텀 미들웨어")
-	example12CustomMiddleware()
-
-	// Example 13: Multiple Middleware / 다중 미들웨어
-	logPrintln()
-	logPrintln("Example 13: Multiple Middleware / 다중 미들웨어")
-	example13MultipleMiddleware()
-
-	// Example 14: Production Configuration / 프로덕션 설정
-	logPrintln()
-	logPrintln("Example 14: Production Configuration / 프로덕션 설정")
-	example14ProductionConfig()
-
-	logPrintln()
-	logPrintln("=== All Examples Completed ===")
-	logPrintln("=== 모든 예제 완료 ===")
-}
-
-// example1BasicServer demonstrates creating and running a basic server.
-// example1BasicServer는 기본 서버 생성 및 실행을 시연합니다.
-func example1BasicServer() {
-	// Create app with default options
-	// 기본 옵션으로 앱 생성
 	app := websvrutil.New()
+	logDual("Created app with default middleware (Logger, Recovery)", "기본 미들웨어(Logger, Recovery)가 활성화된 앱 생성")
+	logDual("Recommended usage: app.Run(\":8080\")", "권장 실행 방법: app.Run(\":8080\")")
 
-	logPrintln("✓ Created app with default options")
-	logPrintln("✓ 기본 옵션으로 앱 생성됨")
-	logPrintln("  - ReadTimeout: 15s")
-	logPrintln("  - WriteTimeout: 15s")
-	logPrintln("  - IdleTimeout: 60s")
-	logPrintln("  - MaxHeaderBytes: 1 MB")
-	logPrintln("  - Logger: enabled")
-	logPrintln("  - Recovery: enabled")
-
-	// Note: In real usage, you would call app.Run(":8080")
-	// 참고: 실제 사용에서는 app.Run(":8080")을 호출합니다
-	logPrintln()
-	logPrintln("Usage: app.Run(\":8080\")")
-	logPrintln("사용법: app.Run(\":8080\")")
-
-	_ = app // Suppress unused variable warning / 미사용 변수 경고 억제
-}
-
-// example2CustomOptions demonstrates using custom options.
-// example2CustomOptions는 커스텀 옵션 사용을 시연합니다.
-func example2CustomOptions() {
-	// Create app with custom options
-	// 커스텀 옵션으로 앱 생성
-	app := websvrutil.New(
+	customApp := websvrutil.New(
 		websvrutil.WithReadTimeout(30*time.Second),
 		websvrutil.WithWriteTimeout(30*time.Second),
 		websvrutil.WithIdleTimeout(90*time.Second),
-		websvrutil.WithMaxHeaderBytes(2<<20), // 2 MB
+		websvrutil.WithMaxHeaderBytes(2<<20),
 		websvrutil.WithTemplateDir("views"),
 		websvrutil.WithStaticDir("public"),
 		websvrutil.WithStaticPrefix("/assets"),
@@ -223,633 +164,624 @@ func example2CustomOptions() {
 		websvrutil.WithLogger(false),
 		websvrutil.WithRecovery(true),
 	)
+	logDual("Custom app configured with non-default options", "커스텀 옵션으로 구성된 앱 설정 완료")
+	logDual("Key options: ReadTimeout=30s, WriteTimeout=30s, IdleTimeout=90s, MaxHeaderBytes=2MB", "주요 옵션: ReadTimeout=30초, WriteTimeout=30초, IdleTimeout=90초, MaxHeaderBytes=2MB")
+	logDual("TemplateDir=views, StaticDir=public, StaticPrefix=/assets, AutoReload=true", "TemplateDir=views, StaticDir=public, StaticPrefix=/assets, AutoReload=true")
+	logDual("Logger disabled, Recovery enabled", "Logger 비활성화, Recovery 활성화")
 
-	logPrintln("✓ Created app with custom options")
-	logPrintln("✓ 커스텀 옵션으로 앱 생성됨")
-	logPrintln("  - ReadTimeout: 30s")
-	logPrintln("  - WriteTimeout: 30s")
-	logPrintln("  - IdleTimeout: 90s")
-	logPrintln("  - MaxHeaderBytes: 2 MB")
-	logPrintln("  - TemplateDir: views")
-	logPrintln("  - StaticDir: public")
-	logPrintln("  - StaticPrefix: /assets")
-	logPrintln("  - AutoReload: true")
-	logPrintln("  - Logger: disabled")
-	logPrintln("  - Recovery: enabled")
-
-	_ = app // Suppress unused variable warning / 미사용 변수 경고 억제
+	_ = app
+	_ = customApp
 }
 
-// example3Routing demonstrates basic routing with GET and POST.
-// example3Routing은 GET 및 POST를 사용한 기본 라우팅을 시연합니다.
-func example3Routing() {
-	app := websvrutil.New()
+func runRoutingExamples() {
+	logSection("Routing", "라우팅")
 
-	getCount := 0
-	postCount := 0
+	type routeResult struct {
+		Method string `json:"method"`
+		Path   string `json:"path"`
+		Status int    `json:"status"`
+	}
 
-	// Register GET route
-	// GET 라우트 등록
-	app.GET("/users", func(w http.ResponseWriter, r *http.Request) {
-		getCount++
+	results := []routeResult{}
+
+	routingApp := websvrutil.New()
+	routingApp.GET("/resources", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
-
-	// Register POST route
-	// POST 라우트 등록
-	app.POST("/users", func(w http.ResponseWriter, r *http.Request) {
-		postCount++
+	routingApp.POST("/resources", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 	})
-
-	logPrintln("✓ Registered routes:")
-	logPrintln("✓ 등록된 라우트:")
-	logPrintln("  - GET /users")
-	logPrintln("  - POST /users")
-
-	// Simulate requests
-	// 요청 시뮬레이션
-	logPrintln()
-	logPrintln("  Simulating requests:")
-	logPrintln("  요청 시뮬레이션:")
-
-	testGet := httptest.NewRequest("GET", "/users", nil)
-	testPost := httptest.NewRequest("POST", "/users", nil)
-
-	app.ServeHTTP(httptest.NewRecorder(), testGet)
-	app.ServeHTTP(httptest.NewRecorder(), testPost)
-
-	logPrintf("  - GET requests: %d\n", getCount)
-	logPrintf("  - POST requests: %d\n", postCount)
-
-	logPrintln()
-	logPrintln("✓ Routes working correctly")
-	logPrintln("✓ 라우트가 올바르게 작동합니다")
-}
-
-// example4PathParameters demonstrates path parameter extraction.
-// example4PathParameters는 경로 매개변수 추출을 시연합니다.
-func example4PathParameters() {
-	app := websvrutil.New()
-
-	// Register route with parameter
-	// 매개변수가 있는 라우트 등록
-	app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
+	routingApp.PUT("/resources/42", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
+	routingApp.PATCH("/resources/42", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusAccepted)
+	})
+	routingApp.DELETE("/resources/42", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})
+	routingApp.HEAD("/resources", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+	routingApp.OPTIONS("/resources", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Allow", "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS")
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	testCases := []struct {
+		method string
+		path   string
+		expect int
+	}{
+		{"GET", "/resources", http.StatusOK},
+		{"POST", "/resources", http.StatusCreated},
+		{"PUT", "/resources/42", http.StatusOK},
+		{"PATCH", "/resources/42", http.StatusAccepted},
+		{"DELETE", "/resources/42", http.StatusNoContent},
+		{"HEAD", "/resources", http.StatusOK},
+		{"OPTIONS", "/resources", http.StatusNoContent},
+	}
+
+	for _, tc := range testCases {
+		req := httptest.NewRequest(tc.method, tc.path, nil)
+		rec := httptest.NewRecorder()
+		routingApp.ServeHTTP(rec, req)
+		results = append(results, routeResult{Method: tc.method, Path: tc.path, Status: rec.Code})
+	}
+
+	// Route group with middleware
+	apiGroup := routingApp.Group("/api")
+	apiGroup.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("X-API-Version", "v1")
+			next.ServeHTTP(w, r)
+		})
+	})
+	apiGroup.GET("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	reqGroup := httptest.NewRequest("GET", "/api/health", nil)
+	recGroup := httptest.NewRecorder()
+	routingApp.ServeHTTP(recGroup, reqGroup)
+	results = append(results, routeResult{Method: "GET", Path: "/api/health", Status: recGroup.Code})
+	logDual("Route group middleware header X-API-Version: "+recGroup.Header().Get("X-API-Version"), "라우트 그룹 미들웨어 헤더 X-API-Version: "+recGroup.Header().Get("X-API-Version"))
+
+	logDual("Routing matrix (method, path, status):", "라우팅 결과 (메서드, 경로, 상태):")
+	for _, res := range results {
+		logPrintf("  %s %s -> %d\n", res.Method, res.Path, res.Status)
+	}
+}
+
+func runContextExamples() {
+	logSection("Context Helpers", "Context 헬퍼")
+
+	type ctxResult struct {
+		PathParams map[string]string      `json:"path_params"`
+		Query      map[string]string      `json:"query"`
+		Headers    map[string]string      `json:"headers"`
+		Values     map[string]interface{} `json:"values"`
+	}
+
+	result := ctxResult{
+		PathParams: map[string]string{},
+		Query:      map[string]string{},
+		Headers:    map[string]string{},
+		Values:     map[string]interface{}{},
+	}
+
+	app := websvrutil.New()
 
 	app.GET("/users/:userId/posts/:postId", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
-
-	logPrintln("✓ Registered routes with parameters:")
-	logPrintln("✓ 매개변수가 있는 라우트 등록됨:")
-	logPrintln("  - GET /users/:id")
-	logPrintln("  - GET /users/:userId/posts/:postId")
-
-	// Test parameter matching
-	// 매개변수 일치 테스트
-	testPaths := []string{
-		"/users/123",
-		"/users/456/posts/789",
-	}
-
-	logPrintln()
-	logPrintln("  Testing parameter matching:")
-	logPrintln("  매개변수 일치 테스트:")
-
-	for _, path := range testPaths {
-		req := httptest.NewRequest("GET", path, nil)
-		rec := httptest.NewRecorder()
-		app.ServeHTTP(rec, req)
-
-		if rec.Code == http.StatusOK {
-			logPrintf("  ✓ Matched: %s\n", path)
-		}
-	}
-
-	logPrintln()
-	logPrintln("✓ Parameter extraction working")
-	logPrintln("✓ 매개변수 추출 작동 중")
-}
-
-// example5WildcardRoutes demonstrates wildcard route matching.
-// example5WildcardRoutes는 와일드카드 라우트 일치를 시연합니다.
-func example5WildcardRoutes() {
-	app := websvrutil.New()
-
-	// Register wildcard route
-	// 와일드카드 라우트 등록
-	app.GET("/files/*", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
-
-	logPrintln("✓ Registered wildcard route:")
-	logPrintln("✓ 와일드카드 라우트 등록됨:")
-	logPrintln("  - GET /files/*")
-
-	// Test wildcard matching
-	// 와일드카드 일치 테스트
-	testPaths := []string{
-		"/files/images/logo.png",
-		"/files/docs/manual.pdf",
-		"/files/a/b/c/d/e.txt",
-	}
-
-	logPrintln()
-	logPrintln("  Testing wildcard matching:")
-	logPrintln("  와일드카드 일치 테스트:")
-
-	for _, path := range testPaths {
-		req := httptest.NewRequest("GET", path, nil)
-		rec := httptest.NewRecorder()
-		app.ServeHTTP(rec, req)
-
-		if rec.Code == http.StatusOK {
-			logPrintf("  ✓ Matched: %s\n", path)
-		}
-	}
-
-	logPrintln()
-	logPrintln("✓ Wildcard routes working correctly")
-	logPrintln("✓ 와일드카드 라우트가 올바르게 작동합니다")
-}
-
-// example6Custom404 demonstrates custom 404 handler.
-// example6Custom404는 커스텀 404 핸들러를 시연합니다.
-func example6Custom404() {
-	app := websvrutil.New()
-
-	// Register normal route
-	// 일반 라우트 등록
-	app.GET("/users", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
-
-	// Register custom 404 handler
-	// 커스텀 404 핸들러 등록
-	custom404Called := false
-	app.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		custom404Called = true
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, "Custom 404: %s not found", r.URL.Path)
-	})
-
-	logPrintln("✓ Custom 404 handler registered")
-	logPrintln("✓ 커스텀 404 핸들러 등록됨")
-
-	// Test existing route
-	// 기존 라우트 테스트
-	logPrintln()
-	logPrintln("  Testing existing route (/users):")
-	logPrintln("  기존 라우트 테스트 (/users):")
-	req := httptest.NewRequest("GET", "/users", nil)
-	rec := httptest.NewRecorder()
-	app.ServeHTTP(rec, req)
-	logPrintf("  Status: %d\n", rec.Code)
-
-	// Test non-existent route
-	// 존재하지 않는 라우트 테스트
-	logPrintln()
-	logPrintln("  Testing non-existent route (/nonexistent):")
-	logPrintln("  존재하지 않는 라우트 테스트 (/nonexistent):")
-	req = httptest.NewRequest("GET", "/nonexistent", nil)
-	rec = httptest.NewRecorder()
-	app.ServeHTTP(rec, req)
-	logPrintf("  Status: %d\n", rec.Code)
-	logPrintf("  Custom handler called: %v\n", custom404Called)
-
-	logPrintln()
-	logPrintln("✓ Custom 404 handler working correctly")
-	logPrintln("✓ 커스텀 404 핸들러가 올바르게 작동합니다")
-}
-
-// example7ContextPathParameters demonstrates Context path parameter access.
-// example7ContextPathParameters는 Context 경로 매개변수 액세스를 시연합니다.
-func example7ContextPathParameters() {
-	app := websvrutil.New()
-
-	var extractedID, extractedUserID, extractedPostID string
-
-	// Single parameter
-	// 단일 매개변수
-	app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
 		ctx := websvrutil.GetContext(r)
-		extractedID = ctx.Param("id")
-		fmt.Fprintf(w, "User ID: %s", extractedID)
+		result.PathParams["userId"] = ctx.Param("userId")
+		result.PathParams["postId"] = ctx.Param("postId")
+		ctx.Set("authenticated", true)
+		ctx.Set("roles", []string{"admin", "editor"})
+		ctx.Set("requestID", "req-12345")
 	})
-
-	// Multiple parameters
-	// 다중 매개변수
-	app.GET("/users/:userId/posts/:postId", func(w http.ResponseWriter, r *http.Request) {
-		ctx := websvrutil.GetContext(r)
-		extractedUserID = ctx.Param("userId")
-		extractedPostID = ctx.Param("postId")
-		fmt.Fprintf(w, "User: %s, Post: %s", extractedUserID, extractedPostID)
-	})
-
-	logPrintln("✓ Routes with Context parameters registered")
-	logPrintln("✓ Context 매개변수가 있는 라우트 등록됨")
-
-	// Test single parameter
-	// 단일 매개변수 테스트
-	req1 := httptest.NewRequest("GET", "/users/123", nil)
-	rec1 := httptest.NewRecorder()
-	app.ServeHTTP(rec1, req1)
-
-	logPrintln()
-	logPrintln("  Single parameter test:")
-	logPrintln("  단일 매개변수 테스트:")
-	logPrintf("  - URL: /users/123\n")
-	logPrintf("  - Extracted ID: %s\n", extractedID)
-
-	// Test multiple parameters
-	// 다중 매개변수 테스트
-	req2 := httptest.NewRequest("GET", "/users/456/posts/789", nil)
-	rec2 := httptest.NewRecorder()
-	app.ServeHTTP(rec2, req2)
-
-	logPrintln()
-	logPrintln("  Multiple parameters test:")
-	logPrintln("  다중 매개변수 테스트:")
-	logPrintf("  - URL: /users/456/posts/789\n")
-	logPrintf("  - Extracted User ID: %s\n", extractedUserID)
-	logPrintf("  - Extracted Post ID: %s\n", extractedPostID)
-
-	logPrintln()
-	logPrintln("✓ Context path parameter access working")
-	logPrintln("✓ Context 경로 매개변수 액세스 작동 중")
-}
-
-// example8ContextQueryParameters demonstrates Context query parameter access.
-// example8ContextQueryParameters는 Context 쿼리 매개변수 액세스를 시연합니다.
-func example8ContextQueryParameters() {
-	app := websvrutil.New()
-
-	var query, page, limit string
 
 	app.GET("/search", func(w http.ResponseWriter, r *http.Request) {
 		ctx := websvrutil.GetContext(r)
-		query = ctx.Query("q")
-		page = ctx.QueryDefault("page", "1")
-		limit = ctx.QueryDefault("limit", "10")
-		fmt.Fprintf(w, "Query: %s, Page: %s, Limit: %s", query, page, limit)
+		result.Query["q"] = ctx.Query("q")
+		result.Query["page"] = ctx.QueryDefault("page", "1")
+		result.Query["limit"] = ctx.QueryDefault("limit", "10")
+		result.Headers["User-Agent"] = ctx.UserAgent()
+		result.Headers["Content-Type"] = ctx.ContentType()
+		result.Headers["Client-IP"] = ctx.ClientIP()
+		result.Headers["Referer"] = ctx.Referer()
+		if val, ok := ctx.Get("authenticated"); ok {
+			result.Values["authenticated"] = val
+		}
+		if val, ok := ctx.Get("roles"); ok {
+			result.Values["roles"] = val
+		}
+		if val, ok := ctx.Get("requestID"); ok {
+			result.Values["requestID"] = val
+		}
 	})
 
-	logPrintln("✓ Search route with query parameters registered")
-	logPrintln("✓ 쿼리 매개변수가 있는 검색 라우트 등록됨")
+	// Simulate path parameter request
+	reqPath := httptest.NewRequest("GET", "/users/42/posts/99", nil)
+	recPath := httptest.NewRecorder()
+	app.ServeHTTP(recPath, reqPath)
 
-	// Test with query parameters
-	// 쿼리 매개변수로 테스트
-	req := httptest.NewRequest("GET", "/search?q=golang&page=2", nil)
-	rec := httptest.NewRecorder()
-	app.ServeHTTP(rec, req)
+	// Simulate query parameter request with headers
+	reqQuery := httptest.NewRequest("GET", "/search?q=golang&page=2", nil)
+	reqQuery.Header.Set("User-Agent", "ExampleClient/1.0")
+	reqQuery.Header.Set("Content-Type", "application/json")
+	reqQuery.Header.Set("X-Forwarded-For", "203.0.113.1, 70.41.3.18")
+	reqQuery.Header.Set("Referer", "https://example.com/docs")
+	recQuery := httptest.NewRecorder()
+	app.ServeHTTP(recQuery, reqQuery)
 
-	logPrintln()
-	logPrintln("  Query parameter test:")
-	logPrintln("  쿼리 매개변수 테스트:")
-	logPrintf("  - URL: /search?q=golang&page=2\n")
-	logPrintf("  - Query (q): %s\n", query)
-	logPrintf("  - Page: %s\n", page)
-	logPrintf("  - Limit (default): %s\n", limit)
-
-	logPrintln()
-	logPrintln("✓ Context query parameter access working")
-	logPrintln("✓ Context 쿼리 매개변수 액세스 작동 중")
+	logDual("Context helper results (JSON):", "Context 헬퍼 결과(JSON):")
+	encoded, _ := json.MarshalIndent(result, "  ", "  ")
+	logPrintln("  " + string(encoded))
 }
 
-// example9ContextCustomValues demonstrates storing and retrieving custom values.
-// example9ContextCustomValues는 커스텀 값 저장 및 검색을 시연합니다.
-func example9ContextCustomValues() {
-	app := websvrutil.New()
+func runBindingExamples() {
+	logSection("Request Binding", "요청 바인딩")
 
-	var storedUser string
-	var storedAuth bool
-	var storedCount int
+	type profilePayload struct {
+		Name  string `json:"name" form:"name"`
+		Email string `json:"email" form:"email"`
+		Age   int    `json:"age" form:"age"`
+	}
 
-	app.GET("/user/:id", func(w http.ResponseWriter, r *http.Request) {
+	type queryPayload struct {
+		Query string `form:"q"`
+		Page  int    `form:"page"`
+		Limit int    `form:"limit"`
+	}
+
+	bindingApp := websvrutil.New()
+
+	bindingApp.POST("/bind/json", func(w http.ResponseWriter, r *http.Request) {
 		ctx := websvrutil.GetContext(r)
-
-		// Store custom values
-		// 커스텀 값 저장
-		ctx.Set("userId", ctx.Param("id"))
-		ctx.Set("authenticated", true)
-		ctx.Set("requestCount", 42)
-
-		// Retrieve values
-		// 값 검색
-		storedUser = ctx.GetString("userId")
-		storedAuth = ctx.GetBool("authenticated")
-		storedCount = ctx.GetInt("requestCount")
-
-		fmt.Fprintf(w, "User: %s, Auth: %v, Count: %d", storedUser, storedAuth, storedCount)
+		var payload profilePayload
+		if err := ctx.BindJSON(&payload); err != nil {
+			logDual("BindJSON failed: "+err.Error(), "BindJSON 실패: "+err.Error())
+			ctx.Status(http.StatusBadRequest)
+			return
+		}
+		logDual(fmt.Sprintf("BindJSON result: %+v", payload), fmt.Sprintf("BindJSON 결과: %+v", payload))
+		ctx.JSON(http.StatusCreated, payload)
 	})
 
-	logPrintln("✓ Route with custom value storage registered")
-	logPrintln("✓ 커스텀 값 저장이 있는 라우트 등록됨")
-
-	// Test custom values
-	// 커스텀 값 테스트
-	req := httptest.NewRequest("GET", "/user/alice", nil)
-	rec := httptest.NewRecorder()
-	app.ServeHTTP(rec, req)
-
-	logPrintln()
-	logPrintln("  Custom values test:")
-	logPrintln("  커스텀 값 테스트:")
-	logPrintf("  - Stored user ID: %s\n", storedUser)
-	logPrintf("  - Stored authenticated: %v\n", storedAuth)
-	logPrintf("  - Stored request count: %d\n", storedCount)
-
-	logPrintln()
-	logPrintln("✓ Context custom value storage working")
-	logPrintln("✓ Context 커스텀 값 저장 작동 중")
-}
-
-// example10ContextHeaders demonstrates request and response header access.
-// example10ContextHeaders는 요청 및 응답 헤더 액세스를 시연합니다.
-func example10ContextHeaders() {
-	app := websvrutil.New()
-
-	var authHeader, contentType string
-
-	app.GET("/api/data", func(w http.ResponseWriter, r *http.Request) {
+	bindingApp.POST("/bind/form", func(w http.ResponseWriter, r *http.Request) {
 		ctx := websvrutil.GetContext(r)
-
-		// Read request headers
-		// 요청 헤더 읽기
-		authHeader = ctx.Header("Authorization")
-		contentType = ctx.Header("Content-Type")
-
-		// Set response headers
-		// 응답 헤더 설정
-		ctx.SetHeader("X-API-Version", "1.0")
-		ctx.SetHeader("Content-Type", "application/json")
-
-		fmt.Fprintf(w, "Auth: %s, Type: %s", authHeader, contentType)
+		var payload profilePayload
+		if err := ctx.BindForm(&payload); err != nil {
+			logDual("BindForm failed: "+err.Error(), "BindForm 실패: "+err.Error())
+			ctx.Status(http.StatusBadRequest)
+			return
+		}
+		logDual(fmt.Sprintf("BindForm result: %+v", payload), fmt.Sprintf("BindForm 결과: %+v", payload))
+		ctx.JSON(http.StatusOK, payload)
 	})
 
-	logPrintln("✓ API route with header access registered")
-	logPrintln("✓ 헤더 액세스가 있는 API 라우트 등록됨")
+	bindingApp.GET("/bind/query", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		var payload queryPayload
+		if err := ctx.Bind(&payload); err != nil {
+			logDual("Bind (query) failed: "+err.Error(), "Bind (query) 실패: "+err.Error())
+			ctx.Status(http.StatusBadRequest)
+			return
+		}
+		logDual(fmt.Sprintf("Bind(query) result: %+v", payload), fmt.Sprintf("Bind(query) 결과: %+v", payload))
+		ctx.JSON(http.StatusOK, payload)
+	})
 
-	// Test with headers
-	// 헤더로 테스트
-	req := httptest.NewRequest("GET", "/api/data", nil)
-	req.Header.Set("Authorization", "Bearer token123")
-	req.Header.Set("Content-Type", "application/json")
+	jsonBody := bytes.NewBufferString(`{"name":"Alice","email":"alice@example.com","age":29}`)
+	reqJSON := httptest.NewRequest("POST", "/bind/json", jsonBody)
+	reqJSON.Header.Set("Content-Type", "application/json")
+	recJSON := httptest.NewRecorder()
+	bindingApp.ServeHTTP(recJSON, reqJSON)
+	logDual("/bind/json response body: "+strings.TrimSpace(recJSON.Body.String()), "/bind/json 응답 본문: "+strings.TrimSpace(recJSON.Body.String()))
+
+	reqForm := httptest.NewRequest("POST", "/bind/form", strings.NewReader("name=Bob&email=bob%40example.com&age=34"))
+	reqForm.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	recForm := httptest.NewRecorder()
+	bindingApp.ServeHTTP(recForm, reqForm)
+	logDual("/bind/form response body: "+strings.TrimSpace(recForm.Body.String()), "/bind/form 응답 본문: "+strings.TrimSpace(recForm.Body.String()))
+
+	reqQuery := httptest.NewRequest("GET", "/bind/query?q=golang&page=3&limit=25", nil)
+	recQuery := httptest.NewRecorder()
+	bindingApp.ServeHTTP(recQuery, reqQuery)
+	logDual("/bind/query response body: "+strings.TrimSpace(recQuery.Body.String()), "/bind/query 응답 본문: "+strings.TrimSpace(recQuery.Body.String()))
+}
+
+func runResponseExamples() {
+	logSection("Response Helpers", "응답 헬퍼")
+
+	tempDir, err := os.MkdirTemp("", "websvrutil-responses")
+	if err != nil {
+		logDual("Failed to create temp dir: "+err.Error(), "임시 디렉터리 생성 실패: "+err.Error())
+		return
+	}
+	defer os.RemoveAll(tempDir)
+
+	tempFile := filepath.Join(tempDir, "report.txt")
+	os.WriteFile(tempFile, []byte("Quarterly Report"), 0o644)
+
+	respApp := websvrutil.New()
+
+	respApp.GET("/json", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		ctx.JSON(http.StatusOK, map[string]interface{}{"message": "success", "count": 3})
+	})
+
+	respApp.GET("/html", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		ctx.HTML(http.StatusOK, "<h1>Hello, websvrutil</h1>")
+	})
+
+	respApp.GET("/text", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		ctx.Text(http.StatusAccepted, "plain text response")
+	})
+
+	respApp.GET("/redirect", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		ctx.Redirect(http.StatusFound, "/json")
+	})
+
+	respApp.GET("/file", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		ctx.File(tempFile)
+	})
+
+	respApp.GET("/attachment", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		ctx.FileAttachment(tempFile, "report.txt")
+	})
+
+	testPaths := []string{"/json", "/html", "/text", "/redirect", "/file", "/attachment"}
+	for _, path := range testPaths {
+		req := httptest.NewRequest("GET", path, nil)
+		rec := httptest.NewRecorder()
+		respApp.ServeHTTP(rec, req)
+		logDual(fmt.Sprintf("Response for %s: status=%d", path, rec.Code), fmt.Sprintf("%s 응답: 상태=%d", path, rec.Code))
+		body := strings.TrimSpace(rec.Body.String())
+		if body != "" {
+			logDual("  Body: "+body, "  본문: "+body)
+		}
+		for key, vals := range rec.Header() {
+			logDual(fmt.Sprintf("  Header %s: %v", key, vals), fmt.Sprintf("  헤더 %s: %v", key, vals))
+		}
+	}
+}
+
+func runMiddlewareExamples() {
+	logSection("Middleware", "미들웨어")
+
+	app := websvrutil.New()
+	app.Use(websvrutil.RequestID())
+	app.Use(websvrutil.Timeout(2 * time.Second))
+	app.Use(websvrutil.CORS())
+	app.Use(websvrutil.Recovery())
+
+	app.GET("/panic", func(w http.ResponseWriter, r *http.Request) {
+		panic("forced panic for Recovery middleware")
+	})
+
+	app.GET("/protected", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		ctx.Text(http.StatusOK, "protected content")
+	})
+
+	authApp := websvrutil.New()
+	authApp.Use(websvrutil.BasicAuth("admin", "secret"))
+	authApp.GET("/credentials", func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(50 * time.Millisecond)
+		ctx := websvrutil.GetContext(r)
+		ctx.Text(http.StatusOK, "authorized")
+	})
+
+	// Recovery test
+	reqPanic := httptest.NewRequest("GET", "/panic", nil)
+	recPanic := httptest.NewRecorder()
+	app.ServeHTTP(recPanic, reqPanic)
+	logDual(fmt.Sprintf("Recovery middleware response: status=%d", recPanic.Code), fmt.Sprintf("Recovery 미들웨어 응답: 상태=%d", recPanic.Code))
+
+	// RequestID + CORS test
+	reqProtected := httptest.NewRequest("GET", "/protected", nil)
+	recProtected := httptest.NewRecorder()
+	app.ServeHTTP(recProtected, reqProtected)
+	logDual("Headers set by RequestID/CORS middleware:", "RequestID/CORS 미들웨어가 설정한 헤더:")
+	logDual(fmt.Sprintf("  X-Request-ID: %s", recProtected.Header().Get("X-Request-ID")), fmt.Sprintf("  X-Request-ID: %s", recProtected.Header().Get("X-Request-ID")))
+	logDual(fmt.Sprintf("  Access-Control-Allow-Origin: %s", recProtected.Header().Get("Access-Control-Allow-Origin")), fmt.Sprintf("  Access-Control-Allow-Origin: %s", recProtected.Header().Get("Access-Control-Allow-Origin")))
+
+	// BasicAuth test - missing credentials
+	reqNoAuth := httptest.NewRequest("GET", "/credentials", nil)
+	recNoAuth := httptest.NewRecorder()
+	authApp.ServeHTTP(recNoAuth, reqNoAuth)
+	logDual(fmt.Sprintf("BasicAuth without credentials -> status %d", recNoAuth.Code), fmt.Sprintf("인증 없이 BasicAuth 호출 -> 상태 %d", recNoAuth.Code))
+
+	// BasicAuth test - correct credentials
+	reqAuth := httptest.NewRequest("GET", "/credentials", nil)
+	reqAuth.SetBasicAuth("admin", "secret")
+	recAuth := httptest.NewRecorder()
+	authApp.ServeHTTP(recAuth, reqAuth)
+	logDual(fmt.Sprintf("BasicAuth with credentials -> status %d, body=%s", recAuth.Code, strings.TrimSpace(recAuth.Body.String())), fmt.Sprintf("인증 후 BasicAuth -> 상태 %d, 본문=%s", recAuth.Code, strings.TrimSpace(recAuth.Body.String())))
+}
+
+func runSessionExamples() {
+	logSection("Session Store", "세션 저장소")
+
+	store := websvrutil.NewSessionStore(websvrutil.DefaultSessionOptions())
+
+	req := httptest.NewRequest("GET", "/", nil)
+	rec := httptest.NewRecorder()
+
+	session, _ := store.Get(req)
+	session.Set("user", "alice")
+	session.Set("role", "admin")
+	store.Save(rec, session)
+
+	logDual("Created new session with ID: "+session.ID, "새 세션 생성, ID: "+session.ID)
+	logDual(fmt.Sprintf("Session cookie: %v", rec.Result().Cookies()), fmt.Sprintf("세션 쿠키: %v", rec.Result().Cookies()))
+
+	cookie := rec.Result().Cookies()[0]
+	req2 := httptest.NewRequest("GET", "/", nil)
+	req2.AddCookie(cookie)
+
+	session2, _ := store.Get(req2)
+	logDual(fmt.Sprintf("Retrieved session data: user=%s, role=%s", session2.GetString("user"), session2.GetString("role")), fmt.Sprintf("세션 데이터 조회: user=%s, role=%s", session2.GetString("user"), session2.GetString("role")))
+
+	session2.Delete("role")
+	store.Save(httptest.NewRecorder(), session2)
+	logDual("Updated session: removed role key", "세션 업데이트: role 키 삭제")
+}
+
+func runTemplateExamples() {
+	logSection("Template Engine", "템플릿 엔진")
+
+	tempDir, err := os.MkdirTemp("", "websvrutil-templates")
+	if err != nil {
+		logDual("Failed to create template dir: "+err.Error(), "템플릿 디렉터리 생성 실패: "+err.Error())
+		return
+	}
+	defer os.RemoveAll(tempDir)
+
+	layoutDir := filepath.Join(tempDir, "layouts")
+	os.MkdirAll(layoutDir, 0o755)
+
+	os.WriteFile(filepath.Join(tempDir, "home.html"), []byte("<h1>{{.Title}}</h1><p>{{.Message}}</p>"), 0o644)
+	os.WriteFile(filepath.Join(layoutDir, "base.html"), []byte("<html><body>{{template \"content\" .}}</body></html>"), 0o644)
+
+	engine := websvrutil.NewTemplateEngine(tempDir)
+	engine.SetLayoutDir(layoutDir)
+	engine.AddFunc("upper", strings.ToUpper)
+
+	if err := engine.Load("home.html"); err != nil {
+		logDual("Template load failed: "+err.Error(), "템플릿 로드 실패: "+err.Error())
+		return
+	}
+
+	var buf bytes.Buffer
+	err = engine.Render(&buf, "home.html", map[string]string{"Title": "Dashboard", "Message": "Rendered without layout"})
+	if err == nil {
+		logDual("Render result (no layout): "+buf.String(), "레이아웃 없이 렌더링 결과: "+buf.String())
+	}
+
+	var bufLayout bytes.Buffer
+	err = engine.RenderWithLayout(&bufLayout, "base.html", "home.html", map[string]string{"Title": "Dashboard", "Message": "Rendered with layout"})
+	if err == nil {
+		logDual("Render with layout: "+bufLayout.String(), "레이아웃과 함께 렌더링: "+bufLayout.String())
+	}
+}
+
+func runCSRFExamples() {
+	logSection("CSRF Middleware", "CSRF 미들웨어")
+
+	app := websvrutil.New()
+	app.Use(websvrutil.CSRF())
+
+	tokenCapture := ""
+
+	app.GET("/form", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		token := websvrutil.GetCSRFToken(ctx)
+		tokenCapture = token
+		logDual("Issued CSRF token: "+token, "발급된 CSRF 토큰: "+token)
+		ctx.Text(http.StatusOK, "token issued")
+	})
+
+	app.POST("/submit", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		ctx.Text(http.StatusOK, "CSRF validation passed")
+	})
+
+	reqGet := httptest.NewRequest("GET", "/form", nil)
+	recGet := httptest.NewRecorder()
+	app.ServeHTTP(recGet, reqGet)
+
+	csrfCookie := recGet.Result().Cookies()
+	logDual(fmt.Sprintf("CSRF cookies: %v", csrfCookie), fmt.Sprintf("CSRF 쿠키: %v", csrfCookie))
+
+	reqPost := httptest.NewRequest("POST", "/submit", strings.NewReader("name=test"))
+	reqPost.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	reqPost.Header.Set("X-CSRF-Token", tokenCapture)
+	for _, c := range csrfCookie {
+		reqPost.AddCookie(c)
+	}
+	recPost := httptest.NewRecorder()
+	app.ServeHTTP(recPost, reqPost)
+	logDual(fmt.Sprintf("POST /submit status: %d", recPost.Code), fmt.Sprintf("POST /submit 상태: %d", recPost.Code))
+}
+
+func runValidatorExamples() {
+	logSection("Validator", "검증기")
+
+	type userForm struct {
+		Name  string `validate:"required,min=3"`
+		Email string `validate:"required,email"`
+		Age   int    `validate:"gte=18,lte=120"`
+		Role  string `validate:"oneof=admin user guest"`
+	}
+
+	validator := websvrutil.DefaultValidator{}
+
+	valid := userForm{Name: "Alice", Email: "alice@example.com", Age: 30, Role: "admin"}
+	invalid := userForm{Name: "A", Email: "alice", Age: 10, Role: "unknown"}
+
+	err := validator.Validate(valid)
+	logDual("Valid form validation error: "+fmt.Sprint(err), "유효한 폼 검증 에러: "+fmt.Sprint(err))
+
+	err = validator.Validate(invalid)
+	logDual("Invalid form validation error: "+err.Error(), "유효하지 않은 폼 검증 에러: "+err.Error())
+}
+
+func runFileUploadExamples() {
+	logSection("File Upload", "파일 업로드")
+
+	tempDir, err := os.MkdirTemp("", "websvrutil-uploads")
+	if err != nil {
+		logDual("Failed to create upload dir: "+err.Error(), "업로드 디렉터리 생성 실패: "+err.Error())
+		return
+	}
+	defer os.RemoveAll(tempDir)
+
+	app := websvrutil.New()
+	app.POST("/upload", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		fileHeader, err := ctx.FormFile("file")
+		if err != nil {
+			ctx.Text(http.StatusBadRequest, "missing file")
+			return
+		}
+		destination := filepath.Join(tempDir, fileHeader.Filename)
+		if err := ctx.SaveUploadedFile(fileHeader, destination); err != nil {
+			ctx.Text(http.StatusInternalServerError, "upload failed")
+			return
+		}
+		ctx.Text(http.StatusOK, "upload success")
+	})
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	fileWriter, _ := writer.CreateFormFile("file", "photo.png")
+	fileWriter.Write([]byte("PNGDATA"))
+	writer.Close()
+
+	req := httptest.NewRequest("POST", "/upload", body)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
 	rec := httptest.NewRecorder()
 	app.ServeHTTP(rec, req)
 
-	logPrintln()
-	logPrintln("  Request headers:")
-	logPrintln("  요청 헤더:")
-	logPrintf("  - Authorization: %s\n", authHeader)
-	logPrintf("  - Content-Type: %s\n", contentType)
-
-	logPrintln()
-	logPrintln("  Response headers:")
-	logPrintln("  응답 헤더:")
-	logPrintf("  - X-API-Version: %s\n", rec.Header().Get("X-API-Version"))
-	logPrintf("  - Content-Type: %s\n", rec.Header().Get("Content-Type"))
-
-	logPrintln()
-	logPrintln("✓ Context header access working")
-	logPrintln("✓ Context 헤더 액세스 작동 중")
+	logDual(fmt.Sprintf("File upload status: %d", rec.Code), fmt.Sprintf("파일 업로드 상태: %d", rec.Code))
+	logDual("Saved files: "+strings.Join(listDir(tempDir), ", "), "저장된 파일: "+strings.Join(listDir(tempDir), ", "))
 }
 
-// example11GracefulShutdown demonstrates graceful server shutdown.
-// example11GracefulShutdown은 정상적인 서버 종료를 시연합니다.
-func example11GracefulShutdown() {
-	app := websvrutil.New()
+func runStaticFileExamples() {
+	logSection("Static File Serving", "정적 파일 제공")
 
-	// Setup signal handling
-	// 시그널 처리 설정
+	tempDir, err := os.MkdirTemp("", "websvrutil-static")
+	if err != nil {
+		logDual("Failed to create static dir: "+err.Error(), "정적 디렉터리 생성 실패: "+err.Error())
+		return
+	}
+	defer os.RemoveAll(tempDir)
+
+	staticFile := filepath.Join(tempDir, "style.css")
+	os.WriteFile(staticFile, []byte("body { color: #333; }"), 0o644)
+
+	app := websvrutil.New()
+	app.Static("/assets", tempDir)
+
+	req := httptest.NewRequest("GET", "/assets/style.css", nil)
+	rec := httptest.NewRecorder()
+	app.ServeHTTP(rec, req)
+
+	logDual(fmt.Sprintf("Static file status: %d", rec.Code), fmt.Sprintf("정적 파일 상태: %d", rec.Code))
+	logDual("Static file body: "+strings.TrimSpace(rec.Body.String()), "정적 파일 본문: "+strings.TrimSpace(rec.Body.String()))
+}
+
+func runTestingExamples() {
+	logSection("Testing Patterns", "테스트 패턴")
+
+	app := websvrutil.New()
+	app.GET("/ping", func(w http.ResponseWriter, r *http.Request) {
+		ctx := websvrutil.GetContext(r)
+		ctx.JSON(http.StatusOK, map[string]string{"message": "pong"})
+	})
+
+	req := httptest.NewRequest("GET", "/ping", nil)
+	rec := httptest.NewRecorder()
+	app.ServeHTTP(rec, req)
+
+	logDual(fmt.Sprintf("Testing example: status=%d, body=%s", rec.Code, strings.TrimSpace(rec.Body.String())), fmt.Sprintf("테스트 예제: 상태=%d, 본문=%s", rec.Code, strings.TrimSpace(rec.Body.String())))
+}
+
+func runGracefulShutdownExample() {
+	logSection("Graceful Shutdown", "정상 종료")
+
+	app := websvrutil.New()
+	done := make(chan struct{})
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
-	logPrintln("✓ Signal handler configured")
-	logPrintln("✓ 시그널 핸들러 설정됨")
-
-	// Simulate server startup and shutdown
-	// 서버 시작 및 종료 시뮬레이션
-	serverStarted := make(chan bool)
-
 	go func() {
-		// In real usage: app.Run(":8080")
-		// 실제 사용: app.Run(":8080")
-		logPrintln()
-		logPrintln("  Server would start here...")
-		logPrintln("  서버가 여기서 시작됩니다...")
-		serverStarted <- true
-
-		// Simulate running
-		// 실행 시뮬레이션
-		time.Sleep(100 * time.Millisecond)
+		if err := app.Run(":0"); err != nil && !strings.Contains(err.Error(), "Server closed") {
+			logDual("Server encountered error: "+err.Error(), "서버 실행 중 에러 발생: "+err.Error())
+		}
+		close(done)
 	}()
 
-	<-serverStarted
+	logDual("Server started in goroutine on ephemeral port", "에페메럴 포트로 고루틴에서 서버 시작")
+	time.Sleep(200 * time.Millisecond)
 
-	// Simulate shutdown signal
-	// 종료 시그널 시뮬레이션
-	logPrintln()
-	logPrintln("  Simulating shutdown signal...")
-	logPrintln("  종료 시그널 시뮬레이션...")
+	go func() {
+		time.Sleep(200 * time.Millisecond)
+		quit <- syscall.SIGINT
+	}()
 
-	// Graceful shutdown with timeout
-	// 타임아웃으로 정상 종료
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	received := <-quit
+	logDual("Simulated signal received: "+received.String(), "시뮬레이션된 시그널 수신: "+received.String())
+	signal.Stop(quit)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	logPrintln()
-	logPrintln("✓ Shutdown initiated with 5s timeout")
-	logPrintln("✓ 5초 타임아웃으로 종료 시작됨")
+	if err := app.Shutdown(ctx); err != nil {
+		logDual("Graceful shutdown error: "+err.Error(), "정상 종료 중 에러: "+err.Error())
+	} else {
+		logDual("Graceful shutdown completed without error", "정상 종료가 오류 없이 완료")
+	}
 
-	// In real usage: app.Shutdown(ctx)
-	// 실제 사용: app.Shutdown(ctx)
-	_ = ctx
-	_ = app
-
-	logPrintln("✓ Server would shutdown gracefully")
-	logPrintln("✓ 서버가 정상적으로 종료됩니다")
+	<-done
+	logDual("Server goroutine exited", "서버 고루틴 종료")
 }
 
-// example12CustomMiddleware demonstrates adding custom middleware.
-// example12CustomMiddleware는 커스텀 미들웨어 추가를 시연합니다.
-func example12CustomMiddleware() {
-	app := websvrutil.New()
+func runProductionConfigExample() {
+	logSection("Production Checklist", "프로덕션 체크리스트")
 
-	// Create a logging middleware
-	// 로깅 미들웨어 생성
-	loggingMiddleware := func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			start := time.Now()
-			log.Printf("Started %s %s", r.Method, r.URL.Path)
-
-			next.ServeHTTP(w, r)
-
-			log.Printf("Completed in %v", time.Since(start))
-		})
-	}
-
-	// Add middleware
-	// 미들웨어 추가
-	app.Use(loggingMiddleware)
-
-	logPrintln("✓ Added logging middleware")
-	logPrintln("✓ 로깅 미들웨어 추가됨")
-
-	// Test with a sample request
-	// 샘플 요청으로 테스트
-	req, _ := http.NewRequest("GET", "/test", nil)
-	rr := &responseRecorder{ResponseWriter: &dummyResponseWriter{}}
-
-	logPrintln()
-	logPrintln("  Testing middleware with sample request:")
-	logPrintln("  샘플 요청으로 미들웨어 테스트:")
-
-	app.ServeHTTP(rr, req)
-
-	logPrintln("✓ Middleware executed successfully")
-	logPrintln("✓ 미들웨어 실행 성공")
-}
-
-// example13MultipleMiddleware demonstrates adding multiple middleware.
-// example13MultipleMiddleware는 다중 미들웨어 추가를 시연합니다.
-func example13MultipleMiddleware() {
-	app := websvrutil.New()
-
-	// First middleware: Request ID
-	// 첫 번째 미들웨어: 요청 ID
-	requestIDMiddleware := func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("X-Request-ID", "12345")
-			next.ServeHTTP(w, r)
-		})
-	}
-
-	// Second middleware: Timing
-	// 두 번째 미들웨어: 타이밍
-	timingMiddleware := func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			start := time.Now()
-			next.ServeHTTP(w, r)
-			duration := time.Since(start)
-			w.Header().Set("X-Response-Time", duration.String())
-		})
-	}
-
-	// Third middleware: CORS
-	// 세 번째 미들웨어: CORS
-	corsMiddleware := func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-			next.ServeHTTP(w, r)
-		})
-	}
-
-	// Add all middleware (executed in order)
-	// 모든 미들웨어 추가 (순서대로 실행)
-	app.Use(requestIDMiddleware, timingMiddleware, corsMiddleware)
-
-	logPrintln("✓ Added 3 middleware:")
-	logPrintln("✓ 3개의 미들웨어 추가됨:")
-	logPrintln("  1. Request ID")
-	logPrintln("  2. Timing")
-	logPrintln("  3. CORS")
-
-	// Test with a sample request
-	// 샘플 요청으로 테스트
-	req, _ := http.NewRequest("GET", "/test", nil)
-	rr := &responseRecorder{
-		ResponseWriter: &dummyResponseWriter{headers: make(http.Header)},
-	}
-
-	app.ServeHTTP(rr, req)
-
-	logPrintln()
-	logPrintln("  Headers set by middleware:")
-	logPrintln("  미들웨어가 설정한 헤더:")
-	if id := rr.Header().Get("X-Request-ID"); id != "" {
-		logPrintf("  - X-Request-ID: %s\n", id)
-	}
-	if cors := rr.Header().Get("Access-Control-Allow-Origin"); cors != "" {
-		logPrintf("  - Access-Control-Allow-Origin: %s\n", cors)
-	}
-
-	logPrintln()
-	logPrintln("✓ All middleware executed in order")
-	logPrintln("✓ 모든 미들웨어가 순서대로 실행됨")
-}
-
-// example14ProductionConfig demonstrates a production-ready configuration.
-// example14ProductionConfig는 프로덕션 준비 설정을 시연합니다.
-func example14ProductionConfig() {
 	app := websvrutil.New(
-		// Security timeouts / 보안 타임아웃
 		websvrutil.WithReadTimeout(10*time.Second),
 		websvrutil.WithWriteTimeout(10*time.Second),
 		websvrutil.WithIdleTimeout(120*time.Second),
-
-		// Limit request size / 요청 크기 제한
-		websvrutil.WithMaxHeaderBytes(1<<20), // 1 MB
-
-		// Production directories / 프로덕션 디렉토리
-		websvrutil.WithTemplateDir("/app/templates"),
-		websvrutil.WithStaticDir("/app/static"),
-		websvrutil.WithStaticPrefix("/static"),
-
-		// Production settings / 프로덕션 설정
-		websvrutil.WithAutoReload(false), // Disable in production
-		websvrutil.WithLogger(true),      // Enable logging
-		websvrutil.WithRecovery(true),    // Enable panic recovery
+		websvrutil.WithMaxHeaderBytes(1<<20),
+		websvrutil.WithAutoReload(false),
 	)
 
-	logPrintln("✓ Production configuration applied")
-	logPrintln("✓ 프로덕션 설정 적용됨")
-	logPrintln()
-	logPrintln("Security Features / 보안 기능:")
-	logPrintln("  ✓ Short timeouts to prevent slowloris attacks")
-	logPrintln("  ✓ Slowloris 공격 방지를 위한 짧은 타임아웃")
-	logPrintln("  ✓ Header size limits")
-	logPrintln("  ✓ 헤더 크기 제한")
-	logPrintln("  ✓ Panic recovery enabled")
-	logPrintln("  ✓ 패닉 복구 활성화")
-	logPrintln("  ✓ Request logging enabled")
-	logPrintln("  ✓ 요청 로깅 활성화")
-	logPrintln()
-	logPrintln("Optimization / 최적화:")
-	logPrintln("  ✓ Template caching (no auto-reload)")
-	logPrintln("  ✓ 템플릿 캐싱 (자동 재로드 없음)")
-	logPrintln("  ✓ Keep-alive with appropriate timeout")
-	logPrintln("  ✓ 적절한 타임아웃의 Keep-alive")
+	logDual("Production server initialized with hardened timeouts and header limits", "보안 강화 타임아웃과 헤더 제한으로 프로덕션 서버 초기화 완료")
+	app.Use(websvrutil.Logger())
+	app.Use(websvrutil.Recovery())
+	logDual("Enabled default Logger and Recovery middleware", "기본 Logger 및 Recovery 미들웨어 활성화")
 
-	_ = app // Suppress unused variable warning / 미사용 변수 경고 억제
+	_ = app
 }
 
-// responseRecorder is a simple response writer for testing.
-// responseRecorder는 테스트용 간단한 응답 작성기입니다.
-type responseRecorder struct {
-	http.ResponseWriter
-}
-
-// dummyResponseWriter is a minimal implementation of http.ResponseWriter.
-// dummyResponseWriter는 http.ResponseWriter의 최소 구현입니다.
-type dummyResponseWriter struct {
-	headers http.Header
-	code    int
-}
-
-func (d *dummyResponseWriter) Header() http.Header {
-	if d.headers == nil {
-		d.headers = make(http.Header)
+func listDir(path string) []string {
+	entries, err := os.ReadDir(path)
+	if err != nil {
+		return nil
 	}
-	return d.headers
-}
-
-func (d *dummyResponseWriter) Write([]byte) (int, error) {
-	return 0, nil
-}
-
-func (d *dummyResponseWriter) WriteHeader(statusCode int) {
-	d.code = statusCode
+	var names []string
+	for _, entry := range entries {
+		names = append(names, entry.Name())
+	}
+	return names
 }

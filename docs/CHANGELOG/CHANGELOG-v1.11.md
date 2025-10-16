@@ -1,3 +1,17 @@
+## [v1.11.039] - 2025-10-16
+
+### Added / 추가
+- Expanded `examples/websvrutil/main.go` to cover every major package feature: routing methods, route groups, context helpers, request binding, responses, middleware, sessions, templates, CSRF, validator usage, file upload, static files, graceful shutdown, production configuration, and testing patterns / `examples/websvrutil/main.go`를 확장하여 라우팅 전 메서드, 라우트 그룹, 컨텍스트 헬퍼, 요청 바인딩, 응답, 미들웨어, 세션, 템플릿, CSRF, 검증기, 파일 업로드, 정적 파일, 정상 종료, 프로덕션 설정, 테스트 패턴 등 주요 기능을 모두 포함
+- Added rich bilingual logging that records inputs, headers, outputs, and HTTP statuses so the example log alone acts as operational documentation / 요청 값, 헤더, 결과, HTTP 상태 등을 기록하는 이중 언어 상세 로그를 추가하여 로그만으로도 동작을 이해할 수 있도록 함
+
+### Changed / 변경
+- Bumped `cfg/app.yaml` version to v1.11.039 to track the enhanced example release / 향상된 예제 릴리스를 추적하기 위해 `cfg/app.yaml` 버전을 v1.11.039로 갱신
+
+### Testing / 테스트
+- `go test ./...`
+
+---
+
 ## [v1.11.038] - 2025-10-16
 
 ### Changed / 변경
