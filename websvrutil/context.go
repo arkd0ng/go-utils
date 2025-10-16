@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -52,12 +53,18 @@ const (
 
 // NewContext creates a new Context instance.
 // NewContext는 새 Context 인스턴스를 생성합니다.
+//
+// Performance optimization / 성능 최적화:
+//   - values map is lazily allocated (nil by default)
+//   - values 맵은 지연 할당됩니다 (기본적으로 nil)
+//   - Only created when first value is set via Set()
+//   - Set()을 통해 첫 번째 값이 설정될 때만 생성됩니다
 func NewContext(w http.ResponseWriter, r *http.Request) *Context {
 	return &Context{
 		Request:        r,
 		ResponseWriter: w,
 		params:         make(map[string]string),
-		values:         make(map[string]interface{}),
+		values:         nil, // Lazy allocation in Set()
 	}
 }
 
@@ -101,6 +108,14 @@ func (c *Context) setParams(params map[string]string) {
 func (c *Context) Set(key string, value interface{}) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+
+	// Lazy map initialization / 지연 맵 초기화
+	// Only create the map when first value is set
+	// 첫 번째 값이 설정될 때만 맵 생성
+	if c.values == nil {
+		c.values = make(map[string]interface{})
+	}
+
 	c.values[key] = value
 }
 
@@ -963,10 +978,10 @@ func (c *Context) ClientIP() string {
 	if xff := c.Request.Header.Get("X-Forwarded-For"); xff != "" {
 		// Return the first IP in the list
 		// 목록의 첫 번째 IP 반환
-		for idx := 0; idx < len(xff); idx++ {
-			if xff[idx] == ',' {
-				return xff[:idx]
-			}
+		// Use strings.IndexByte for better performance
+		// 더 나은 성능을 위해 strings.IndexByte 사용
+		if idx := strings.IndexByte(xff, ','); idx != -1 {
+			return strings.TrimSpace(xff[:idx])
 		}
 		return xff
 	}
@@ -979,10 +994,10 @@ func (c *Context) ClientIP() string {
 
 	// Fall back to RemoteAddr
 	// RemoteAddr로 대체
-	for idx := 0; idx < len(c.Request.RemoteAddr); idx++ {
-		if c.Request.RemoteAddr[idx] == ':' {
-			return c.Request.RemoteAddr[:idx]
-		}
+	// Use strings.IndexByte for better performance
+	// 더 나은 성능을 위해 strings.IndexByte 사용
+	if idx := strings.IndexByte(c.Request.RemoteAddr, ':'); idx != -1 {
+		return c.Request.RemoteAddr[:idx]
 	}
 	return c.Request.RemoteAddr
 }

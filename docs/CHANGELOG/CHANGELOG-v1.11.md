@@ -42,6 +42,66 @@
 
 ---
 
+## [v1.11.029] - 2025-10-16
+
+### Performance / 성능
+- **Performance Optimizations** / **성능 최적화**
+  1. **ClientIP() String Operations Optimization** / **ClientIP() 문자열 작업 최적화** (`context.go`)
+     - Replaced manual loop with `strings.IndexByte()` for better performance
+     - Added `strings.TrimSpace()` for X-Forwarded-For IP extraction
+     - Applied optimization to both X-Forwarded-For and RemoteAddr parsing
+     - Performance improvement: O(n) manual loop → O(n) optimized stdlib function
+
+  2. **Context Values Map Lazy Allocation** / **컨텍스트 값 맵 지연 할당** (`context.go`)
+     - Changed `NewContext()` to not allocate `values` map by default (nil)
+     - Implemented lazy initialization in `Set()` method
+     - Memory saving: One less map allocation per request when not used
+     - Optimization benefit: Reduces memory allocations for requests that don't use context storage
+
+### Testing / 테스트
+- **Updated Context Tests for Lazy Allocation** / **지연 할당을 위한 컨텍스트 테스트 업데이트** (`context_test.go`)
+  - Modified `TestNewContext` to verify values map is nil initially
+  - Added lazy allocation verification in `TestContextSetGet`
+  - Verifies values map is created after first `Set()` call
+  - All 219 tests pass ✅ (increased from 208)
+
+### Code Quality / 코드 품질
+- **Import Statement Updated** / **Import 문 업데이트** (`context.go`)
+  - Added `strings` package import for `IndexByte()` and `TrimSpace()` functions
+
+### Technical Details / 기술 세부사항
+- **Before (ClientIP)** / **이전 (ClientIP)**:
+  ```go
+  for idx := 0; idx < len(xff); idx++ {
+      if xff[idx] == ',' {
+          return xff[:idx]
+      }
+  }
+  ```
+- **After (ClientIP)** / **이후 (ClientIP)**:
+  ```go
+  if idx := strings.IndexByte(xff, ','); idx != -1 {
+      return strings.TrimSpace(xff[:idx])
+  }
+  ```
+
+- **Before (NewContext)** / **이전 (NewContext)**:
+  ```go
+  values: make(map[string]interface{}), // Always allocated
+  ```
+- **After (NewContext)** / **이후 (NewContext)**:
+  ```go
+  values: nil, // Lazy allocation in Set()
+  ```
+
+### Benefits / 이점
+- Improved performance for ClientIP() with stdlib optimized functions
+- Reduced memory allocations per request (one less map when not needed)
+- Better IP extraction with whitespace trimming
+- Maintains all existing functionality with zero breaking changes
+
+---
+
 ## [v1.11.028] - 2025-10-16
 
 ### Features / 기능

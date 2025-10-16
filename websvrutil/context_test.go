@@ -32,8 +32,10 @@ func TestNewContext(t *testing.T) {
 		t.Error("params map is nil")
 	}
 
-	if ctx.values == nil {
-		t.Error("values map is nil")
+	// values map is lazily allocated (should be nil initially for performance)
+	// values 맵은 지연 할당됩니다 (성능을 위해 초기에는 nil이어야 함)
+	if ctx.values != nil {
+		t.Error("values map should be nil (lazy allocation)")
 	}
 }
 
@@ -104,9 +106,21 @@ func TestContextSetGet(t *testing.T) {
 
 	ctx := NewContext(rec, req)
 
+	// Verify lazy allocation: values map should be nil initially
+	// 지연 할당 검증: values 맵은 초기에 nil이어야 함
+	if ctx.values != nil {
+		t.Error("values map should be nil before first Set()")
+	}
+
 	// Test Set and Get
 	// Set 및 Get 테스트
 	ctx.Set("user", "john")
+
+	// After first Set(), values map should be allocated
+	// 첫 번째 Set() 이후 values 맵이 할당되어야 함
+	if ctx.values == nil {
+		t.Error("values map should be allocated after Set()")
+	}
 	ctx.Set("count", 42)
 	ctx.Set("active", true)
 
