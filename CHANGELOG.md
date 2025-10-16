@@ -24,7 +24,7 @@ This file contains a high-level overview of major and minor versions. For detail
 
 **Status / 상태**: In Development / 개발 중
 **Branch / 브랜치**: `feature/v1.11.x-websvrutil`
-**Latest Patch / 최신 패치**: v1.11.040 – documentation alignment with expanded examples, standardized workflow guidance
+**Latest Patch / 최신 패치**: v1.11.041 – automated documentation version syncing via scripts/update-docs.sh and GitHub Actions
 
 **Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.11.md](docs/CHANGELOG/CHANGELOG-v1.11.md)
 

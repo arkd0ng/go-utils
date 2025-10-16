@@ -819,14 +819,14 @@ err := httputil.Get(url, &users, httputil.WithBearerToken("token"))
 
 **Status / 상태**: In Development / 개발 중
 **Branch / 브랜치**: `feature/v1.11.x-websvrutil`
-**Version / 버전**: v1.11.040
+**Version / 버전**: v1.11.041
 
 Extreme simplicity web server utilities - reduce 50+ lines of server setup code to just 5 lines.
 
 극도로 간단한 웹 서버 유틸리티 - 50줄 이상의 서버 설정 코드를 단 5줄로 줄입니다.
 
-**Latest update / 최신 업데이트**: v1.11.040 refines documentation to mirror the expanded example suite and codifies the standard cfg/app.yaml → code → docs → changelog → push workflow.  
-**최신 업데이트**: v1.11.040에서 확장된 예제 모음과 일치하도록 문서를 정비하고, cfg/app.yaml → 코드 → 문서 → changelog → 푸시 표준 작업 순서를 명문화했습니다.
+**Latest update / 최신 업데이트**: v1.11.041 introduces automated version syncing (scripts/update-docs.sh + GitHub Actions) so documentation stays aligned with cfg/app.yaml.  
+**최신 업데이트**: v1.11.041에서 자동 버전 동기화( scripts/update-docs.sh 및 GitHub Actions )를 도입해 cfg/app.yaml과 문서를 항상 일치시키도록 했습니다.
 
 **Planned Features / 계획된 기능**:
 - Simple Router with RESTful routing / RESTful 라우팅을 가진 간단한 라우터

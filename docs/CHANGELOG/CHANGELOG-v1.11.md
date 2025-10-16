@@ -1,3 +1,14 @@
+## [v1.11.041] - 2025-10-16
+
+### Changed / 변경
+- Introduced automated version placeholder replacement via `scripts/update-docs.sh` (uses yq + sed) and the `update-version-docs` GitHub Action. / `scripts/update-docs.sh` 및 `update-version-docs` GitHub Action을 통해 버전 토큰 자동 치환 기능을 도입했습니다.
+- Updated documentation (`README.md`, USER/DEVELOPER guides) to reflect v1.11.041 and reference the automation. / `README.md` 및 사용자·개발자 가이드에 v1.11.041과 자동화 내용을 반영했습니다.
+
+### Testing / 테스트
+- `go test ./...`
+
+---
+
 ## [v1.11.040] - 2025-10-16
 
 ### Changed / 변경
