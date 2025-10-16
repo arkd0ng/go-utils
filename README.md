@@ -4,7 +4,7 @@ A collection of frequently used utility functions for Golang development.
 
 Golang 개발에 자주 사용되는 유틸리티 함수 모음입니다.
 
-[![go-utils version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=go-utils&color=blue&cacheSeconds=300)](https://github.com/arkd0ng/go-utils)
+[![go-utils version](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=go-utils&color=blue&cacheSeconds=300)](https://github.com/arkd0ng/go-utils)
 
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.16-blue)](https://golang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
