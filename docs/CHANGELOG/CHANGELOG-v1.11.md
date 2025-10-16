@@ -1,12 +1,14 @@
+## [v1.11.044] - 2025-10-16
+
+### Changed / 변경
+- Removed the GitHub Actions workflow and helper script that auto-synced Markdown versions; version display now relies on the dynamic Shields.io badge. / Markdown 버전을 자동 동기화하던 GitHub Actions 워크플로와 스크립트를 제거하고, Shields.io 배지로 버전 정보를 표시하도록 변경했습니다.
+
+---
+
 ## [v1.11.043] - 2025-10-16
 
 ### Changed / 변경
 - Bumped cfg/app.yaml and updated README plus websvrutil guides to v1.11.043. / cfg/app.yaml과 README, websvrutil 문서를 v1.11.043으로 갱신했습니다.
-
-### Testing / 테스트
-- `go test ./...`
-
----
 
 ## [v1.11.042] - 2025-10-16
 
