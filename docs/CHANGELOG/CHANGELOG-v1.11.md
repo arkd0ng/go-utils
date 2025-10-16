@@ -1,3 +1,25 @@
+## [v1.11.046] - 2025-10-16
+
+### Changed / 변경
+- Optimized CLAUDE.md file from 1364 lines to 459 lines (66% reduction) / CLAUDE.md 파일을 1364줄에서 459줄로 최적화 (66% 감소)
+- Removed detailed package architecture descriptions from CLAUDE.md / CLAUDE.md에서 패키지별 상세 아키텍처 설명 제거
+- Emphasized core documentation guides in docs/ directory / docs/ 디렉토리의 핵심 문서 가이드 강조
+
+### Documentation / 문서화
+- Added prominent links to critical guides at the top of CLAUDE.md / CLAUDE.md 상단에 중요 가이드 링크를 눈에 띄게 추가
+  - DEVELOPMENT_WORKFLOW_GUIDE.md ⭐ (Most Important)
+  - PACKAGE_DEVELOPMENT_GUIDE.md ⭐ (Essential)
+  - CODE_TEST_MAKE_GUIDE.md
+  - EXAMPLE_CODE_GUIDE.md
+- Simplified package overview with reference to detailed documentation / 패키지 개요를 간소화하고 상세 문서 참조 추가
+- Kept only essential information: workflow, version management, standards / 워크플로우, 버전 관리, 표준 등 필수 정보만 유지
+- All detailed package information moved to respective README and documentation files / 모든 패키지 상세 정보는 각각의 README 및 문서 파일로 이동
+
+### Testing / 테스트
+- `go test ./... -v` - All tests passed / 모든 테스트 통과
+
+---
+
 ## [v1.11.045] - 2025-10-16
 
 ### Added / 추가
