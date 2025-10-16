@@ -64,14 +64,34 @@ git commit -m "Feat: Add Get function (v1.11.045)"
    ↓
 3. Test & Verify (go test ./...) / 테스트 및 검증
    ↓
-4. Update CHANGELOG / CHANGELOG 업데이트
+4. Update CHANGELOG (BEFORE commit!) / CHANGELOG 업데이트 (커밋 전!)
    ↓
 5. Git Commit & Push / Git 커밋 및 푸시
 ```
 
+### 📝 CHANGELOG Requirements / CHANGELOG 요구사항
+
+**🚨 MUST UPDATE CHANGELOG BEFORE EVERY COMMIT (except version bump only)**
+**🚨 모든 커밋 전에 반드시 CHANGELOG 업데이트 (버전 증가만 하는 경우 제외)**
+
+**Two-Level System / 2단계 시스템:**
+1. Root `CHANGELOG.md` - Overview + links / 개요 + 링크
+2. `docs/CHANGELOG/CHANGELOG-v1.{MINOR}.md` - Detailed history / 상세 이력
+
+**Required in detailed CHANGELOG / 상세 CHANGELOG에 필수:**
+- ✅ What changed (Added/Changed/Fixed) / 변경 내용
+- ✅ Which files changed / 변경된 파일
+- ✅ Why it changed / 변경 이유
+- ✅ User request context / 사용자 요청 컨텍스트
+- ✅ Impact/what it enables / 영향/가능하게 하는 것
+
+**See PACKAGE_DEVELOPMENT_GUIDE.md Step 6 for full template**
+**전체 템플릿은 PACKAGE_DEVELOPMENT_GUIDE.md Step 6 참조**
+
 **❌ NEVER / 절대 금지:**
 - Skip version bump before work / 작업 전 버전 증가 생략
 - Skip CHANGELOG update / CHANGELOG 업데이트 생략
+- Commit before updating CHANGELOG / CHANGELOG 업데이트 전에 커밋
 - Push without testing / 테스트 없이 푸시
 - Skip documentation / 문서화 생략
 

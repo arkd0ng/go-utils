@@ -385,22 +385,173 @@ Add example to `examples/{package}/main.go`.
 
 ### Step 6: CHANGELOG / 변경 기록
 
-Update `docs/CHANGELOG/CHANGELOG-v1.{MINOR}.md`:
+**🚨 CRITICAL: MUST UPDATE CHANGELOG BEFORE EVERY COMMIT**
+**🚨 핵심: 모든 커밋 전에 반드시 CHANGELOG 업데이트**
 
-`docs/CHANGELOG/CHANGELOG-v1.{MINOR}.md`를 업데이트합니다:
+#### CHANGELOG Structure / CHANGELOG 구조
+
+**Two-Level CHANGELOG System / 2단계 CHANGELOG 시스템:**
+
+1. **Root `CHANGELOG.md`** - High-level overview / 상위 레벨 개요
+   - Lists major and minor versions / 메이저 및 마이너 버전 나열
+   - Brief description only / 간단한 설명만
+   - Links to detailed version files / 상세 버전 파일로 링크
+
+2. **`docs/CHANGELOG/CHANGELOG-v1.{MINOR}.md`** - Detailed patch history / 상세 패치 이력
+   - Every patch version documented / 모든 패치 버전 문서화
+   - What changed / 무엇이 변경되었는지
+   - Which files changed / 어떤 파일이 변경되었는지
+   - Why it changed / 왜 변경되었는지
+   - User request context / 사용자 요청 컨텍스트
+
+#### Step-by-Step Process / 단계별 프로세스
+
+**1. Update Detailed CHANGELOG / 상세 CHANGELOG 업데이트**
+
+File: `docs/CHANGELOG/CHANGELOG-v1.{MINOR}.md` (create if not exists)
+
+파일: `docs/CHANGELOG/CHANGELOG-v1.{MINOR}.md` (없으면 생성)
 
 ```markdown
-## [v1.11.002] - 2025-10-16
+# CHANGELOG v1.12.x
 
-### Added
-- Added `Get` function for retrieving values from maps
-- Added `Get` 함수로 맵에서 값 검색
+## [v1.12.002] - 2025-10-16
 
-### Changed
-- N/A
+### Added / 추가
+- Added `Wrap` function for error wrapping / 에러 래핑을 위한 `Wrap` 함수 추가
+- Added comprehensive tests for Wrap / Wrap 함수에 대한 포괄적인 테스트 추가
 
-### Fixed
-- N/A
+### Changed / 변경
+- Updated error message format in Create function / Create 함수의 에러 메시지 형식 업데이트
+
+### Fixed / 수정
+- Fixed nil pointer issue in GetCode function / GetCode 함수의 nil 포인터 문제 수정
+
+### Files Changed / 변경된 파일
+- `errorutil/wrap.go` - Added Wrap function / Wrap 함수 추가
+- `errorutil/wrap_test.go` - Added 15 test cases / 15개 테스트 케이스 추가
+- `errorutil/create.go` - Updated error message format / 에러 메시지 형식 업데이트
+- `errorutil/inspect.go` - Fixed nil check / nil 체크 수정
+
+### Context / 컨텍스트
+**User Request / 사용자 요청**: "Add error wrapping functionality with context preservation"
+"컨텍스트 보존과 함께 에러 래핑 기능 추가"
+
+**Why / 이유**: Need to add context to errors while preserving original error chain for better debugging
+더 나은 디버깅을 위해 원본 에러 체인을 유지하면서 에러에 컨텍스트를 추가해야 함
+
+**Impact / 영향**: Enables multi-layer error handling in applications
+애플리케이션에서 다층 에러 처리 가능
+```
+
+**2. Update Root CHANGELOG (if needed) / 루트 CHANGELOG 업데이트 (필요시)**
+
+File: `CHANGELOG.md` (only for major milestones)
+
+파일: `CHANGELOG.md` (주요 마일스톤만)
+
+```markdown
+## [v1.12.x] - Error Handling Utilities / 에러 처리 유틸리티
+
+**Status / 상태**: In Development / 개발 중  
+**Focus / 초점**: Comprehensive error handling utilities for Go applications
+
+Detailed changes: [CHANGELOG-v1.12.md](./docs/CHANGELOG/CHANGELOG-v1.12.md)
+상세 변경사항: [CHANGELOG-v1.12.md](./docs/CHANGELOG/CHANGELOG-v1.12.md)
+```
+
+#### CHANGELOG Template / CHANGELOG 템플릿
+
+**For `docs/CHANGELOG/CHANGELOG-v1.{MINOR}.md`:**
+
+```markdown
+# CHANGELOG v1.{MINOR}.x
+
+## [v1.{MINOR}.{PATCH}] - YYYY-MM-DD
+
+### Added / 추가
+- New features / 새로운 기능
+- New functions / 새로운 함수
+
+### Changed / 변경
+- Modified behavior / 변경된 동작
+- Updated implementations / 업데이트된 구현
+
+### Fixed / 수정
+- Bug fixes / 버그 수정
+- Error corrections / 에러 수정
+
+### Files Changed / 변경된 파일
+- `path/to/file1.go` - Description / 설명
+- `path/to/file2.go` - Description / 설명
+- `path/to/file3_test.go` - Description / 설명
+
+### Context / 컨텍스트
+**User Request / 사용자 요청**: "Original user request here"
+"여기에 원본 사용자 요청"
+
+**Why / 이유**: Explanation of why changes were made
+변경이 이루어진 이유 설명
+
+**Impact / 영향**: What this enables or improves
+이것이 가능하게 하거나 개선하는 것
+```
+
+#### When to Update CHANGELOG / CHANGELOG 업데이트 시점
+
+**MUST update before EVERY commit / 모든 커밋 전에 반드시 업데이트:**
+
+✅ **Always update / 항상 업데이트:**
+- New feature added / 새 기능 추가
+- Bug fixed / 버그 수정
+- Documentation updated / 문서 업데이트
+- Tests added / 테스트 추가
+- Refactoring done / 리팩토링 완료
+- Any code changes / 모든 코드 변경
+
+❌ **Exception / 예외:**
+- Only version bump commit (no other changes) / 버전 증가 커밋만 (다른 변경사항 없음)
+
+#### Example Workflow / 예제 워크플로우
+
+```bash
+# 1. Bump version
+vi cfg/app.yaml  # v1.12.001 → v1.12.002
+
+# 2. Commit version bump
+git commit -m "Chore: Bump version to v1.12.002 / v1.12.002로 버전 증가"
+
+# 3. Do your work
+# ... implement features ...
+
+# 4. Update CHANGELOG (BEFORE commit)
+vi docs/CHANGELOG/CHANGELOG-v1.12.md
+# Document all changes, files, context
+
+# 5. Test
+go test ./... -v
+
+# 6. Commit with CHANGELOG
+git add .
+git commit -m "Feat: Add Wrap function / Wrap 함수 추가 (v1.12.002)"
+
+# 7. Push
+git push
+```
+
+**❌ WRONG ORDER / 잘못된 순서:**
+```bash
+# Don't do this / 이렇게 하지 마세요
+git commit -m "..."  # Commit first
+vi CHANGELOG.md      # Then update CHANGELOG (TOO LATE!)
+```
+
+**✅ CORRECT ORDER / 올바른 순서:**
+```bash
+# Do this / 이렇게 하세요
+vi CHANGELOG.md      # Update CHANGELOG first
+git add .
+git commit -m "..."  # Then commit
 ```
 
 ### Step 7: Compile & Test / 컴파일 및 테스트

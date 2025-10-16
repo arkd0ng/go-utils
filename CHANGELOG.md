@@ -18,6 +18,38 @@ This file contains a high-level overview of major and minor versions. For detail
 
 ---
 
+## [v1.12.x] - Error Handling Utilities Package / 에러 처리 유틸리티 패키지 (개발 중 / In Development)
+
+**Focus / 초점**: Comprehensive error handling utilities for Go applications / Go 애플리케이션을 위한 포괄적인 에러 처리 유틸리티
+
+**Status / 상태**: In Development / 개발 중
+**Branch / 브랜치**: `main`
+**Latest Patch / 최신 패치**: v1.12.001 – Package initialization, bilingual requirements, CHANGELOG workflow / 패키지 초기화, 이중 언어 요구사항, CHANGELOG 워크플로우
+
+**Detailed Changes / 상세 변경사항**: [docs/CHANGELOG/CHANGELOG-v1.12.md](docs/CHANGELOG/CHANGELOG-v1.12.md)
+
+### Planned Features / 계획된 기능
+- **Error Creation**: New, Newf, WithCode, WithStack, WithContext / 에러 생성
+- **Error Wrapping**: Wrap, Wrapf, WrapWithCode, WrapWithStack / 에러 래핑
+- **Error Inspection**: Unwrap, UnwrapAll, Root, GetCode, GetStack / 에러 검사
+- **Error Classification**: IsValidation, IsNotFound, IsPermission, IsTimeout / 에러 분류
+- **Error Formatting**: Format, FormatWithStack, ToJSON, ToMap / 에러 포매팅
+- **Error Assertions**: As, Is, Must, MustReturn, Assert / 에러 단언
+
+**Key Design Principles / 주요 설계 원칙**:
+- Standard Library Compatible: Works with errors and fmt packages / 표준 라이브러리 호환
+- Zero Dependencies: No external dependencies / 외부 의존성 없음
+- Type Safety: Strongly typed error interfaces / 강력한 타입의 에러 인터페이스
+- Performance: Minimal overhead / 최소 오버헤드
+
+**Current Status / 현재 상태**: 
+- ✅ Package structure created / 패키지 구조 생성
+- ✅ DESIGN_PLAN.md created / DESIGN_PLAN.md 생성
+- 🔄 WORK_PLAN.md pending / WORK_PLAN.md 대기 중
+- ⏳ Implementation pending / 구현 대기 중
+
+---
+
 ## [v1.11.x] - Web Server Utilities Package / 웹 서버 유틸리티 패키지 (개발 중 / In Development)
 
 **Focus / 초점**: Extreme simplicity web server utilities / 극도로 간단한 웹 서버 유틸리티

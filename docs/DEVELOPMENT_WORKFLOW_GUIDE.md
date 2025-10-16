@@ -109,21 +109,56 @@ go test ./{package} -cover
 
 ### Step 4: Update CHANGELOG / CHANGELOG 업데이트
 
-Edit `docs/CHANGELOG/CHANGELOG-v1.{MINOR}.md`:
+**🚨 CRITICAL: MUST UPDATE BEFORE EVERY COMMIT**
+**🚨 핵심: 모든 커밋 전에 반드시 업데이트**
+
+#### Two-Level System / 2단계 시스템
+
+1. **Root `CHANGELOG.md`**
+   - High-level overview only / 상위 개요만
+   - Major/minor versions / 메이저/마이너 버전
+   - Links to detailed files / 상세 파일로 링크
+
+2. **`docs/CHANGELOG/CHANGELOG-v1.{MINOR}.md`**
+   - Detailed patch history / 상세 패치 이력
+   - Every change documented / 모든 변경 문서화
+   - Files changed / 변경된 파일
+   - Why and context / 이유와 컨텍스트
+
+#### Required Information / 필수 정보
+
+Edit `docs/CHANGELOG/CHANGELOG-v1.{MINOR}.md` with:
 
 ```markdown
-## [v1.11.045] - 2025-10-16
+## [v1.{MINOR}.{PATCH}] - YYYY-MM-DD
 
-### Added
-- Added new development workflow guide
-- 새로운 개발 워크플로우 가이드 추가
+### Added / 추가
+- What was added / 추가된 것
 
-### Changed
-- N/A
+### Changed / 변경
+- What was modified / 수정된 것
 
-### Fixed
-- N/A
+### Fixed / 수정
+- What was fixed / 수정된 것
+
+### Files Changed / 변경된 파일
+- `path/to/file.go` - Description / 설명
+- `path/to/test.go` - Description / 설명
+
+### Context / 컨텍스트
+**User Request / 사용자 요청**: "Original request"
+"원본 요청"
+
+**Why / 이유**: Why changes were made
+변경 이유
+
+**Impact / 영향**: What this enables
+가능하게 하는 것
 ```
+
+**See [PACKAGE_DEVELOPMENT_GUIDE.md](./PACKAGE_DEVELOPMENT_GUIDE.md#step-6-changelog--변경-기록) for full details**
+
+**전체 세부사항은 [PACKAGE_DEVELOPMENT_GUIDE.md](./PACKAGE_DEVELOPMENT_GUIDE.md#step-6-changelog--변경-기록) 참조**
 
 ### Step 5: Git Commit & Push / Git 커밋 및 푸시
 
