@@ -1,3 +1,34 @@
+## [v1.11.035] - 2025-10-16
+
+### Test Coverage Final Improvement / 테스트 커버리지 최종 개선
+- **Coverage increase from 88.5% to 89.5%** / **커버리지 88.5%에서 89.5%로 증가**
+  - Additional 1% coverage improvement (88.5% → 89.5%)
+  - 추가 1% 커버리지 향상
+
+- **New complete coverage test file** / **새로운 완전 커버리지 테스트 파일** (`coverage_complete_test.go`)
+  - **CSRF Token Expiry**: Tests CSRF token cleanup through expiry mechanism
+  - **Template File Detection**: Tests template file detection through LoadGlob (HTML, HTM, TMPL, TPL vs other files)
+  - **Template Auto-Reload**: Tests template auto-reload functionality with file watching
+  - **Graceful Shutdown Complete**: Tests all shutdown paths (shutdown before start, timeout, multiple calls)
+  - **Validator isZero Complete**: Tests isZero with all types (int, int8-64, uint, uint8-64, float32-64, string, bool, slice, map, ptr)
+  - **Validator String Formats**: Email, alpha, alphanum, numeric validation edge cases
+  - **Context Render Error Paths**: Tests render with invalid template, missing template
+  - **Middleware Edge Cases**: Logger with custom function, body limit with exact/over limit
+  - **Bind Edge Cases**: Unsupported content type handling
+  - **GetContext Edge Cases**: Nil context value, wrong type in context
+  - **Session Edge Cases**: Destroy with invalid cookie, get and save multiple times
+  - **CSRF Multiple Token Sources**: Query parameter token lookup
+  - **Route Group With Middleware**: Nested route groups, empty prefix groups
+  - CSRF 토큰 만료, 템플릿 파일 감지, 자동 리로드, 우아한 종료, 검증자, 렌더링, 미들웨어, 바인딩, 컨텍스트, 세션, 라우트 그룹 테스트
+
+### Test Results / 테스트 결과
+- ✅ All tests passing
+- ✅ Coverage: 89.5% of statements (increased from 88.5%)
+- ✅ Total cumulative improvement: 79.9% → 89.5% (9.6% increase across 3 test files)
+- ✅ 총 누적 향상: 79.9% → 89.5% (3개 테스트 파일에 걸쳐 9.6% 증가)
+
+---
+
 ## [v1.11.034] - 2025-10-16
 
 ### Test Coverage Further Improvement / 테스트 커버리지 추가 개선
