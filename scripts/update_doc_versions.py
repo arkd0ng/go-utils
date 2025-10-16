@@ -1,37 +1,51 @@
 #!/usr/bin/env python3
-"""Synchronize markdown version strings with cfg/app.yaml."""
+"""Synchronize Markdown version strings with cfg/app.yaml.
+
+The script looks for two kinds of targets:
+
+1. Explicit placeholders `{Version}` placed inside Markdown files.
+2. Existing version lines such as `**Version**: v1.11.000` or
+   `**Version / 버전**: v1.11.000`.
+
+Any file under the repository (recursively) with a `.md` suffix is processed,
+so 새로운 문서를 추가해도 스크립트를 수정할 필요가 없습니다.
+"""
+
+from __future__ import annotations
 
 import re
 import sys
 from pathlib import Path
 
-import yaml
-
 
 CFG_PATH = Path("cfg/app.yaml")
+VERSION_PLACEHOLDER = "{Version}"
+VERSION_LINE_PATTERNS = [
+    re.compile(r"(\*\*Version\s*/\s*버전\*\*:\s*)v\d+\.\d+\.\d+"),
+    re.compile(r"(\*\*Version\*\*:\s*)v\d+\.\d+\.\d+"),
+]
+YAML_VERSION_REGEX = re.compile(r"^\s*version:\s*(v\d+\.\d+\.\d+)\s*$", re.MULTILINE)
 
 
 def load_version() -> str:
-    data = yaml.safe_load(CFG_PATH.read_text(encoding="utf-8"))
-    try:
-        return data["app"]["version"]
-    except KeyError as exc:
-        raise SystemExit("cfg/app.yaml missing app.version") from exc
+    text = CFG_PATH.read_text(encoding="utf-8")
+    match = YAML_VERSION_REGEX.search(text)
+    if not match:
+        raise SystemExit("Unable to locate app.version in cfg/app.yaml")
+    return match.group(1)
 
 
-def update_file(path: Path, version: str) -> bool:
-    text = path.read_text(encoding="utf-8")
+def update_markdown(path: Path, version: str) -> bool:
+    original = path.read_text(encoding="utf-8")
+    updated = original
 
-    patterns = [
-        re.compile(r"(\*\*Version\s*/\s*버전\*\*:\s*)v\d+\.\d+\.\d+"),
-        re.compile(r"(\*\*Version\*\*:\s*)v\d+\.\d+\.\d+"),
-    ]
+    if VERSION_PLACEHOLDER in updated:
+        updated = updated.replace(VERSION_PLACEHOLDER, version)
 
-    updated = text
-    for pattern in patterns:
+    for pattern in VERSION_LINE_PATTERNS:
         updated = pattern.sub(rf"\1{version}", updated)
 
-    if updated != text:
+    if updated != original:
         path.write_text(updated, encoding="utf-8")
         return True
     return False
@@ -39,23 +53,16 @@ def update_file(path: Path, version: str) -> bool:
 
 def main() -> int:
     version = load_version()
+    markdown_files = [p for p in Path(".").rglob("*.md") if p.is_file()]
 
-    target_files = [
-        Path("README.md"),
-        Path("docs/websvrutil/USER_MANUAL.md"),
-        Path("docs/websvrutil/DEVELOPER_GUIDE.md"),
-    ]
+    any_changed = False
+    for md_file in markdown_files:
+        any_changed |= update_markdown(md_file, version)
 
-    changed = False
-    for file_path in target_files:
-        if not file_path.exists():
-            continue
-        changed |= update_file(file_path, version)
-
-    if changed:
-        print(f"Updated documentation version strings to {version}.")
+    if any_changed:
+        print(f"Updated version placeholders to {version}.")
     else:
-        print("Documentation already up to date.")
+        print("No Markdown files required updates.")
 
     return 0
 
