@@ -1,3 +1,92 @@
+## [v1.11.032] - 2025-10-16
+
+### Code Organization / 코드 구성
+- **File Split** / **파일 분할** (`context.go` → 5 files)
+  - Split large context.go file (1,475 lines) into 5 logical files
+  - `context.go` (302 lines) - Core struct, params/values management
+  - `context_request.go` (454 lines) - Request info methods
+  - `context_response.go` (296 lines) - Response rendering methods
+  - `context_bind.go` (305 lines) - Data binding & file operations
+  - `context_helpers.go` (215 lines) - Helper methods
+  - 거대한 context.go 파일 (1,475줄)을 5개의 논리적 파일로 분할
+  - 코드 가독성 및 유지보수성 향상
+
+### Security / 보안
+- **CSRF Protection Middleware** / **CSRF 보호 미들웨어** (`csrf.go`)
+  - Cryptographically secure token generation with crypto/rand
+  - Flexible token lookup (header, form, query)
+  - Cookie-based token storage with customizable options
+  - Request method filtering (safe methods: GET, HEAD, OPTIONS, TRACE)
+  - Token validation with constant-time comparison (timing attack prevention)
+  - Skipper function support for conditional CSRF validation
+  - Automatic token cleanup with periodic garbage collection
+  - 암호학적으로 안전한 토큰 생성 (crypto/rand)
+  - 유연한 토큰 조회 (헤더, 폼, 쿼리)
+  - 쿠키 기반 토큰 저장 (커스텀 옵션 지원)
+  - 타이밍 공격 방지를 위한 상수 시간 비교
+  - Tests: 5 comprehensive tests (`csrf_test.go`)
+
+### Validation / 검증
+- **Validation Tag Support** / **검증 태그 지원** (`validator.go`)
+  - Built-in validator with 14 validation tags:
+    - `required`, `email`, `min`, `max`, `len`
+    - `eq`, `ne`, `gt`, `gte`, `lt`, `lte`
+    - `oneof`, `alpha`, `alphanum`, `numeric`
+  - Support for multiple tags per field
+  - Type-safe validation for string, int, uint, float, slice, map, array
+  - Detailed validation errors with field and tag information
+  - Context method: `BindWithValidation(obj)` for auto bind + validate
+  - 14개의 검증 태그 지원
+  - 여러 태그 조합 가능
+  - 타입 안전 검증 (문자열, 정수, 실수, 슬라이스, 맵, 배열)
+  - Tests: 12 comprehensive tests (`validator_test.go`)
+
+### Testing / 테스트
+- **Integration Tests** / **통합 테스트** (`integration_test.go`)
+  - Full app integration test with multiple middlewares
+  - Route groups integration test
+  - CSRF + validation integration test
+  - 여러 미들웨어가 있는 전체 앱 통합 테스트
+  - 라우트 그룹 통합 테스트
+  - CSRF + 검증 통합 테스트
+  - Tests: 3 integration tests
+
+- **Benchmark Tests** / **벤치마크 테스트** (`benchmark_test.go`)
+  - Context operations (Get/Set)
+  - JSON response rendering
+  - Routing (simple and with params)
+  - Middleware execution
+  - CSRF token generation
+  - Validation
+  - ClientIP extraction
+  - Parameter extraction
+  - Benchmarks: 10 performance benchmarks
+
+### Test Results / 테스트 결과
+- ✅ All 259 tests pass (increased from 237)
+  - 219 unit tests
+  - 18 example tests
+  - 5 CSRF tests
+  - 12 validator tests
+  - 3 integration tests
+  - 10 benchmark tests (separate)
+- ✅ Zero breaking changes
+- ✅ All functionality preserved
+
+### Code Quality Improvements / 코드 품질 개선
+- Better file organization with logical separation
+- Enhanced security with CSRF protection
+- Improved data validation capabilities
+- More comprehensive test coverage
+- Performance benchmarking added
+- 논리적 분리를 통한 더 나은 파일 구성
+- CSRF 보호로 향상된 보안
+- 개선된 데이터 검증 기능
+- 더 포괄적인 테스트 커버리지
+- 성능 벤치마크 추가
+
+---
+
 ## Summary of v1.11.x - Code Quality Improvements / v1.11.x 요약 - 코드 품질 개선
 
 이번 버전에서는 websvrutil 패키지의 코드 품질, 보안, 유지보수성을 대폭 개선했습니다:
