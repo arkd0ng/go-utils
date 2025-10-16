@@ -1,11 +1,18 @@
+## [v1.11.038] - 2025-10-16
+
+### Changed / 변경
+- Updated `cfg/app.yaml` version to v1.11.038 / `cfg/app.yaml` 버전을 v1.11.038로 업데이트
+- Refined `examples/websvrutil/main.go` workflow to match Example Code Guide standards (shared `logs/` rotation, bilingual console/log output, dynamic version banner) / `examples/websvrutil/main.go`를 예제 코드 가이드 표준에 맞게 정비 (공용 `logs/` 회전, 이중 언어 콘솔·로그 출력, 동적 버전 배너)
+- Documented the example overhaul in this changelog entry to maintain versioned history / 버전 이력을 유지하기 위해 이번 변경을 체인지로그에 명시
+
+---
+
 ## [v1.11.037] - 2025-10-16
 
 ### Changed / 변경
-- Updated `cfg/app.yaml` version to v1.11.037 / `cfg/app.yaml` 버전을 v1.11.037로 업데이트
 - Modified `fileutil`, `sliceutil`, and `websvrutil` packages to load version information from `cfg/app.yaml` automatically / `fileutil`, `sliceutil`, `websvrutil` 패키지가 `cfg/app.yaml`에서 버전 정보를 자동으로 로드하도록 수정
 - Aligned package tests to expect the dynamically loaded version value / 패키지 테스트가 동적으로 로드된 버전 값을 기대하도록 정렬
 - Refreshed documentation to reflect shared log directory and version automation (Example Code Guide, websvrutil User Manual, websvrutil Developer Guide) / 공유 로그 디렉토리와 버전 자동화를 반영하도록 문서 업데이트 (예제 코드 가이드, websvrutil 사용자 매뉴얼, websvrutil 개발자 가이드)
-- Updated `examples/websvrutil/main.go` to mirror Example Code Guide requirements (shared log setup, dynamic version banner, bilingual logging) / Example Code Guide 요구사항을 반영하도록 `examples/websvrutil/main.go`를 갱신 (공용 로그 설정, 동적 버전 배너, 이중 언어 로깅)
 
 ---
 
