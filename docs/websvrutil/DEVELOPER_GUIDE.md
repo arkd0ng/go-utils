@@ -1,7 +1,7 @@
 # Websvrutil Package - Developer Guide / 개발자 가이드
 
 **Package**: `github.com/arkd0ng/go-utils/websvrutil`  
-**Version**: v1.11.041  
+**Version**: v1.11.043  
 **Last Updated**: 2025-10-16
 
 ---

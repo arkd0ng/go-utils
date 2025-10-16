@@ -1,3 +1,24 @@
+## [v1.11.043] - 2025-10-16
+
+### Changed / 변경
+- Bumped cfg/app.yaml and updated README plus websvrutil guides to v1.11.043. / cfg/app.yaml과 README, websvrutil 문서를 v1.11.043으로 갱신했습니다.
+
+### Testing / 테스트
+- `go test ./...`
+
+---
+
+## [v1.11.042] - 2025-10-16
+
+### Changed / 변경
+- Bumped `cfg/app.yaml` and README to confirm the automated `{Version}` replacement workflow. / `{Version}` 자동 치환 워크플로우 검증을 위해 `cfg/app.yaml`과 README를 업데이트했습니다.
+- Updated user/developer guides to point at v1.11.042. / 사용자·개발자 가이드 버전을 v1.11.042로 맞췄습니다.
+
+### Testing / 테스트
+- `go test ./...`
+
+---
+
 ## [v1.11.041] - 2025-10-16
 
 ### Changed / 변경
