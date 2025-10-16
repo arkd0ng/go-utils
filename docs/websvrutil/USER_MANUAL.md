@@ -1,7 +1,7 @@
 # Websvrutil Package - User Manual / 사용자 매뉴얼
 
 **Package**: `github.com/arkd0ng/go-utils/websvrutil`  
-**Version**: v1.11.028  
+**Version**: v1.11.039  
 **Last Updated**: 2025-10-16
 
 ---
@@ -19,8 +19,12 @@
 9. [Template Rendering / 템플릿-렌더링](#template-rendering--템플릿-렌더링)
 10. [Session Management / 세션-관리](#session-management--세션-관리)
 11. [File Handling & Static Assets / 파일-처리-및-정적-자산](#file-handling--static-assets--파일-처리-및-정적-자산)
-12. [Graceful Shutdown / 우아한-종료](#graceful-shutdown--우아한-종료)
-13. [FAQ](#faq)
+12. [Security & CSRF / 보안--csrf](#security--csrf--보안--csrf)
+13. [Validation / 검증](#validation--검증)
+14. [Graceful Shutdown / 우아한-종료](#graceful-shutdown--우아한-종료)
+15. [Testing Patterns / 테스트-패턴](#testing-patterns--테스트-패턴)
+16. [Log-Driven Learning / 로그-중심-학습](#log-driven-learning--로그-중심-학습)
+17. [FAQ](#faq)
 
 ---
 
@@ -420,19 +424,139 @@ app.POST("/upload", func(w http.ResponseWriter, r *http.Request) {
 
 ---
 
-## Graceful Shutdown / 우아한 종료
+## Security & CSRF / 보안 & CSRF
 
-`RunWithGracefulShutdown` starts the server and listens for `SIGINT`/`SIGTERM`, applying a timeout before calling `Shutdown`.  
-`RunWithGracefulShutdown`은 서버를 시작하고 `SIGINT`/`SIGTERM`을 감지하여 타임아웃 후 `Shutdown`을 호출합니다.
+Enable CSRF middleware to issue per-request tokens and validate form submissions.  
+CSRF 미들웨어를 활성화하면 요청마다 토큰을 발급하고 폼 제출 시 이를 검증할 수 있습니다.
 
 ```go
-if err := app.RunWithGracefulShutdown(":8080", 30*time.Second); err != nil {
-    log.Fatal(err)
+app := websvrutil.New()
+app.Use(websvrutil.CSRF())
+
+app.GET("/form", func(w http.ResponseWriter, r *http.Request) {
+    ctx := websvrutil.GetContext(r)
+    token := websvrutil.GetCSRFToken(ctx)          // Include token in form / 폼에 토큰 포함
+    ctx.Text(http.StatusOK, token)
+})
+
+app.POST("/submit", func(w http.ResponseWriter, r *http.Request) {
+    ctx := websvrutil.GetContext(r)
+    ctx.Text(http.StatusOK, "CSRF validation passed")
+})
+```
+
+- Tokens are stored in a secure cookie and must be echoed back through the `X-CSRF-Token` header or form field.  
+  토큰은 안전한 쿠키에 저장되며 `X-CSRF-Token` 헤더 또는 폼 필드로 다시 전송해야 합니다.  
+- The middleware automatically rejects requests missing or mismatching the token.  
+  미들웨어는 토큰이 없거나 일치하지 않는 요청을 자동으로 거부합니다.  
+- Customize behaviour through `CSRFWithConfig` (token length, cookie settings, skip logic).  
+  `CSRFWithConfig`로 토큰 길이, 쿠키 설정, 스킵 로직 등을 조정할 수 있습니다.
+
+---
+
+## Validation / 검증
+
+Use the built-in validator to enforce struct tags before processing a payload.  
+내장 검증기를 사용하면 페이로드를 처리하기 전에 구조체 태그를 검증할 수 있습니다.
+
+```go
+type UserForm struct {
+    Name  string `validate:"required,min=3"`
+    Email string `validate:"required,email"`
+    Age   int    `validate:"gte=18,lte=120"`
+}
+
+validator := websvrutil.DefaultValidator{}
+if err := validator.Validate(form); err != nil {
+    log.Println("Validation failed:", err)
 }
 ```
 
-Use `Shutdown` manually when integrating with custom signal handling or orchestrators.  
-사용자 정의 신호 처리나 오케스트레이터에 통합할 때는 `Shutdown`을 직접 호출하면 됩니다.
+- Supported tags include `required`, `email`, `min`, `max`, `len`, `oneof`, `alpha`, `numeric`, etc.  
+  지원 태그에는 `required`, `email`, `min`, `max`, `len`, `oneof`, `alpha`, `numeric` 등이 있습니다.  
+- Errors are aggregated, so you can present all issues at once.  
+  모든 오류가 모여 반환되므로 한 번에 전체 문제를 안내할 수 있습니다.  
+- Combine with binding helpers to reject malformed requests early.  
+  바인딩 헬퍼와 결합하면 잘못된 요청을 초기 단계에서 차단할 수 있습니다.
+
+---
+
+## Graceful Shutdown / 우아한 종료
+
+Use either the helper `RunWithGracefulShutdown` or a manual `Shutdown` sequence.  
+`RunWithGracefulShutdown` 헬퍼를 쓰거나 수동으로 `Shutdown` 절차를 구성할 수 있습니다.
+
+```go
+app := websvrutil.New()
+quit := make(chan os.Signal, 1)
+signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+go func() {
+    if err := app.Run(":8080"); err != nil && !errors.Is(err, http.ErrServerClosed) {
+        log.Println("Server error:", err)
+    }
+}()
+
+<-quit
+ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+defer cancel()
+if err := app.Shutdown(ctx); err != nil {
+    log.Println("Graceful shutdown failed:", err)
+}
+```
+
+- Always pair `signal.Notify` with `signal.Stop` or `defer cancel()` to avoid leaks.  
+  리소스 누수를 방지하려면 `signal.Notify` 사용 후 `signal.Stop` 혹은 `defer cancel()`을 잊지 마세요.  
+- Pick a timeout that matches your SLA—long enough for in-flight requests to finish.  
+  서비스 수준 계약에 맞춰 충분한 타임아웃을 설정해야 합니다.  
+- The bundled example demonstrates running on an ephemeral port, sending a simulated signal, and confirming that goroutines exit cleanly.  
+  제공된 예제는 에페메럴 포트에서 서버를 실행하고 시뮬레이트된 시그널을 전송한 뒤 고루틴이 정상 종료되는 과정을 보여줍니다.
+
+---
+
+## Testing Patterns / 테스트 패턴
+
+`net/http/httptest`와 함께 파이프라인을 검증해 보세요.  
+Use `net/http/httptest` to exercise handlers, middleware, and full routing stacks.
+
+```go
+app := websvrutil.New()
+app.GET("/ping", func(w http.ResponseWriter, r *http.Request) {
+    ctx := websvrutil.GetContext(r)
+    ctx.JSON(http.StatusOK, map[string]string{"message": "pong"})
+})
+
+req := httptest.NewRequest("GET", "/ping", nil)
+rec := httptest.NewRecorder()
+app.ServeHTTP(rec, req)
+
+if rec.Code != http.StatusOK {
+    t.Fatalf("unexpected status: %d", rec.Code)
+}
+```
+
+- Capture `rec.Body.String()` to verify JSON payloads, headers, and status codes.  
+  `rec.Body.String()`을 사용하면 JSON 본문, 헤더, 상태 코드를 검증할 수 있습니다.  
+- Define helper factories for app instances to keep individual tests focused.  
+  테스트마다 앱 생성을 돕는 헬퍼를 만들면 개별 테스트에 집중할 수 있습니다.  
+- Combine with the session, binding, or middleware examples above for end-to-end coverage.  
+  위에서 다룬 세션, 바인딩, 미들웨어 예제와 결합하여 종단 간 테스트를 수행하세요.
+
+---
+
+## Log-Driven Learning / 로그 중심 학습
+
+The project-standard example writes every console message to `logs/websvrutil-example.log`.  
+프로젝트 표준 예제는 콘솔 메시지를 모두 `logs/websvrutil-example.log`에 기록합니다.
+
+- Dual-language entries: each step logs English first, then Korean, so teammates can cross-reference easily.  
+  이중 언어 메시지: 영어 후 한국어 순으로 기록되어 협업 시 상호 참조가 쉽습니다.  
+- Structured context: request method, path, headers, payloads, and status codes are included where relevant.  
+  구조화된 컨텍스트: 요청 메서드, 경로, 헤더, 페이로드, 상태 코드가 상황에 맞게 포함됩니다.  
+- Backup rotation: existing logs are timestamped and archived automatically (latest 5 retained).  
+  백업 회전: 기존 로그는 타임스탬프와 함께 보관되며 최근 5개만 유지됩니다.  
+- Re-run the example and open the log to follow the workbook-style tour without reading this manual end to end.  
+  예제를 다시 실행하고 로그를 확인하면 이 매뉴얼을 처음부터 읽지 않아도 워크북처럼 학습할 수 있습니다.
 
 ---
 

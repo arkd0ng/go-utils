@@ -101,6 +101,26 @@ When multiple packages are being developed simultaneously:
 
 ## Version Management / 버전 관리
 
+### Standard Release Workflow / 표준 작업 순서
+
+Every patch cycle must follow the same order to keep history consistent:
+
+패치 사이클마다 다음 순서를 지켜야 이력이 일관됩니다:
+
+1. **Bump cfg/app.yaml** – increment the patch or minor version before modifying code.  
+   **cfg/app.yaml 버전 증가** – 코드를 손대기 전에 패치/마이너 버전을 올립니다.
+2. **Implement code & docs** – write code and update documentation in the same cycle.  
+   **코드 및 문서 작업** – 코드 변경과 문서 수정을 같은 사이클에서 처리합니다.
+3. **Verify changes** – run `go test ./...` (또는 필요한 범위), 포매터 및 정적 분석을 수행합니다.  
+   **변경 검증** – `go test ./...` 등 필요한 검증을 반드시 실행합니다.
+4. **Record updates** – log the changes in package-level changelog(s) and the root `CHANGELOG.md`.  
+   **변경 기록** – 패키지별 체인지로그와 루트 `CHANGELOG.md`에 내용을 적습니다.
+5. **Commit & push** – only after steps 1–4 succeed, commit and push the branch.  
+   **커밋 및 푸시** – 1~4단계가 완료된 뒤에만 커밋하고 푸시합니다.
+
+> Tip / 팁: Large features can be split into multiple micro cycles; repeat steps 1–5 for each to maintain clean history.  
+> 큰 기능은 여러 마이크로 사이클로 나누어 진행하고, 각 사이클마다 1–5 단계를 반복하면 기록이 깔끔해집니다.
+
 ### Version Format / 버전 형식
 
 ```

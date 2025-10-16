@@ -334,37 +334,37 @@ This work plan outlines the development phases for the `websvrutil` package, foc
 ### Phase 6: Documentation & Polish (v1.11.026-030)
 
 #### v1.11.026 - USER_MANUAL.md
-- [ ] Create USER_MANUAL.md / 사용자 매뉴얼 생성
-  - [ ] Introduction / 소개
-  - [ ] Installation / 설치
-  - [ ] Quick Start / 빠른 시작
-  - [ ] API Reference / API 참조
-  - [ ] Configuration / 설정
-  - [ ] Middleware Guide / 미들웨어 가이드
-  - [ ] Template Guide / 템플릿 가이드
-  - [ ] Best Practices / 모범 사례
-  - [ ] Troubleshooting / 문제 해결
-  - [ ] FAQ / 자주 묻는 질문
+- [x] Create USER_MANUAL.md / 사용자 매뉴얼 생성
+  - [x] Introduction / 소개
+  - [x] Installation / 설치
+  - [x] Quick Start / 빠른 시작
+  - [x] API Reference / API 참조
+  - [x] Configuration / 설정
+  - [x] Middleware Guide / 미들웨어 가이드
+  - [x] Template Guide / 템플릿 가이드
+  - [x] Best Practices / 모범 사례
+  - [x] Troubleshooting / 문제 해결
+  - [x] FAQ / 자주 묻는 질문
 
 #### v1.11.027 - DEVELOPER_GUIDE.md
-- [ ] Create DEVELOPER_GUIDE.md / 개발자 가이드 생성
-  - [ ] Architecture Overview / 아키텍처 개요
-  - [ ] Package Structure / 패키지 구조
-  - [ ] Core Components / 핵심 컴포넌트
-  - [ ] Internal Implementation / 내부 구현
-  - [ ] Design Patterns / 디자인 패턴
-  - [ ] Adding New Features / 새 기능 추가
-  - [ ] Testing Guide / 테스트 가이드
-  - [ ] Performance / 성능
-  - [ ] Contributing / 기여
+- [x] Create DEVELOPER_GUIDE.md / 개발자 가이드 생성
+  - [x] Architecture Overview / 아키텍처 개요
+  - [x] Package Structure / 패키지 구조
+  - [x] Core Components / 핵심 컴포넌트
+  - [x] Internal Implementation / 내부 구현
+  - [x] Design Patterns / 디자인 패턴
+  - [x] Adding New Features / 새 기능 추가
+  - [x] Testing Guide / 테스트 가이드
+  - [x] Performance / 성능
+  - [x] Contributing / 기여
 
 #### v1.11.028 - Comprehensive Examples
-- [ ] Create REST API example / REST API 예제 생성
-- [ ] Create web application example / 웹 애플리케이션 예제 생성
-- [ ] Create middleware example / 미들웨어 예제 생성
-- [ ] Create template example / 템플릿 예제 생성
-- [ ] Create full-featured example / 전체 기능 예제 생성
-- [ ] All examples with detailed logging / 모든 예제에 상세 로깅
+- [x] Create REST API example / REST API 예제 생성
+- [x] Create web application example / 웹 애플리케이션 예제 생성
+- [x] Create middleware example / 미들웨어 예제 생성
+- [x] Create template example / 템플릿 예제 생성
+- [x] Create full-featured example / 전체 기능 예제 생성
+- [x] All examples with detailed logging / 모든 예제에 상세 로깅
 
 #### v1.11.029 - Testing & Benchmarks
 - [ ] Ensure 80%+ test coverage / 80% 이상 테스트 커버리지 확인

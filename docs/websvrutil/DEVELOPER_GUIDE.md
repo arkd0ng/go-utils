@@ -1,7 +1,7 @@
 # Websvrutil Package - Developer Guide / 개발자 가이드
 
 **Package**: `github.com/arkd0ng/go-utils/websvrutil`  
-**Version**: v1.11.028  
+**Version**: v1.11.039  
 **Last Updated**: 2025-10-16
 
 ---
@@ -232,6 +232,34 @@ Highlights / 주요 기능:
 - `Get` fetches an existing session or creates a fresh one when absent / `Get`은 기존 세션을 가져오거나 없으면 새 세션을 생성합니다.
 - `Save` refreshes expiration and writes the cookie; `Destroy` deletes session data and clears the cookie / `Save`는 만료 시간을 갱신하고 쿠키를 쓰며, `Destroy`는 세션 데이터를 삭제하고 쿠키를 제거합니다.
 - Session helpers (`Set`, `Get`, `GetString`, `GetInt`, `GetBool`, etc.) mirror context storage patterns / 세션 헬퍼(`Set`, `Get`, `GetString`, `GetInt`, `GetBool` 등)는 컨텍스트 저장 패턴과 동일합니다.
+
+---
+
+## Example Suite & Logging / 예제 모음 및 로깅
+
+`examples/websvrutil/main.go` is now a comprehensive workbook that exercises every major feature.  
+`examples/websvrutil/main.go`는 주요 기능 전부를 다루는 종합 워크북 형태로 구성되어 있습니다.
+
+- **Feature coverage / 기능 커버리지**: routing (all verbs + groups), context helpers, request binding, responses, middleware, sessions, template engine, CSRF, validator, file uploads, static files, graceful shutdown, testing scenarios.  
+  **기능 커버리지**: 라우팅(모든 메서드 및 그룹), 컨텍스트 헬퍼, 요청 바인딩, 응답, 미들웨어, 세션, 템플릿 엔진, CSRF, 검증기, 파일 업로드, 정적 파일, 정상 종료, 테스트 시나리오.  
+- **Log-first narrative / 로그 우선 학습**: every console line is duplicated in `logs/websvrutil-example.log` with English first and the Korean translation immediately after.  
+  **로그 기반 학습**: 모든 콘솔 출력이 영어 → 한국어 순으로 `logs/websvrutil-example.log`에 기록됩니다.  
+- **Structured context / 구조화된 정보**: request method, path, headers, payloads, status codes, and resulting artifacts (e.g., saved files, CSRF tokens) are logged alongside each step.  
+  **구조화된 정보**: 요청 메서드·경로·헤더·페이로드·상태 코드와 결과물(저장된 파일, CSRF 토큰 등)을 단계별로 기록합니다.  
+- **Shared rotation / 공용 로그 로테이션**: existing logs are backed up with timestamps (`logs/websvrutil-example-YYYYMMDD-HHMMSS.log`) and only the latest five are kept.  
+  **공용 로그 로테이션**: 기존 로그는 타임스탬프 백업(`logs/websvrutil-example-YYYYMMDD-HHMMSS.log`) 후 최근 5개만 유지합니다.
+
+Implementation notes / 구현 메모:
+
+1. `setupLogger` ensures the `logs/` directory exists, rotates the current log, and initializes `logging.Logger` with stdout mirroring.  
+   `setupLogger`는 `logs/` 디렉터리를 생성하고 현재 로그를 회전시킨 뒤 `logging.Logger`를 stdout 미러링과 함께 초기화합니다.
+2. `logSection`, `logDual`, `logPrintln`, `logPrintf` helper functions centralize bilingual logging so every example step stays consistent.  
+   `logSection`, `logDual`, `logPrintln`, `logPrintf` 헬퍼로 이중 언어 로그를 일관되게 출력합니다.
+3. Each functional area is encapsulated in `runXYZExamples` to keep the file navigable and make it easy to cherry-pick snippets.  
+   각 기능 영역은 `runXYZExamples` 함수에 캡슐화되어 있어 탐색과 코드 재사용이 용이합니다.
+
+When authoring new examples for other packages, follow the pattern documented in `docs/EXAMPLE_CODE_GUIDE.md`—shared `logs/`, timestamped backups, and bilingual, data-rich logging.  
+다른 패키지의 예제를 작성할 때도 `docs/EXAMPLE_CODE_GUIDE.md`에 정리된 패턴(공용 `logs/`, 타임스탬프 백업, 이중 언어 상세 로그)을 준수하세요.
 
 ---
 

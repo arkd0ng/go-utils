@@ -1,8 +1,15 @@
 # websvrutil Design Plan / 설계 계획
 
-**Version / 버전**: v1.11.001
+**Version / 버전**: v1.11.001 (living document)
 **Created / 생성일**: 2025-10-16
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
+
+> ### Revision Notes / 개정 메모 (2025-10-16, v1.11.039)
+> - Implemented in-memory `SessionStore` with automatic cleanup; original design mentioned optional external stores only.
+> - CSRF middleware now persists tokens in a global map with hourly pruning rather than relying on per-request state.
+> - Template engine gained layout directory support, custom function registration, and optional auto-reload watcher.
+> - Comprehensive example (`examples/websvrutil/main.go`) mirrors console output to `logs/websvrutil-example.log` with bilingual, data-rich entries and automatic log rotation.
+> - Future iterations should revisit Phase 4/5 items in this plan to reconcile documented goals with the implemented feature set.
 
 ---
 

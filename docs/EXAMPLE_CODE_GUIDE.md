@@ -327,14 +327,29 @@ func example1BasicUsage(logger *logging.Logger) {
 		return
 	}
 
-	logger.Info("Operation succeeded", "result", result)
-	logger.Info("작업 성공", "result", result)
-	fmt.Printf("✅ Result: %v\n", result)
+logger.Info("Operation succeeded", "result", result)
+logger.Info("작업 성공", "result", result)
+fmt.Printf("✅ Result: %v\n", result)
 
-	logger.Info("Example 1 completed successfully")
-	logger.Info("예제 1 완료")
+logger.Info("Example 1 completed successfully")
+logger.Info("예제 1 완료")
 }
 ```
+
+- **Structured bilingual logging / 구조화된 이중 언어 로그 예시**:
+
+```
+logger.Info("Example 12: Custom Middleware / 커스텀 미들웨어")
+logger.Info("Request", "method", r.Method, "path", r.URL.Path)
+logger.Info("요청", "method", r.Method, "path", r.URL.Path)
+logger.Info("Response", "status", rec.Code, "duration", time.Since(start))
+logger.Info("응답", "status", rec.Code, "duration", time.Since(start))
+logger.Info("Artifacts", "headers", rec.Header(), "cookie_count", len(rec.Result().Cookies()))
+logger.Info("산출물", "headers", rec.Header(), "cookie_count", len(rec.Result().Cookies()))
+```
+
+- Always include inputs, outputs, headers, status codes, and generated artifacts (file paths, tokens, session IDs).  
+  입력·출력·헤더·상태 코드·생성된 산출물(파일 경로, 토큰, 세션 ID)을 반드시 기록하세요.
 
 ---
 
@@ -751,6 +766,14 @@ Before committing example code, verify:
     - Integration testing
     - Mocking requests
     - Testing middleware
+
+**Logging Expectations / 로깅 기대치**:
+- Mirror every console message to `logs/websvrutil-example.log` (English followed by Korean).  
+  모든 콘솔 메시지를 영어 후 한국어 순으로 `logs/websvrutil-example.log`에 기록합니다.
+- Capture inputs, headers, payloads, status codes, and artifacts such as saved files or CSRF 토큰.  
+  입력값, 헤더, 페이로드, 상태 코드, 저장된 파일·CSRF 토큰과 같은 산출물을 기록합니다.
+- Rotate logs: timestamp backups (`logs/websvrutil-example-YYYYMMDD-HHMMSS.log`) and keep only the most recent five.  
+  로그 회전: 타임스탬프 백업(`logs/websvrutil-example-YYYYMMDD-HHMMSS.log`)을 생성하고 최신 다섯 개만 유지합니다.
 
 **Logging Requirements / 로깅 요구사항**:
 
