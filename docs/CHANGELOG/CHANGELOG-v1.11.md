@@ -1,3 +1,15 @@
+## [v1.11.040] - 2025-10-16
+
+### Changed / 변경
+- Updated documentation set (USER_MANUAL, DEVELOPER_GUIDE, EXAMPLE_CODE_GUIDE, WORK_PLAN, DESIGN_PLAN) to reflect the comprehensive example overhaul and bilingual logging standard. / 통합 예제 확장과 이중 언어 로그 표준을 반영하도록 문서(사용자/개발자 가이드, 예제 코드 가이드, 작업/설계 계획)를 업데이트했습니다.
+- Documented project-wide workflow (cfg/app.yaml bump → code/docs → tests → changelog → push) in `docs/PACKAGE_DEVELOPMENT_GUIDE.md`. / `docs/PACKAGE_DEVELOPMENT_GUIDE.md`에 표준 작업 순서를 명문화했습니다.
+- Added initial design/work plans for the `random` package to match other modules. / 다른 모듈과의 일관성을 위해 `random` 패키지의 설계/작업 계획을 추가했습니다.
+
+### Testing / 테스트
+- `go test ./...`
+
+---
+
 ## [v1.11.039] - 2025-10-16
 
 ### Added / 추가

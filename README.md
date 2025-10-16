@@ -819,14 +819,14 @@ err := httputil.Get(url, &users, httputil.WithBearerToken("token"))
 
 **Status / 상태**: In Development / 개발 중
 **Branch / 브랜치**: `feature/v1.11.x-websvrutil`
-**Version / 버전**: v1.11.039
+**Version / 버전**: v1.11.040
 
 Extreme simplicity web server utilities - reduce 50+ lines of server setup code to just 5 lines.
 
 극도로 간단한 웹 서버 유틸리티 - 50줄 이상의 서버 설정 코드를 단 5줄로 줄입니다.
 
-**Latest update / 최신 업데이트**: the comprehensive example (`examples/websvrutil/main.go`) now exercises routing, context helpers, binding, responses, middleware, sessions, templates, CSRF, validator, file upload, static files, graceful shutdown, and testing patterns with bilingual logging saved to `logs/websvrutil-example.log`.  
-**최신 업데이트**: 통합 예제(`examples/websvrutil/main.go`)가 라우팅, 컨텍스트 헬퍼, 바인딩, 응답, 미들웨어, 세션, 템플릿, CSRF, 검증기, 파일 업로드, 정적 파일, 정상 종료, 테스트 패턴을 모두 시연하며, 영어/한국어 로그를 `logs/websvrutil-example.log`에 기록합니다.
+**Latest update / 최신 업데이트**: v1.11.040 refines documentation to mirror the expanded example suite and codifies the standard cfg/app.yaml → code → docs → changelog → push workflow.  
+**최신 업데이트**: v1.11.040에서 확장된 예제 모음과 일치하도록 문서를 정비하고, cfg/app.yaml → 코드 → 문서 → changelog → 푸시 표준 작업 순서를 명문화했습니다.
 
 **Planned Features / 계획된 기능**:
 - Simple Router with RESTful routing / RESTful 라우팅을 가진 간단한 라우터
