@@ -526,9 +526,28 @@ git push origin v1.11.030
 
 ### Bilingual Format / 이중 언어 형식
 
+**🚨 CRITICAL: ALL DOCUMENTATION MUST BE BILINGUAL (ENGLISH/KOREAN)**
+**🚨 핵심: 모든 문서는 반드시 영문/한글 병기**
+
 **All documentation MUST be bilingual (English/Korean):**
 
 모든 문서는 이중 언어(영문/한글)여야 합니다:
+
+#### What Must Be Bilingual / 반드시 병기해야 하는 항목
+
+1. **All .md files / 모든 .md 파일**
+2. **Code comments / 코드 주석**
+3. **Git commit messages / Git 커밋 메시지**
+4. **Log messages / 로그 메시지**
+5. **Error messages / 에러 메시지**
+
+#### Exceptions (English Only) / 예외 (영문만)
+
+- **CLAUDE.md** (personal AI guidance / 개인 AI 가이드)
+- **todo.md** (personal task list / 개인 작업 목록)
+- **Variable/function names / 변수/함수 이름**
+
+#### Format Examples / 형식 예제
 
 ```markdown
 ## Section Title / 섹션 제목
@@ -780,10 +799,13 @@ logs/
 
 ### Commit Message Format / 커밋 메시지 형식
 
-```
-<type>: <subject> (<version>)
+**🚨 CRITICAL: ALL COMMIT MESSAGES MUST BE BILINGUAL (ENGLISH/KOREAN)**
+**🚨 핵심: 모든 커밋 메시지는 반드시 영문/한글 병기**
 
-[optional body]
+```
+<type>: <subject in English / 한글 제목> (<version>)
+
+[optional body in English / 한글 본문]
 
 🤖 Generated with Claude Code
 Co-Authored-By: Claude <noreply@anthropic.com>
@@ -804,29 +826,42 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ### Commit Examples / 커밋 예제
 
+**✅ CORRECT - Bilingual / 올바른 예시 - 병기:**
+
 ```bash
 # Version bump (ALWAYS FIRST)
-git commit -m "Chore: Bump version to v1.11.045"
+git commit -m "Chore: Bump version to v1.11.045 / v1.11.045로 버전 증가"
 
 # New feature
-git commit -m "Feat: Add Get function to maputil (v1.11.045)"
+git commit -m "Feat: Add Get function to maputil / maputil에 Get 함수 추가 (v1.11.045)"
 
 # Bug fix
-git commit -m "Fix: Handle nil pointer in Get function (v1.11.046)"
+git commit -m "Fix: Handle nil pointer in Get function / Get 함수에서 nil 포인터 처리 (v1.11.046)"
 
 # Documentation
-git commit -m "Docs: Add comprehensive workflow guide (v1.11.047)"
+git commit -m "Docs: Add comprehensive workflow guide / 포괄적인 워크플로우 가이드 추가 (v1.11.047)"
 
 # Test
-git commit -m "Test: Add edge case tests for Get (v1.11.048)"
+git commit -m "Test: Add edge case tests for Get / Get 함수 엣지 케이스 테스트 추가 (v1.11.048)"
 
-# Multiple changes
-git commit -m "Feat: Complete maputil basic operations (v1.11.049)
+# Multiple changes with body
+git commit -m "Feat: Complete maputil basic operations / maputil 기본 연산 완료 (v1.11.049)
 
-- Added Get, Set, Delete functions
-- Added comprehensive tests
-- Added examples and documentation
-- Updated README and CHANGELOG"
+- Added Get, Set, Delete functions / Get, Set, Delete 함수 추가
+- Added comprehensive tests / 포괄적인 테스트 추가
+- Added examples and documentation / 예제 및 문서 추가
+- Updated README and CHANGELOG / README 및 CHANGELOG 업데이트
+
+🤖 Generated with Claude Code
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+**❌ INCORRECT - English only / 잘못된 예시 - 영문만:**
+
+```bash
+# Don't do this / 이렇게 하지 마세요
+git commit -m "Chore: Bump version to v1.11.045"
+git commit -m "Feat: Add Get function to maputil (v1.11.045)"
 ```
 
 ### Push Workflow / 푸시 워크플로우

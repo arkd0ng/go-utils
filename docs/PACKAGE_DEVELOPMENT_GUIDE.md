@@ -658,21 +658,95 @@ Every package must have:
 
 ### Bilingual Documentation / 이중 언어 문서화
 
+**🚨 CRITICAL RULE: ALL DOCUMENTATION MUST BE BILINGUAL (ENGLISH/KOREAN)**
+**🚨 핵심 규칙: 모든 문서는 반드시 영문/한글 병기**
+
 All documentation must be bilingual (English/Korean):
 
 모든 문서는 이중 언어(영문/한글)여야 합니다:
 
-**Format / 형식**:
+#### What Must Be Bilingual / 병기가 필요한 항목
+
+1. **All Documentation Files / 모든 문서 파일**
+   - README.md files / README.md 파일
+   - DESIGN_PLAN.md / 설계 계획서
+   - WORK_PLAN.md / 작업 계획서
+   - USER_MANUAL.md / 사용자 매뉴얼
+   - DEVELOPER_GUIDE.md / 개발자 가이드
+   - CHANGELOG files / 변경 로그 파일
+   - Any .md files in docs/ / docs/ 폴더의 모든 .md 파일
+
+2. **Code Comments / 코드 주석**
+   - Package-level comments / 패키지 레벨 주석
+   - Function/method documentation / 함수/메서드 문서화
+   - Important inline comments / 중요한 인라인 주석
+   - Example code comments / 예제 코드 주석
+
+3. **Git Commit Messages / Git 커밋 메시지**
+   - Subject line must be bilingual / 제목은 반드시 병기
+   - Body can be bilingual or English / 본문은 병기 또는 영문
+
+4. **Log Messages / 로그 메시지**
+   - All log messages must be bilingual / 모든 로그 메시지는 병기
+   - Currently bilingual, will be separated later / 현재는 병기, 추후 분리 예정
+
+5. **Error Messages / 에러 메시지**
+   - User-facing error messages must be bilingual / 사용자 대상 에러 메시지는 병기
+   - Internal error messages can be English / 내부 에러 메시지는 영문 가능
+
+#### What Can Be English-Only / 영문만 사용 가능한 항목
+
+1. **Personal Notes / 개인 노트**
+   - CLAUDE.md (AI assistant guidance / AI 어시스턴트 가이드)
+   - todo.md (personal task list / 개인 작업 목록)
+   - Private development notes / 비공개 개발 노트
+
+2. **Variable/Function Names / 변수/함수 이름**
+   - All code identifiers must be in English / 모든 코드 식별자는 영문
+   - Comments must be bilingual / 주석은 병기
+
+#### Documentation Format Examples / 문서 형식 예제
+
+**Section Headers / 섹션 헤더**:
 ```markdown
 ## Section Title / 섹션 제목
+### Subsection / 하위 섹션
+```
 
-Description in English.
+**Paragraphs / 문단**:
+```markdown
+## Overview / 개요
 
-한글 설명.
+This package provides utility functions for string manipulation.
 
-**Example / 예제**:
+이 패키지는 문자열 조작을 위한 유틸리티 함수를 제공합니다.
+```
+
+**Lists / 목록**:
+```markdown
+**Features / 기능**:
+- Feature one / 기능 1
+- Feature two / 기능 2
+```
+
+**Tables / 테이블**:
+```markdown
+| Function / 함수 | Description / 설명 |
+|-----------------|-------------------|
+| `Get()` | Gets a value / 값을 가져옴 |
+```
+
+**Code Examples / 코드 예제**:
 ```go
-// English comment / 한글 주석
+// GetValue retrieves a value from the map.
+// It returns the value and a boolean indicating if the key exists.
+// GetValue는 맵에서 값을 검색합니다.
+// 키가 존재하는지 나타내는 불리언과 함께 값을 반환합니다.
+func GetValue(m map[string]int, key string) (int, bool) {
+    // Check if key exists / 키 존재 여부 확인
+    val, ok := m[key]
+    return val, ok
+}
 ```
 
 ### Code Comments / 코드 주석
@@ -759,10 +833,13 @@ func TestFunctionName(t *testing.T) {
 
 ### Commit Message Format / 커밋 메시지 형식
 
-```
-<type>: <subject> (<version>)
+**🚨 CRITICAL: ALL COMMIT MESSAGES MUST BE BILINGUAL (ENGLISH/KOREAN)**
+**🚨 핵심: 모든 커밋 메시지는 반드시 영문/한글 병기**
 
-[optional body]
+```
+<type>: <subject in English / 한글 제목> (<version>)
+
+[optional body in English / 한글 본문]
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -782,22 +859,58 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ### Examples / 예제
 
+**✅ CORRECT - Bilingual / 올바른 예시 - 병기**:
 ```bash
 # Version bump / 버전 증가
-git commit -m "Chore: Bump version to v1.11.002"
+git commit -m "Chore: Bump version to v1.11.002 / v1.11.002로 버전 증가"
 
 # New feature / 새 기능
-git commit -m "Feat: Add Get function to maputil (v1.11.002)"
+git commit -m "Feat: Add Get function to maputil / maputil에 Get 함수 추가 (v1.11.002)"
 
 # Bug fix / 버그 수정
-git commit -m "Fix: Handle nil map in Get function (v1.11.003)"
+git commit -m "Fix: Handle nil map in Get function / Get 함수에서 nil 맵 처리 (v1.11.003)"
 
 # Documentation / 문서
-git commit -m "Docs: Update maputil README with Get example (v1.11.004)"
+git commit -m "Docs: Update maputil README with Get example / Get 예제로 maputil README 업데이트 (v1.11.004)"
 
 # Test / 테스트
-git commit -m "Test: Add comprehensive tests for Get function (v1.11.005)"
+git commit -m "Test: Add comprehensive tests for Get function / Get 함수에 대한 포괄적인 테스트 추가 (v1.11.005)"
+
+# Multiple line commit / 여러 줄 커밋
+git commit -m "Feat: Add error handling utilities / 에러 처리 유틸리티 추가 (v1.12.010)
+
+- Add Wrap function for error wrapping / 에러 래핑용 Wrap 함수 추가
+- Add GetCode for error code extraction / 에러 코드 추출용 GetCode 추가
+- Add comprehensive tests / 포괄적인 테스트 추가
+
+🤖 Generated with Claude Code
+Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
+
+**❌ INCORRECT - English only / 잘못된 예시 - 영문만**:
+```bash
+# Don't do this / 이렇게 하지 마세요
+git commit -m "Chore: Bump version to v1.11.002"
+git commit -m "Feat: Add Get function to maputil (v1.11.002)"
+```
+
+### Commit Message Best Practices / 커밋 메시지 모범 사례
+
+1. **Keep it concise but descriptive / 간결하지만 설명적으로**
+   - Subject line: 50-72 characters / 제목: 50-72자
+   - Body: Wrap at 72 characters / 본문: 72자에서 줄바꿈
+
+2. **Use imperative mood in English / 영문은 명령형으로**
+   - "Add feature" not "Added feature" / "Add feature"이지 "Added feature"가 아님
+   - "Fix bug" not "Fixed bug" / "Fix bug"이지 "Fixed bug"가 아님
+
+3. **Always include version for code changes / 코드 변경시 항상 버전 포함**
+   - (v1.11.002) at the end of subject / 제목 끝에 (v1.11.002)
+
+4. **Use body for detailed explanation / 상세 설명은 본문에**
+   - Why the change was made / 왜 변경했는지
+   - What was changed / 무엇이 변경되었는지
+   - Any breaking changes / 호환성 파괴 변경사항
 
 ### Commit Frequency / 커밋 빈도
 

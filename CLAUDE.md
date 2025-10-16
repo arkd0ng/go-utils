@@ -28,6 +28,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
    - Example code structure and requirements / 예제 코드 구조 및 요구사항
    - Logging best practices / 로깅 모범 사례
 
+### 🌐 Bilingual Requirements / 이중 언어 요구사항
+
+**🚨 ALL CONTENT MUST BE BILINGUAL (ENGLISH/KOREAN) / 모든 콘텐츠는 반드시 영문/한글 병기:**
+
+**MUST be bilingual / 반드시 병기:**
+- ✅ All documentation files (.md) / 모든 문서 파일
+- ✅ Code comments / 코드 주석
+- ✅ Git commit messages / Git 커밋 메시지
+- ✅ Log messages / 로그 메시지
+- ✅ Error messages / 에러 메시지
+
+**English only / 영문만 사용:**
+- ❌ CLAUDE.md (this file, personal AI guidance)
+- ❌ todo.md (personal task list)
+- ❌ Variable/function names (code identifiers)
+
+**Commit message format / 커밋 메시지 형식:**
+```bash
+# ✅ CORRECT
+git commit -m "Feat: Add Get function / Get 함수 추가 (v1.11.045)"
+
+# ❌ WRONG
+git commit -m "Feat: Add Get function (v1.11.045)"
+```
+
 ### 🔄 Standard Work Cycle / 표준 작업 사이클
 
 **EVERY task follows this exact order / 모든 작업은 이 순서를 정확히 따름:**
