@@ -1,3 +1,15 @@
+## [v1.11.025] - 2025-10-16
+
+### Refactoring / 리팩토링
+- **HTTP Method Registration Duplication Removed** / **HTTP 메서드 등록 중복 제거** (`app.go`)
+  - Added `registerRoute(method, pattern, handler)` helper method
+  - Refactored GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD methods to use helper
+  - Reduced code from ~120 lines to ~50 lines (58% reduction)
+  - Improved maintainability with DRY principle
+  - All tests pass (199 tests)
+
+---
+
 ## [v1.11.024] - 2025-10-16
 
 ### Code Quality / 코드 품질

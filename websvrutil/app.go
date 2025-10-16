@@ -140,6 +140,57 @@ func (a *App) Use(middleware ...MiddlewareFunc) *App {
 	return a
 }
 
+// registerRoute is a helper method that registers a route with the given HTTP method.
+// registerRoute는 주어진 HTTP 메서드로 라우트를 등록하는 헬퍼 메서드입니다.
+//
+// This helper reduces code duplication across GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD methods.
+// 이 헬퍼는 GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD 메서드 전반에 걸친 코드 중복을 줄입니다.
+//
+// Parameters / 매개변수:
+//   - method: HTTP method name (e.g., "GET", "POST", "PUT")
+//   - pattern: URL pattern with parameters (e.g., "/users/:id")
+//   - handler: HTTP handler function
+//
+// Thread safety / 스레드 안전성:
+//   - Acquires mutex lock to prevent concurrent route registration
+//   - Mutex 락을 획득하여 동시 라우트 등록 방지
+//   - Panics if routes are added while server is running
+//   - 서버 실행 중 라우트가 추가되면 패닉 발생
+//
+// Returns / 반환:
+//   - *App for method chaining
+//   - 메서드 체이닝을 위한 *App
+func (a *App) registerRoute(method, pattern string, handler http.HandlerFunc) *App {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.running {
+		panic("cannot add routes while server is running")
+	}
+
+	if router, ok := a.router.(*Router); ok {
+		// Call the appropriate router method based on HTTP method
+		// HTTP 메서드에 따라 적절한 라우터 메서드 호출
+		switch method {
+		case "GET":
+			router.GET(pattern, handler)
+		case "POST":
+			router.POST(pattern, handler)
+		case "PUT":
+			router.PUT(pattern, handler)
+		case "PATCH":
+			router.PATCH(pattern, handler)
+		case "DELETE":
+			router.DELETE(pattern, handler)
+		case "OPTIONS":
+			router.OPTIONS(pattern, handler)
+		case "HEAD":
+			router.HEAD(pattern, handler)
+		}
+	}
+	return a
+}
+
 // GET registers a GET route.
 // GET은 GET 라우트를 등록합니다.
 //
@@ -149,113 +200,43 @@ func (a *App) Use(middleware ...MiddlewareFunc) *App {
 //	    // Handler implementation
 //	})
 func (a *App) GET(pattern string, handler http.HandlerFunc) *App {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
-	if a.running {
-		panic("cannot add routes while server is running")
-	}
-
-	if router, ok := a.router.(*Router); ok {
-		router.GET(pattern, handler)
-	}
-	return a
+	return a.registerRoute("GET", pattern, handler)
 }
 
 // POST registers a POST route.
 // POST는 POST 라우트를 등록합니다.
 func (a *App) POST(pattern string, handler http.HandlerFunc) *App {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
-	if a.running {
-		panic("cannot add routes while server is running")
-	}
-
-	if router, ok := a.router.(*Router); ok {
-		router.POST(pattern, handler)
-	}
-	return a
+	return a.registerRoute("POST", pattern, handler)
 }
 
 // PUT registers a PUT route.
 // PUT은 PUT 라우트를 등록합니다.
 func (a *App) PUT(pattern string, handler http.HandlerFunc) *App {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
-	if a.running {
-		panic("cannot add routes while server is running")
-	}
-
-	if router, ok := a.router.(*Router); ok {
-		router.PUT(pattern, handler)
-	}
-	return a
+	return a.registerRoute("PUT", pattern, handler)
 }
 
 // PATCH registers a PATCH route.
 // PATCH는 PATCH 라우트를 등록합니다.
 func (a *App) PATCH(pattern string, handler http.HandlerFunc) *App {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
-	if a.running {
-		panic("cannot add routes while server is running")
-	}
-
-	if router, ok := a.router.(*Router); ok {
-		router.PATCH(pattern, handler)
-	}
-	return a
+	return a.registerRoute("PATCH", pattern, handler)
 }
 
 // DELETE registers a DELETE route.
 // DELETE는 DELETE 라우트를 등록합니다.
 func (a *App) DELETE(pattern string, handler http.HandlerFunc) *App {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
-	if a.running {
-		panic("cannot add routes while server is running")
-	}
-
-	if router, ok := a.router.(*Router); ok {
-		router.DELETE(pattern, handler)
-	}
-	return a
+	return a.registerRoute("DELETE", pattern, handler)
 }
 
 // OPTIONS registers an OPTIONS route.
 // OPTIONS는 OPTIONS 라우트를 등록합니다.
 func (a *App) OPTIONS(pattern string, handler http.HandlerFunc) *App {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
-	if a.running {
-		panic("cannot add routes while server is running")
-	}
-
-	if router, ok := a.router.(*Router); ok {
-		router.OPTIONS(pattern, handler)
-	}
-	return a
+	return a.registerRoute("OPTIONS", pattern, handler)
 }
 
 // HEAD registers a HEAD route.
 // HEAD는 HEAD 라우트를 등록합니다.
 func (a *App) HEAD(pattern string, handler http.HandlerFunc) *App {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
-	if a.running {
-		panic("cannot add routes while server is running")
-	}
-
-	if router, ok := a.router.(*Router); ok {
-		router.HEAD(pattern, handler)
-	}
-	return a
+	return a.registerRoute("HEAD", pattern, handler)
 }
 
 // NotFound sets the handler for 404 Not Found responses.
