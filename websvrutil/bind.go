@@ -59,14 +59,14 @@ func bindFormData(obj interface{}, values url.Values) error {
 	// 객체의 리플렉트 값과 타입 가져오기
 	val := reflect.ValueOf(obj)
 	if val.Kind() != reflect.Ptr {
-		return fmt.Errorf("binding requires a pointer to a struct")
+		return fmt.Errorf("binding requires a pointer to a struct, got %s", val.Kind())
 	}
 
 	// Dereference the pointer
 	// 포인터 역참조
 	val = val.Elem()
 	if val.Kind() != reflect.Struct {
-		return fmt.Errorf("binding requires a pointer to a struct")
+		return fmt.Errorf("binding requires a pointer to a struct, got pointer to %s", val.Kind())
 	}
 
 	typ := val.Type()
@@ -121,33 +121,33 @@ func setFieldValue(field reflect.Value, value string) error {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		intValue, err := strconv.ParseInt(value, 10, 64)
 		if err != nil {
-			return fmt.Errorf("failed to parse int: %w", err)
+			return fmt.Errorf("cannot convert value %q to %s: %w", value, field.Type(), err)
 		}
 		field.SetInt(intValue)
 
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		uintValue, err := strconv.ParseUint(value, 10, 64)
 		if err != nil {
-			return fmt.Errorf("failed to parse uint: %w", err)
+			return fmt.Errorf("cannot convert value %q to %s: %w", value, field.Type(), err)
 		}
 		field.SetUint(uintValue)
 
 	case reflect.Float32, reflect.Float64:
 		floatValue, err := strconv.ParseFloat(value, 64)
 		if err != nil {
-			return fmt.Errorf("failed to parse float: %w", err)
+			return fmt.Errorf("cannot convert value %q to %s: %w", value, field.Type(), err)
 		}
 		field.SetFloat(floatValue)
 
 	case reflect.Bool:
 		boolValue, err := strconv.ParseBool(value)
 		if err != nil {
-			return fmt.Errorf("failed to parse bool: %w", err)
+			return fmt.Errorf("cannot convert value %q to %s (expected true/false, 1/0, t/f): %w", value, field.Type(), err)
 		}
 		field.SetBool(boolValue)
 
 	default:
-		return fmt.Errorf("unsupported field type: %s", field.Kind())
+		return fmt.Errorf("unsupported field type %s (supported: string, int, uint, float, bool)", field.Type())
 	}
 
 	return nil

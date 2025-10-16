@@ -1,3 +1,25 @@
+## [v1.11.027] - 2025-10-16
+
+### Improvements / 개선
+- **Error Messages Enhanced with Type Information** / **타입 정보를 포함한 에러 메시지 개선** (`bind.go`)
+  - Improved `bindFormData()` error messages to include actual type received
+    - "binding requires a pointer to a struct, got %s"
+    - "got pointer to %s" for non-struct pointers
+  - Enhanced `setFieldValue()` error messages with:
+    - Actual value attempted to convert: `cannot convert value "abc" to int`
+    - Target type information: includes full type (int, bool, float64, etc.)
+    - Expected format hints for bool: "(expected true/false, 1/0, t/f)"
+    - Supported types list: "unsupported field type %s (supported: string, int, uint, float, bool)"
+  - Better debugging experience with descriptive error messages
+
+### Examples / 예제
+- Before: `failed to parse int`
+- After: `cannot convert value "abc" to int: invalid syntax`
+- Before: `unsupported field type: map`
+- After: `unsupported field type map[string]string (supported: string, int, uint, float, bool)`
+
+---
+
 ## [v1.11.026] - 2025-10-16
 
 ### Security / 보안
