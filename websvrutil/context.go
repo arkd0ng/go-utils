@@ -827,12 +827,88 @@ func (c *Context) Referer() string {
 // ClientIP returns the client IP address.
 // ClientIP는 클라이언트 IP 주소를 반환합니다.
 //
-// It checks X-Forwarded-For, X-Real-IP headers first, then falls back to RemoteAddr.
-// X-Forwarded-For, X-Real-IP 헤더를 먼저 확인한 후 RemoteAddr로 대체합니다.
+// Priority order for IP detection / IP 감지 우선순위:
+//   1. X-Forwarded-For header (first IP in comma-separated list)
+//   2. X-Real-IP header
+//   3. RemoteAddr (direct connection)
 //
-// Example / 예제:
+//   1. X-Forwarded-For 헤더 (쉼표로 구분된 목록의 첫 번째 IP)
+//   2. X-Real-IP 헤더
+//   3. RemoteAddr (직접 연결)
+//
+// Header details / 헤더 세부정보:
+//
+// X-Forwarded-For:
+//   - Standard header set by proxies (nginx, HAProxy, CloudFlare, etc.)
+//   - 프록시(nginx, HAProxy, CloudFlare 등)가 설정하는 표준 헤더
+//   - Format: "client, proxy1, proxy2" (comma-separated chain)
+//   - 형식: "클라이언트, 프록시1, 프록시2" (쉼표로 구분된 체인)
+//   - Returns ONLY the first IP (original client) for security
+//   - 보안을 위해 첫 번째 IP(원본 클라이언트)만 반환
+//   - Example: "203.0.113.195, 70.41.3.18" → returns "203.0.113.195"
+//   - 예제: "203.0.113.195, 70.41.3.18" → "203.0.113.195" 반환
+//
+// X-Real-IP:
+//   - Non-standard but widely used by nginx reverse proxies
+//   - 비표준이지만 nginx 리버스 프록시에서 널리 사용
+//   - Contains single IP address (no chain)
+//   - 단일 IP 주소 포함 (체인 없음)
+//   - More reliable than X-Forwarded-For when available
+//   - 사용 가능한 경우 X-Forwarded-For보다 신뢰성 높음
+//
+// RemoteAddr:
+//   - Direct TCP connection source address
+//   - 직접 TCP 연결 소스 주소
+//   - Format: "IP:Port" (e.g., "192.168.1.100:54321")
+//   - 형식: "IP:포트" (예: "192.168.1.100:54321")
+//   - Returns IP only (strips port number)
+//   - IP만 반환 (포트 번호 제거)
+//   - Most reliable when no proxies involved
+//   - 프록시가 없을 때 가장 신뢰할 수 있음
+//
+// Security considerations / 보안 고려사항:
+//   - X-Forwarded-For can be spoofed by malicious clients
+//   - X-Forwarded-For는 악의적인 클라이언트가 위조할 수 있음
+//   - Only use first IP to prevent proxy chain manipulation
+//   - 프록시 체인 조작을 방지하기 위해 첫 번째 IP만 사용
+//   - For critical security decisions, validate IP against trusted proxy list
+//   - 중요한 보안 결정의 경우 신뢰할 수 있는 프록시 목록에 대해 IP 검증
+//   - Consider implementing IP whitelist/blacklist if needed
+//   - 필요한 경우 IP 화이트리스트/블랙리스트 구현 고려
+//
+// Performance / 성능:
+//   - Time complexity: O(n) where n = length of X-Forwarded-For or RemoteAddr
+//   - 시간 복잡도: O(n), n = X-Forwarded-For 또는 RemoteAddr 길이
+//   - Optimized with byte-by-byte comparison (faster than strings.Split)
+//   - 바이트 단위 비교로 최적화 (strings.Split보다 빠름)
+//   - No memory allocation for string operations
+//   - 문자열 작업에 메모리 할당 없음
+//
+// Example scenarios / 시나리오 예제:
+//
+// Direct connection (no proxy):
+//   RemoteAddr: "203.0.113.195:54321"
+//   Returns: "203.0.113.195"
+//
+// Behind nginx reverse proxy:
+//   X-Real-IP: "203.0.113.195"
+//   RemoteAddr: "127.0.0.1:8080" (nginx internal)
+//   Returns: "203.0.113.195" (from X-Real-IP)
+//
+// Behind CloudFlare CDN:
+//   X-Forwarded-For: "203.0.113.195, 104.16.133.229"
+//   RemoteAddr: "104.16.133.229:443" (CloudFlare IP)
+//   Returns: "203.0.113.195" (first IP from X-Forwarded-For)
+//
+// Example usage / 사용 예제:
 //
 //	ip := ctx.ClientIP()
+//	if ip == "127.0.0.1" {
+//	    // Local request
+//	} else {
+//	    // Remote request, log for rate limiting
+//	    rateLimiter.Check(ip)
+//	}
 func (c *Context) ClientIP() string {
 	// Check X-Forwarded-For header
 	// X-Forwarded-For 헤더 확인

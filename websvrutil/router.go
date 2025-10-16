@@ -198,6 +198,34 @@ func contextWithValue(ctx context.Context, c *Context) context.Context {
 
 // match checks if the route matches the given path and extracts parameters.
 // match는 라우트가 주어진 경로와 일치하는지 확인하고 매개변수를 추출합니다.
+//
+// Matching algorithm / 매칭 알고리즘:
+//   1. Parse incoming path into segments
+//   2. Check segment count compatibility:
+//      - Without wildcard: must match exactly
+//      - With wildcard: request must have at least (pattern segments - 1)
+//   3. Iterate through pattern segments:
+//      - Wildcard (*): captures all remaining path segments
+//      - Parameter (:name): captures current segment into parameter map
+//      - Literal: must match exactly (case-sensitive)
+//   4. Return parameters map and match status
+//
+// Return values / 반환 값:
+//   - params: Map of parameter names to values (e.g., {"id": "123"})
+//   - matched: true if route matches, false otherwise
+//
+// Examples / 예제:
+//   Pattern: "/users/:id", Path: "/users/123"
+//   -> params: {"id": "123"}, matched: true
+//
+//   Pattern: "/files/*", Path: "/files/docs/report.pdf"
+//   -> params: {"*": "docs/report.pdf"}, matched: true
+//
+//   Pattern: "/users/:id", Path: "/posts/123"
+//   -> params: nil, matched: false
+//
+// Time complexity: O(n) where n = number of segments
+// 시간 복잡도: O(n), n = 세그먼트 수
 func (route *Route) match(path string) (map[string]string, bool) {
 	// Parse the request path into segments
 	// 요청 경로를 세그먼트로 파싱
@@ -257,13 +285,33 @@ func (route *Route) match(path string) (map[string]string, bool) {
 	return params, true
 }
 
-// parsePattern parses a URL pattern into segments.
-// parsePattern은 URL 패턴을 세그먼트로 파싱합니다.
+// parsePattern parses a URL pattern string into segments for efficient matching.
+// parsePattern은 효율적인 매칭을 위해 URL 패턴 문자열을 세그먼트로 파싱합니다.
+//
+// Pattern syntax / 패턴 구문:
+//   - Static segments: "/users/profile" - Exact match required
+//   - 정적 세그먼트: "/users/profile" - 정확한 일치 필요
+//   - Parameters: "/users/:id" - Captures value into "id" parameter
+//   - 매개변수: "/users/:id" - "id" 매개변수로 값 캡처
+//   - Wildcards: "/files/*" - Matches all remaining path segments
+//   - 와일드카드: "/files/*" - 나머지 모든 경로 세그먼트 일치
+//
+// Implementation details / 구현 세부사항:
+//   1. Trim leading/trailing slashes from pattern
+//   2. Split pattern by "/" separator
+//   3. Identify segment types:
+//      - "*" -> wildcard segment (isWildcard=true)
+//      - ":name" -> parameter segment (isParam=true, value="name")
+//      - "literal" -> static segment (value="literal")
+//   4. Pre-allocate segments slice with capacity for performance
+//
+// Time complexity: O(n) where n = number of path segments
+// 시간 복잡도: O(n), n = 경로 세그먼트 수
 //
 // Examples / 예제:
-//   - "/users" -> [segment{value: "users"}]
-//   - "/users/:id" -> [segment{value: "users"}, segment{value: "id", isParam: true}]
-//   - "/files/*" -> [segment{value: "files"}, segment{isWildcard: true}]
+//   parsePattern("/users") -> [segment{value: "users"}]
+//   parsePattern("/users/:id") -> [segment{value: "users"}, segment{value: "id", isParam: true}]
+//   parsePattern("/files/*") -> [segment{value: "files"}, segment{isWildcard: true}]
 func parsePattern(pattern string) []segment {
 	// Remove leading and trailing slashes
 	// 앞뒤 슬래시 제거
@@ -306,8 +354,25 @@ func parsePattern(pattern string) []segment {
 	return segments
 }
 
-// parsePath parses a URL path into segments.
-// parsePath는 URL 경로를 세그먼트로 파싱합니다.
+// parsePath parses a URL path into segments for route matching.
+// parsePath는 라우트 매칭을 위해 URL 경로를 세그먼트로 파싱합니다.
+//
+// Process / 프로세스:
+//   1. Trim leading and trailing slashes
+//   2. Handle empty path (returns empty slice)
+//   3. Split by "/" separator
+//   4. Filter out empty segments (from consecutive slashes)
+//   5. Return cleaned segment list
+//
+// Examples / 예제:
+//   parsePath("/users/123") -> ["users", "123"]
+//   parsePath("/users/123/") -> ["users", "123"] (trailing slash removed)
+//   parsePath("/api//v1/users") -> ["api", "v1", "users"] (double slash cleaned)
+//   parsePath("/") -> [] (root path)
+//   parsePath("") -> [] (empty path)
+//
+// Time complexity: O(n) where n = path length
+// 시간 복잡도: O(n), n = 경로 길이
 func parsePath(path string) []string {
 	// Remove leading and trailing slashes
 	// 앞뒤 슬래시 제거

@@ -20,13 +20,109 @@ import (
 // Recovery returns a middleware that recovers from panics.
 // Recovery는 패닉에서 복구하는 미들웨어를 반환합니다.
 //
-// When a panic occurs, it logs the error and stack trace, then sends a 500 response.
-// 패닉이 발생하면 에러와 스택 트레이스를 로깅하고 500 응답을 전송합니다.
+// Panic recovery mechanism / 패닉 복구 메커니즘:
+//   - Wraps handler execution in defer/recover block
+//   - defer/recover 블록으로 핸들러 실행 래핑
+//   - Prevents server crashes from unhandled panics
+//   - 처리되지 않은 패닉으로 인한 서버 충돌 방지
+//   - Logs panic details with full stack trace
+//   - 전체 스택 트레이스와 함께 패닉 세부정보 로깅
+//   - Returns 500 Internal Server Error to client
+//   - 클라이언트에 500 Internal Server Error 반환
 //
-// Example / 예제:
+// Why panic recovery is critical / 패닉 복구가 중요한 이유:
+//   - Go's panic mechanism immediately terminates the goroutine
+//   - Go의 패닉 메커니즘은 즉시 고루틴을 종료함
+//   - Without recovery, a single panic in any handler kills the entire server
+//   - 복구 없이는 모든 핸들러의 단일 패닉이 전체 서버를 중단시킴
+//   - Recovery middleware ensures server stability and availability
+//   - 복구 미들웨어는 서버 안정성과 가용성을 보장함
+//   - Allows graceful degradation instead of catastrophic failure
+//   - 재앙적 실패 대신 우아한 성능 저하 허용
+//
+// What gets logged / 로깅되는 내용:
+//   - Panic value (error message, value, or custom type)
+//   - 패닉 값 (에러 메시지, 값 또는 커스텀 타입)
+//   - Full goroutine stack trace using runtime/debug.Stack()
+//   - runtime/debug.Stack()을 사용한 전체 고루틴 스택 트레이스
+//   - File paths, line numbers, and function names
+//   - 파일 경로, 줄 번호 및 함수 이름
+//
+// Stack trace format example / 스택 트레이스 형식 예제:
+//   PANIC: runtime error: index out of range [5] with length 3
+//   goroutine 123 [running]:
+//   runtime/debug.Stack()
+//       /usr/local/go/src/runtime/debug/stack.go:24 +0x65
+//   main.(*App).Recovery.func1.1()
+//       /app/middleware.go:37 +0x89
+//   ...
+//
+// Response to client / 클라이언트에 대한 응답:
+//   - HTTP 500 Internal Server Error
+//   - Generic "Internal Server Error" message (no stack trace exposed)
+//   - 일반적인 "Internal Server Error" 메시지 (스택 트레이스 노출 없음)
+//   - Prevents information disclosure to attackers
+//   - 공격자에게 정보 공개 방지
+//   - Detailed error only in server logs for debugging
+//   - 디버깅을 위한 서버 로그에만 상세 에러 기록
+//
+// Thread safety / 스레드 안전성:
+//   - Each request runs in separate goroutine with own defer/recover
+//   - 각 요청은 자체 defer/recover를 가진 별도 고루틴에서 실행
+//   - Panic in one request does NOT affect other concurrent requests
+//   - 하나의 요청에서 패닉이 발생해도 다른 동시 요청에 영향 없음
+//   - Server continues serving other requests normally
+//   - 서버는 다른 요청을 정상적으로 계속 제공
+//
+// Performance / 성능:
+//   - Negligible overhead (defer is cheap in Go)
+//   - 무시할 만한 오버헤드 (Go에서 defer는 저렴함)
+//   - Only activates on actual panic (zero cost in happy path)
+//   - 실제 패닉 발생 시에만 활성화 (정상 경로에서 비용 없음)
+//   - Stack trace generation only happens during panic
+//   - 스택 트레이스 생성은 패닉 중에만 발생
+//
+// Common panic causes / 일반적인 패닉 원인:
+//   - Nil pointer dereference: var p *User; p.Name
+//   - Out of bounds access: arr[999] when len(arr) < 999
+//   - Type assertion failure: val.(int) when val is not int
+//   - Division by zero: x / 0 (for integers)
+//   - Map concurrent read/write without mutex
+//
+// Best practices / 모범 사례:
+//   - ALWAYS use Recovery() as the FIRST middleware
+//   - 항상 Recovery()를 첫 번째 미들웨어로 사용
+//   - Ensures all subsequent middleware/handlers are protected
+//   - 모든 후속 미들웨어/핸들러가 보호되도록 보장
+//   - Use RecoveryWithConfig() for custom logging behavior
+//   - 커스텀 로깅 동작을 위해 RecoveryWithConfig() 사용
+//   - Monitor panic frequency (frequent panics indicate bugs)
+//   - 패닉 빈도 모니터링 (빈번한 패닉은 버그를 나타냄)
+//
+// Example usage / 사용 예제:
 //
 //	app := websvrutil.New()
-//	app.Use(websvrutil.Recovery())
+//	app.Use(websvrutil.Recovery()) // MUST be first middleware
+//	app.Use(websvrutil.Logger())
+//	app.Use(websvrutil.CORS())
+//
+//	app.GET("/panic", func(w http.ResponseWriter, r *http.Request) {
+//	    var user *User
+//	    fmt.Fprintf(w, "Name: %s", user.Name) // PANIC: nil pointer dereference
+//	    // Recovery catches this, logs stack trace, returns 500
+//	})
+//
+// Advanced configuration / 고급 설정:
+//
+//	app.Use(websvrutil.RecoveryWithConfig(websvrutil.RecoveryConfig{
+//	    PrintStack: true,
+//	    LogFunc: func(err interface{}, stack []byte) {
+//	        // Send to external logging service
+//	        logger.Error("PANIC", "error", err, "stack", string(stack))
+//	        // Send alert to monitoring system
+//	        monitoring.SendAlert("Server panic", err)
+//	    },
+//	}))
 func Recovery() MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
