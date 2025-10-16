@@ -1,3 +1,29 @@
+## [v1.11.034] - 2025-10-16
+
+### Test Coverage Further Improvement / 테스트 커버리지 추가 개선
+- **Coverage increase from 84.5% to 88.5%** / **커버리지 84.5%에서 88.5%로 증가**
+  - Additional 4% coverage improvement (84.5% → 88.5%)
+  - 추가 4% 커버리지 향상
+
+- **New additional test file** / **새로운 추가 테스트 파일** (`coverage_additional_test.go`)
+  - **Template Engine Methods**: TemplateEngine, LoadTemplate, LoadTemplates, ReloadTemplates, AddTemplateFunc, AddTemplateFuncs
+  - **Render Methods**: Render, RenderWithLayout with actual templates
+  - **Validator Coverage Improvement**: validateMin/Max/Gt/Gte/Lt/Lte with all types (int, uint, float, string, slice, map, array)
+  - **Validator Edge Cases**: isZero, validateEmail, validateAlpha/Alphanum edge cases, BindWithValidation error paths
+  - **Middleware Coverage**: RecoveryWithConfig panic recovery and normal flow
+  - **CSRF Internal Methods**: Cleanup goroutine, token validation with invalid formats
+  - **Template Internal Methods**: isTemplateFile, addBuiltinFuncs, RenderWithLayout
+  - **Graceful Shutdown**: Multiple shutdown calls, shutdown before start
+  - 템플릿 엔진 메서드, 렌더 메서드, 검증자 커버리지 향상, 미들웨어, CSRF 내부 메서드, 우아한 종료 테스트
+
+### Test Results / 테스트 결과
+- ✅ All tests passing
+- ✅ Coverage: 88.5% of statements (increased from 84.5%)
+- ✅ Total improvement: 79.9% → 88.5% (8.6% increase)
+- ✅ 전체 향상: 79.9% → 88.5% (8.6% 증가)
+
+---
+
 ## [v1.11.033] - 2025-10-16
 
 ### Test Coverage Improvement / 테스트 커버리지 개선
