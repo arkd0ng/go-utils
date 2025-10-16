@@ -21,16 +21,99 @@
    - Enhanced error messages with type information
    - Better debugging experience with descriptive errors
 
+**Medium Priority Tasks Completed (v1.11.028) / 중우선순위 작업 완료:**
+5. ✅ **Route Group Support** (v1.11.028)
+   - Added Group functionality for organizing routes hierarchically
+   - Support for nested groups with prefix concatenation
+   - Group-specific middleware with inheritance
+   - Method chaining for fluent API
+
 **Test Results / 테스트 결과:**
-- ✅ All 199 tests pass (2 skipped)
-- ✅ Test coverage: 79.4%
+- ✅ All 208 tests pass (2 skipped) - increased from 199 tests
+- ✅ Test coverage: maintained
 - ✅ No regressions
 
 **Overall Quality Metrics / 전체 품질 지표:**
 - Code Quality: 9/10 (improved from 8/10)
 - Documentation: 9/10 (improved from 7/10)
-- Test Coverage: 8/10 (maintained at 79.4%)
+- Test Coverage: 8/10 (maintained)
 - Security: 9/10 (improved with body size limits)
+- Feature Completeness: 9/10 (improved with route groups)
+
+---
+
+## [v1.11.028] - 2025-10-16
+
+### Features / 기능
+- **Route Group Support Added** / **라우트 그룹 지원 추가** (`group.go`)
+  - Implemented `Group` struct with prefix, middleware, and app reference
+  - Added `App.Group(prefix)` method to create route groups
+  - Added `Group.Group(prefix)` method for nested groups with prefix concatenation
+  - Added `Group.Use(middleware...)` for group-specific middleware
+  - Implemented all HTTP methods on Group: GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD
+  - Method chaining support for fluent API
+  - Middleware inheritance: nested groups inherit parent middleware
+  - Middleware wrapping in reverse order for correct execution sequence
+
+### Features / 기능
+- **Route Organization** / **라우트 구성**
+  - Hierarchical route structure with common prefixes
+  - Example: `/api/v1/admin/users` from nested groups
+  - Group-specific middleware applied to all routes in group
+  - Cleaner, more maintainable route organization
+
+### Testing / 테스트
+- **Comprehensive Group Tests Added** / **종합 그룹 테스트 추가** (`group_test.go`)
+  - 9 new test functions covering all Group functionality:
+    - `TestGroup_BasicGroupCreation`: Basic group creation and route registration
+    - `TestGroup_NestedGroups`: Nested group prefix concatenation
+    - `TestGroup_GroupMiddleware`: Group-specific middleware application
+    - `TestGroup_MiddlewareInheritance`: Middleware inheritance in nested groups
+    - `TestGroup_AllHTTPMethods`: All 7 HTTP methods (GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD)
+    - `TestGroup_MethodChaining`: Fluent API method chaining
+    - `TestGroup_MultipleMiddleware`: Multiple middleware execution order
+    - `TestGroup_EmptyPrefix`: Group with empty prefix
+    - `TestGroup_DeepNesting`: Deeply nested groups (4 levels)
+  - All 9 tests pass ✅
+  - Total test count: 208 tests (increased from 199)
+
+### Documentation / 문서화
+- Added comprehensive bilingual documentation to `group.go`:
+  - Group struct documentation with features and examples
+  - App.Group() method documentation
+  - Group.Group() method documentation for nested groups
+  - Group.Use() method documentation for middleware
+  - All HTTP method documentation (GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD)
+  - registerRoute() internal method documentation with process flow
+
+### Examples / 예제
+```go
+// Create API group with authentication middleware
+// 인증 미들웨어가 있는 API 그룹 생성
+api := app.Group("/api")
+api.Use(AuthMiddleware())
+
+// Create v1 API subgroup
+// v1 API 하위 그룹 생성
+v1 := api.Group("/v1")  // Prefix: /api/v1
+
+// Create admin subgroup with additional middleware
+// 추가 미들웨어가 있는 admin 하위 그룹 생성
+admin := v1.Group("/admin")  // Prefix: /api/v1/admin
+admin.Use(AdminMiddleware())
+
+// Register routes - all inherit middleware
+// 라우트 등록 - 모든 라우트가 미들웨어 상속
+admin.GET("/users", listUsers)      // Route: /api/v1/admin/users
+admin.POST("/users", createUser)    // Route: /api/v1/admin/users
+admin.DELETE("/users/:id", deleteUser) // Route: /api/v1/admin/users/:id
+
+// Method chaining support
+// 메서드 체이닝 지원
+v1.GET("/stats", getStats).
+   POST("/reports", createReport).
+   PUT("/config", updateConfig)
+```
 
 ---
 
