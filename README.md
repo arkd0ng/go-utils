@@ -6,26 +6,8 @@ Golang 개발에 자주 사용되는 유틸리티 함수 모음입니다.
 
 [![go-utils version](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=go-utils&color=blue&cacheSeconds=300)](https://github.com/arkd0ng/go-utils)
 
-> Version badge experiments / 버전 배지 실험
-
-| Description / 설명 | Badge |
-|--------------------|-------|
-| Default (blue, cache 5m) / 기본 (파란색, 캐시 5분) | ![default badge](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=go-utils&color=blue&cacheSeconds=300) |
-| Short cache (60s) / 짧은 캐시 (60초) | ![short cache](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=go-utils&color=green&cacheSeconds=60) |
-| Longer label / 긴 라벨 | ![long label](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=go-utils%20version&color=orange&cacheSeconds=300) |
-| No cache (0) / 캐시 없음 (0) | ![no cache](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=go-utils&color=purple&cacheSeconds=0) |
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.16-blue)](https://golang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-## 배찌 테스트
-### 기본 배지
-[![go-utils version](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=go-utils&color=blue&cacheSeconds=300)](https://github.com/arkd0ng/go-utils)
-### 배지 이름 바꾸기 (label)
-[![go-utils version](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=Current-Version&color=blue&cacheSeconds=300)](https://github.com/arkd0ng/go-utils)
-### 색상 바꾸기 (color)
-[![go-utils version](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=go-utils&color=green&cacheSeconds=300)](https://github.com/arkd0ng/go-utils)
-### 스타일 바꾸기
-[![go-utils version](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=go-utils&color=blue&style=flat-square&cacheSeconds=300)](https://github.com/arkd0ng/go-utils)
 
 ## Overview / 개요
 
