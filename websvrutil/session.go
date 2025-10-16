@@ -43,12 +43,12 @@ type SessionOptions struct {
 // DefaultSessionOptions는 기본 세션 옵션을 반환합니다.
 func DefaultSessionOptions() SessionOptions {
 	return SessionOptions{
-		CookieName:  "sessionid",
-		MaxAge:      24 * time.Hour,
+		CookieName:  DefaultSessionCookieName,
+		MaxAge:      DefaultSessionMaxAge,
 		Secure:      false,
 		HttpOnly:    true,
 		SameSite:    http.SameSiteLaxMode,
-		CleanupTime: 5 * time.Minute,
+		CleanupTime: DefaultSessionCleanup,
 		Path:        "/",
 		Domain:      "",
 	}

@@ -368,7 +368,7 @@ func GetContext(r *http.Request) *Context {
 //
 //	ctx.JSON(200, map[string]string{"message": "success"})
 func (c *Context) JSON(code int, data interface{}) error {
-	c.SetHeader("Content-Type", "application/json; charset=utf-8")
+	c.SetHeader("Content-Type", ContentTypeJSON)
 	c.Status(code)
 
 	encoder := json.NewEncoder(c.ResponseWriter)
@@ -385,7 +385,7 @@ func (c *Context) JSON(code int, data interface{}) error {
 //
 //	ctx.JSONIndent(200, data, "", "  ")
 func (c *Context) JSONIndent(code int, data interface{}, prefix, indent string) error {
-	c.SetHeader("Content-Type", "application/json; charset=utf-8")
+	c.SetHeader("Content-Type", ContentTypeJSON)
 	c.Status(code)
 
 	encoder := json.NewEncoder(c.ResponseWriter)
@@ -413,7 +413,7 @@ func (c *Context) JSONPretty(code int, data interface{}) error {
 //
 //	ctx.HTML(200, "<h1>Hello World</h1>")
 func (c *Context) HTML(code int, html string) error {
-	c.SetHeader("Content-Type", "text/html; charset=utf-8")
+	c.SetHeader("Content-Type", ContentTypeHTML)
 	c.Status(code)
 	_, err := c.WriteString(html)
 	return err
@@ -430,7 +430,7 @@ func (c *Context) HTML(code int, html string) error {
 //	tmpl := "<h1>Hello {{.Name}}</h1>"
 //	ctx.HTMLTemplate(200, tmpl, map[string]string{"Name": "World"})
 func (c *Context) HTMLTemplate(code int, tmpl string, data interface{}) error {
-	c.SetHeader("Content-Type", "text/html; charset=utf-8")
+	c.SetHeader("Content-Type", ContentTypeHTML)
 	c.Status(code)
 
 	t, err := template.New("").Parse(tmpl)
@@ -448,7 +448,7 @@ func (c *Context) HTMLTemplate(code int, tmpl string, data interface{}) error {
 //
 //	ctx.Text(200, "Hello World")
 func (c *Context) Text(code int, text string) error {
-	c.SetHeader("Content-Type", "text/plain; charset=utf-8")
+	c.SetHeader("Content-Type", ContentTypeText)
 	c.Status(code)
 	_, err := c.WriteString(text)
 	return err
@@ -475,7 +475,7 @@ func (c *Context) Textf(code int, format string, args ...interface{}) error {
 //
 //	ctx.XML(200, "<root><message>success</message></root>")
 func (c *Context) XML(code int, xml string) error {
-	c.SetHeader("Content-Type", "application/xml; charset=utf-8")
+	c.SetHeader("Content-Type", ContentTypeXML)
 	c.Status(code)
 	_, err := c.WriteString(xml)
 	return err
@@ -561,7 +561,7 @@ func (c *Context) Render(code int, name string, data interface{}) error {
 
 	// Set content type and status
 	// Content-Type 및 상태 설정
-	c.SetHeader("Content-Type", "text/html; charset=utf-8")
+	c.SetHeader("Content-Type", ContentTypeHTML)
 	c.Status(code)
 
 	// Render template
@@ -592,7 +592,7 @@ func (c *Context) RenderWithLayout(code int, layoutName, templateName string, da
 
 	// Set content type and status
 	// Content-Type 및 상태 설정
-	c.SetHeader("Content-Type", "text/html; charset=utf-8")
+	c.SetHeader("Content-Type", ContentTypeHTML)
 	c.Status(code)
 
 	// Render template with layout
@@ -634,9 +634,9 @@ func (c *Context) BindJSON(obj interface{}) error {
 		return fmt.Errorf("request body is nil")
 	}
 
-	// Get max body size from app options, default to 10 MB
-	// 앱 옵션에서 최대 본문 크기 가져오기, 기본값 10 MB
-	maxBodySize := int64(10 << 20) // 10 MB default
+	// Get max body size from app options, default to DefaultMaxBodySize
+	// 앱 옵션에서 최대 본문 크기 가져오기, 기본값은 DefaultMaxBodySize
+	maxBodySize := int64(DefaultMaxBodySize)
 	if c.app != nil && c.app.options != nil && c.app.options.MaxBodySize > 0 {
 		maxBodySize = c.app.options.MaxBodySize
 	}
@@ -731,7 +731,7 @@ func (c *Context) Bind(obj interface{}) error {
 
 	// Check for JSON content type
 	// JSON Content-Type 확인
-	if contentType == "application/json" || contentType == "application/json; charset=utf-8" {
+	if contentType == "application/json" || contentType == ContentTypeJSON {
 		return c.BindJSON(obj)
 	}
 
@@ -1020,7 +1020,7 @@ func (c *Context) FormFile(name string) (*multipart.FileHeader, error) {
 // MultipartForm returns the parsed multipart form, including file uploads.
 // MultipartForm은 파일 업로드를 포함한 파싱된 multipart 폼을 반환합니다.
 func (c *Context) MultipartForm() (*multipart.Form, error) {
-	maxSize := int64(32 << 20) // 32 MB default
+	maxSize := int64(DefaultMaxUploadSize)
 	if c.app != nil && c.app.options != nil {
 		maxSize = c.app.options.MaxUploadSize
 	}

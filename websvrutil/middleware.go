@@ -1044,7 +1044,7 @@ func BodyLimit(maxBytes int64) MiddlewareFunc {
 // BodyLimitWithConfig는 사용자 정의 설정으로 미들웨어를 반환합니다.
 func BodyLimitWithConfig(config BodyLimitConfig) MiddlewareFunc {
 	if config.MaxBytes <= 0 {
-		config.MaxBytes = 10 << 20 // 10MB default
+		config.MaxBytes = DefaultMaxBodySize
 	}
 
 	return func(next http.Handler) http.Handler {

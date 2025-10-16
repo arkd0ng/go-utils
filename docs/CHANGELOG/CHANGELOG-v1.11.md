@@ -102,6 +102,64 @@
 
 ---
 
+## [v1.11.030] - 2025-10-16
+
+### Code Organization / 코드 조직화
+- **Constants File Added** / **상수 파일 추가** (`constants.go`)
+  - Created centralized constants file for better code organization
+  - Extracted all magic numbers and hardcoded strings into named constants
+  - Improved code maintainability and readability
+
+### Constants Added / 추가된 상수
+1. **Default Timeout Configurations** / **기본 타임아웃 설정**:
+   - `DefaultReadTimeout` = 15 seconds
+   - `DefaultWriteTimeout` = 15 seconds
+   - `DefaultIdleTimeout` = 60 seconds
+
+2. **Default Size Limits** / **기본 크기 제한**:
+   - `DefaultMaxHeaderBytes` = 1 MB
+   - `DefaultMaxBodySize` = 10 MB (for JSON/form data)
+   - `DefaultMaxUploadSize` = 32 MB (for file uploads)
+
+3. **Default Session Configurations** / **기본 세션 설정**:
+   - `DefaultSessionMaxAge` = 24 hours
+   - `DefaultSessionCookieName` = "sessionid"
+   - `DefaultSessionCleanup` = 5 minutes
+
+4. **Content-Type Constants** / **Content-Type 상수**:
+   - `ContentTypeJSON` = "application/json; charset=utf-8"
+   - `ContentTypeHTML` = "text/html; charset=utf-8"
+   - `ContentTypeXML` = "application/xml; charset=utf-8"
+   - `ContentTypeText` = "text/plain; charset=utf-8"
+   - `ContentTypeForm` = "application/x-www-form-urlencoded"
+   - `ContentTypeMultipart` = "multipart/form-data"
+
+5. **HTTP Header Constants** / **HTTP 헤더 상수**:
+   - `HeaderContentType`, `HeaderAccept`, `HeaderAuthorization`
+   - `HeaderUserAgent`, `HeaderXForwardedFor`, `HeaderXRealIP`
+
+### Refactoring / 리팩토링
+- **Updated All Files to Use Constants** / **모든 파일을 상수 사용으로 업데이트**:
+  - `options.go`: defaultOptions() now uses named constants
+  - `context.go`: All Content-Type and size limits use constants
+  - `session.go`: DefaultSessionOptions() uses named constants
+  - `middleware.go`: BodyLimitWithConfig() uses DefaultMaxBodySize
+
+### Benefits / 이점
+- Eliminated magic numbers throughout the codebase
+- Single source of truth for configuration values
+- Easier to maintain and update default values
+- Better code documentation through named constants
+- Improved code readability and maintainability
+- Reduced risk of inconsistent default values
+
+### Testing / 테스트
+- All 219 tests pass ✅
+- No breaking changes
+- All existing functionality preserved
+
+---
+
 ## [v1.11.028] - 2025-10-16
 
 ### Features / 기능

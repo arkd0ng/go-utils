@@ -64,18 +64,18 @@ type Option func(*Options)
 // defaultOptions는 App의 기본 옵션을 반환합니다.
 func defaultOptions() *Options {
 	return &Options{
-		ReadTimeout:      15 * time.Second,
-		WriteTimeout:     15 * time.Second,
-		IdleTimeout:      60 * time.Second,
-		MaxHeaderBytes:   1 << 20, // 1 MB
+		ReadTimeout:      DefaultReadTimeout,
+		WriteTimeout:     DefaultWriteTimeout,
+		IdleTimeout:      DefaultIdleTimeout,
+		MaxHeaderBytes:   DefaultMaxHeaderBytes,
 		TemplateDir:      "templates",
 		StaticDir:        "static",
 		StaticPrefix:     "/static",
 		EnableAutoReload: false,
 		EnableLogger:     true,
 		EnableRecovery:   true,
-		MaxUploadSize:    32 << 20, // 32 MB default
-		MaxBodySize:      10 << 20, // 10 MB default for JSON/form bodies
+		MaxUploadSize:    DefaultMaxUploadSize,
+		MaxBodySize:      DefaultMaxBodySize,
 	}
 }
 
