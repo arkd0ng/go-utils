@@ -1,3 +1,37 @@
+## [v1.11.036] - 2025-10-16
+
+### Documentation / 문서화
+- **Example Code Writing Guide** / **예제 코드 작성 가이드** (`docs/EXAMPLE_CODE_GUIDE.md`)
+  - Comprehensive guide for writing example code across all packages
+  - 모든 패키지에 걸쳐 예제 코드 작성을 위한 종합 가이드
+
+  **Guide Contents / 가이드 내용**:
+  - Directory structure and file naming conventions
+  - Logging standards with backup management (keep 5 most recent)
+  - Code structure templates (main function, example functions)
+  - Example categories: Basic, Combination, Real-World, Edge Case, Performance, Integration
+  - Documentation standards: Bilingual comments, structured logging, Unicode symbols
+  - Package-specific guidelines (websvrutil: 14 categories with detailed requirements)
+  - Best practices: Progressive examples, self-documenting code, error demonstration, resource cleanup
+  - Comprehensive checklist for new examples (30+ items)
+
+  **Key Standards / 주요 표준**:
+  - All logs must be saved to `logs/` directory / 모든 로그는 `logs/` 디렉토리에 저장
+  - Log file format: `logs/{package}-example.log` (current) / 로그 파일 형식
+  - Backup format: `logs/{package}-example-YYYYMMDD-HHMMSS.log` / 백업 형식
+  - Keep only 5 most recent backups, auto-delete older files / 최근 5개만 유지, 자동 삭제
+  - Extremely detailed logging (logs should be self-documenting) / 매우 상세한 로깅
+  - Bilingual comments and logs (English/Korean) / 이중 언어 주석 및 로그
+  - Unicode symbols for console output (✅ ❌ ⚠️ ℹ️ 🔍 📊 🔧 🚀 🏁 📝) / 콘솔 출력용 유니코드 기호
+
+### Test Results / 테스트 결과
+- ✅ All existing tests passing
+- ✅ Documentation guide created successfully
+- ✅ 모든 기존 테스트 통과
+- ✅ 문서화 가이드 생성 완료
+
+---
+
 ## [v1.11.035] - 2025-10-16
 
 ### Test Coverage Final Improvement / 테스트 커버리지 최종 개선
