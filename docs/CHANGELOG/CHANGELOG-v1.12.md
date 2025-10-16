@@ -6,6 +6,75 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.003] - 2025-10-16
+
+### Added / 추가
+- Created errorutil package WORK_PLAN.md with comprehensive task breakdown / 포괄적인 작업 분류를 포함한 errorutil 패키지 WORK_PLAN.md 생성
+- Created todo.md for task tracking and progress management / 작업 추적 및 진행 관리를 위한 todo.md 생성
+- Defined 12 development phases with clear goals / 명확한 목표를 가진 12개 개발 단계 정의
+- Documented 60+ individual tasks across all phases / 모든 단계에 걸쳐 60개 이상의 개별 작업 문서화
+- Added completion criteria for each phase / 각 단계에 대한 완료 기준 추가
+- Established flexible task ordering within phases / 단계 내 유연한 작업 순서 수립
+
+### Changed / 변경
+- N/A
+
+### Fixed / 수정
+- N/A
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bumped from v1.12.002 to v1.12.003 / 버전을 v1.12.002에서 v1.12.003로 증가
+- `docs/errorutil/WORK_PLAN.md` - Created comprehensive work plan with 12 phases / 12개 단계를 포함한 포괄적인 작업 계획서 생성
+- `todo.md` - Created task tracking file with all planned tasks / 모든 계획된 작업이 포함된 작업 추적 파일 생성
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - Added v1.12.003 entry / v1.12.003 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**: 
+"진행해주세요. 단위작업을 잘 만들어 주세요. 필요하다면 todo.md를 만들어 진행할 수 있도록 해주세요. 함수/기능 하나에 패치 하나를 기준으로 합니다. 단위작업에 패치 번호를 할당하지 마세요. 중간에 추가작업이 있을 수 있습니다."
+"Please proceed. Create good unit tasks. Create todo.md if needed to proceed. One function/feature = one patch. Don't assign patch numbers to unit tasks. There may be additional tasks in between."
+
+**Why / 이유**: 
+- Provide clear roadmap for errorutil package implementation / errorutil 패키지 구현을 위한 명확한 로드맵 제공
+- Break down development into manageable, trackable tasks / 개발을 관리 가능하고 추적 가능한 작업으로 분할
+- Allow flexibility for adding tasks during development / 개발 중 작업 추가를 위한 유연성 허용
+- Follow principle: one function/feature = one patch version / 원칙 준수: 함수/기능 하나 = 패치 버전 하나
+- Enable clear progress tracking via todo.md / todo.md를 통한 명확한 진행 상황 추적 가능
+- Avoid rigid version number assignment that limits flexibility / 유연성을 제한하는 엄격한 버전 번호 할당 회피
+
+**Impact / 영향**: 
+- Clear development path with 12 well-defined phases / 12개의 잘 정의된 단계를 가진 명확한 개발 경로
+- 60+ tasks ready to be executed incrementally / 점진적으로 실행할 준비가 된 60개 이상의 작업
+- Flexible task ordering allows parallel work when possible / 유연한 작업 순서로 가능한 경우 병렬 작업 허용
+- Version numbers assigned during actual work, not planning / 버전 번호는 계획이 아닌 실제 작업 중 할당
+- Easy to add new tasks without disrupting version sequence / 버전 순서를 방해하지 않고 새 작업 추가 용이
+- todo.md serves as central progress tracking document / todo.md가 중앙 진행 상황 추적 문서로 역할
+- Ready to start Phase 1: Core Types implementation / Phase 1: 핵심 타입 구현 시작 준비 완료
+
+**Work Plan Highlights / 작업 계획 주요 사항**:
+- **Phase 1**: Core Types (6 tasks) - Error type definitions / 핵심 타입 (6개 작업) - 에러 타입 정의
+- **Phase 2**: Error Creation (4 tasks) - Basic creation functions / 에러 생성 (4개 작업) - 기본 생성 함수
+- **Phase 3**: Error Wrapping (4 tasks) - Context preservation / 에러 래핑 (4개 작업) - 컨텍스트 보존
+- **Phase 4**: Error Inspection (7 tasks) - Information extraction / 에러 검사 (7개 작업) - 정보 추출
+- **Phase 5**: Error Classification (8 tasks) - Error categorization / 에러 분류 (8개 작업) - 에러 범주화
+- **Phase 6**: Error Formatting (5 tasks) - Output formatting / 에러 포매팅 (5개 작업) - 출력 포매팅
+- **Phase 7**: Stack Traces (7 tasks) - Stack capture and display / 스택 트레이스 (7개 작업) - 스택 캡처 및 표시
+- **Phase 8**: Context Errors (5 tasks) - Structured data / 컨텍스트 에러 (5개 작업) - 구조화된 데이터
+- **Phase 9**: Error Assertions (5 tasks) - Must patterns / 에러 단언 (5개 작업) - Must 패턴
+- **Phase 10**: Documentation (7 tasks) - Comprehensive docs / 문서화 (7개 작업) - 포괄적인 문서
+- **Phase 11**: Examples (6 tasks) - Real-world scenarios / 예제 (6개 작업) - 실제 시나리오
+- **Phase 12**: Testing & Polish (8 tasks) - Production readiness / 테스트 및 마무리 (8개 작업) - 프로덕션 준비
+
+### Commits / 커밋
+
+1. **67465cf** - `Chore: Bump version to v1.12.003 / v1.12.003로 버전 증가`
+   - Version bump only / 버전 증가만
+
+2. **(pending)** - `Docs: Create WORK_PLAN.md and todo.md for errorutil development / errorutil 개발을 위한 WORK_PLAN.md 및 todo.md 생성 (v1.12.003)`
+   - Created comprehensive work plan and task tracking / 포괄적인 작업 계획 및 작업 추적 생성
+
+---
+
 ## [v1.12.002] - 2025-10-16
 
 ### Added / 추가
