@@ -1,3 +1,10 @@
+## [v1.11.023] - 2025-10-16
+
+### Added / 추가
+- Package finalization with comprehensive documentation (USER_MANUAL: 1067 lines, DEVELOPER_GUIDE: 1084 lines) / 종합 문서를 포함한 패키지 완료
+- Final README update with all feature sections / 모든 기능 섹션을 포함한 최종 README 업데이트
+
+
 # CHANGELOG v1.11.x - Web Server Utilities Package
 
 **Package / 패키지**: `websvrutil`

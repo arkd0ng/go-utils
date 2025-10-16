@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.022
+**Version / 버전**: v1.11.023
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.022) / 현재 기능
+## Current Features (v1.11.023) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -132,7 +132,7 @@ Request context for accessing path parameters, query strings, headers, and stori
 - `DeleteCookie(name, path string)` - Delete cookie / 쿠키 삭제
 - `GetCookie(name string) string` - Get cookie value / 쿠키 값 가져오기
 
-**HTTP Method Helpers / HTTP 메서드 헬퍼** (v1.11.022+):
+**HTTP Method Helpers / HTTP 메서드 헬퍼** (v1.11.023+):
 - `IsGET() bool` - Check if request method is GET / GET 요청인지 확인
 - `IsPOST() bool` - Check if request method is POST / POST 요청인지 확인
 - `IsPUT() bool` - Check if request method is PUT / PUT 요청인지 확인
@@ -155,6 +155,33 @@ Request context for accessing path parameters, query strings, headers, and stori
 - `UserAgent() string` - Get User-Agent header / User-Agent 헤더 가져오기
 - `Referer() string` - Get Referer header / Referer 헤더 가져오기
 - `ClientIP() string` - Get client IP address / 클라이언트 IP 주소 가져오기
+
+### Error Response Helpers / 에러 응답 헬퍼
+
+The Context provides convenient methods for sending error responses:
+Context는 에러 응답 전송을 위한 편리한 메서드를 제공합니다:
+
+```go
+// Abort with status code / 상태 코드로 중단
+ctx.AbortWithStatus(http.StatusNotFound)
+ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid input"))
+ctx.AbortWithJSON(http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+
+// Standardized JSON responses / 표준화된 JSON 응답
+ctx.ErrorJSON(400, "Invalid request")
+// {"error":"Invalid request","status":400,"success":false}
+
+ctx.SuccessJSON(200, "Operation successful", map[string]interface{}{"id": 123})
+// {"message":"Operation successful","data":{"id":123},"status":200,"success":true}
+
+// Common HTTP error shortcuts / 일반적인 HTTP 에러 단축
+ctx.NotFound()              // 404
+ctx.Unauthorized()          // 401
+ctx.Forbidden()             // 403
+ctx.BadRequest()            // 400
+ctx.InternalServerError()   // 500
+```
+
 
 **File Upload / 파일 업로드** (v1.11.015+):
 - `FormFile(name string) (*multipart.FileHeader, error)` - Get uploaded file / 업로드된 파일 가져오기
