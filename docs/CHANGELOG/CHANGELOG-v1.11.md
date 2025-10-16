@@ -1,3 +1,33 @@
+## [v1.11.033] - 2025-10-16
+
+### Test Coverage Improvement / 테스트 커버리지 개선
+- **Coverage increase from 79.9% to 84.5%** / **커버리지 79.9%에서 84.5%로 증가**
+  - Added 169 new tests (259 → 428 tests total)
+  - 169개의 새로운 테스트 추가 (총 259 → 428개 테스트)
+
+- **New comprehensive test file** / **새로운 종합 테스트 파일** (`coverage_test.go`)
+  - **HTTP Methods Coverage**: Tests for PUT, PATCH, DELETE, OPTIONS, HEAD methods
+  - **Context Request Methods**: HeaderExists, ContentType, UserAgent, Referer, ClientIP, AddHeader, GetHeader, GetHeaders
+  - **Context Cookie Methods**: GetCookie
+  - **NotFound Handler**: Custom 404 handler testing
+  - **Max Body Size**: Request body size limit enforcement
+  - **Binding Edge Cases**: BindJSON, BindForm, Bind with various error conditions
+  - **File Upload**: File and FileAttachment methods
+  - **CSRF Edge Cases**: GetCSRFToken, query parameter lookup
+  - **Validator Edge Cases**: All validation tags with different types (int, float, string, slice)
+  - **Graceful Shutdown**: RunWithGracefulShutdown functionality
+  - **Security Input Validation**: SQL injection, XSS, path traversal, large headers, null bytes
+  - **Concurrency**: Thread-safe Context operations
+  - **Error Paths**: Invalid JSON, missing files, cookies, form data
+  - HTTP 메서드 커버리지, 컨텍스트 메서드, 쿠키, 파일 업로드, CSRF, 검증자, 보안, 동시성, 에러 경로 테스트
+
+### Test Results / 테스트 결과
+- ✅ All 428 tests passing
+- ✅ Coverage: 84.5% of statements (increased from 79.9%)
+- ✅ No regressions
+
+---
+
 ## [v1.11.032] - 2025-10-16
 
 ### Code Organization / 코드 구성
