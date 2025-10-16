@@ -8,74 +8,177 @@ import (
 	"net/http/httptest"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"sort"
+	"strings"
 	"syscall"
 	"time"
 
+	"github.com/arkd0ng/go-utils/fileutil"
+	"github.com/arkd0ng/go-utils/logging"
 	"github.com/arkd0ng/go-utils/websvrutil"
 )
 
+const logBaseName = "websvrutil-example"
+
+var exampleLogger *logging.Logger
+
+func setupLogger() *logging.Logger {
+	if err := os.MkdirAll("logs", 0o755); err != nil {
+		fmt.Fprintf(os.Stderr, "⚠️  Failed to create logs directory: %v\n", err)
+		return nil
+	}
+
+	logFilePath := fmt.Sprintf("logs/%s.log", logBaseName)
+
+	if fileutil.Exists(logFilePath) {
+		if modTime, err := fileutil.ModTime(logFilePath); err == nil {
+			backupName := fmt.Sprintf("logs/%s-%s.log", logBaseName, modTime.Format("20060102-150405"))
+			if err := fileutil.CopyFile(logFilePath, backupName); err == nil {
+				fmt.Fprintf(os.Stdout, "✅ Backed up previous log to: %s\n", backupName)
+				fileutil.DeleteFile(logFilePath)
+			}
+		}
+
+		backupPattern := fmt.Sprintf("logs/%s-*.log", logBaseName)
+		if backupFiles, err := filepath.Glob(backupPattern); err == nil && len(backupFiles) > 5 {
+			type fileInfo struct {
+				path    string
+				modTime time.Time
+			}
+			files := make([]fileInfo, 0, len(backupFiles))
+			for _, f := range backupFiles {
+				if mt, err := fileutil.ModTime(f); err == nil {
+					files = append(files, fileInfo{path: f, modTime: mt})
+				}
+			}
+
+			sort.Slice(files, func(i, j int) bool {
+				return files[i].modTime.Before(files[j].modTime)
+			})
+
+			for i := 0; i < len(files)-5; i++ {
+				fileutil.DeleteFile(files[i].path)
+				fmt.Fprintf(os.Stdout, "🗑️  Deleted old backup: %s\n", files[i].path)
+			}
+		}
+	}
+
+	logger, err := logging.New(
+		logging.WithFilePath(logFilePath),
+		logging.WithStdout(true),
+		logging.WithLevel(logging.INFO),
+	)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "⚠️  Failed to initialize logger: %v\n", err)
+		return nil
+	}
+
+	logger.Banner("websvrutil Package Examples", websvrutil.Version)
+	logger.Info("Logs mirror console output / 로그는 콘솔 출력을 반영합니다")
+	logger.Info("")
+
+	return logger
+}
+
+func logPrintln(args ...interface{}) {
+	fmt.Fprintln(os.Stdout, args...)
+	if exampleLogger != nil {
+		msg := strings.TrimSuffix(fmt.Sprintln(args...), "\n")
+		exampleLogger.Info(msg)
+	}
+}
+
+func logPrintf(format string, args ...interface{}) {
+	fmt.Fprintf(os.Stdout, format, args...)
+	if exampleLogger != nil {
+		msg := strings.TrimSuffix(fmt.Sprintf(format, args...), "\n")
+		exampleLogger.Info(msg)
+	}
+}
+
 func main() {
-	fmt.Println("=== websvrutil Package Examples (v1.11.004) ===")
-	fmt.Println("=== websvrutil 패키지 예제 (v1.11.004) ===\n")
+	exampleLogger = setupLogger()
+	if exampleLogger != nil {
+		defer exampleLogger.Close()
+	}
+
+	logPrintf("=== websvrutil Package Examples (%s) ===\n", websvrutil.Version)
+	logPrintf("=== websvrutil 패키지 예제 (%s) ===\n", websvrutil.Version)
+	logPrintln()
 
 	// Example 1: Basic Server / 기본 서버
-	fmt.Println("Example 1: Basic Server / 기본 서버")
+	logPrintln("Example 1: Basic Server / 기본 서버")
 	example1BasicServer()
 
 	// Example 2: Server with Custom Options / 커스텀 옵션을 사용한 서버
-	fmt.Println("\nExample 2: Server with Custom Options / 커스텀 옵션을 사용한 서버")
+	logPrintln()
+	logPrintln("Example 2: Server with Custom Options / 커스텀 옵션을 사용한 서버")
 	example2CustomOptions()
 
 	// Example 3: Routing with GET/POST / GET/POST 라우팅
-	fmt.Println("\nExample 3: Routing with GET/POST / GET/POST 라우팅")
+	logPrintln()
+	logPrintln("Example 3: Routing with GET/POST / GET/POST 라우팅")
 	example3Routing()
 
 	// Example 4: Path Parameters / 경로 매개변수
-	fmt.Println("\nExample 4: Path Parameters / 경로 매개변수")
+	logPrintln()
+	logPrintln("Example 4: Path Parameters / 경로 매개변수")
 	example4PathParameters()
 
 	// Example 5: Wildcard Routes / 와일드카드 라우트
-	fmt.Println("\nExample 5: Wildcard Routes / 와일드카드 라우트")
+	logPrintln()
+	logPrintln("Example 5: Wildcard Routes / 와일드카드 라우트")
 	example5WildcardRoutes()
 
 	// Example 6: Custom 404 Handler / 커스텀 404 핸들러
-	fmt.Println("\nExample 6: Custom 404 Handler / 커스텀 404 핸들러")
+	logPrintln()
+	logPrintln("Example 6: Custom 404 Handler / 커스텀 404 핸들러")
 	example6Custom404()
 
 	// Example 7: Context - Path Parameters / Context - 경로 매개변수
-	fmt.Println("\nExample 7: Context - Path Parameters / Context - 경로 매개변수")
+	logPrintln()
+	logPrintln("Example 7: Context - Path Parameters / Context - 경로 매개변수")
 	example7ContextPathParameters()
 
 	// Example 8: Context - Query Parameters / Context - 쿼리 매개변수
-	fmt.Println("\nExample 8: Context - Query Parameters / Context - 쿼리 매개변수")
+	logPrintln()
+	logPrintln("Example 8: Context - Query Parameters / Context - 쿼리 매개변수")
 	example8ContextQueryParameters()
 
 	// Example 9: Context - Custom Values / Context - 커스텀 값
-	fmt.Println("\nExample 9: Context - Custom Values / Context - 커스텀 값")
+	logPrintln()
+	logPrintln("Example 9: Context - Custom Values / Context - 커스텀 값")
 	example9ContextCustomValues()
 
 	// Example 10: Context - Request Headers / Context - 요청 헤더
-	fmt.Println("\nExample 10: Context - Request Headers / Context - 요청 헤더")
+	logPrintln()
+	logPrintln("Example 10: Context - Request Headers / Context - 요청 헤더")
 	example10ContextHeaders()
 
 	// Example 11: Graceful Shutdown / 정상 종료
-	fmt.Println("\nExample 11: Graceful Shutdown / 정상 종료")
+	logPrintln()
+	logPrintln("Example 11: Graceful Shutdown / 정상 종료")
 	example11GracefulShutdown()
 
 	// Example 12: Custom Middleware / 커스텀 미들웨어
-	fmt.Println("\nExample 12: Custom Middleware / 커스텀 미들웨어")
+	logPrintln()
+	logPrintln("Example 12: Custom Middleware / 커스텀 미들웨어")
 	example12CustomMiddleware()
 
 	// Example 13: Multiple Middleware / 다중 미들웨어
-	fmt.Println("\nExample 13: Multiple Middleware / 다중 미들웨어")
+	logPrintln()
+	logPrintln("Example 13: Multiple Middleware / 다중 미들웨어")
 	example13MultipleMiddleware()
 
 	// Example 14: Production Configuration / 프로덕션 설정
-	fmt.Println("\nExample 14: Production Configuration / 프로덕션 설정")
+	logPrintln()
+	logPrintln("Example 14: Production Configuration / 프로덕션 설정")
 	example14ProductionConfig()
 
-	fmt.Println("\n=== All Examples Completed ===")
-	fmt.Println("=== 모든 예제 완료 ===")
+	logPrintln()
+	logPrintln("=== All Examples Completed ===")
+	logPrintln("=== 모든 예제 완료 ===")
 }
 
 // example1BasicServer demonstrates creating and running a basic server.
@@ -85,19 +188,20 @@ func example1BasicServer() {
 	// 기본 옵션으로 앱 생성
 	app := websvrutil.New()
 
-	fmt.Println("✓ Created app with default options")
-	fmt.Println("✓ 기본 옵션으로 앱 생성됨")
-	fmt.Println("  - ReadTimeout: 15s")
-	fmt.Println("  - WriteTimeout: 15s")
-	fmt.Println("  - IdleTimeout: 60s")
-	fmt.Println("  - MaxHeaderBytes: 1 MB")
-	fmt.Println("  - Logger: enabled")
-	fmt.Println("  - Recovery: enabled")
+	logPrintln("✓ Created app with default options")
+	logPrintln("✓ 기본 옵션으로 앱 생성됨")
+	logPrintln("  - ReadTimeout: 15s")
+	logPrintln("  - WriteTimeout: 15s")
+	logPrintln("  - IdleTimeout: 60s")
+	logPrintln("  - MaxHeaderBytes: 1 MB")
+	logPrintln("  - Logger: enabled")
+	logPrintln("  - Recovery: enabled")
 
 	// Note: In real usage, you would call app.Run(":8080")
 	// 참고: 실제 사용에서는 app.Run(":8080")을 호출합니다
-	fmt.Println("\nUsage: app.Run(\":8080\")")
-	fmt.Println("사용법: app.Run(\":8080\")")
+	logPrintln()
+	logPrintln("Usage: app.Run(\":8080\")")
+	logPrintln("사용법: app.Run(\":8080\")")
 
 	_ = app // Suppress unused variable warning / 미사용 변수 경고 억제
 }
@@ -120,18 +224,18 @@ func example2CustomOptions() {
 		websvrutil.WithRecovery(true),
 	)
 
-	fmt.Println("✓ Created app with custom options")
-	fmt.Println("✓ 커스텀 옵션으로 앱 생성됨")
-	fmt.Println("  - ReadTimeout: 30s")
-	fmt.Println("  - WriteTimeout: 30s")
-	fmt.Println("  - IdleTimeout: 90s")
-	fmt.Println("  - MaxHeaderBytes: 2 MB")
-	fmt.Println("  - TemplateDir: views")
-	fmt.Println("  - StaticDir: public")
-	fmt.Println("  - StaticPrefix: /assets")
-	fmt.Println("  - AutoReload: true")
-	fmt.Println("  - Logger: disabled")
-	fmt.Println("  - Recovery: enabled")
+	logPrintln("✓ Created app with custom options")
+	logPrintln("✓ 커스텀 옵션으로 앱 생성됨")
+	logPrintln("  - ReadTimeout: 30s")
+	logPrintln("  - WriteTimeout: 30s")
+	logPrintln("  - IdleTimeout: 90s")
+	logPrintln("  - MaxHeaderBytes: 2 MB")
+	logPrintln("  - TemplateDir: views")
+	logPrintln("  - StaticDir: public")
+	logPrintln("  - StaticPrefix: /assets")
+	logPrintln("  - AutoReload: true")
+	logPrintln("  - Logger: disabled")
+	logPrintln("  - Recovery: enabled")
 
 	_ = app // Suppress unused variable warning / 미사용 변수 경고 억제
 }
@@ -158,15 +262,16 @@ func example3Routing() {
 		w.WriteHeader(http.StatusCreated)
 	})
 
-	fmt.Println("✓ Registered routes:")
-	fmt.Println("✓ 등록된 라우트:")
-	fmt.Println("  - GET /users")
-	fmt.Println("  - POST /users")
+	logPrintln("✓ Registered routes:")
+	logPrintln("✓ 등록된 라우트:")
+	logPrintln("  - GET /users")
+	logPrintln("  - POST /users")
 
 	// Simulate requests
 	// 요청 시뮬레이션
-	fmt.Println("\n  Simulating requests:")
-	fmt.Println("  요청 시뮬레이션:")
+	logPrintln()
+	logPrintln("  Simulating requests:")
+	logPrintln("  요청 시뮬레이션:")
 
 	testGet := httptest.NewRequest("GET", "/users", nil)
 	testPost := httptest.NewRequest("POST", "/users", nil)
@@ -174,11 +279,12 @@ func example3Routing() {
 	app.ServeHTTP(httptest.NewRecorder(), testGet)
 	app.ServeHTTP(httptest.NewRecorder(), testPost)
 
-	fmt.Printf("  - GET requests: %d\n", getCount)
-	fmt.Printf("  - POST requests: %d\n", postCount)
+	logPrintf("  - GET requests: %d\n", getCount)
+	logPrintf("  - POST requests: %d\n", postCount)
 
-	fmt.Println("\n✓ Routes working correctly")
-	fmt.Println("✓ 라우트가 올바르게 작동합니다")
+	logPrintln()
+	logPrintln("✓ Routes working correctly")
+	logPrintln("✓ 라우트가 올바르게 작동합니다")
 }
 
 // example4PathParameters demonstrates path parameter extraction.
@@ -196,10 +302,10 @@ func example4PathParameters() {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	fmt.Println("✓ Registered routes with parameters:")
-	fmt.Println("✓ 매개변수가 있는 라우트 등록됨:")
-	fmt.Println("  - GET /users/:id")
-	fmt.Println("  - GET /users/:userId/posts/:postId")
+	logPrintln("✓ Registered routes with parameters:")
+	logPrintln("✓ 매개변수가 있는 라우트 등록됨:")
+	logPrintln("  - GET /users/:id")
+	logPrintln("  - GET /users/:userId/posts/:postId")
 
 	// Test parameter matching
 	// 매개변수 일치 테스트
@@ -208,8 +314,9 @@ func example4PathParameters() {
 		"/users/456/posts/789",
 	}
 
-	fmt.Println("\n  Testing parameter matching:")
-	fmt.Println("  매개변수 일치 테스트:")
+	logPrintln()
+	logPrintln("  Testing parameter matching:")
+	logPrintln("  매개변수 일치 테스트:")
 
 	for _, path := range testPaths {
 		req := httptest.NewRequest("GET", path, nil)
@@ -217,12 +324,13 @@ func example4PathParameters() {
 		app.ServeHTTP(rec, req)
 
 		if rec.Code == http.StatusOK {
-			fmt.Printf("  ✓ Matched: %s\n", path)
+			logPrintf("  ✓ Matched: %s\n", path)
 		}
 	}
 
-	fmt.Println("\n✓ Parameter extraction working")
-	fmt.Println("✓ 매개변수 추출 작동 중")
+	logPrintln()
+	logPrintln("✓ Parameter extraction working")
+	logPrintln("✓ 매개변수 추출 작동 중")
 }
 
 // example5WildcardRoutes demonstrates wildcard route matching.
@@ -236,9 +344,9 @@ func example5WildcardRoutes() {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	fmt.Println("✓ Registered wildcard route:")
-	fmt.Println("✓ 와일드카드 라우트 등록됨:")
-	fmt.Println("  - GET /files/*")
+	logPrintln("✓ Registered wildcard route:")
+	logPrintln("✓ 와일드카드 라우트 등록됨:")
+	logPrintln("  - GET /files/*")
 
 	// Test wildcard matching
 	// 와일드카드 일치 테스트
@@ -248,8 +356,9 @@ func example5WildcardRoutes() {
 		"/files/a/b/c/d/e.txt",
 	}
 
-	fmt.Println("\n  Testing wildcard matching:")
-	fmt.Println("  와일드카드 일치 테스트:")
+	logPrintln()
+	logPrintln("  Testing wildcard matching:")
+	logPrintln("  와일드카드 일치 테스트:")
 
 	for _, path := range testPaths {
 		req := httptest.NewRequest("GET", path, nil)
@@ -257,12 +366,13 @@ func example5WildcardRoutes() {
 		app.ServeHTTP(rec, req)
 
 		if rec.Code == http.StatusOK {
-			fmt.Printf("  ✓ Matched: %s\n", path)
+			logPrintf("  ✓ Matched: %s\n", path)
 		}
 	}
 
-	fmt.Println("\n✓ Wildcard routes working correctly")
-	fmt.Println("✓ 와일드카드 라우트가 올바르게 작동합니다")
+	logPrintln()
+	logPrintln("✓ Wildcard routes working correctly")
+	logPrintln("✓ 와일드카드 라우트가 올바르게 작동합니다")
 }
 
 // example6Custom404 demonstrates custom 404 handler.
@@ -285,30 +395,33 @@ func example6Custom404() {
 		fmt.Fprintf(w, "Custom 404: %s not found", r.URL.Path)
 	})
 
-	fmt.Println("✓ Custom 404 handler registered")
-	fmt.Println("✓ 커스텀 404 핸들러 등록됨")
+	logPrintln("✓ Custom 404 handler registered")
+	logPrintln("✓ 커스텀 404 핸들러 등록됨")
 
 	// Test existing route
 	// 기존 라우트 테스트
-	fmt.Println("\n  Testing existing route (/users):")
-	fmt.Println("  기존 라우트 테스트 (/users):")
+	logPrintln()
+	logPrintln("  Testing existing route (/users):")
+	logPrintln("  기존 라우트 테스트 (/users):")
 	req := httptest.NewRequest("GET", "/users", nil)
 	rec := httptest.NewRecorder()
 	app.ServeHTTP(rec, req)
-	fmt.Printf("  Status: %d\n", rec.Code)
+	logPrintf("  Status: %d\n", rec.Code)
 
 	// Test non-existent route
 	// 존재하지 않는 라우트 테스트
-	fmt.Println("\n  Testing non-existent route (/nonexistent):")
-	fmt.Println("  존재하지 않는 라우트 테스트 (/nonexistent):")
+	logPrintln()
+	logPrintln("  Testing non-existent route (/nonexistent):")
+	logPrintln("  존재하지 않는 라우트 테스트 (/nonexistent):")
 	req = httptest.NewRequest("GET", "/nonexistent", nil)
 	rec = httptest.NewRecorder()
 	app.ServeHTTP(rec, req)
-	fmt.Printf("  Status: %d\n", rec.Code)
-	fmt.Printf("  Custom handler called: %v\n", custom404Called)
+	logPrintf("  Status: %d\n", rec.Code)
+	logPrintf("  Custom handler called: %v\n", custom404Called)
 
-	fmt.Println("\n✓ Custom 404 handler working correctly")
-	fmt.Println("✓ 커스텀 404 핸들러가 올바르게 작동합니다")
+	logPrintln()
+	logPrintln("✓ Custom 404 handler working correctly")
+	logPrintln("✓ 커스텀 404 핸들러가 올바르게 작동합니다")
 }
 
 // example7ContextPathParameters demonstrates Context path parameter access.
@@ -335,8 +448,8 @@ func example7ContextPathParameters() {
 		fmt.Fprintf(w, "User: %s, Post: %s", extractedUserID, extractedPostID)
 	})
 
-	fmt.Println("✓ Routes with Context parameters registered")
-	fmt.Println("✓ Context 매개변수가 있는 라우트 등록됨")
+	logPrintln("✓ Routes with Context parameters registered")
+	logPrintln("✓ Context 매개변수가 있는 라우트 등록됨")
 
 	// Test single parameter
 	// 단일 매개변수 테스트
@@ -344,10 +457,11 @@ func example7ContextPathParameters() {
 	rec1 := httptest.NewRecorder()
 	app.ServeHTTP(rec1, req1)
 
-	fmt.Println("\n  Single parameter test:")
-	fmt.Println("  단일 매개변수 테스트:")
-	fmt.Printf("  - URL: /users/123\n")
-	fmt.Printf("  - Extracted ID: %s\n", extractedID)
+	logPrintln()
+	logPrintln("  Single parameter test:")
+	logPrintln("  단일 매개변수 테스트:")
+	logPrintf("  - URL: /users/123\n")
+	logPrintf("  - Extracted ID: %s\n", extractedID)
 
 	// Test multiple parameters
 	// 다중 매개변수 테스트
@@ -355,14 +469,16 @@ func example7ContextPathParameters() {
 	rec2 := httptest.NewRecorder()
 	app.ServeHTTP(rec2, req2)
 
-	fmt.Println("\n  Multiple parameters test:")
-	fmt.Println("  다중 매개변수 테스트:")
-	fmt.Printf("  - URL: /users/456/posts/789\n")
-	fmt.Printf("  - Extracted User ID: %s\n", extractedUserID)
-	fmt.Printf("  - Extracted Post ID: %s\n", extractedPostID)
+	logPrintln()
+	logPrintln("  Multiple parameters test:")
+	logPrintln("  다중 매개변수 테스트:")
+	logPrintf("  - URL: /users/456/posts/789\n")
+	logPrintf("  - Extracted User ID: %s\n", extractedUserID)
+	logPrintf("  - Extracted Post ID: %s\n", extractedPostID)
 
-	fmt.Println("\n✓ Context path parameter access working")
-	fmt.Println("✓ Context 경로 매개변수 액세스 작동 중")
+	logPrintln()
+	logPrintln("✓ Context path parameter access working")
+	logPrintln("✓ Context 경로 매개변수 액세스 작동 중")
 }
 
 // example8ContextQueryParameters demonstrates Context query parameter access.
@@ -380,8 +496,8 @@ func example8ContextQueryParameters() {
 		fmt.Fprintf(w, "Query: %s, Page: %s, Limit: %s", query, page, limit)
 	})
 
-	fmt.Println("✓ Search route with query parameters registered")
-	fmt.Println("✓ 쿼리 매개변수가 있는 검색 라우트 등록됨")
+	logPrintln("✓ Search route with query parameters registered")
+	logPrintln("✓ 쿼리 매개변수가 있는 검색 라우트 등록됨")
 
 	// Test with query parameters
 	// 쿼리 매개변수로 테스트
@@ -389,15 +505,17 @@ func example8ContextQueryParameters() {
 	rec := httptest.NewRecorder()
 	app.ServeHTTP(rec, req)
 
-	fmt.Println("\n  Query parameter test:")
-	fmt.Println("  쿼리 매개변수 테스트:")
-	fmt.Printf("  - URL: /search?q=golang&page=2\n")
-	fmt.Printf("  - Query (q): %s\n", query)
-	fmt.Printf("  - Page: %s\n", page)
-	fmt.Printf("  - Limit (default): %s\n", limit)
+	logPrintln()
+	logPrintln("  Query parameter test:")
+	logPrintln("  쿼리 매개변수 테스트:")
+	logPrintf("  - URL: /search?q=golang&page=2\n")
+	logPrintf("  - Query (q): %s\n", query)
+	logPrintf("  - Page: %s\n", page)
+	logPrintf("  - Limit (default): %s\n", limit)
 
-	fmt.Println("\n✓ Context query parameter access working")
-	fmt.Println("✓ Context 쿼리 매개변수 액세스 작동 중")
+	logPrintln()
+	logPrintln("✓ Context query parameter access working")
+	logPrintln("✓ Context 쿼리 매개변수 액세스 작동 중")
 }
 
 // example9ContextCustomValues demonstrates storing and retrieving custom values.
@@ -427,8 +545,8 @@ func example9ContextCustomValues() {
 		fmt.Fprintf(w, "User: %s, Auth: %v, Count: %d", storedUser, storedAuth, storedCount)
 	})
 
-	fmt.Println("✓ Route with custom value storage registered")
-	fmt.Println("✓ 커스텀 값 저장이 있는 라우트 등록됨")
+	logPrintln("✓ Route with custom value storage registered")
+	logPrintln("✓ 커스텀 값 저장이 있는 라우트 등록됨")
 
 	// Test custom values
 	// 커스텀 값 테스트
@@ -436,14 +554,16 @@ func example9ContextCustomValues() {
 	rec := httptest.NewRecorder()
 	app.ServeHTTP(rec, req)
 
-	fmt.Println("\n  Custom values test:")
-	fmt.Println("  커스텀 값 테스트:")
-	fmt.Printf("  - Stored user ID: %s\n", storedUser)
-	fmt.Printf("  - Stored authenticated: %v\n", storedAuth)
-	fmt.Printf("  - Stored request count: %d\n", storedCount)
+	logPrintln()
+	logPrintln("  Custom values test:")
+	logPrintln("  커스텀 값 테스트:")
+	logPrintf("  - Stored user ID: %s\n", storedUser)
+	logPrintf("  - Stored authenticated: %v\n", storedAuth)
+	logPrintf("  - Stored request count: %d\n", storedCount)
 
-	fmt.Println("\n✓ Context custom value storage working")
-	fmt.Println("✓ Context 커스텀 값 저장 작동 중")
+	logPrintln()
+	logPrintln("✓ Context custom value storage working")
+	logPrintln("✓ Context 커스텀 값 저장 작동 중")
 }
 
 // example10ContextHeaders demonstrates request and response header access.
@@ -469,8 +589,8 @@ func example10ContextHeaders() {
 		fmt.Fprintf(w, "Auth: %s, Type: %s", authHeader, contentType)
 	})
 
-	fmt.Println("✓ API route with header access registered")
-	fmt.Println("✓ 헤더 액세스가 있는 API 라우트 등록됨")
+	logPrintln("✓ API route with header access registered")
+	logPrintln("✓ 헤더 액세스가 있는 API 라우트 등록됨")
 
 	// Test with headers
 	// 헤더로 테스트
@@ -480,18 +600,21 @@ func example10ContextHeaders() {
 	rec := httptest.NewRecorder()
 	app.ServeHTTP(rec, req)
 
-	fmt.Println("\n  Request headers:")
-	fmt.Println("  요청 헤더:")
-	fmt.Printf("  - Authorization: %s\n", authHeader)
-	fmt.Printf("  - Content-Type: %s\n", contentType)
+	logPrintln()
+	logPrintln("  Request headers:")
+	logPrintln("  요청 헤더:")
+	logPrintf("  - Authorization: %s\n", authHeader)
+	logPrintf("  - Content-Type: %s\n", contentType)
 
-	fmt.Println("\n  Response headers:")
-	fmt.Println("  응답 헤더:")
-	fmt.Printf("  - X-API-Version: %s\n", rec.Header().Get("X-API-Version"))
-	fmt.Printf("  - Content-Type: %s\n", rec.Header().Get("Content-Type"))
+	logPrintln()
+	logPrintln("  Response headers:")
+	logPrintln("  응답 헤더:")
+	logPrintf("  - X-API-Version: %s\n", rec.Header().Get("X-API-Version"))
+	logPrintf("  - Content-Type: %s\n", rec.Header().Get("Content-Type"))
 
-	fmt.Println("\n✓ Context header access working")
-	fmt.Println("✓ Context 헤더 액세스 작동 중")
+	logPrintln()
+	logPrintln("✓ Context header access working")
+	logPrintln("✓ Context 헤더 액세스 작동 중")
 }
 
 // example11GracefulShutdown demonstrates graceful server shutdown.
@@ -504,8 +627,8 @@ func example11GracefulShutdown() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
-	fmt.Println("✓ Signal handler configured")
-	fmt.Println("✓ 시그널 핸들러 설정됨")
+	logPrintln("✓ Signal handler configured")
+	logPrintln("✓ 시그널 핸들러 설정됨")
 
 	// Simulate server startup and shutdown
 	// 서버 시작 및 종료 시뮬레이션
@@ -514,8 +637,9 @@ func example11GracefulShutdown() {
 	go func() {
 		// In real usage: app.Run(":8080")
 		// 실제 사용: app.Run(":8080")
-		fmt.Println("\n  Server would start here...")
-		fmt.Println("  서버가 여기서 시작됩니다...")
+		logPrintln()
+		logPrintln("  Server would start here...")
+		logPrintln("  서버가 여기서 시작됩니다...")
 		serverStarted <- true
 
 		// Simulate running
@@ -527,24 +651,26 @@ func example11GracefulShutdown() {
 
 	// Simulate shutdown signal
 	// 종료 시그널 시뮬레이션
-	fmt.Println("\n  Simulating shutdown signal...")
-	fmt.Println("  종료 시그널 시뮬레이션...")
+	logPrintln()
+	logPrintln("  Simulating shutdown signal...")
+	logPrintln("  종료 시그널 시뮬레이션...")
 
 	// Graceful shutdown with timeout
 	// 타임아웃으로 정상 종료
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	fmt.Println("\n✓ Shutdown initiated with 5s timeout")
-	fmt.Println("✓ 5초 타임아웃으로 종료 시작됨")
+	logPrintln()
+	logPrintln("✓ Shutdown initiated with 5s timeout")
+	logPrintln("✓ 5초 타임아웃으로 종료 시작됨")
 
 	// In real usage: app.Shutdown(ctx)
 	// 실제 사용: app.Shutdown(ctx)
 	_ = ctx
 	_ = app
 
-	fmt.Println("✓ Server would shutdown gracefully")
-	fmt.Println("✓ 서버가 정상적으로 종료됩니다")
+	logPrintln("✓ Server would shutdown gracefully")
+	logPrintln("✓ 서버가 정상적으로 종료됩니다")
 }
 
 // example12CustomMiddleware demonstrates adding custom middleware.
@@ -569,21 +695,22 @@ func example12CustomMiddleware() {
 	// 미들웨어 추가
 	app.Use(loggingMiddleware)
 
-	fmt.Println("✓ Added logging middleware")
-	fmt.Println("✓ 로깅 미들웨어 추가됨")
+	logPrintln("✓ Added logging middleware")
+	logPrintln("✓ 로깅 미들웨어 추가됨")
 
 	// Test with a sample request
 	// 샘플 요청으로 테스트
 	req, _ := http.NewRequest("GET", "/test", nil)
 	rr := &responseRecorder{ResponseWriter: &dummyResponseWriter{}}
 
-	fmt.Println("\n  Testing middleware with sample request:")
-	fmt.Println("  샘플 요청으로 미들웨어 테스트:")
+	logPrintln()
+	logPrintln("  Testing middleware with sample request:")
+	logPrintln("  샘플 요청으로 미들웨어 테스트:")
 
 	app.ServeHTTP(rr, req)
 
-	fmt.Println("✓ Middleware executed successfully")
-	fmt.Println("✓ 미들웨어 실행 성공")
+	logPrintln("✓ Middleware executed successfully")
+	logPrintln("✓ 미들웨어 실행 성공")
 }
 
 // example13MultipleMiddleware demonstrates adding multiple middleware.
@@ -624,11 +751,11 @@ func example13MultipleMiddleware() {
 	// 모든 미들웨어 추가 (순서대로 실행)
 	app.Use(requestIDMiddleware, timingMiddleware, corsMiddleware)
 
-	fmt.Println("✓ Added 3 middleware:")
-	fmt.Println("✓ 3개의 미들웨어 추가됨:")
-	fmt.Println("  1. Request ID")
-	fmt.Println("  2. Timing")
-	fmt.Println("  3. CORS")
+	logPrintln("✓ Added 3 middleware:")
+	logPrintln("✓ 3개의 미들웨어 추가됨:")
+	logPrintln("  1. Request ID")
+	logPrintln("  2. Timing")
+	logPrintln("  3. CORS")
 
 	// Test with a sample request
 	// 샘플 요청으로 테스트
@@ -639,17 +766,19 @@ func example13MultipleMiddleware() {
 
 	app.ServeHTTP(rr, req)
 
-	fmt.Println("\n  Headers set by middleware:")
-	fmt.Println("  미들웨어가 설정한 헤더:")
+	logPrintln()
+	logPrintln("  Headers set by middleware:")
+	logPrintln("  미들웨어가 설정한 헤더:")
 	if id := rr.Header().Get("X-Request-ID"); id != "" {
-		fmt.Printf("  - X-Request-ID: %s\n", id)
+		logPrintf("  - X-Request-ID: %s\n", id)
 	}
 	if cors := rr.Header().Get("Access-Control-Allow-Origin"); cors != "" {
-		fmt.Printf("  - Access-Control-Allow-Origin: %s\n", cors)
+		logPrintf("  - Access-Control-Allow-Origin: %s\n", cors)
 	}
 
-	fmt.Println("\n✓ All middleware executed in order")
-	fmt.Println("✓ 모든 미들웨어가 순서대로 실행됨")
+	logPrintln()
+	logPrintln("✓ All middleware executed in order")
+	logPrintln("✓ 모든 미들웨어가 순서대로 실행됨")
 }
 
 // example14ProductionConfig demonstrates a production-ready configuration.
@@ -670,27 +799,29 @@ func example14ProductionConfig() {
 		websvrutil.WithStaticPrefix("/static"),
 
 		// Production settings / 프로덕션 설정
-		websvrutil.WithAutoReload(false),  // Disable in production
-		websvrutil.WithLogger(true),       // Enable logging
-		websvrutil.WithRecovery(true),     // Enable panic recovery
+		websvrutil.WithAutoReload(false), // Disable in production
+		websvrutil.WithLogger(true),      // Enable logging
+		websvrutil.WithRecovery(true),    // Enable panic recovery
 	)
 
-	fmt.Println("✓ Production configuration applied")
-	fmt.Println("✓ 프로덕션 설정 적용됨")
-	fmt.Println("\nSecurity Features / 보안 기능:")
-	fmt.Println("  ✓ Short timeouts to prevent slowloris attacks")
-	fmt.Println("  ✓ Slowloris 공격 방지를 위한 짧은 타임아웃")
-	fmt.Println("  ✓ Header size limits")
-	fmt.Println("  ✓ 헤더 크기 제한")
-	fmt.Println("  ✓ Panic recovery enabled")
-	fmt.Println("  ✓ 패닉 복구 활성화")
-	fmt.Println("  ✓ Request logging enabled")
-	fmt.Println("  ✓ 요청 로깅 활성화")
-	fmt.Println("\nOptimization / 최적화:")
-	fmt.Println("  ✓ Template caching (no auto-reload)")
-	fmt.Println("  ✓ 템플릿 캐싱 (자동 재로드 없음)")
-	fmt.Println("  ✓ Keep-alive with appropriate timeout")
-	fmt.Println("  ✓ 적절한 타임아웃의 Keep-alive")
+	logPrintln("✓ Production configuration applied")
+	logPrintln("✓ 프로덕션 설정 적용됨")
+	logPrintln()
+	logPrintln("Security Features / 보안 기능:")
+	logPrintln("  ✓ Short timeouts to prevent slowloris attacks")
+	logPrintln("  ✓ Slowloris 공격 방지를 위한 짧은 타임아웃")
+	logPrintln("  ✓ Header size limits")
+	logPrintln("  ✓ 헤더 크기 제한")
+	logPrintln("  ✓ Panic recovery enabled")
+	logPrintln("  ✓ 패닉 복구 활성화")
+	logPrintln("  ✓ Request logging enabled")
+	logPrintln("  ✓ 요청 로깅 활성화")
+	logPrintln()
+	logPrintln("Optimization / 최적화:")
+	logPrintln("  ✓ Template caching (no auto-reload)")
+	logPrintln("  ✓ 템플릿 캐싱 (자동 재로드 없음)")
+	logPrintln("  ✓ Keep-alive with appropriate timeout")
+	logPrintln("  ✓ 적절한 타임아웃의 Keep-alive")
 
 	_ = app // Suppress unused variable warning / 미사용 변수 경고 억제
 }
