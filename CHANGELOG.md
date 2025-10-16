@@ -24,7 +24,7 @@ This file contains a high-level overview of major and minor versions. For detail
 
 **Status / 상태**: In Development / 개발 중
 **Branch / 브랜치**: `feature/v1.11.x-websvrutil`
-**Latest Patch / 최신 패치**: v1.11.044 – removed auto-sync workflow and adopted Shields.io version badge
+**Latest Patch / 최신 패치**: v1.11.044 – bumped cfg/app.yaml and refreshed README/websvrutil docs with the new version
 
 **Detailed Changes / 상세 변경사항**: See / 참조 [docs/CHANGELOG/CHANGELOG-v1.11.md](docs/CHANGELOG/CHANGELOG-v1.11.md)
 

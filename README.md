@@ -5,7 +5,6 @@ A collection of frequently used utility functions for Golang development.
 Golang 개발에 자주 사용되는 유틸리티 함수 모음입니다.
 
 [![go-utils version](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=go-utils&color=blue&cacheSeconds=300)](https://github.com/arkd0ng/go-utils)
-
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.16-blue)](https://golang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -821,14 +820,14 @@ err := httputil.Get(url, &users, httputil.WithBearerToken("token"))
 
 **Status / 상태**: In Development / 개발 중
 **Branch / 브랜치**: `feature/v1.11.x-websvrutil`
-**Version / 버전**: v1.11.043
+**Version / 버전**: v1.11.044
 
 Extreme simplicity web server utilities - reduce 50+ lines of server setup code to just 5 lines.
 
 극도로 간단한 웹 서버 유틸리티 - 50줄 이상의 서버 설정 코드를 단 5줄로 줄입니다.
 
-**Latest update / 최신 업데이트**: v1.11.043 introduces a Shields.io badge that reads the version directly from `cfg/app.yaml`.  
-**최신 업데이트**: v1.11.043에서 Shields.io 배지를 도입하여 `cfg/app.yaml`의 버전을 바로 확인할 수 있도록 했습니다.
+**Latest update / 최신 업데이트**: v1.11.044 consolidates the latest automation changes on `main`.  
+**최신 업데이트**: v1.11.044에서 최신 자동화 변경 사항을 `main` 브랜치에 통합했습니다.
 
 **Planned Features / 계획된 기능**:
 - Simple Router with RESTful routing / RESTful 라우팅을 가진 간단한 라우터

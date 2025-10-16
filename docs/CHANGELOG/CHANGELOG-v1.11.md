@@ -5,6 +5,17 @@
 
 ---
 
+## [v1.11.044] - 2025-10-16
+
+### Changed / 변경
+- Bumped cfg/app.yaml to v1.11.044 and aligned README plus websvrutil docs with the new version number. / `cfg/app.yaml` 버전을 v1.11.044로 올리고 README 및 websvrutil 문서를 최신 버전에 맞췄습니다.
+- Reverted temporary badge experiments, keeping the default dynamic badge only. / 일시적인 배지 실험을 되돌리고 기본 배지만 유지했습니다.
+
+### Testing / 테스트
+- `go test ./...`
+
+---
+
 ## [v1.11.043] - 2025-10-16
 
 ### Changed / 변경
