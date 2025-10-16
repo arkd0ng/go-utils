@@ -1,6 +1,6 @@
 # websvrutil - Web Server Utilities / 웹 서버 유틸리티
 
-**Version / 버전**: v1.11.021
+**Version / 버전**: v1.11.022
 **Package / 패키지**: `github.com/arkd0ng/go-utils/websvrutil`
 
 ## Overview / 개요
@@ -23,7 +23,7 @@ The `websvrutil` package provides extreme simplicity web server utilities for Go
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-## Current Features (v1.11.021) / 현재 기능
+## Current Features (v1.11.022) / 현재 기능
 
 ### App Struct / App 구조체
 
@@ -132,7 +132,7 @@ Request context for accessing path parameters, query strings, headers, and stori
 - `DeleteCookie(name, path string)` - Delete cookie / 쿠키 삭제
 - `GetCookie(name string) string` - Get cookie value / 쿠키 값 가져오기
 
-**HTTP Method Helpers / HTTP 메서드 헬퍼** (v1.11.021+):
+**HTTP Method Helpers / HTTP 메서드 헬퍼** (v1.11.022+):
 - `IsGET() bool` - Check if request method is GET / GET 요청인지 확인
 - `IsPOST() bool` - Check if request method is POST / POST 요청인지 확인
 - `IsPUT() bool` - Check if request method is PUT / PUT 요청인지 확인

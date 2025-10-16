@@ -5,6 +5,27 @@
 
 ---
 
+## [v1.11.022] - 2025-10-16
+
+### Added / 추가
+- **Error Response Helpers** / **에러 응답 헬퍼** (`context.go`)
+  - `AbortWithStatus(code int)` - Abort with status code
+  - `AbortWithError(code int, message string)` - Abort with error message
+  - `AbortWithJSON(code int, obj interface{})` - Abort with JSON
+  - `ErrorJSON(code int, message string)` - Standardized JSON error
+  - `SuccessJSON(code int, message string, data interface{})` - Standardized JSON success
+  - `NotFound()` - Send 404 response
+  - `Unauthorized()` - Send 401 response
+  - `Forbidden()` - Send 403 response
+  - `BadRequest()` - Send 400 response
+  - `InternalServerError()` - Send 500 response
+
+### Tests / 테스트
+  - 11 test functions + 2 benchmarks (error_test.go)
+  - 79.4% coverage
+
+---
+
 ## [v1.11.021] - 2025-10-16
 
 ### Added / 추가

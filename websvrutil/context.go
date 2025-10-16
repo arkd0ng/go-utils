@@ -1217,3 +1217,120 @@ func (c *Context) containsContentType(accept, contentType string) bool {
 	}
 	return false
 }
+
+// ====================
+// Error Response Helpers / 에러 응답 헬퍼
+// ====================
+
+// AbortWithStatus aborts the request with the specified status code.
+// AbortWithStatus는 지정된 상태 코드로 요청을 중단합니다.
+//
+// Example / 예제:
+//
+//	ctx.AbortWithStatus(http.StatusUnauthorized)
+func (c *Context) AbortWithStatus(code int) {
+	c.Status(code)
+	c.ResponseWriter.WriteHeader(code)
+}
+
+// AbortWithError aborts with status code and error message.
+// AbortWithError는 상태 코드와 에러 메시지로 중단합니다.
+//
+// Example / 예제:
+//
+//	ctx.AbortWithError(http.StatusBadRequest, "Invalid input")
+func (c *Context) AbortWithError(code int, message string) {
+	c.Status(code)
+	http.Error(c.ResponseWriter, message, code)
+}
+
+// AbortWithJSON aborts with status code and JSON error response.
+// AbortWithJSON은 상태 코드와 JSON 에러 응답으로 중단합니다.
+//
+// Example / 예제:
+//
+//	ctx.AbortWithJSON(http.StatusBadRequest, map[string]string{
+//	    "error": "Invalid input",
+//	})
+func (c *Context) AbortWithJSON(code int, obj interface{}) {
+	c.JSON(code, obj)
+}
+
+// ErrorJSON sends a standardized JSON error response.
+// ErrorJSON은 표준화된 JSON 에러 응답을 전송합니다.
+//
+// Example / 예제:
+//
+//	ctx.ErrorJSON(http.StatusNotFound, "User not found")
+func (c *Context) ErrorJSON(code int, message string) {
+	c.JSON(code, map[string]interface{}{
+		"error":   message,
+		"status":  code,
+		"success": false,
+	})
+}
+
+// SuccessJSON sends a standardized JSON success response.
+// SuccessJSON은 표준화된 JSON 성공 응답을 전송합니다.
+//
+// Example / 예제:
+//
+//	ctx.SuccessJSON(http.StatusOK, "Operation completed", data)
+func (c *Context) SuccessJSON(code int, message string, data interface{}) {
+	c.JSON(code, map[string]interface{}{
+		"message": message,
+		"data":    data,
+		"status":  code,
+		"success": true,
+	})
+}
+
+// NotFound sends a 404 Not Found response.
+// NotFound는 404 Not Found 응답을 전송합니다.
+//
+// Example / 예제:
+//
+//	ctx.NotFound()
+func (c *Context) NotFound() {
+	c.AbortWithStatus(http.StatusNotFound)
+}
+
+// Unauthorized sends a 401 Unauthorized response.
+// Unauthorized는 401 Unauthorized 응답을 전송합니다.
+//
+// Example / 예제:
+//
+//	ctx.Unauthorized()
+func (c *Context) Unauthorized() {
+	c.AbortWithStatus(http.StatusUnauthorized)
+}
+
+// Forbidden sends a 403 Forbidden response.
+// Forbidden은 403 Forbidden 응답을 전송합니다.
+//
+// Example / 예제:
+//
+//	ctx.Forbidden()
+func (c *Context) Forbidden() {
+	c.AbortWithStatus(http.StatusForbidden)
+}
+
+// BadRequest sends a 400 Bad Request response.
+// BadRequest는 400 Bad Request 응답을 전송합니다.
+//
+// Example / 예제:
+//
+//	ctx.BadRequest()
+func (c *Context) BadRequest() {
+	c.AbortWithStatus(http.StatusBadRequest)
+}
+
+// InternalServerError sends a 500 Internal Server Error response.
+// InternalServerError는 500 Internal Server Error 응답을 전송합니다.
+//
+// Example / 예제:
+//
+//	ctx.InternalServerError()
+func (c *Context) InternalServerError() {
+	c.AbortWithStatus(http.StatusInternalServerError)
+}
