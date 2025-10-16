@@ -50,6 +50,10 @@ type Options struct {
 	// MaxUploadSize is the maximum allowed file upload size in bytes.
 	// MaxUploadSize는 허용되는 최대 파일 업로드 크기(바이트)입니다.
 	MaxUploadSize int64
+
+	// MaxBodySize is the maximum allowed request body size in bytes (for JSON, etc).
+	// MaxBodySize는 허용되는 최대 요청 본문 크기(바이트)입니다 (JSON 등).
+	MaxBodySize int64
 }
 
 // Option is a functional option for configuring the App.
@@ -71,6 +75,7 @@ func defaultOptions() *Options {
 		EnableLogger:     true,
 		EnableRecovery:   true,
 		MaxUploadSize:    32 << 20, // 32 MB default
+		MaxBodySize:      10 << 20, // 10 MB default for JSON/form bodies
 	}
 }
 
@@ -159,5 +164,25 @@ func WithRecovery(enable bool) Option {
 func WithMaxUploadSize(size int64) Option {
 	return func(o *Options) {
 		o.MaxUploadSize = size
+	}
+}
+
+// WithMaxBodySize sets the maximum request body size in bytes.
+// WithMaxBodySize는 최대 요청 본문 크기(바이트)를 설정합니다.
+//
+// This limit applies to JSON, form data, and other request bodies.
+// 이 제한은 JSON, 폼 데이터 및 기타 요청 본문에 적용됩니다.
+//
+// Default: 10 MB
+// 기본값: 10 MB
+//
+// Example / 예제:
+//
+//	app := websvrutil.New(
+//	    websvrutil.WithMaxBodySize(5 * 1024 * 1024), // 5 MB
+//	)
+func WithMaxBodySize(size int64) Option {
+	return func(o *Options) {
+		o.MaxBodySize = size
 	}
 }

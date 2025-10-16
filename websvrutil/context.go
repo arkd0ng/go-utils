@@ -588,20 +588,68 @@ func (c *Context) RenderWithLayout(code int, layoutName, templateName string, da
 // BindJSON binds the request body as JSON to the provided struct.
 // BindJSON은 요청 본문을 JSON으로 제공된 구조체에 바인딩합니다.
 //
+// Body size limit / 본문 크기 제한:
+//   - Enforces maximum body size from App.options.MaxBodySize
+//   - App.options.MaxBodySize에서 최대 본문 크기 강제 적용
+//   - Default: 10 MB (configurable with WithMaxBodySize option)
+//   - 기본값: 10 MB (WithMaxBodySize 옵션으로 설정 가능)
+//   - Returns error if request body exceeds limit
+//   - 요청 본문이 제한을 초과하면 에러 반환
+//
+// Security considerations / 보안 고려사항:
+//   - Prevents denial-of-service attacks with large payloads
+//   - 대용량 페이로드를 사용한 서비스 거부 공격 방지
+//   - Uses io.LimitReader to enforce limit at read level
+//   - io.LimitReader를 사용하여 읽기 수준에서 제한 강제 적용
+//
 // Example / 예제:
 //
 //	var user User
 //	if err := ctx.BindJSON(&user); err != nil {
 //	    return ctx.Error(400, "Invalid JSON")
 //	}
+//
+// Custom limit / 커스텀 제한:
+//
+//	app := websvrutil.New(
+//	    websvrutil.WithMaxBodySize(5 * 1024 * 1024), // 5 MB
+//	)
 func (c *Context) BindJSON(obj interface{}) error {
 	if c.Request.Body == nil {
 		return fmt.Errorf("request body is nil")
 	}
 
-	decoder := json.NewDecoder(c.Request.Body)
+	// Get max body size from app options, default to 10 MB
+	// 앱 옵션에서 최대 본문 크기 가져오기, 기본값 10 MB
+	maxBodySize := int64(10 << 20) // 10 MB default
+	if c.app != nil && c.app.options != nil && c.app.options.MaxBodySize > 0 {
+		maxBodySize = c.app.options.MaxBodySize
+	}
+
+	// Use io.LimitReader to enforce body size limit
+	// io.LimitReader를 사용하여 본문 크기 제한 강제 적용
+	limitedReader := io.LimitReader(c.Request.Body, maxBodySize+1) // +1 to detect over-limit
+
+	decoder := json.NewDecoder(limitedReader)
 	if err := decoder.Decode(obj); err != nil {
+		// Check if error is due to body size limit
+		// 에러가 본문 크기 제한 때문인지 확인
+		if err == io.EOF || err == io.ErrUnexpectedEOF {
+			// Try to read one more byte to confirm size limit exceeded
+			// 크기 제한 초과 확인을 위해 한 바이트 더 읽기 시도
+			var buf [1]byte
+			if n, _ := limitedReader.Read(buf[:]); n > 0 {
+				return fmt.Errorf("request body too large (exceeds %d bytes)", maxBodySize)
+			}
+		}
 		return fmt.Errorf("failed to decode JSON: %w", err)
+	}
+
+	// Check if there's more data (body size exceeded)
+	// 더 많은 데이터가 있는지 확인 (본문 크기 초과)
+	var buf [1]byte
+	if n, _ := limitedReader.Read(buf[:]); n > 0 {
+		return fmt.Errorf("request body too large (exceeds %d bytes)", maxBodySize)
 	}
 
 	return nil

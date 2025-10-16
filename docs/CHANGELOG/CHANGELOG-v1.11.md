@@ -1,3 +1,20 @@
+## [v1.11.026] - 2025-10-16
+
+### Security / 보안
+- **Request Body Size Limits Added** / **요청 본문 크기 제한 추가**
+  - Added `MaxBodySize` option to `Options` struct (default: 10 MB)
+  - Added `WithMaxBodySize(size int64)` configuration function
+  - Enhanced `BindJSON()` to enforce body size limits using `io.LimitReader`
+  - Prevents denial-of-service attacks with large JSON payloads
+  - Returns descriptive error message when limit exceeded
+  - Configurable per-app via options
+
+### Documentation / 문서화
+- Enhanced `BindJSON()` documentation with security considerations
+- Added examples for custom body size limits
+
+---
+
 ## [v1.11.025] - 2025-10-16
 
 ### Refactoring / 리팩토링
