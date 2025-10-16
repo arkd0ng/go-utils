@@ -1,7 +1,7 @@
 # Websvrutil Package - User Manual / 사용자 매뉴얼
 
 **Package**: `github.com/arkd0ng/go-utils/websvrutil`  
-**Version**: v1.11.043  
+**Version**: ![go-utils version](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Farkd0ng%2Fgo-utils%2Fmain%2Fcfg%2Fapp.yaml&query=$.app.version&label=go-utils&color=blue&cacheSeconds=300)  
 **Last Updated**: 2025-10-16
 
 ---
