@@ -2,6 +2,8 @@ package maputil
 
 import (
 	"testing"
+
+	"github.com/arkd0ng/go-utils/logging"
 )
 
 // TestEntry tests the Entry type
@@ -25,8 +27,13 @@ func TestVersion(t *testing.T) {
 		t.Error("Version should not be empty")
 	}
 
-	if Version != "v1.9.018" {
-		t.Errorf("Expected version 'v1.9.018', got '%s'", Version)
+	expected := logging.TryLoadAppVersion()
+	if expected == "" {
+		expected = "unknown"
+	}
+
+	if Version != expected {
+		t.Errorf("Expected version '%s', got '%s'", expected, Version)
 	}
 }
 

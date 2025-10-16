@@ -21,6 +21,7 @@
 //  7. Predicates (6 functions) - All, Any, None, AllEqual, ContainsAll, IsSortedBy
 //  8. Utilities (13 functions) - ForEach, ForEachIndexed, Join, Clone, Fill, Insert, Remove, RemoveAll, Shuffle, Zip, Unzip, Window, Tap
 //  9. Combinatorial (2 functions) - Permutations, Combinations
+//
 // 10. Statistics (8 functions) - Median, Mode, Frequencies, Percentile, StandardDeviation, Variance, MostCommon, LeastCommon
 // 11. Diff/Comparison (4 functions) - Diff, DiffBy, EqualUnordered, HasDuplicates
 // 12. Index-based (3 functions) - FindIndices, AtIndices, RemoveIndices
@@ -91,7 +92,8 @@
 //
 // # Version / 버전
 //
-// Current version: v1.7.x
+// Current version is loaded automatically from cfg/app.yaml.
+// 현재 버전은 cfg/app.yaml에서 자동으로 로드됩니다.
 //
 // For more information, see:
 //   - Package README: https://github.com/arkd0ng/go-utils/tree/main/sliceutil
@@ -103,11 +105,23 @@ import (
 	"math/rand"
 	"sync"
 	"time"
+
+	"github.com/arkd0ng/go-utils/logging"
 )
 
-// Version is the current package version.
-// Version은 현재 패키지 버전입니다.
-const Version = "1.7.024"
+// Version is the current package version loaded from cfg/app.yaml.
+// Version은 cfg/app.yaml에서 로드되는 현재 패키지 버전입니다.
+var Version = getVersion()
+
+// getVersion loads the application version from cfg/app.yaml.
+// getVersion은 cfg/app.yaml에서 애플리케이션 버전을 로드합니다.
+func getVersion() string {
+	version := logging.TryLoadAppVersion()
+	if version == "" {
+		return "unknown"
+	}
+	return version
+}
 
 // Global random number generator for thread-safe random operations
 // 스레드 안전 랜덤 작업을 위한 전역 랜덤 번호 생성기

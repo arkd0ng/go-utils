@@ -1,3 +1,12 @@
+## [v1.11.037] - 2025-10-16
+
+### Changed / 변경
+- Updated `cfg/app.yaml` version to v1.11.037 / `cfg/app.yaml` 버전을 v1.11.037로 업데이트
+- Modified `fileutil`, `sliceutil`, and `websvrutil` packages to load version information from `cfg/app.yaml` automatically / `fileutil`, `sliceutil`, `websvrutil` 패키지가 `cfg/app.yaml`에서 버전 정보를 자동으로 로드하도록 수정
+- Aligned package tests to expect the dynamically loaded version value / 패키지 테스트가 동적으로 로드된 버전 값을 기대하도록 정렬
+
+---
+
 ## [v1.11.036] - 2025-10-16
 
 ### Documentation / 문서화

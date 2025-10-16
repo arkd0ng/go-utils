@@ -2,6 +2,8 @@ package sliceutil
 
 import (
 	"testing"
+
+	"github.com/arkd0ng/go-utils/logging"
 )
 
 // TestPackageVersion tests the package version constant.
@@ -11,7 +13,10 @@ func TestPackageVersion(t *testing.T) {
 		t.Error("Version constant should not be empty")
 	}
 
-	expected := "1.7.024"
+	expected := logging.TryLoadAppVersion()
+	if expected == "" {
+		expected = "unknown"
+	}
 	if Version != expected {
 		t.Errorf("Version = %v, want %v", Version, expected)
 	}

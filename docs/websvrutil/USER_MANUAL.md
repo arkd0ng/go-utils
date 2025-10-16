@@ -1,7 +1,7 @@
 # Websvrutil Package - User Manual / 사용자 매뉴얼
 
-**Package**: `github.com/arkd0ng/go-utils/websvrutil`
-**Version**: v1.11.023
+**Package**: `github.com/arkd0ng/go-utils/websvrutil`  
+**Version**: v1.11.028  
 **Last Updated**: 2025-10-16
 
 ---
@@ -10,69 +10,39 @@
 
 1. [Introduction / 소개](#introduction--소개)
 2. [Installation / 설치](#installation--설치)
-3. [Quick Start / 빠른 시작](#quick-start--빠른-시작)
-4. [Core Concepts / 핵심 개념](#core-concepts--핵심-개념)
+3. [Quick Start / 빠른-시작](#quick-start--빠른-시작)
+4. [Application Setup / 애플리케이션-설정](#application-setup--애플리케이션-설정)
 5. [Routing / 라우팅](#routing--라우팅)
-6. [Request Handling / 요청 처리](#request-handling--요청-처리)
-7. [Response Handling / 응답 처리](#response-handling--응답-처리)
+6. [Context Helpers / 컨텍스트-헬퍼](#context-helpers--컨텍스트-헬퍼)
+7. [Responses / 응답](#responses--응답)
 8. [Middleware / 미들웨어](#middleware--미들웨어)
-9. [Template Rendering / 템플릿 렌더링](#template-rendering--템플릿-렌더링)
-10. [Session Management / 세션 관리](#session-management--세션-관리)
-11. [Static Files / 정적 파일](#static-files--정적-파일)
-12. [File Upload / 파일 업로드](#file-upload--파일-업로드)
-13. [Error Handling / 에러 처리](#error-handling--에러-처리)
-14. [Graceful Shutdown / 우아한 종료](#graceful-shutdown--우아한-종료)
-15. [Best Practices / 모범 사례](#best-practices--모범-사례)
-16. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
-17. [FAQ](#faq)
+9. [Template Rendering / 템플릿-렌더링](#template-rendering--템플릿-렌더링)
+10. [Session Management / 세션-관리](#session-management--세션-관리)
+11. [File Handling & Static Assets / 파일-처리-및-정적-자산](#file-handling--static-assets--파일-처리-및-정적-자산)
+12. [Graceful Shutdown / 우아한-종료](#graceful-shutdown--우아한-종료)
+13. [FAQ](#faq)
 
 ---
 
 ## Introduction / 소개
 
-The `websvrutil` package provides a lightweight, developer-friendly HTTP framework for Go applications. It offers an intuitive API similar to popular web frameworks while maintaining the simplicity and performance of Go's standard library.
+`websvrutil` provides a lightweight HTTP toolkit that layers developer-friendly helpers on top of Go's `net/http`.  
+`websvrutil`은 Go의 `net/http` 위에 개발자 친화적인 헬퍼를 더한 경량 HTTP 툴킷을 제공합니다.
 
-`websvrutil` 패키지는 Go 애플리케이션을 위한 가볍고 개발자 친화적인 HTTP 프레임워크를 제공합니다. 인기 있는 웹 프레임워크와 유사한 직관적인 API를 제공하면서도 Go 표준 라이브러리의 단순성과 성능을 유지합니다.
+It focuses on practical productivity: concise routing, convenient request/response helpers, and smart defaults.  
+이 패키지는 실용적인 생산성에 초점을 맞추어 간결한 라우팅, 편리한 요청/응답 헬퍼, 스마트한 기본값을 제공합니다.
 
-### Key Features / 주요 기능
+### Key Capabilities / 주요 기능
 
-- **Simple Routing**: HTTP method-based routing with path parameters
-- **Request Binding**: Automatic JSON/XML parsing and validation
-- **Template Rendering**: Built-in HTML template support
-- **Middleware Support**: Chainable middleware system
-- **Session Management**: Cookie-based sessions with automatic cleanup
-- **Static File Serving**: Efficient static file and directory serving
-- **File Upload**: Multipart form handling with file upload support
-- **Error Handling**: Standardized error responses
-- **Graceful Shutdown**: Signal-based graceful server shutdown
-
-- **간단한 라우팅**: HTTP 메서드 기반 라우팅과 경로 매개변수
-- **요청 바인딩**: 자동 JSON/XML 파싱 및 검증
-- **템플릿 렌더링**: 내장 HTML 템플릿 지원
-- **미들웨어 지원**: 체이닝 가능한 미들웨어 시스템
-- **세션 관리**: 자동 정리 기능이 있는 쿠키 기반 세션
-- **정적 파일 서빙**: 효율적인 정적 파일 및 디렉토리 서빙
-- **파일 업로드**: 파일 업로드 지원이 있는 멀티파트 폼 처리
-- **에러 처리**: 표준화된 에러 응답
-- **우아한 종료**: 신호 기반 우아한 서버 종료
-
-### Design Philosophy / 설계 철학
-
-The websvrutil package follows the **"Developer Convenience First"** philosophy:
-
-websvrutil 패키지는 **"개발자 편의 우선"** 철학을 따릅니다:
-
-1. **Intuitive API**: Method names and signatures that are easy to remember
-2. **Minimal Boilerplate**: Reduce repetitive code patterns
-3. **Safe Defaults**: Sensible defaults that work for most use cases
-4. **Type Safety**: Leverage Go's type system for compile-time safety
-5. **Performance**: Built on top of Go's standard `net/http` for performance
-
-1. **직관적인 API**: 기억하기 쉬운 메서드 이름과 시그니처
-2. **최소한의 보일러플레이트**: 반복적인 코드 패턴 감소
-3. **안전한 기본값**: 대부분의 사용 사례에 적합한 합리적인 기본값
-4. **타입 안전성**: 컴파일 타임 안전성을 위한 Go 타입 시스템 활용
-5. **성능**: 성능을 위해 Go의 표준 `net/http` 위에 구축
+- **App lifecycle** helpers (`New`, `Run`, `RunWithGracefulShutdown`) with option-based configuration / 옵션 기반 설정이 가능한 **애플리케이션 생명주기** 헬퍼 (`New`, `Run`, `RunWithGracefulShutdown`)
+- **Router & Groups** supporting GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD, and nested prefixes / GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD 및 중첩 접두사를 지원하는 **라우터와 그룹**
+- **Context helpers** for params, queries, headers, cookies, and request-scoped storage / 파라미터, 쿼리, 헤더, 쿠키, 요청 범위 저장소를 위한 **컨텍스트 헬퍼**
+- **Binding utilities** (`Bind`, `BindJSON`, `BindForm`, `BindQuery`) honoring size limits / 크기 제한을 준수하는 **데이터 바인딩 유틸리티** (`Bind`, `BindJSON`, `BindForm`, `BindQuery`)
+- **Response helpers** for text, JSON (pretty/indent), HTML string, XML string, files, and standardized errors / 텍스트, JSON(예쁘게/들여쓰기), HTML 문자열, XML 문자열, 파일, 표준화된 에러 응답을 위한 **응답 헬퍼**
+- **Template engine** with layouts, custom funcs, and optional auto-reload / 레이아웃, 사용자 정의 함수, 선택적 자동 재로드가 가능한 **템플릿 엔진**
+- **Session store** using secure cookie IDs with configurable policies / 구성 가능한 정책을 가진 보안 쿠키 ID 기반 **세션 저장소**
+- **Built-in middleware** including recovery, logging, CORS, request ID, timeout, auth, rate limiting, compression, security headers, redirects, and CSRF / Recovery, Logging, CORS, Request ID, Timeout, 인증, 레이트 리밋, 압축, 보안 헤더, 리다이렉트, CSRF 등을 포함한 **내장 미들웨어**
+- **File helpers** for multipart uploads and static directory serving / 멀티파트 업로드와 정적 디렉터리 제공을 위한 **파일 헬퍼**
 
 ---
 
@@ -80,16 +50,15 @@ websvrutil 패키지는 **"개발자 편의 우선"** 철학을 따릅니다:
 
 ### Prerequisites / 전제 조건
 
-- Go 1.18 or higher (for generics support)
-- Go 1.18 이상 (제네릭 지원)
+- Go 1.18 or newer (module-aware builds) / Go 1.18 이상 (모듈 기반 빌드)
 
-### Installing the Package / 패키지 설치
+### Install / 설치 방법
 
 ```bash
 go get github.com/arkd0ng/go-utils/websvrutil
 ```
 
-### Importing / 임포트
+### Import / 임포트
 
 ```go
 import "github.com/arkd0ng/go-utils/websvrutil"
@@ -99,1956 +68,393 @@ import "github.com/arkd0ng/go-utils/websvrutil"
 
 ## Quick Start / 빠른 시작
 
-### Example 1: Hello World / 예제 1: Hello World
+The snippet below spins up a basic server with logging and recovery enabled.  
+아래 예제는 로깅과 복구 미들웨어를 활성화한 기본 서버를 실행합니다.
 
 ```go
 package main
 
 import (
+    "net/http"
+
     "github.com/arkd0ng/go-utils/websvrutil"
 )
 
 func main() {
-    // Create new app / 새 앱 생성
-    app := websvrutil.New()
+    app := websvrutil.New(
+        websvrutil.WithLogger(true),  // Enable logging middleware / 로깅 미들웨어 활성화
+        websvrutil.WithRecovery(true),// Enable recovery middleware / 복구 미들웨어 활성화
+    )
 
-    // Define route / 라우트 정의
     app.GET("/", func(w http.ResponseWriter, r *http.Request) {
         ctx := websvrutil.GetContext(r)
-        ctx.String(200, "Hello, World!")
+        ctx.Text(200, "Hello, websvrutil!") // Plain text response / 일반 텍스트 응답
     })
 
-    // Start server / 서버 시작
-    app.Run(":8080")
+    if err := app.Run(":8080"); err != nil {
+        panic(err)
+    }
 }
 ```
 
-### Example 2: JSON API / 예제 2: JSON API
-
-```go
-package main
-
-import (
-    "github.com/arkd0ng/go-utils/websvrutil"
-)
-
-type User struct {
-    ID   int    `json:"id"`
-    Name string `json:"name"`
-}
-
-func main() {
-    app := websvrutil.New()
-
-    // GET endpoint / GET 엔드포인트
-    app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
-        ctx := websvrutil.GetContext(r)
-        id := ctx.Param("id")
-
-        user := User{ID: 1, Name: "John Doe"}
-        ctx.JSON(200, user)
-    })
-
-    // POST endpoint / POST 엔드포인트
-    app.POST("/users", func(w http.ResponseWriter, r *http.Request) {
-        ctx := websvrutil.GetContext(r)
-
-        var user User
-        if err := ctx.BindJSON(&user); err != nil {
-            ctx.ErrorJSON(400, "Invalid JSON")
-            return
-        }
-
-        ctx.SuccessJSON(201, "User created", user)
-    })
-
-    app.Run(":8080")
-}
-```
-
-### Example 3: Template Rendering / 예제 3: 템플릿 렌더링
-
-```go
-package main
-
-import (
-    "github.com/arkd0ng/go-utils/websvrutil"
-)
-
-func main() {
-    app := websvrutil.New()
-
-    // Load templates / 템플릿 로드
-    app.LoadHTMLGlob("templates/*")
-
-    // Render template / 템플릿 렌더링
-    app.GET("/", func(w http.ResponseWriter, r *http.Request) {
-        ctx := websvrutil.GetContext(r)
-        ctx.HTML(200, "index.html", map[string]interface{}{
-            "Title": "Home Page",
-            "Name":  "John",
-        })
-    })
-
-    app.Run(":8080")
-}
-```
+Create the app with `New`, register routes, and call `Run` to start listening.  
+`New`로 앱을 만들고 라우트를 등록한 뒤 `Run`을 호출하여 서버를 실행합니다.
 
 ---
 
-## Core Concepts / 핵심 개념
+## Application Setup / 애플리케이션 설정
 
-### App / 앱
-
-The `App` is the main application instance that handles routing, middleware, and server lifecycle.
-
-`App`은 라우팅, 미들웨어, 서버 생명주기를 처리하는 메인 애플리케이션 인스턴스입니다.
+`New` accepts functional options so you can adjust server behavior without boilerplate.  
+`New` 함수는 함수형 옵션을 받아 보일러플레이트 없이 서버 동작을 조정할 수 있습니다.
 
 ```go
-// Create new app / 새 앱 생성
-app := websvrutil.New()
-
-// Configure app / 앱 설정
-app.LoadHTMLGlob("templates/*")
-app.Static("/static", "./public")
-
-// Start server / 서버 시작
-app.Run(":8080")
+app := websvrutil.New(
+    websvrutil.WithReadTimeout(30*time.Second),   // Read timeout / 읽기 타임아웃
+    websvrutil.WithWriteTimeout(30*time.Second),  // Write timeout / 쓰기 타임아웃
+    websvrutil.WithIdleTimeout(2*time.Minute),    // Idle timeout / 유휴 타임아웃
+    websvrutil.WithTemplateDir("templates"),     // Template directory / 템플릿 디렉터리
+    websvrutil.WithStaticDir("./public"),        // Static file directory / 정적 파일 디렉터리
+    websvrutil.WithStaticPrefix("/assets"),      // Static URL prefix / 정적 URL 접두사
+    websvrutil.WithAutoReload(true),              // Template auto-reload / 템플릿 자동 재로드
+    websvrutil.WithMaxBodySize(5<<20),            // Max body size / 최대 본문 크기 (5MB)
+    websvrutil.WithMaxUploadSize(32<<20),         // Max upload size / 최대 업로드 크기 (32MB)
+)
 ```
 
-### Context / 컨텍스트
+- `WithLogger` and `WithRecovery` toggle bundled middleware on or off.  
+- `WithTemplateDir` creates a `TemplateEngine` so templates can load on demand.  
+- `WithMaxBodySize` and `WithMaxUploadSize` enforce limits during binding and uploads.  
 
-The `Context` provides access to the request and response, along with helper methods for common operations.
+- `WithLogger`와 `WithRecovery`는 내장 미들웨어를 켜거나 끕니다.  
+- `WithTemplateDir`는 템플릿을 필요할 때 로드할 수 있도록 `TemplateEngine`을 생성합니다.  
+- `WithMaxBodySize`와 `WithMaxUploadSize`는 바인딩 및 업로드 시 크기 제한을 적용합니다.  
 
-`Context`는 요청과 응답에 대한 액세스를 제공하며 일반적인 작업을 위한 헬퍼 메서드를 제공합니다.
-
-```go
-app.GET("/user/:id", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Get path parameter / 경로 매개변수 가져오기
-    id := ctx.Param("id")
-
-    // Get query parameter / 쿼리 매개변수 가져오기
-    name := ctx.Query("name")
-
-    // Send JSON response / JSON 응답 전송
-    ctx.JSON(200, map[string]string{"id": id, "name": name})
-})
-```
-
-### Router / 라우터
-
-The `Router` manages route registration and matching.
-
-`Router`는 라우트 등록 및 매칭을 관리합니다.
+Add middleware with `Use` in registration order (first added = innermost).  
+`Use`로 미들웨어를 추가하면 등록 순서대로 적용되며, 먼저 추가한 미들웨어가 안쪽에서 실행됩니다.
 
 ```go
-// HTTP method-based routing / HTTP 메서드 기반 라우팅
-app.GET("/users", listUsers)
-app.POST("/users", createUser)
-app.PUT("/users/:id", updateUser)
-app.DELETE("/users/:id", deleteUser)
-
-// Route groups / 라우트 그룹
-api := app.Group("/api")
-api.GET("/users", listUsers)
-api.GET("/posts", listPosts)
+app.Use(
+    websvrutil.RequestID(),              // Request ID injection / 요청 ID 삽입
+    websvrutil.Logger(),                 // Access logging / 접근 로깅
+    websvrutil.RecoveryWithConfig(websvrutil.RecoveryConfig{LogStack: true}),
+    websvrutil.CORSWithConfig(websvrutil.CORSConfig{AllowOrigins: []string{"https://example.com"}}),
+)
 ```
 
 ---
 
 ## Routing / 라우팅
 
-### Basic Routing / 기본 라우팅
+All HTTP verbs are exposed as fluent helpers on `App`.  
+모든 HTTP 메서드는 `App`의 플루언트 헬퍼로 제공됩니다.
 
 ```go
-app := websvrutil.New()
-
-// GET request / GET 요청
-app.GET("/", homeHandler)
-
-// POST request / POST 요청
-app.POST("/submit", submitHandler)
-
-// PUT request / PUT 요청
-app.PUT("/update", updateHandler)
-
-// DELETE request / DELETE 요청
-app.DELETE("/delete", deleteHandler)
-
-// PATCH request / PATCH 요청
-app.PATCH("/patch", patchHandler)
-
-// HEAD request / HEAD 요청
-app.HEAD("/head", headHandler)
-
-// OPTIONS request / OPTIONS 요청
-app.OPTIONS("/options", optionsHandler)
+app.GET("/status", statusHandler)
+app.POST("/users", createUser)
+app.PUT("/users/:id", updateUser)
+app.PATCH("/users/:id", patchUser)
+app.DELETE("/users/:id", deleteUser)
+app.OPTIONS("/info", optionsHandler)
+app.HEAD("/health", headHandler)
 ```
 
-### Path Parameters / 경로 매개변수
+Route groups help share prefixes and middleware.  
+라우트 그룹을 사용하면 접두사와 미들웨어를 쉽게 공유할 수 있습니다.
 
 ```go
-// Single parameter / 단일 매개변수
-app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    id := ctx.Param("id")
-    ctx.String(200, "User ID: %s", id)
-})
+api := app.Group("/api")
+api.GET("/ping", pingHandler)
 
-// Multiple parameters / 다중 매개변수
-app.GET("/posts/:category/:id", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    category := ctx.Param("category")
-    id := ctx.Param("id")
-    ctx.String(200, "Category: %s, ID: %s", category, id)
-})
+v1 := api.Group("/v1")
+v1.Use(authMiddleware)
+v1.GET("/profile", profileHandler)
 ```
 
-### Query Parameters / 쿼리 매개변수
+Customize the not-found handler or expose static directories directly.  
+사용자 정의 404 핸들러를 등록하거나 정적 디렉터리를 직접 노출할 수 있습니다.
 
 ```go
-// GET /search?q=golang&page=2
-app.GET("/search", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Get single query parameter / 단일 쿼리 매개변수 가져오기
-    query := ctx.Query("q")
-
-    // Get with default value / 기본값과 함께 가져오기
-    page := ctx.DefaultQuery("page", "1")
-
-    ctx.String(200, "Query: %s, Page: %s", query, page)
+app.NotFound(func(w http.ResponseWriter, r *http.Request) {
+    http.Error(w, "resource not found", http.StatusNotFound)
 })
-```
 
-### Route Groups / 라우트 그룹
-
-```go
-app := websvrutil.New()
-
-// API v1 group / API v1 그룹
-v1 := app.Group("/api/v1")
-{
-    v1.GET("/users", listUsersV1)
-    v1.POST("/users", createUserV1)
-    v1.GET("/users/:id", getUserV1)
-}
-
-// API v2 group / API v2 그룹
-v2 := app.Group("/api/v2")
-{
-    v2.GET("/users", listUsersV2)
-    v2.POST("/users", createUserV2)
-    v2.GET("/users/:id", getUserV2)
-}
-
-// Admin group / 관리자 그룹
-admin := app.Group("/admin")
-{
-    admin.GET("/dashboard", adminDashboard)
-    admin.GET("/users", adminUsers)
-}
+app.Static("/static", "./public")
 ```
 
 ---
 
-## Request Handling / 요청 처리
+## Context Helpers / 컨텍스트 헬퍼
 
-### Reading Request Body / 요청 본문 읽기
+Retrieve the request-scoped `Context` inside handlers for convenience.  
+핸들러 내부에서 요청 범위의 `Context`를 가져와 편리하게 사용할 수 있습니다.
 
-#### JSON Binding / JSON 바인딩
+```go
+func profileHandler(w http.ResponseWriter, r *http.Request) {
+    ctx := websvrutil.GetContext(r)
+
+    id := ctx.Param("id")                          // Path parameter / 경로 매개변수
+    verbose := ctx.Query("verbose")                // Query parameter / 쿼리 매개변수
+    lang := ctx.QueryDefault("lang", "en")        // Default query / 기본 쿼리값
+
+    ctx.Set("userID", id)                          // Store arbitrary data / 임의 데이터 저장
+    storedID, _ := ctx.Get("userID")               // Retrieve stored data / 저장된 데이터 검색
+
+    ctx.JSON(200, map[string]interface{}{
+        "id":       id,
+        "verbose": verbose,
+        "lang":    lang,
+        "agent":   ctx.UserAgent(),               // User-Agent header / 사용자 에이전트 헤더
+        "ip":      ctx.ClientIP(),                // Client IP detection / 클라이언트 IP 확인
+        "stored":  storedID,
+    })
+}
+```
+
+Popular helpers include `Param`, `Params`, `Method`, `Path`, `Query`, `QueryDefault`, `Header`, `SetHeader`, `AddHeader`, `HeaderExists`, `Cookie`, `CookieValue`, `GetCookie`, `SetCookie`, `SetCookieAdvanced`, `DeleteCookie`, `Set`, `Get`, `MustGet`, and typed getters (`GetString`, `GetInt`, `GetBool`, `GetInt64`, `GetFloat64`, `GetStringSlice`, `GetStringMap`).  
+자주 사용하는 헬퍼로는 `Param`, `Params`, `Method`, `Path`, `Query`, `QueryDefault`, `Header`, `SetHeader`, `AddHeader`, `HeaderExists`, `Cookie`, `CookieValue`, `GetCookie`, `SetCookie`, `SetCookieAdvanced`, `DeleteCookie`, `Set`, `Get`, `MustGet`, 그리고 `GetString`, `GetInt`, `GetBool`, `GetInt64`, `GetFloat64`, `GetStringSlice`, `GetStringMap`와 같은 타입별 getter가 있습니다.
+
+### Binding Data / 데이터 바인딩
+
+`Bind` chooses an appropriate strategy based on `Content-Type`, while explicit helpers let you force a format.  
+`Bind`는 `Content-Type`에 따라 적절한 전략을 선택하며, 명시적 헬퍼를 사용하면 원하는 포맷을 강제할 수 있습니다.
 
 ```go
 type User struct {
-    Name  string `json:"name" binding:"required"`
-    Email string `json:"email" binding:"required,email"`
-    Age   int    `json:"age" binding:"gte=0,lte=130"`
+    Name  string `json:"name" form:"name"`
+    Email string `json:"email" form:"email"`
 }
 
 app.POST("/users", func(w http.ResponseWriter, r *http.Request) {
     ctx := websvrutil.GetContext(r)
 
-    var user User
-    if err := ctx.BindJSON(&user); err != nil {
-        ctx.ErrorJSON(400, "Invalid JSON: " + err.Error())
+    var payload User
+    if err := ctx.Bind(&payload); err != nil {          // Auto-detect binding / 자동 바인딩 선택
+        ctx.ErrorJSON(http.StatusBadRequest, err.Error())
         return
     }
 
-    ctx.SuccessJSON(201, "User created", user)
+    ctx.SuccessJSON(http.StatusCreated, "created", payload) // Standard success payload / 표준 성공 응답
 })
 ```
 
-#### XML Binding / XML 바인딩
-
-```go
-type Product struct {
-    XMLName xml.Name `xml:"product"`
-    Name    string   `xml:"name"`
-    Price   float64  `xml:"price"`
-}
-
-app.POST("/products", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    var product Product
-    if err := ctx.BindXML(&product); err != nil {
-        ctx.ErrorJSON(400, "Invalid XML: " + err.Error())
-        return
-    }
-
-    ctx.XML(201, product)
-})
-```
-
-### Request Headers / 요청 헤더
-
-```go
-app.GET("/headers", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Get single header / 단일 헤더 가져오기
-    userAgent := ctx.GetHeader("User-Agent")
-
-    // Get all headers / 모든 헤더 가져오기
-    headers := ctx.GetAllHeaders()
-
-    // Check if header exists / 헤더 존재 확인
-    hasAuth := ctx.HasHeader("Authorization")
-
-    ctx.JSON(200, map[string]interface{}{
-        "user_agent": userAgent,
-        "headers":    headers,
-        "has_auth":   hasAuth,
-    })
-})
-```
-
-### Request Method Helpers / 요청 메서드 헬퍼
-
-```go
-app.Any("/endpoint", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Check request method / 요청 메서드 확인
-    if ctx.IsGET() {
-        ctx.String(200, "GET request")
-    } else if ctx.IsPOST() {
-        ctx.String(200, "POST request")
-    } else if ctx.IsPUT() {
-        ctx.String(200, "PUT request")
-    }
-
-    // Check request type / 요청 타입 확인
-    if ctx.IsAjax() {
-        ctx.String(200, "AJAX request")
-    }
-
-    if ctx.IsWebSocket() {
-        ctx.String(200, "WebSocket upgrade request")
-    }
-})
-```
-
-### Content Negotiation / 컨텐츠 협상
-
-```go
-app.GET("/data", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    data := map[string]interface{}{
-        "message": "Hello",
-        "value":   123,
-    }
-
-    // Check Accept header / Accept 헤더 확인
-    if ctx.AcceptsJSON() {
-        ctx.JSON(200, data)
-    } else if ctx.AcceptsXML() {
-        ctx.XML(200, data)
-    } else if ctx.AcceptsHTML() {
-        ctx.HTML(200, "data.html", data)
-    } else {
-        ctx.String(200, "Unsupported content type")
-    }
-})
-```
+`BindJSON`, `BindForm`, and `BindQuery` are available when you need explicit control.  
+명시적 제어가 필요하면 `BindJSON`, `BindForm`, `BindQuery`를 사용할 수 있습니다.
 
 ---
 
-## Response Handling / 응답 처리
+## Responses / 응답
 
-### String Response / 문자열 응답
+Use the context to manage status codes and write response bodies.  
+컨텍스트를 사용해 상태 코드를 설정하고 응답 본문을 작성합니다.
 
 ```go
-app.GET("/hello", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.String(200, "Hello, World!")
-})
-
-app.GET("/formatted", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    name := "John"
-    ctx.String(200, "Hello, %s!", name)
-})
+ctx.Status(201)
+ctx.Text(201, "created")
+ctx.Textf(200, "Hello %s", name)
+ctx.JSON(200, payload)
+ctx.JSONIndent(200, payload, "", "  ")
+ctx.JSONPretty(200, payload)
+ctx.HTML(200, "<h1>Hi</h1>")
+ctx.XML(200, "<note>OK</note>")
 ```
 
-### JSON Response / JSON 응답
+`Write`, `WriteString`, `File`, and `FileAttachment` cover byte streaming and downloads.  
+`Write`, `WriteString`, `File`, `FileAttachment`을 사용하면 바이트 스트리밍과 다운로드를 처리할 수 있습니다.
+
+Standardized helpers produce consistent error payloads.  
+표준화된 헬퍼는 일관된 에러 페이로드를 생성합니다.
 
 ```go
-app.GET("/json", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Simple JSON / 간단한 JSON
-    ctx.JSON(200, map[string]string{
-        "message": "Success",
-    })
-})
-
-app.GET("/user", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Struct to JSON / 구조체를 JSON으로
-    user := User{ID: 1, Name: "John"}
-    ctx.JSON(200, user)
-})
-```
-
-### XML Response / XML 응답
-
-```go
-type Book struct {
-    XMLName xml.Name `xml:"book"`
-    Title   string   `xml:"title"`
-    Author  string   `xml:"author"`
-}
-
-app.GET("/xml", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    book := Book{Title: "Go Programming", Author: "John Doe"}
-    ctx.XML(200, book)
-})
-```
-
-### HTML Response / HTML 응답
-
-```go
-app.GET("/page", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    ctx.HTML(200, "page.html", map[string]interface{}{
-        "Title":   "My Page",
-        "Message": "Welcome!",
-    })
-})
-```
-
-### File Response / 파일 응답
-
-```go
-// Send file inline / 파일 인라인 전송
-app.GET("/view", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.File("./files/document.pdf")
-})
-
-// Send file as attachment / 파일을 첨부 파일로 전송
-app.GET("/download", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.FileAttachment("./files/report.pdf", "monthly-report.pdf")
-})
-```
-
-### Data Response / 데이터 응답
-
-```go
-app.GET("/binary", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    data := []byte{0x48, 0x65, 0x6c, 0x6c, 0x6f} // "Hello"
-    ctx.Data(200, "application/octet-stream", data)
-})
-```
-
-### Response Headers / 응답 헤더
-
-```go
-app.GET("/headers", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Set single header / 단일 헤더 설정
-    ctx.SetHeader("X-Custom-Header", "value")
-
-    // Set multiple headers / 다중 헤더 설정
-    ctx.SetHeaders(map[string]string{
-        "X-Request-ID": "12345",
-        "X-Version":    "1.0",
-    })
-
-    ctx.String(200, "Headers set")
-})
-```
-
-### Error Responses / 에러 응답
-
-```go
-app.GET("/error", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Standard error response / 표준 에러 응답
-    ctx.ErrorJSON(400, "Invalid request")
-    // {"error":"Invalid request","status":400,"success":false}
-})
-
-app.GET("/success", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Success response / 성공 응답
-    ctx.SuccessJSON(200, "Operation completed", map[string]int{"count": 5})
-    // {"message":"Operation completed","data":{"count":5},"status":200,"success":true}
-})
-
-// HTTP error shortcuts / HTTP 에러 단축
-app.GET("/not-found", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.NotFound() // 404
-})
-
-app.GET("/unauthorized", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.Unauthorized() // 401
-})
-
-app.GET("/forbidden", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.Forbidden() // 403
-})
-
-app.GET("/bad-request", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.BadRequest() // 400
-})
-
-app.GET("/server-error", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.InternalServerError() // 500
-})
-```
-
-### Redirect / 리다이렉트
-
-```go
-app.GET("/redirect", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.Redirect(302, "/new-location")
-})
+ctx.AbortWithStatus(http.StatusUnauthorized)
+ctx.AbortWithError(http.StatusBadRequest, "invalid request")
+ctx.AbortWithJSON(http.StatusForbidden, map[string]string{"error": "forbidden"})
+ctx.ErrorJSON(http.StatusNotFound, "missing resource")
+ctx.SuccessJSON(http.StatusOK, "ok", data)
+ctx.NotFound()
+ctx.Unauthorized()
+ctx.Forbidden()
+ctx.BadRequest()
+ctx.InternalServerError()
 ```
 
 ---
 
 ## Middleware / 미들웨어
 
-### Using Middleware / 미들웨어 사용
+Register middleware with `Use`; the last added middleware executes first.  
+`Use`로 미들웨어를 등록하면 마지막에 추가한 미들웨어가 가장 먼저 실행됩니다.
 
 ```go
-// Global middleware / 전역 미들웨어
-app.Use(LoggerMiddleware)
-app.Use(RecoveryMiddleware)
-
-// Route-specific middleware / 라우트별 미들웨어
-app.GET("/admin", AuthMiddleware, adminHandler)
-
-// Group middleware / 그룹 미들웨어
-admin := app.Group("/admin")
-admin.Use(AuthMiddleware)
-admin.GET("/dashboard", dashboardHandler)
+app.Use(
+    websvrutil.RequestIDWithConfig(websvrutil.RequestIDConfig{HeaderName: "X-Trace-ID"}),
+    websvrutil.Timeout(5*time.Second),
+    websvrutil.LoggerWithConfig(websvrutil.LoggerConfig{IncludeHeaders: true}),
+)
 ```
 
-### Logger Middleware / 로거 미들웨어
+Built-in middleware overview / 내장 미들웨어 개요:
 
-```go
-func LoggerMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        start := time.Now()
+- `Recovery`, `RecoveryWithConfig` – panic safety and custom logging / 패닉 안전성과 커스텀 로깅 지원
+- `Logger`, `LoggerWithConfig` – request/response logging / 요청/응답 로깅
+- `CORS`, `CORSWithConfig` – cross-origin access control / 교차 출처 접근 제어
+- `RequestID`, `RequestIDWithConfig` – request ID propagation / 요청 ID 전파
+- `Timeout`, `TimeoutWithConfig` – per-request deadlines / 요청별 데드라인 설정
+- `BasicAuth`, `BasicAuthWithConfig` – simple HTTP authentication / 간단한 HTTP 인증
+- `RateLimiter`, `RateLimiterWithConfig` – token bucket rate limiting / 토큰 버킷 레이트 리밋
+- `Compression`, `CompressionWithConfig` – gzip compression / gzip 압축
+- `SecureHeaders`, `SecureHeadersWithConfig` – security header defaults / 보안 헤더 기본값
+- `BodyLimit`, `BodyLimitWithConfig` – middleware-level body cap / 미들웨어 수준 본문 제한
+- `Static`, `StaticWithConfig` – static directory serving / 정적 디렉터리 제공
+- `Redirect`, `RedirectWithConfig`, `HTTPSRedirect`, `WWWRedirect` – redirect helpers / 리다이렉트 헬퍼
+- `CSRF`, `CSRFWithConfig` – CSRF token issuance & validation / CSRF 토큰 발급 및 검증
 
-        // Call next handler / 다음 핸들러 호출
-        next.ServeHTTP(w, r)
-
-        // Log request / 요청 로그
-        duration := time.Since(start)
-        log.Printf("%s %s - %v", r.Method, r.URL.Path, duration)
-    })
-}
-
-app.Use(LoggerMiddleware)
-```
-
-### Recovery Middleware / 복구 미들웨어
-
-```go
-func RecoveryMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        defer func() {
-            if err := recover(); err != nil {
-                log.Printf("Panic: %v", err)
-                http.Error(w, "Internal Server Error", 500)
-            }
-        }()
-
-        next.ServeHTTP(w, r)
-    })
-}
-
-app.Use(RecoveryMiddleware)
-```
-
-### Authentication Middleware / 인증 미들웨어
-
-```go
-func AuthMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        ctx := websvrutil.GetContext(r)
-
-        // Check authorization header / 인증 헤더 확인
-        token := ctx.GetHeader("Authorization")
-        if token == "" {
-            ctx.Unauthorized()
-            return
-        }
-
-        // Validate token / 토큰 검증
-        if !isValidToken(token) {
-            ctx.Forbidden()
-            return
-        }
-
-        next.ServeHTTP(w, r)
-    })
-}
-
-app.GET("/protected", AuthMiddleware, protectedHandler)
-```
-
-### CORS Middleware / CORS 미들웨어
-
-```go
-func CORSMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        ctx := websvrutil.GetContext(r)
-
-        // Set CORS headers / CORS 헤더 설정
-        ctx.SetHeader("Access-Control-Allow-Origin", "*")
-        ctx.SetHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-        ctx.SetHeader("Access-Control-Allow-Headers", "Content-Type, Authorization")
-
-        // Handle preflight / 프리플라이트 처리
-        if r.Method == "OPTIONS" {
-            ctx.Status(204)
-            return
-        }
-
-        next.ServeHTTP(w, r)
-    })
-}
-
-app.Use(CORSMiddleware)
-```
+Custom middleware should match the same `func(http.Handler) http.Handler` signature.  
+사용자 정의 미들웨어도 `func(http.Handler) http.Handler` 시그니처를 따라야 합니다.
 
 ---
 
 ## Template Rendering / 템플릿 렌더링
 
-### Loading Templates / 템플릿 로드
+Initialize the template engine by specifying `WithTemplateDir` (and optionally enabling auto-reload).  
+`WithTemplateDir`를 지정하고 필요하다면 자동 재로드를 활성화하여 템플릿 엔진을 초기화합니다.
 
 ```go
-app := websvrutil.New()
+app := websvrutil.New(
+    websvrutil.WithTemplateDir("web/templates"),
+    websvrutil.WithAutoReload(true),
+)
 
-// Load all templates from directory / 디렉토리에서 모든 템플릿 로드
-app.LoadHTMLGlob("templates/*")
-
-// Load specific template files / 특정 템플릿 파일 로드
-app.LoadHTMLFiles("templates/index.html", "templates/about.html")
+if err := app.LoadTemplates("*.html"); err != nil {
+    log.Fatal(err)
+}
 ```
 
-### Rendering Templates / 템플릿 렌더링
-
-**Template file (templates/index.html):**
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{.Title}}</title>
-</head>
-<body>
-    <h1>Welcome, {{.Name}}!</h1>
-    <p>{{.Message}}</p>
-</body>
-</html>
-```
-
-**Go code:**
+Render templates inside handlers using `Render` or `RenderWithLayout`.  
+핸들러 내부에서는 `Render` 또는 `RenderWithLayout`을 사용해 템플릿을 렌더링합니다.
 
 ```go
 app.GET("/", func(w http.ResponseWriter, r *http.Request) {
     ctx := websvrutil.GetContext(r)
-
-    ctx.HTML(200, "index.html", map[string]interface{}{
-        "Title":   "Home Page",
-        "Name":    "John",
-        "Message": "Welcome to our website!",
-    })
+    if err := ctx.Render(http.StatusOK, "home.html", map[string]any{
+        "Title":   "Home",
+        "Message": "Welcome",
+    }); err != nil {
+        ctx.InternalServerError()
+    }
 })
 ```
 
-### Custom Template Functions / 커스텀 템플릿 함수
-
-```go
-// Add custom template functions / 커스텀 템플릿 함수 추가
-app.SetFuncMap(template.FuncMap{
-    "upper": strings.ToUpper,
-    "lower": strings.ToLower,
-    "formatDate": func(t time.Time) string {
-        return t.Format("2006-01-02")
-    },
-})
-
-app.LoadHTMLGlob("templates/*")
-```
-
-**Template usage:**
-
-```html
-<h1>{{upper .Title}}</h1>
-<p>Date: {{formatDate .CreatedAt}}</p>
-```
+Template engine features include layout directories, `AddTemplateFunc`, `AddTemplateFuncs`, `LoadTemplate`, `LoadTemplates`, `LoadAll`, `LoadLayout`, `LoadAllLayouts`, `ReloadTemplates`, `EnableAutoReload`, `DisableAutoReload`, and `IsAutoReloadEnabled`.  
+템플릿 엔진 기능에는 레이아웃 디렉터리, `AddTemplateFunc`, `AddTemplateFuncs`, `LoadTemplate`, `LoadTemplates`, `LoadAll`, `LoadLayout`, `LoadAllLayouts`, `ReloadTemplates`, `EnableAutoReload`, `DisableAutoReload`, `IsAutoReloadEnabled`가 포함됩니다.
 
 ---
 
 ## Session Management / 세션 관리
 
-### Creating Session Store / 세션 저장소 생성
+`SessionStore` keeps sessions in memory and issues secure cookie IDs.  
+`SessionStore`는 메모리에 세션을 저장하고 안전한 쿠키 ID를 발급합니다.
 
 ```go
-// Create session store with default options / 기본 옵션으로 세션 저장소 생성
 store := websvrutil.NewSessionStore(websvrutil.DefaultSessionOptions())
 
-// Create with custom options / 커스텀 옵션으로 생성
-store := websvrutil.NewSessionStore(websvrutil.SessionOptions{
-    CookieName:  "my_session",
-    MaxAge:      12 * time.Hour,
-    Secure:      true,
-    HttpOnly:    true,
-    SameSite:    http.SameSiteStrictMode,
-    CleanupTime: 10 * time.Minute,
-    Path:        "/",
-    Domain:      "example.com",
-})
-```
+app.GET("/login", func(w http.ResponseWriter, r *http.Request) {
+    sess, _ := store.Get(r)      // Fetch or create session / 세션 조회 또는 생성
+    sess.Set("user", "alice")   // Store data in session / 세션에 데이터 저장
+    store.Save(w, sess)          // Persist cookie / 쿠키 저장
 
-### Using Sessions / 세션 사용
-
-```go
-var sessionStore *websvrutil.SessionStore
-
-func init() {
-    sessionStore = websvrutil.NewSessionStore(websvrutil.DefaultSessionOptions())
-}
-
-// Set session data / 세션 데이터 설정
-app.POST("/login", func(w http.ResponseWriter, r *http.Request) {
     ctx := websvrutil.GetContext(r)
-
-    // Get or create session / 세션 가져오기 또는 생성
-    session, _ := sessionStore.Get(r)
-
-    // Store user data / 사용자 데이터 저장
-    session.Set("user_id", 123)
-    session.Set("username", "john")
-    session.Set("is_admin", true)
-
-    // Save session / 세션 저장
-    sessionStore.Save(w, session)
-
-    ctx.SuccessJSON(200, "Logged in", nil)
+    ctx.Text(http.StatusOK, "logged in")
 })
 
-// Get session data / 세션 데이터 가져오기
-app.GET("/profile", func(w http.ResponseWriter, r *http.Request) {
+app.GET("/me", func(w http.ResponseWriter, r *http.Request) {
     ctx := websvrutil.GetContext(r)
+    sess, _ := store.Get(r)
 
-    // Get session / 세션 가져오기
-    session, err := sessionStore.Get(r)
-    if err != nil {
+    user := sess.GetString("user")
+    if user == "" {
         ctx.Unauthorized()
         return
     }
 
-    // Retrieve values / 값 가져오기
-    userID := session.GetInt("user_id")
-    username := session.GetString("username")
-    isAdmin := session.GetBool("is_admin")
-
-    ctx.JSON(200, map[string]interface{}{
-        "user_id":  userID,
-        "username": username,
-        "is_admin": isAdmin,
-    })
-})
-
-// Destroy session / 세션 삭제
-app.POST("/logout", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    sessionStore.Destroy(w, r)
-
-    ctx.SuccessJSON(200, "Logged out", nil)
+    ctx.JSON(http.StatusOK, map[string]string{"user": user})
 })
 ```
 
-### Session Data Methods / 세션 데이터 메서드
-
-```go
-session, _ := sessionStore.Get(r)
-
-// Set values / 값 설정
-session.Set("key", "value")
-
-// Get values / 값 가져오기
-value, exists := session.Get("key")
-
-// Type-safe getters / 타입 안전 getter
-str := session.GetString("name")
-num := session.GetInt("count")
-flag := session.GetBool("enabled")
-
-// Delete value / 값 삭제
-session.Delete("key")
-
-// Clear all values / 모든 값 지우기
-session.Clear()
-```
+Adjust behavior with `SessionOptions` (cookie name, expiration, SameSite, cleanup interval, path, domain, secure flag, HTTP-only flag).  
+`SessionOptions`(쿠키 이름, 만료, SameSite, 정리 주기, Path, Domain, Secure, HttpOnly)으로 동작을 원하는 대로 조정할 수 있습니다.
 
 ---
 
-## Static Files / 정적 파일
+## File Handling & Static Assets / 파일 처리 및 정적 자산
 
-### Serving Static Files / 정적 파일 서빙
-
-```go
-app := websvrutil.New()
-
-// Serve static files from directory / 디렉토리에서 정적 파일 서빙
-app.Static("/static", "./public")
-// Access: /static/css/style.css → ./public/css/style.css
-
-// Multiple static directories / 여러 정적 디렉토리
-app.Static("/css", "./assets/css")
-app.Static("/js", "./assets/js")
-app.Static("/images", "./assets/images")
-```
-
-### Directory Structure Example / 디렉토리 구조 예제
-
-```
-project/
-├── main.go
-├── public/
-│   ├── css/
-│   │   └── style.css
-│   ├── js/
-│   │   └── app.js
-│   └── images/
-│       └── logo.png
-└── templates/
-    └── index.html
-```
-
-**Go code:**
-
-```go
-app.Static("/static", "./public")
-
-// Access files:
-// http://localhost:8080/static/css/style.css
-// http://localhost:8080/static/js/app.js
-// http://localhost:8080/static/images/logo.png
-```
-
----
-
-## File Upload / 파일 업로드
-
-### Single File Upload / 단일 파일 업로드
+Multipart helpers simplify uploads and reuse option-based size limits.  
+멀티파트 헬퍼는 업로드를 단순화하고 옵션 기반 크기 제한을 재사용합니다.
 
 ```go
 app.POST("/upload", func(w http.ResponseWriter, r *http.Request) {
     ctx := websvrutil.GetContext(r)
 
-    // Get uploaded file / 업로드된 파일 가져오기
-    file, header, err := ctx.FormFile("file")
+    header, err := ctx.FormFile("file")           // First file / 첫 번째 파일
     if err != nil {
-        ctx.ErrorJSON(400, "No file uploaded")
+        ctx.ErrorJSON(http.StatusBadRequest, err.Error())
         return
     }
-    defer file.Close()
 
-    // Save file / 파일 저장
-    dst, err := os.Create("./uploads/" + header.Filename)
-    if err != nil {
-        ctx.InternalServerError()
-        return
-    }
-    defer dst.Close()
-
-    if _, err := io.Copy(dst, file); err != nil {
+    if err := ctx.SaveUploadedFile(header, "./uploads/"+header.Filename); err != nil {
         ctx.InternalServerError()
         return
     }
 
-    ctx.SuccessJSON(200, "File uploaded", map[string]string{
-        "filename": header.Filename,
-        "size":     fmt.Sprintf("%d", header.Size),
-    })
+    ctx.SuccessJSON(http.StatusOK, "uploaded", header.Filename)
 })
 ```
 
-### Multiple File Upload / 다중 파일 업로드
+- `MultipartForm` parses and caches multipart payloads while respecting `WithMaxUploadSize`.  
+- `File` streams files inline; `FileAttachment` forces download with a custom filename.  
 
-```go
-app.POST("/upload-multiple", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
+- `MultipartForm`은 `WithMaxUploadSize`를 준수하며 멀티파트 페이로드를 파싱하고 캐시합니다.  
+- `File`은 파일을 인라인으로 전송하고 `FileAttachment`는 사용자 정의 파일명으로 다운로드를 강제합니다.  
 
-    // Parse multipart form / 멀티파트 폼 파싱
-    if err := r.ParseMultipartForm(10 << 20); err != nil { // 10 MB limit
-        ctx.ErrorJSON(400, "Failed to parse form")
-        return
-    }
-
-    // Get all files / 모든 파일 가져오기
-    files := r.MultipartForm.File["files"]
-
-    var uploadedFiles []string
-    for _, fileHeader := range files {
-        file, err := fileHeader.Open()
-        if err != nil {
-            continue
-        }
-        defer file.Close()
-
-        // Save each file / 각 파일 저장
-        dst, err := os.Create("./uploads/" + fileHeader.Filename)
-        if err != nil {
-            continue
-        }
-        defer dst.Close()
-
-        io.Copy(dst, file)
-        uploadedFiles = append(uploadedFiles, fileHeader.Filename)
-    }
-
-    ctx.SuccessJSON(200, "Files uploaded", map[string]interface{}{
-        "count": len(uploadedFiles),
-        "files": uploadedFiles,
-    })
-})
-```
-
-### HTML Form Example / HTML 폼 예제
-
-```html
-<!-- Single file upload / 단일 파일 업로드 -->
-<form action="/upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="file">
-    <button type="submit">Upload</button>
-</form>
-
-<!-- Multiple file upload / 다중 파일 업로드 -->
-<form action="/upload-multiple" method="post" enctype="multipart/form-data">
-    <input type="file" name="files" multiple>
-    <button type="submit">Upload Files</button>
-</form>
-```
-
----
-
-## Error Handling / 에러 처리
-
-### Standard Error Responses / 표준 에러 응답
-
-```go
-app.GET("/error-demo", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Custom error JSON / 커스텀 에러 JSON
-    ctx.ErrorJSON(400, "Invalid request parameters")
-    // Response: {"error":"Invalid request parameters","status":400,"success":false}
-})
-```
-
-### HTTP Error Shortcuts / HTTP 에러 단축
-
-```go
-app.GET("/not-found", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.NotFound() // 404
-})
-
-app.GET("/unauthorized", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.Unauthorized() // 401
-})
-
-app.GET("/forbidden", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.Forbidden() // 403
-})
-
-app.GET("/bad-request", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.BadRequest() // 400
-})
-
-app.GET("/server-error", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.InternalServerError() // 500
-})
-```
-
-### Abort Methods / 중단 메서드
-
-```go
-// Abort with status code / 상태 코드로 중단
-app.GET("/abort-status", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.AbortWithStatus(http.StatusTeapot)
-})
-
-// Abort with error / 에러로 중단
-app.GET("/abort-error", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    err := errors.New("something went wrong")
-    ctx.AbortWithError(500, err)
-})
-
-// Abort with JSON / JSON으로 중단
-app.GET("/abort-json", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.AbortWithJSON(403, map[string]string{
-        "error": "Access denied",
-    })
-})
-```
-
-### Success Response / 성공 응답
-
-```go
-app.POST("/create", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Create resource / 리소스 생성
-    resource := map[string]interface{}{
-        "id":   123,
-        "name": "New Resource",
-    }
-
-    ctx.SuccessJSON(201, "Resource created successfully", resource)
-    // Response: {"message":"Resource created successfully","data":{"id":123,"name":"New Resource"},"status":201,"success":true}
-})
-```
+`app.Static(prefix, dir)` registers middleware-friendly static serving for directories.  
+`app.Static(prefix, dir)`로 디렉터리에 대한 미들웨어 기반 정적 서빙을 구성할 수 있습니다.
 
 ---
 
 ## Graceful Shutdown / 우아한 종료
 
-### Basic Graceful Shutdown / 기본 우아한 종료
+`RunWithGracefulShutdown` starts the server and listens for `SIGINT`/`SIGTERM`, applying a timeout before calling `Shutdown`.  
+`RunWithGracefulShutdown`은 서버를 시작하고 `SIGINT`/`SIGTERM`을 감지하여 타임아웃 후 `Shutdown`을 호출합니다.
 
 ```go
-app := websvrutil.New()
-
-app.GET("/", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.String(200, "Hello, World!")
-})
-
-// Run with graceful shutdown / 우아한 종료와 함께 실행
-// Listens for SIGINT and SIGTERM / SIGINT와 SIGTERM 수신
-// 5 second timeout for graceful shutdown / 우아한 종료를 위한 5초 타임아웃
-if err := app.RunWithGracefulShutdown(":8080", 5*time.Second); err != nil {
+if err := app.RunWithGracefulShutdown(":8080", 30*time.Second); err != nil {
     log.Fatal(err)
 }
 ```
 
-### Manual Shutdown Control / 수동 종료 제어
-
-```go
-app := websvrutil.New()
-
-// Start server in goroutine / 고루틴에서 서버 시작
-go func() {
-    if err := app.Run(":8080"); err != nil && err != http.ErrServerClosed {
-        log.Fatal(err)
-    }
-}()
-
-// Wait for interrupt signal / 인터럽트 신호 대기
-quit := make(chan os.Signal, 1)
-signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-<-quit
-
-log.Println("Shutting down server...")
-
-// Shutdown with timeout / 타임아웃과 함께 종료
-ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-defer cancel()
-
-if err := app.Shutdown(ctx); err != nil {
-    log.Fatal("Server forced to shutdown:", err)
-}
-
-log.Println("Server exited")
-```
-
-### Cleanup on Shutdown / 종료 시 정리
-
-```go
-func main() {
-    app := websvrutil.New()
-
-    // Resources to cleanup / 정리할 리소스
-    db := connectDatabase()
-    defer db.Close()
-
-    cache := connectCache()
-    defer cache.Close()
-
-    // Setup routes / 라우트 설정
-    app.GET("/", homeHandler)
-
-    // Graceful shutdown handles cleanup automatically
-    // 우아한 종료가 자동으로 정리 처리
-    if err := app.RunWithGracefulShutdown(":8080", 5*time.Second); err != nil {
-        log.Fatal(err)
-    }
-
-    // Deferred cleanup will run after shutdown
-    // 지연된 정리가 종료 후 실행됨
-}
-```
-
----
-
-## Best Practices / 모범 사례
-
-### 1. Use Route Groups for Organization / 조직화를 위한 라우트 그룹 사용
-
-```go
-// Good: Organized by feature / 좋음: 기능별로 조직화
-api := app.Group("/api")
-{
-    users := api.Group("/users")
-    users.GET("", listUsers)
-    users.POST("", createUser)
-    users.GET("/:id", getUser)
-
-    posts := api.Group("/posts")
-    posts.GET("", listPosts)
-    posts.POST("", createPost)
-}
-
-// Bad: Flat structure / 나쁨: 평면 구조
-app.GET("/api/users", listUsers)
-app.POST("/api/users", createUser)
-app.GET("/api/posts", listPosts)
-```
-
-### 2. Validate Input Early / 입력을 조기에 검증
-
-```go
-// Good: Validate early / 좋음: 조기 검증
-app.POST("/users", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    var user User
-    if err := ctx.BindJSON(&user); err != nil {
-        ctx.ErrorJSON(400, "Invalid JSON")
-        return
-    }
-
-    if user.Email == "" {
-        ctx.ErrorJSON(400, "Email is required")
-        return
-    }
-
-    // Proceed with business logic / 비즈니스 로직 진행
-    createUser(user)
-    ctx.SuccessJSON(201, "User created", user)
-})
-```
-
-### 3. Use Middleware for Cross-Cutting Concerns / 횡단 관심사에 미들웨어 사용
-
-```go
-// Good: Centralized logging, auth, etc. / 좋음: 중앙화된 로깅, 인증 등
-app.Use(LoggerMiddleware)
-app.Use(RecoveryMiddleware)
-app.Use(CORSMiddleware)
-
-admin := app.Group("/admin")
-admin.Use(AuthMiddleware)
-
-// Bad: Repeated logic in handlers / 나쁨: 핸들러에서 로직 반복
-app.GET("/admin/dashboard", func(w http.ResponseWriter, r *http.Request) {
-    // Check auth... / 인증 확인...
-    // Log request... / 요청 로그...
-    // Handle CORS... / CORS 처리...
-    // Actual handler logic / 실제 핸들러 로직
-})
-```
-
-### 4. Return Consistent Error Formats / 일관된 에러 형식 반환
-
-```go
-// Good: Consistent error format / 좋음: 일관된 에러 형식
-ctx.ErrorJSON(400, "Invalid email format")
-ctx.ErrorJSON(401, "Authentication required")
-ctx.ErrorJSON(500, "Database connection failed")
-
-// All return: {"error":"...","status":XXX,"success":false}
-
-// Bad: Inconsistent formats / 나쁨: 비일관적 형식
-ctx.JSON(400, "Invalid email")
-ctx.JSON(401, map[string]string{"message": "Not authenticated"})
-ctx.String(500, "Error occurred")
-```
-
-### 5. Use Type-Safe Request Binding / 타입 안전 요청 바인딩 사용
-
-```go
-// Good: Type-safe binding / 좋음: 타입 안전 바인딩
-type CreateUserRequest struct {
-    Name  string `json:"name" binding:"required"`
-    Email string `json:"email" binding:"required,email"`
-    Age   int    `json:"age" binding:"gte=0,lte=130"`
-}
-
-app.POST("/users", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    var req CreateUserRequest
-    if err := ctx.BindJSON(&req); err != nil {
-        ctx.ErrorJSON(400, err.Error())
-        return
-    }
-
-    // req is validated and type-safe / req는 검증되고 타입 안전함
-})
-
-// Bad: Manual parsing / 나쁨: 수동 파싱
-app.POST("/users", func(w http.ResponseWriter, r *http.Request) {
-    var data map[string]interface{}
-    json.NewDecoder(r.Body).Decode(&data)
-    name := data["name"].(string) // Type assertion risks / 타입 단언 위험
-})
-```
-
-### 6. Handle Panics with Recovery Middleware / 복구 미들웨어로 패닉 처리
-
-```go
-// Good: Global recovery / 좋음: 전역 복구
-app.Use(RecoveryMiddleware)
-
-app.GET("/panic", func(w http.ResponseWriter, r *http.Request) {
-    panic("something went wrong") // Caught by middleware / 미들웨어가 잡음
-})
-
-// Bad: Unhandled panics / 나쁨: 처리되지 않은 패닉
-app.GET("/panic", func(w http.ResponseWriter, r *http.Request) {
-    panic("something went wrong") // Crashes server / 서버 충돌
-})
-```
-
-### 7. Use Sessions Securely / 세션을 안전하게 사용
-
-```go
-// Good: Secure session configuration / 좋음: 안전한 세션 설정
-store := websvrutil.NewSessionStore(websvrutil.SessionOptions{
-    CookieName:  "session_id",
-    MaxAge:      24 * time.Hour,
-    Secure:      true,  // HTTPS only / HTTPS만
-    HttpOnly:    true,  // No JavaScript access / JavaScript 접근 없음
-    SameSite:    http.SameSiteStrictMode,
-    CleanupTime: 5 * time.Minute,
-})
-
-// Bad: Insecure configuration / 나쁨: 안전하지 않은 설정
-store := websvrutil.NewSessionStore(websvrutil.SessionOptions{
-    Secure:   false, // Vulnerable to interception / 가로채기에 취약
-    HttpOnly: false, // Vulnerable to XSS / XSS에 취약
-})
-```
-
-### 8. Use Context Storage for Request-Scoped Data / 요청 범위 데이터에 컨텍스트 저장소 사용
-
-```go
-// Good: Use context storage / 좋음: 컨텍스트 저장소 사용
-func AuthMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        ctx := websvrutil.GetContext(r)
-
-        // Authenticate and store user / 인증 및 사용자 저장
-        user := authenticateUser(r)
-        ctx.Set("user", user)
-
-        next.ServeHTTP(w, r)
-    })
-}
-
-app.GET("/profile", AuthMiddleware, func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    user := ctx.MustGet("user").(User)
-    ctx.JSON(200, user)
-})
-```
-
-### 9. Use Graceful Shutdown in Production / 프로덕션에서 우아한 종료 사용
-
-```go
-// Good: Graceful shutdown / 좋음: 우아한 종료
-app.RunWithGracefulShutdown(":8080", 10*time.Second)
-
-// Bad: Abrupt shutdown / 나쁨: 갑작스러운 종료
-app.Run(":8080")
-```
-
-### 10. Organize Handlers by Domain / 도메인별로 핸들러 조직화
-
-```go
-// Good: Organized by domain / 좋음: 도메인별로 조직화
-// handlers/users.go
-package handlers
-
-func ListUsers(w http.ResponseWriter, r *http.Request) { ... }
-func CreateUser(w http.ResponseWriter, r *http.Request) { ... }
-
-// handlers/posts.go
-package handlers
-
-func ListPosts(w http.ResponseWriter, r *http.Request) { ... }
-func CreatePost(w http.ResponseWriter, r *http.Request) { ... }
-
-// main.go
-app.GET("/users", handlers.ListUsers)
-app.GET("/posts", handlers.ListPosts)
-
-// Bad: Everything in main.go / 나쁨: 모든 것이 main.go에
-func main() {
-    app.GET("/users", func(...) { /* hundreds of lines */ })
-    app.GET("/posts", func(...) { /* hundreds of lines */ })
-}
-```
-
----
-
-## Troubleshooting / 문제 해결
-
-### Issue: Routes Not Matching / 문제: 라우트가 매칭되지 않음
-
-**Symptom**: 404 Not Found for valid routes / 증상: 유효한 라우트에 대해 404 Not Found
-
-**Causes and Solutions**:
-
-1. **Trailing slash mismatch** / **후행 슬래시 불일치**
-   ```go
-   // Route defined as / 라우트 정의
-   app.GET("/users", handler)
-
-   // Request to / 요청
-   GET /users/  // 404! Missing route for /users/
-
-   // Solution: Define both / 해결: 둘 다 정의
-   app.GET("/users", handler)
-   app.GET("/users/", handler)
-   ```
-
-2. **HTTP method mismatch** / **HTTP 메서드 불일치**
-   ```go
-   // Route defined as / 라우트 정의
-   app.GET("/users", handler)
-
-   // Request / 요청
-   POST /users  // 404! No POST route defined
-
-   // Solution: Check method / 해결: 메서드 확인
-   app.POST("/users", handler)
-   ```
-
-3. **Parameter pattern issues** / **매개변수 패턴 문제**
-   ```go
-   // Route defined as / 라우트 정의
-   app.GET("/users/:id", handler)
-
-   // These work / 동작함
-   GET /users/123
-   GET /users/abc
-
-   // This doesn't work / 동작하지 않음
-   GET /users/  // Missing parameter
-   ```
-
-### Issue: Template Not Found / 문제: 템플릿을 찾을 수 없음
-
-**Symptom**: "template not found" error / 증상: "template not found" 에러
-
-**Causes and Solutions**:
-
-1. **Templates not loaded** / **템플릿이 로드되지 않음**
-   ```go
-   // Bad: Forgot to load templates / 나쁨: 템플릿 로드를 잊음
-   app.GET("/", func(w http.ResponseWriter, r *http.Request) {
-       ctx.HTML(200, "index.html", nil) // Error!
-   })
-
-   // Good: Load templates first / 좋음: 먼저 템플릿 로드
-   app.LoadHTMLGlob("templates/*")
-   app.GET("/", func(w http.ResponseWriter, r *http.Request) {
-       ctx.HTML(200, "index.html", nil)
-   })
-   ```
-
-2. **Wrong file path** / **잘못된 파일 경로**
-   ```go
-   // Check your directory structure / 디렉토리 구조 확인
-   project/
-   ├── main.go
-   └── templates/
-       └── index.html
-
-   // Use relative path from main.go / main.go에서 상대 경로 사용
-   app.LoadHTMLGlob("templates/*")  // Correct / 올바름
-   app.LoadHTMLGlob("./templates/*") // Also works / 역시 동작함
-   ```
-
-3. **File extension mismatch** / **파일 확장자 불일치**
-   ```go
-   // Template file: index.html
-   ctx.HTML(200, "index.html", nil)  // Correct / 올바름
-   ctx.HTML(200, "index", nil)       // Error! / 에러!
-   ```
-
-### Issue: Session Not Persisting / 문제: 세션이 유지되지 않음
-
-**Symptom**: Session data lost between requests / 증상: 요청 간 세션 데이터 손실
-
-**Causes and Solutions**:
-
-1. **Forgot to save session** / **세션 저장을 잊음**
-   ```go
-   // Bad: Set but didn't save / 나쁨: 설정했지만 저장하지 않음
-   session, _ := store.Get(r)
-   session.Set("user_id", 123)
-   // Session not saved! / 세션이 저장되지 않음!
-
-   // Good: Save session / 좋음: 세션 저장
-   session, _ := store.Get(r)
-   session.Set("user_id", 123)
-   store.Save(w, session)  // Must save! / 저장해야 함!
-   ```
-
-2. **Cookie settings issue** / **쿠키 설정 문제**
-   ```go
-   // Bad: Secure=true on HTTP / 나쁨: HTTP에서 Secure=true
-   store := websvrutil.NewSessionStore(websvrutil.SessionOptions{
-       Secure: true,  // Only works on HTTPS! / HTTPS에서만 동작!
-   })
-
-   // Good: Match your protocol / 좋음: 프로토콜에 맞춤
-   store := websvrutil.NewSessionStore(websvrutil.SessionOptions{
-       Secure: false,  // For HTTP development / HTTP 개발용
-   })
-   ```
-
-3. **Session expired** / **세션 만료**
-   ```go
-   // Check MaxAge setting / MaxAge 설정 확인
-   store := websvrutil.NewSessionStore(websvrutil.SessionOptions{
-       MaxAge: 1 * time.Hour,  // Sessions expire after 1 hour / 1시간 후 세션 만료
-   })
-   ```
-
-### Issue: JSON Binding Fails / 문제: JSON 바인딩 실패
-
-**Symptom**: "invalid JSON" or binding errors / 증상: "invalid JSON" 또는 바인딩 에러
-
-**Causes and Solutions**:
-
-1. **Struct tag mismatch** / **구조체 태그 불일치**
-   ```go
-   type User struct {
-       Name string `json:"name"`  // JSON field: "name"
-   }
-
-   // Request body / 요청 본문
-   {"Name": "John"}  // Wrong! Should be lowercase "name" / 틀림! 소문자 "name"이어야 함
-   {"name": "John"}  // Correct! / 올바름!
-   ```
-
-2. **Content-Type header missing** / **Content-Type 헤더 누락**
-   ```go
-   // Client must send / 클라이언트가 보내야 함
-   Content-Type: application/json
-
-   // Otherwise binding fails / 그렇지 않으면 바인딩 실패
-   ```
-
-3. **Validation failures** / **검증 실패**
-   ```go
-   type User struct {
-       Email string `json:"email" binding:"required,email"`
-       Age   int    `json:"age" binding:"gte=0,lte=130"`
-   }
-
-   // This fails validation / 검증 실패
-   {"email": "invalid", "age": 200}
-
-   // This passes / 통과
-   {"email": "john@example.com", "age": 25}
-   ```
-
-### Issue: File Upload Fails / 문제: 파일 업로드 실패
-
-**Symptom**: "no file uploaded" or "file too large" / 증상: "no file uploaded" 또는 "file too large"
-
-**Causes and Solutions**:
-
-1. **Form encoding mismatch** / **폼 인코딩 불일치**
-   ```html
-   <!-- Bad: Wrong enctype / 나쁨: 잘못된 enctype -->
-   <form action="/upload" method="post">
-
-   <!-- Good: Correct enctype / 좋음: 올바른 enctype -->
-   <form action="/upload" method="post" enctype="multipart/form-data">
-   ```
-
-2. **Input name mismatch** / **입력 이름 불일치**
-   ```go
-   // Handler expects / 핸들러 예상
-   file, _, err := ctx.FormFile("document")
-
-   // HTML must match / HTML이 일치해야 함
-   <input type="file" name="document">  <!-- Correct / 올바름 -->
-   <input type="file" name="file">      <!-- Wrong! / 틀림! -->
-   ```
-
-3. **File size limit** / **파일 크기 제한**
-   ```go
-   // Increase size limit / 크기 제한 증가
-   r.ParseMultipartForm(10 << 20)  // 10 MB
-   r.ParseMultipartForm(50 << 20)  // 50 MB
-   ```
-
-### Issue: Middleware Not Running / 문제: 미들웨어가 실행되지 않음
-
-**Symptom**: Middleware logic not executing / 증상: 미들웨어 로직이 실행되지 않음
-
-**Causes and Solutions**:
-
-1. **Order matters** / **순서가 중요함**
-   ```go
-   // Bad: Middleware added after routes / 나쁨: 라우트 후 미들웨어 추가
-   app.GET("/users", handler)
-   app.Use(LoggerMiddleware)  // Too late! / 너무 늦음!
-
-   // Good: Middleware before routes / 좋음: 라우트 전 미들웨어
-   app.Use(LoggerMiddleware)
-   app.GET("/users", handler)
-   ```
-
-2. **Forgot to call next** / **next 호출을 잊음**
-   ```go
-   // Bad: Doesn't call next / 나쁨: next를 호출하지 않음
-   func MyMiddleware(next http.Handler) http.Handler {
-       return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-           // Do something / 무언가 수행
-           // Forgot: next.ServeHTTP(w, r) / 잊음: next.ServeHTTP(w, r)
-       })
-   }
-
-   // Good: Calls next / 좋음: next를 호출
-   func MyMiddleware(next http.Handler) http.Handler {
-       return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-           // Do something / 무언가 수행
-           next.ServeHTTP(w, r)  // Continue chain / 체인 계속
-       })
-   }
-   ```
+Use `Shutdown` manually when integrating with custom signal handling or orchestrators.  
+사용자 정의 신호 처리나 오케스트레이터에 통합할 때는 `Shutdown`을 직접 호출하면 됩니다.
 
 ---
 
 ## FAQ
 
-### 1. How do I serve both API and web pages? / API와 웹 페이지를 둘 다 서빙하려면?
-
-```go
-app := websvrutil.New()
-
-// Load templates for web pages / 웹 페이지용 템플릿 로드
-app.LoadHTMLGlob("templates/*")
-
-// Web pages / 웹 페이지
-app.GET("/", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.HTML(200, "index.html", nil)
-})
-
-// API endpoints / API 엔드포인트
-api := app.Group("/api")
-api.GET("/users", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-    ctx.JSON(200, users)
-})
-```
-
-### 2. How do I handle CORS? / CORS를 어떻게 처리하나요?
-
-```go
-func CORSMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        ctx := websvrutil.GetContext(r)
-
-        ctx.SetHeaders(map[string]string{
-            "Access-Control-Allow-Origin":  "*",
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        })
-
-        if r.Method == "OPTIONS" {
-            ctx.Status(204)
-            return
-        }
-
-        next.ServeHTTP(w, r)
-    })
-}
-
-app.Use(CORSMiddleware)
-```
-
-### 3. How do I implement authentication? / 인증을 어떻게 구현하나요?
-
-```go
-// Use sessions / 세션 사용
-var sessionStore = websvrutil.NewSessionStore(websvrutil.DefaultSessionOptions())
-
-func AuthMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        ctx := websvrutil.GetContext(r)
-
-        session, err := sessionStore.Get(r)
-        if err != nil || session.GetInt("user_id") == 0 {
-            ctx.Unauthorized()
-            return
-        }
-
-        next.ServeHTTP(w, r)
-    })
-}
-
-// Protected routes / 보호된 라우트
-app.GET("/profile", AuthMiddleware, profileHandler)
-```
-
-### 4. How do I validate request data? / 요청 데이터를 어떻게 검증하나요?
-
-```go
-type CreateUserRequest struct {
-    Name  string `json:"name" binding:"required,min=3,max=50"`
-    Email string `json:"email" binding:"required,email"`
-    Age   int    `json:"age" binding:"required,gte=0,lte=130"`
-}
-
-app.POST("/users", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    var req CreateUserRequest
-    if err := ctx.BindJSON(&req); err != nil {
-        ctx.ErrorJSON(400, "Validation failed: " + err.Error())
-        return
-    }
-
-    // Data is validated / 데이터가 검증됨
-    createUser(req)
-})
-```
-
-### 5. How do I serve a Single Page Application (SPA)? / SPA를 어떻게 서빙하나요?
-
-```go
-app := websvrutil.New()
-
-// Serve static files / 정적 파일 서빙
-app.Static("/static", "./dist/static")
-
-// Catch-all route for SPA / SPA를 위한 모든 라우트 캐치
-app.GET("/*", func(w http.ResponseWriter, r *http.Request) {
-    http.ServeFile(w, r, "./dist/index.html")
-})
-```
-
-### 6. How do I limit request body size? / 요청 본문 크기를 어떻게 제한하나요?
-
-```go
-func LimitMiddleware(maxSize int64) func(http.Handler) http.Handler {
-    return func(next http.Handler) http.Handler {
-        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-            r.Body = http.MaxBytesReader(w, r.Body, maxSize)
-            next.ServeHTTP(w, r)
-        })
-    }
-}
-
-// Limit to 10MB / 10MB로 제한
-app.Use(LimitMiddleware(10 << 20))
-```
-
-### 7. How do I implement rate limiting? / 속도 제한을 어떻게 구현하나요?
-
-```go
-import "golang.org/x/time/rate"
-
-var limiter = rate.NewLimiter(10, 20) // 10 req/sec, burst 20
-
-func RateLimitMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        ctx := websvrutil.GetContext(r)
-
-        if !limiter.Allow() {
-            ctx.ErrorJSON(429, "Rate limit exceeded")
-            return
-        }
-
-        next.ServeHTTP(w, r)
-    })
-}
-
-app.Use(RateLimitMiddleware)
-```
-
-### 8. How do I handle file downloads? / 파일 다운로드를 어떻게 처리하나요?
-
-```go
-app.GET("/download", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Force download with custom filename / 커스텀 파일명으로 다운로드 강제
-    ctx.FileAttachment("./files/report.pdf", "monthly-report-2025.pdf")
-})
-```
-
-### 9. How do I log requests? / 요청을 어떻게 로깅하나요?
-
-```go
-func LoggerMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        start := time.Now()
-
-        // Create response recorder to capture status / 상태를 캡처하기 위한 응답 레코더 생성
-        recorder := &ResponseRecorder{ResponseWriter: w, StatusCode: 200}
-
-        next.ServeHTTP(recorder, r)
-
-        duration := time.Since(start)
-        log.Printf(
-            "%s %s %d %v",
-            r.Method,
-            r.URL.Path,
-            recorder.StatusCode,
-            duration,
-        )
-    })
-}
-
-type ResponseRecorder struct {
-    http.ResponseWriter
-    StatusCode int
-}
-
-func (r *ResponseRecorder) WriteHeader(code int) {
-    r.StatusCode = code
-    r.ResponseWriter.WriteHeader(code)
-}
-```
-
-### 10. How do I implement HTTPS? / HTTPS를 어떻게 구현하나요?
-
-```go
-// Generate self-signed certificate for development / 개발용 자체 서명 인증서 생성
-// openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
-
-app := websvrutil.New()
-
-// Setup routes / 라우트 설정
-app.GET("/", homeHandler)
-
-// Run with TLS / TLS로 실행
-if err := app.RunTLS(":443", "cert.pem", "key.pem"); err != nil {
-    log.Fatal(err)
-}
-```
-
-### 11. How do I use custom templates? / 커스텀 템플릿을 어떻게 사용하나요?
-
-```go
-// Create custom template with functions / 함수가 있는 커스텀 템플릿 생성
-tmpl := template.New("").Funcs(template.FuncMap{
-    "upper": strings.ToUpper,
-    "add": func(a, b int) int {
-        return a + b
-    },
-})
-
-// Parse templates / 템플릿 파싱
-tmpl, err := tmpl.ParseGlob("templates/*")
-if err != nil {
-    log.Fatal(err)
-}
-
-// Set custom template / 커스텀 템플릿 설정
-app.SetHTMLTemplate(tmpl)
-```
-
-### 12. How do I implement WebSocket? / WebSocket을 어떻게 구현하나요?
-
-```go
-import "github.com/gorilla/websocket"
-
-var upgrader = websocket.Upgrader{
-    CheckOrigin: func(r *http.Request) bool {
-        return true // Allow all origins / 모든 출처 허용
-    },
-}
-
-app.GET("/ws", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    if !ctx.IsWebSocket() {
-        ctx.BadRequest()
-        return
-    }
-
-    conn, err := upgrader.Upgrade(w, r, nil)
-    if err != nil {
-        ctx.InternalServerError()
-        return
-    }
-    defer conn.Close()
-
-    // Handle WebSocket messages / WebSocket 메시지 처리
-    for {
-        messageType, message, err := conn.ReadMessage()
-        if err != nil {
-            break
-        }
-
-        conn.WriteMessage(messageType, message)
-    }
-})
-```
-
-### 13. How do I test handlers? / 핸들러를 어떻게 테스트하나요?
-
-```go
-import (
-    "net/http/httptest"
-    "testing"
-)
-
-func TestHandler(t *testing.T) {
-    app := websvrutil.New()
-
-    app.GET("/hello", func(w http.ResponseWriter, r *http.Request) {
-        ctx := websvrutil.GetContext(r)
-        ctx.String(200, "Hello, World!")
-    })
-
-    req := httptest.NewRequest("GET", "/hello", nil)
-    w := httptest.NewRecorder()
-
-    app.ServeHTTP(w, req)
-
-    if w.Code != 200 {
-        t.Errorf("Expected status 200, got %d", w.Code)
-    }
-
-    if w.Body.String() != "Hello, World!" {
-        t.Errorf("Expected 'Hello, World!', got %s", w.Body.String())
-    }
-}
-```
-
-### 14. How do I use environment variables? / 환경 변수를 어떻게 사용하나요?
-
-```go
-import "os"
-
-func main() {
-    app := websvrutil.New()
-
-    // Get port from environment / 환경에서 포트 가져오기
-    port := os.Getenv("PORT")
-    if port == "" {
-        port = "8080"
-    }
-
-    app.Run(":" + port)
-}
-```
-
-### 15. How do I implement pagination? / 페이지네이션을 어떻게 구현하나요?
-
-```go
-app.GET("/users", func(w http.ResponseWriter, r *http.Request) {
-    ctx := websvrutil.GetContext(r)
-
-    // Get pagination parameters / 페이지네이션 매개변수 가져오기
-    page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
-    limit, _ := strconv.Atoi(ctx.DefaultQuery("limit", "10"))
-
-    // Calculate offset / 오프셋 계산
-    offset := (page - 1) * limit
-
-    // Get paginated data / 페이지네이션된 데이터 가져오기
-    users := getUsersPaginated(offset, limit)
-    total := getTotalUsers()
-
-    ctx.JSON(200, map[string]interface{}{
-        "data":       users,
-        "page":       page,
-        "limit":      limit,
-        "total":      total,
-        "total_pages": (total + limit - 1) / limit,
-    })
-})
-```
+**Q1. How do I access the raw `http.ResponseWriter` or `*http.Request`? / Q1. 원래의 `http.ResponseWriter`나 `*http.Request`는 어떻게 사용하나요?**  
+Use the handler parameters directly or reference `ctx.ResponseWriter` and `ctx.Request`.  
+핸들러 매개변수를 직접 사용하거나 `ctx.ResponseWriter`, `ctx.Request`를 참조하면 됩니다.
+
+**Q2. How can I reload templates automatically? / Q2. 템플릿을 자동으로 다시 로드하려면 어떻게 하나요?**  
+Enable `WithAutoReload(true)` when creating the app, or call `TemplateEngine().EnableAutoReload()` for manual control.  
+앱 생성 시 `WithAutoReload(true)`를 사용하거나, 필요할 때 `TemplateEngine().EnableAutoReload()`를 호출하세요.
+
+**Q3. Can I mix standard handlers with websvrutil middleware? / Q3. 표준 핸들러와 websvrutil 미들웨어를 함께 사용할 수 있나요?**  
+Yes. Register any `http.Handler` or `http.HandlerFunc`; inside the handler call `websvrutil.GetContext(r)` to access helpers.  
+가능합니다. 모든 `http.Handler` 또는 `http.HandlerFunc`를 등록하고, 핸들러 내부에서 `websvrutil.GetContext(r)`를 호출해 헬퍼를 사용하세요.
+
+**Q4. How do I test handlers? / Q4. 핸들러는 어떻게 테스트하나요?**  
+Use `httptest.NewRequest` and `httptest.NewRecorder`, then call `app.ServeHTTP`.  
+`httptest.NewRequest`와 `httptest.NewRecorder`를 사용한 뒤 `app.ServeHTTP`를 호출하세요.
 
 ---
 
-## Conclusion / 결론
-
-The websvrutil package provides a comprehensive, developer-friendly toolkit for building web applications in Go. By following the patterns and best practices outlined in this manual, you can create robust, maintainable, and performant web services.
-
-websvrutil 패키지는 Go에서 웹 애플리케이션을 구축하기 위한 포괄적이고 개발자 친화적인 툴킷을 제공합니다. 이 매뉴얼에 설명된 패턴과 모범 사례를 따르면 강력하고 유지 관리 가능하며 성능이 우수한 웹 서비스를 만들 수 있습니다.
-
-For more information, examples, and updates, please visit:
-더 많은 정보, 예제 및 업데이트는 다음을 방문하세요:
-
-- GitHub Repository: https://github.com/arkd0ng/go-utils
-- Package Documentation: https://pkg.go.dev/github.com/arkd0ng/go-utils/websvrutil
-
----
-
-**Version**: v1.11.023
-**Last Updated**: 2025-10-16
-**License**: MIT
+Enjoy building with `websvrutil`!  
+`websvrutil`과 함께 즐거운 개발 되세요!

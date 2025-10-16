@@ -46,10 +46,10 @@ go-utils/
 ├── examples/
 │   └── {package_name}/
 │       ├── main.go              # Main example file / 메인 예제 파일
-│       ├── logs/                # Log directory / 로그 디렉토리
-│       │   ├── {package}-example.log         # Current log / 현재 로그
-│       │   └── {package}-example-YYYYMMDD-HHMMSS.log  # Backup logs / 백업 로그
-│       └── README.md            # Optional: Package-specific notes
+│       └── README.md            # Optional: Package-specific notes / 선택 사항: 패키지별 노트
+└── logs/                        # Shared log directory / 공용 로그 디렉토리
+    ├── {package}-example.log                 # Current log / 현재 로그
+    └── {package}-example-YYYYMMDD-HHMMSS.log # Backup logs / 백업 로그
 ```
 
 ### Example Directory Names / 예제 디렉토리 이름
@@ -70,6 +70,9 @@ go-utils/
 ## File Naming Conventions / 파일 명명 규칙
 
 ### Log Files / 로그 파일
+
+All example logs MUST be written to `go-utils/logs/` (shared across packages).  
+모든 예제 로그는 패키지 공용 디렉토리인 `go-utils/logs/`에 기록되어야 합니다.
 
 **Current Log File Format / 현재 로그 파일 형식**:
 ```
@@ -603,14 +606,13 @@ All examples must be runnable:
 모든 예제는 실행 가능해야 합니다:
 
 ```bash
-# Run the example
-cd examples/{package_name}
-go run main.go
+# Run the example from repository root / 저장소 루트에서 예제 실행
+go run ./examples/{package_name}
 
-# Check logs
+# Check logs in shared directory / 공용 디렉토리에서 로그 확인
 cat logs/{package}-example.log
 
-# Check backup logs
+# Check backup logs / 백업 로그 확인
 ls -l logs/
 ```
 
@@ -623,7 +625,7 @@ Before committing example code, verify:
 - [ ] All functions in the package are demonstrated
 - [ ] Code compiles without errors
 - [ ] All examples run successfully
-- [ ] Logs are created in `logs/` directory
+- [ ] Logs are created in repository root `logs/` directory / 저장소 루트 `logs/` 디렉토리에 로그 생성
 - [ ] Log backup system works correctly
 - [ ] Old backups are cleaned up (only 5 kept)
 - [ ] All comments are bilingual (English/Korean)
@@ -927,7 +929,7 @@ When creating examples for a new package:
 ### During Development / 개발 중
 
 - [ ] Create `examples/{package}/` directory
-- [ ] Create `examples/{package}/logs/` directory
+- [ ] Ensure shared `logs/` directory exists at repository root / 저장소 루트의 공용 `logs/` 디렉토리 확인
 - [ ] Implement log backup system
 - [ ] Create example for each function
 - [ ] Add combination examples
@@ -972,7 +974,7 @@ When creating examples for a new package:
 
 - [ ] Code compiles without warnings
 - [ ] All examples run successfully
-- [ ] Logs directory structure correct
+- [ ] Logs directory structure correct (`go-utils/logs/`) / 로그 디렉토리 구조 확인 (`go-utils/logs/`)
 - [ ] Old backups are deleted
 - [ ] README.md updated (if needed)
 - [ ] CHANGELOG updated

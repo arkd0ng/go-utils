@@ -30,16 +30,29 @@
 //	    return filepath.Ext(path) == ".go"
 //	})
 //
-// Version: v1.9.001
+// Version information is loaded dynamically from cfg/app.yaml.
+// 버전 정보는 cfg/app.yaml에서 동적으로 로드됩니다.
 package fileutil
 
 import (
 	"os"
+
+	"github.com/arkd0ng/go-utils/logging"
 )
 
 // Version is the current version of the fileutil package
 // Version은 fileutil 패키지의 현재 버전입니다
-const Version = "v1.9.002"
+var Version = getVersion()
+
+// getVersion loads the application version from cfg/app.yaml.
+// getVersion은 cfg/app.yaml에서 애플리케이션 버전을 로드합니다.
+func getVersion() string {
+	version := logging.TryLoadAppVersion()
+	if version == "" {
+		return "unknown"
+	}
+	return version
+}
 
 // Default file and directory permissions / 기본 파일 및 디렉토리 권한
 const (
