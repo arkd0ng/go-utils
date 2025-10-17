@@ -1148,3 +1148,89 @@ func Example_securityValidation() {
 	}
 	// Output: All security data valid
 }
+
+// ExampleValidator_HexColor demonstrates hex color validation
+// ExampleValidator_HexColor는 16진수 색상 검증을 보여줍니다
+func ExampleValidator_HexColor() {
+	color := "#FF5733"
+	v := validation.New(color, "brand_color")
+	v.HexColor()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid hex color")
+	} else {
+		fmt.Println("Valid hex color")
+	}
+	// Output: Valid hex color
+}
+
+// ExampleValidator_RGB demonstrates RGB color validation
+// ExampleValidator_RGB는 RGB 색상 검증을 보여줍니다
+func ExampleValidator_RGB() {
+	color := "rgb(255, 87, 51)"
+	v := validation.New(color, "background_color")
+	v.RGB()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid RGB color")
+	} else {
+		fmt.Println("Valid RGB color")
+	}
+	// Output: Valid RGB color
+}
+
+// ExampleValidator_RGBA demonstrates RGBA color validation
+// ExampleValidator_RGBA는 RGBA 색상 검증을 보여줍니다
+func ExampleValidator_RGBA() {
+	color := "rgba(255, 87, 51, 0.8)"
+	v := validation.New(color, "overlay_color")
+	v.RGBA()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid RGBA color")
+	} else {
+		fmt.Println("Valid RGBA color")
+	}
+	// Output: Valid RGBA color
+}
+
+// ExampleValidator_HSL demonstrates HSL color validation
+// ExampleValidator_HSL는 HSL 색상 검증을 보여줍니다
+func ExampleValidator_HSL() {
+	color := "hsl(9, 100%, 60%)"
+	v := validation.New(color, "theme_color")
+	v.HSL()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid HSL color")
+	} else {
+		fmt.Println("Valid HSL color")
+	}
+	// Output: Valid HSL color
+}
+
+// Example_colorValidation demonstrates color validation
+// Example_colorValidation는 색상 검증을 보여줍니다
+func Example_colorValidation() {
+	mv := validation.NewValidator()
+
+	// Validate hex color
+	mv.Field("#FF5733", "primary_color").HexColor()
+
+	// Validate RGB color
+	mv.Field("rgb(255, 87, 51)", "secondary_color").RGB()
+
+	// Validate RGBA color
+	mv.Field("rgba(255, 87, 51, 0.8)", "overlay_color").RGBA()
+
+	// Validate HSL color
+	mv.Field("hsl(9, 100%, 60%)", "accent_color").HSL()
+
+	err := mv.Validate()
+	if err != nil {
+		fmt.Println("Invalid colors")
+	} else {
+		fmt.Println("All colors valid")
+	}
+	// Output: All colors valid
+}

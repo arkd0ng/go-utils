@@ -632,3 +632,47 @@ func BenchmarkSHA512(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkHexColor benchmarks the HexColor validator
+// BenchmarkHexColor는 HexColor 검증기를 벤치마크합니다
+func BenchmarkHexColor(b *testing.B) {
+	color := "#FF5733"
+	for i := 0; i < b.N; i++ {
+		v := New(color, "color")
+		v.HexColor()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkRGB benchmarks the RGB validator
+// BenchmarkRGB는 RGB 검증기를 벤치마크합니다
+func BenchmarkRGB(b *testing.B) {
+	color := "rgb(255, 87, 51)"
+	for i := 0; i < b.N; i++ {
+		v := New(color, "color")
+		v.RGB()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkRGBA benchmarks the RGBA validator
+// BenchmarkRGBA는 RGBA 검증기를 벤치마크합니다
+func BenchmarkRGBA(b *testing.B) {
+	color := "rgba(255, 87, 51, 0.8)"
+	for i := 0; i < b.N; i++ {
+		v := New(color, "color")
+		v.RGBA()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkHSL benchmarks the HSL validator
+// BenchmarkHSL는 HSL 검증기를 벤치마크합니다
+func BenchmarkHSL(b *testing.B) {
+	color := "hsl(9, 100%, 60%)"
+	for i := 0; i < b.N; i++ {
+		v := New(color, "color")
+		v.HSL()
+		_ = v.Validate()
+	}
+}

@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.024
+**Version / 버전**: v1.13.025
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -22,12 +22,13 @@
 13. [Credit Card Validators / 신용카드 검증기](#credit-card-validators--신용카드-검증기)
 14. [Business/ID Validators / 비즈니스/ID 검증기](#businessid-validators--비즈니스id-검증기)
 15. [Geographic Validators / 지리 좌표 검증기](#geographic-validators--지리-좌표-검증기)
-16. [Security Validators / 보안 검증기](#security-validators--보안-검증기) 🆕
-17. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
-18. [Error Handling / 에러 처리](#error-handling--에러-처리)
-19. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
-20. [Best Practices / 모범 사례](#best-practices--모범-사례)
-21. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
+16. [Security Validators / 보안 검증기](#security-validators--보안-검증기)
+17. [Color/CSS Validators / 색상/CSS 검증기](#colorcss-validators--색상css-검증기) 🆕
+18. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
+19. [Error Handling / 에러 처리](#error-handling--에러-처리)
+20. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
+21. [Best Practices / 모범 사례](#best-practices--모범-사례)
+22. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
 
 ---
 
@@ -39,7 +40,7 @@ The `validation` package provides a **fluent, type-safe validation library** for
 
 ### Key Features / 주요 기능
 
-- ✅ **85+ Built-in Validators** / **85개 이상의 내장 검증기**
+- ✅ **89+ Built-in Validators** / **89개 이상의 내장 검증기**
 - ✅ **Fluent API with Method Chaining** / **메서드 체이닝을 통한 플루언트 API**
 - ✅ **Type-Safe with Go Generics** / **Go 제네릭을 활용한 타입 안전성**
 - ✅ **Bilingual Error Messages (EN/KR)** / **양방향 에러 메시지 (영어/한글)**
@@ -56,7 +57,8 @@ The `validation` package provides a **fluent, type-safe validation library** for
 - ✅ **Credit Card Validators (CreditCard, CreditCardType, Luhn)** / **신용카드 검증기**
 - ✅ **Business/ID Validators (ISBN, ISSN, EAN)** / **비즈니스/ID 검증기**
 - ✅ **Geographic Validators (Latitude, Longitude, Coordinate)** / **지리 좌표 검증기**
-- ✅ **Security Validators (JWT, BCrypt, MD5, SHA1, SHA256, SHA512)** 🆕 / **보안 검증기** 🆕
+- ✅ **Security Validators (JWT, BCrypt, MD5, SHA1, SHA256, SHA512)** / **보안 검증기**
+- ✅ **Color/CSS Validators (HexColor, RGB, RGBA, HSL)** 🆕 / **색상/CSS 검증기** 🆕
 
 ---
 
@@ -3080,5 +3082,227 @@ Security validators are highly optimized with regex matching:
 **Note**: Hash validators only validate format, not cryptographic correctness. For actual hash verification, use Go's `crypto` package.
 
 **참고**: 해시 검증기는 형식만 검증하며 암호화 정확성은 검증하지 않습니다. 실제 해시 검증을 위해서는 Go의 `crypto` 패키지를 사용하세요.
+
+---
+
+## Color/CSS Validators / 색상/CSS 검증기
+
+Color/CSS validators ensure that color values are correctly formatted according to web standards. These validators are essential for UI/UX applications, design systems, and web development.
+
+색상/CSS 검증기는 색상 값이 웹 표준에 따라 올바르게 형식화되었는지 확인합니다. 이러한 검증기는 UI/UX 애플리케이션, 디자인 시스템 및 웹 개발에 필수적입니다.
+
+### Available Validators / 사용 가능한 검증기
+
+| Validator | Description (EN) | Description (KR) | Format |
+|-----------|------------------|------------------|--------|
+| `HexColor()` | Validates hexadecimal color codes | 16진수 색상 코드를 검증합니다 | #RGB or #RRGGBB |
+| `RGB()` | Validates RGB color format | RGB 색상 형식을 검증합니다 | rgb(r, g, b) |
+| `RGBA()` | Validates RGBA color format with alpha | 알파 채널이 있는 RGBA 색상 형식을 검증합니다 | rgba(r, g, b, a) |
+| `HSL()` | Validates HSL color format | HSL 색상 형식을 검증합니다 | hsl(h, s%, l%) |
+
+### 1. HexColor Validator / 16진수 색상 검증기
+
+The `HexColor()` validator ensures that a value is a valid hexadecimal color code. Supports both 3-digit (#RGB) and 6-digit (#RRGGBB) formats, with optional # prefix.
+
+`HexColor()` 검증기는 값이 유효한 16진수 색상 코드인지 확인합니다. 3자리(#RGB) 및 6자리(#RRGGBB) 형식을 모두 지원하며, # 접두사는 선택 사항입니다.
+
+**Validation Rules:**
+- Format: #RGB or #RRGGBB (# prefix is optional)
+- Characters: 0-9, A-F (case-insensitive)
+
+**Examples:**
+```go
+// 6-digit hex colors
+v1 := validation.New("#FF5733", "primary_color").HexColor()
+v2 := validation.New("#000000", "black").HexColor()
+v3 := validation.New("FFFFFF", "white").HexColor()  // Without #
+
+// 3-digit hex colors
+v4 := validation.New("#F57", "accent").HexColor()
+v5 := validation.New("000", "dark").HexColor()
+```
+
+**Use Cases:**
+- Brand color validation in design systems
+- CSS color value verification
+- Theme customization
+- Color picker inputs
+
+### 2. RGB Validator / RGB 검증기
+
+The `RGB()` validator validates RGB color format with red, green, and blue components (0-255).
+
+`RGB()` 검증기는 빨강, 초록, 파랑 구성 요소(0-255)가 있는 RGB 색상 형식을 검증합니다.
+
+**Validation Rules:**
+- Format: rgb(r, g, b)
+- Each component: 0-255 (integer)
+- Spaces around commas: optional
+
+**Examples:**
+```go
+// Valid RGB colors
+v1 := validation.New("rgb(255, 87, 51)", "background").RGB()
+v2 := validation.New("rgb(0, 0, 0)", "black").RGB()
+v3 := validation.New("rgb(255,255,255)", "white").RGB()  // No spaces
+```
+
+**Use Cases:**
+- CSS rgb() color validation
+- Image processing color input
+- Graphics library color verification
+
+### 3. RGBA Validator / RGBA 검증기
+
+The `RGBA()` validator validates RGBA color format with RGB components (0-255) and alpha channel (0-1).
+
+`RGBA()` 검증기는 RGB 구성 요소(0-255)와 알파 채널(0-1)이 있는 RGBA 색상 형식을 검증합니다.
+
+**Validation Rules:**
+- Format: rgba(r, g, b, a)
+- RGB components: 0-255 (integer)
+- Alpha component: 0.0-1.0 (float)
+
+**Examples:**
+```go
+// Valid RGBA colors
+v1 := validation.New("rgba(255, 87, 51, 0.8)", "overlay").RGBA()
+v2 := validation.New("rgba(0, 0, 0, 0.5)", "shadow").RGBA()
+v3 := validation.New("rgba(255, 255, 255, 1.0)", "opaque").RGBA()
+```
+
+**Use Cases:**
+- Overlay and modal backgrounds
+- Shadow effects
+- Transparency controls
+- CSS rgba() validation
+
+### 4. HSL Validator / HSL 검증기
+
+The `HSL()` validator validates HSL (Hue, Saturation, Lightness) color format.
+
+`HSL()` 검증기는 HSL(색조, 채도, 명도) 색상 형식을 검증합니다.
+
+**Validation Rules:**
+- Format: hsl(h, s%, l%)
+- Hue: 0-360 degrees
+- Saturation: 0-100%
+- Lightness: 0-100%
+
+**Examples:**
+```go
+// Valid HSL colors
+v1 := validation.New("hsl(9, 100%, 60%)", "theme_color").HSL()
+v2 := validation.New("hsl(0, 0%, 0%)", "black").HSL()
+v3 := validation.New("hsl(180, 50%, 50%)", "cyan").HSL()
+```
+
+**Use Cases:**
+- Color scheme generation
+- Theme customization systems
+- HSL-based color pickers
+- Design tool integrations
+
+### Multi-Field Color Validation / 다중 필드 색상 검증
+
+```go
+type ThemeColors struct {
+    Primary     string
+    Secondary   string
+    Accent      string
+    Background  string
+}
+
+func ValidateTheme(theme ThemeColors) error {
+    mv := validation.NewValidator()
+
+    mv.Field(theme.Primary, "primary").
+        Required().
+        HexColor()
+
+    mv.Field(theme.Secondary, "secondary").
+        Required().
+        RGB()
+
+    mv.Field(theme.Accent, "accent").
+        Required().
+        HSL()
+
+    mv.Field(theme.Background, "background").
+        Required().
+        RGBA()
+
+    return mv.Validate()
+}
+```
+
+### Real-World Use Cases / 실제 사용 사례
+
+**Design Systems:**
+```go
+// Validate brand colors
+mv.Field(brandPrimary, "brand_primary").
+    Required().
+    HexColor()
+
+mv.Field(brandSecondary, "brand_secondary").
+    Required().
+    HexColor()
+```
+
+**Theme Customization:**
+```go
+// User-defined theme validation
+mv.Field(userTheme.Background, "background").
+    Required().
+    RGBA()
+
+mv.Field(userTheme.Text, "text_color").
+    Required().
+    RGB()
+```
+
+**CSS Validation:**
+```go
+// Validate CSS color properties
+mv.Field(cssColor, "color").
+    Required().
+    HexColor()
+
+mv.Field(cssBgColor, "background_color").
+    Required().
+    RGB()
+```
+
+**UI Component Colors:**
+```go
+// Button color validation
+mv.Field(button.Color, "button_color").
+    Required().
+    HexColor()
+
+mv.Field(button.HoverColor, "hover_color").
+    Required().
+    RGB()
+
+mv.Field(button.DisabledColor, "disabled_color").
+    Required().
+    RGBA()
+```
+
+### Performance / 성능
+
+Color validators are highly optimized with regex matching:
+
+색상 검증기는 정규식 매칭으로 고도로 최적화되어 있습니다:
+
+- **HexColor**: ~150-200 ns/op (hex pattern matching)
+- **RGB**: ~400-500 ns/op (regex + 3 value validations)
+- **RGBA**: ~500-600 ns/op (regex + 4 value validations)
+- **HSL**: ~400-500 ns/op (regex + 3 value validations)
+
+**Note**: All color validators only validate format correctness, not color theory or visual perception.
+
+**참고**: 모든 색상 검증기는 형식 정확성만 검증하며, 색상 이론이나 시각적 인식은 검증하지 않습니다.
 
 ---
