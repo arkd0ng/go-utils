@@ -1,12 +1,13 @@
 # validation - Fluent Validation for Go / Go를 위한 Fluent 검증
 
 [![Go Version](https://img.shields.io/badge/Go-%3E%3D%201.18-blue)](https://go.dev/)
-[![Coverage](https://img.shields.io/badge/Coverage-92.5%25-brightgreen)](https://github.com/arkd0ng/go-utils)
+[![Coverage](https://img.shields.io/badge/Coverage-97.7%25-brightgreen)](https://github.com/arkd0ng/go-utils)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-v1.13.030-blue)](https://github.com/arkd0ng/go-utils)
 
-**50+ validators** to reduce 20-30 lines of validation code to just 1-2 lines with fluent API.
+**104+ validators** to reduce 20-30 lines of validation code to just 1-2 lines with fluent API.
 
-**50개 이상의 검증기**로 20-30줄의 검증 코드를 단 1-2줄로 줄입니다.
+**104개 이상의 검증기**로 20-30줄의 검증 코드를 단 1-2줄로 줄입니다.
 
 ## Design Philosophy / 설계 철학
 

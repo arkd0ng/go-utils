@@ -1,3 +1,30 @@
+## [v1.13.030] - 2025-10-17
+
+### Changed / 변경
+- **Documentation Update**: Updated validation README.md
+  - Version badge updated to v1.13.030
+  - Coverage badge updated to 97.7%
+  - Validator count updated from 50+ to 104+
+  - Added version badge for better visibility
+
+### Infrastructure / 인프라
+- **`.gitignore` Update**: Added CLAUDE.md, docs/temp/, Status-Code-Comment.md, todo-codex*.md
+  - CLAUDE.md is now ignored (personal project guide, not for public repo)
+  - Temporary documentation files excluded from version control
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bump to v1.13.030
+- `validation/README.md` - Updated badges (coverage 92.5%→97.7%, validators 50+→104+)
+- `.gitignore` - Added personal and temporary file patterns
+- `docs/CHANGELOG/CHANGELOG-v1.13.md` - Updated with v1.13.030 entry
+
+### Context / 컨텍스트
+**User Request**: Documentation improvement and gitignore cleanup
+**Why**: Keep documentation in sync with actual implementation (104+ validators, 97.7% coverage) and exclude personal/temporary files
+**Impact**: Accurate documentation helps developers understand the current state; cleaner repo with proper file exclusions
+
+---
+
 ## [v1.13.029] - 2025-10-17
 
 ### Added / 추가
