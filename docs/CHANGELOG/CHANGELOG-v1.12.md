@@ -6,6 +6,43 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.022] - 2025-10-17
+
+### Changed / 변경
+- CLAUDE.md 업데이트 - 버전 정보 및 디버깅 명령어 개선
+  - 현재 버전을 v1.12.019에서 v1.12.021로 업데이트
+  - 디렉토리 구조의 버전 참조 업데이트
+  - "Common Debugging Commands" 섹션 추가 (커버리지 확인, 경쟁 조건 탐지 등)
+  - Git 상태 정보 간소화
+
+### Files Changed / 변경된 파일
+- `CLAUDE.md` - 버전 정보 및 디버깅 섹션 개선 (~20줄 변경)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.022 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+"/init - Please analyze this codebase and create a CLAUDE.md file"
+
+**Why / 이유**:
+- CLAUDE.md의 버전 정보가 최신 상태(v1.12.021)를 반영하지 않음
+- 미래의 Claude Code 인스턴스가 일반적인 디버깅 명령어를 쉽게 찾을 수 있도록 개선 필요
+- 프로젝트 현재 상태를 정확히 반영하여 AI 지원 정확도 향상
+
+**Impact / 영향**:
+- ✅ 미래 Claude Code 인스턴스가 정확한 버전 정보로 작업 가능
+- ✅ 커버리지 확인, 경쟁 조건 탐지 등 일반적인 디버깅 작업을 위한 빠른 참조 제공
+- ✅ 프로젝트 문서 일관성 향상
+
+**Test Results / 테스트 결과**:
+
+```bash
+go build ./...
+# Build successful ✅
+```
+
+---
+
 ## [v1.12.021] - 2025-10-17
 
 ### Changed / 변경

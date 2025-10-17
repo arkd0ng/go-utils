@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**go-utils** is a production-ready collection of Go utility packages designed to reduce boilerplate code by 20-50 lines down to 1-2 lines. Current version: **v1.12.019**.
+**go-utils** is a production-ready collection of Go utility packages designed to reduce boilerplate code by 20-50 lines down to 1-2 lines. Current version: **v1.12.021**.
 
 Key characteristics:
 - **Extreme Simplicity**: Minimal code, maximum functionality
@@ -347,7 +347,7 @@ When complete, merge to main.
 ```
 go-utils/
 ├── cfg/                           # Configuration (version source of truth)
-│   └── app.yaml                   # Version: v1.12.019
+│   └── app.yaml                   # Version: v1.12.021
 ├── docs/                          # Comprehensive documentation
 │   ├── CHANGELOG/                 # Detailed version history
 │   │   ├── CHANGELOG-v1.11.md    # websvrutil detailed history
@@ -447,12 +447,34 @@ When working on this codebase, consult these key documents:
 
 ---
 
-## Current Status (v1.12.019)
+## Current Status (v1.12.021)
 
 - **Latest Package**: errorutil (v1.12.x) - COMPLETE with 99.2% coverage
 - **In Development**: websvrutil (v1.11.x) - Advanced features being added
 - **Next Target**: Achieve 100% coverage on errorutil
-- **Git Status**: Main branch stable, feature/v1.11.x-websvrutil active
+- **Git Status**: Main branch stable
+
+### Common Debugging Commands
+
+```bash
+# Check test coverage for all packages
+go test ./... -cover
+
+# Find all test files missing coverage
+find . -name "*_test.go" -type f
+
+# View detailed coverage for specific package
+go test ./errorutil -coverprofile=coverage.out
+go tool cover -html=coverage.out -o coverage.html
+open coverage.html
+
+# Run tests with race detection
+go test ./... -race
+
+# Check for unused dependencies
+go mod tidy
+go mod verify
+```
 
 ---
 
