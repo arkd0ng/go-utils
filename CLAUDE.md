@@ -95,6 +95,37 @@ git push
 
 **Always increment version BEFORE starting any work.**
 
+### 🚨 CRITICAL: Version Management Rule / 버전 관리 규칙
+
+**NEVER hardcode versions in package version.go files!**
+**패키지 version.go 파일에 버전을 하드코딩하지 마세요!**
+
+All packages MUST read version from `cfg/app.yaml` using the internal/version utility:
+
+모든 패키지는 internal/version 유틸리티를 사용하여 `cfg/app.yaml`에서 버전을 읽어야 합니다:
+
+```go
+// ❌ WRONG - Hardcoded version / 잘못됨 - 하드코딩된 버전
+package mypackage
+
+const Version = "v1.13.004"
+
+// ✅ CORRECT - Dynamic version from app.yaml / 올바름 - app.yaml에서 동적으로
+package mypackage
+
+import "github.com/arkd0ng/go-utils/internal/version"
+
+var Version = version.Get()
+```
+
+**Why / 이유:**
+- Single source of truth (cfg/app.yaml)
+- No sync issues between files
+- Easier maintenance
+- 단일 진실 소스 (cfg/app.yaml)
+- 파일 간 동기화 문제 없음
+- 유지보수 용이
+
 ---
 
 ## CHANGELOG Management

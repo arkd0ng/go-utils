@@ -1,5 +1,7 @@
 package validation
 
-// Version is the current version of the validation package.
-// Version은 validation 패키지의 현재 버전입니다.
-const Version = "v1.13.004"
+import "github.com/arkd0ng/go-utils/internal/version"
+
+// Version returns the current version from cfg/app.yaml.
+// Version은 cfg/app.yaml에서 현재 버전을 반환합니다.
+var Version = version.Get()
