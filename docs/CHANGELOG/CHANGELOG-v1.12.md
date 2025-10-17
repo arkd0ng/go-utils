@@ -6,6 +6,108 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.007] - 2025-10-17
+
+### Added / 추가
+- errorutil 패키지 Phase 3 (Error Wrapping) 완료
+- 6개의 에러 래핑 함수 구현:
+  - Wrap(cause, message): 기본 에러 래핑
+  - Wrapf(cause, format, args...): 포맷된 에러 래핑
+  - WrapWithCode(cause, code, message): 문자열 코드와 함께 래핑
+  - WrapWithCodef(cause, code, format, args...): 문자열 코드와 포맷된 메시지로 래핑
+  - WrapWithNumericCode(cause, code, message): 숫자 코드와 함께 래핑
+  - WrapWithNumericCodef(cause, code, format, args...): 숫자 코드와 포맷된 메시지로 래핑
+- nil 에러 처리 (nil을 래핑하면 nil 반환)
+- 모든 래핑 함수에 대한 포괄적인 테스트 추가
+
+### Changed / 변경
+- N/A
+
+### Fixed / 수정
+- N/A
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - 버전을 v1.12.006에서 v1.12.007로 증가
+- `errorutil/error.go` - 6개 래핑 함수 추가 (200+ 줄 추가, 총 370+ 줄)
+- `errorutil/error_test.go` - 6개 래핑 함수 테스트 추가 (460+ 줄 추가, 총 830+ 줄)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.007 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+Phase 2 완료 후 자동으로 Phase 3로 진행
+
+**Why / 이유**:
+- Phase 3는 에러 컨텍스트를 추가하는 핵심 기능
+- Wrap 함수들은 에러가 콜 스택을 올라가면서 컨텍스트를 추가하는 일반적인 패턴
+- Go 표준 라이브러리의 fmt.Errorf("%w", err)와 유사하지만 더 많은 기능 제공
+- 에러 코드를 추가하면서 래핑하여 에러 분류와 추적 동시 지원
+
+**Implementation Details / 구현 세부사항**:
+
+1. **기본 래핑**:
+   - Wrap(): 단순 메시지로 기존 에러 래핑
+   - Wrapf(): 포맷된 메시지로 래핑
+   - nil 에러를 래핑하면 nil 반환 (안전성)
+
+2. **코드가 있는 래핑**:
+   - WrapWithCode(): 문자열 코드 추가하며 래핑
+   - WrapWithNumericCode(): 숫자 코드 추가하며 래핑
+   - 각각 포맷 변형(WrapWithCodef, WrapWithNumericCodef) 제공
+
+3. **인터페이스 호환성**:
+   - 모든 함수는 Unwrapper 인터페이스 구현
+   - errors.Is, errors.As와 완전히 호환
+   - 코드가 있는 래핑은 Coder/NumericCoder 인터페이스도 구현
+
+4. **테스트 커버리지**:
+   - nil 에러 래핑 테스트
+   - 빈 메시지 테스트
+   - 다중 인자 포맷 테스트
+   - Unwrap 동작 검증
+
+**Impact / 영향**:
+- 에러 전파 시 컨텍스트 추가 가능
+- 에러 체인을 통한 원인 추적 가능
+- 코드 추가로 에러 분류 및 처리 용이
+- 다음 단계(Phase 4: Error Inspection)의 기초 제공
+- 전체 커버리지 98.6%로 목표 80% 초과
+
+### Test Results / 테스트 결과
+
+```
+PASS
+ok  	github.com/arkd0ng/go-utils/errorutil	1.557s
+coverage: 98.6% of statements
+```
+
+All 19 test functions passed with 54 subtests:
+- TestNew (3 cases)
+- TestNewf (4 cases)
+- TestWithCode (4 cases)
+- TestWithCodef (3 cases)
+- TestWithNumericCode (4 cases)
+- TestWithNumericCodef (3 cases)
+- TestWrap (3 cases)
+- TestWrapf (3 cases)
+- TestWrapWithCode (3 cases)
+- TestWrapWithCodef (3 cases)
+- TestWrapWithNumericCode (3 cases)
+- TestWrapWithNumericCodef (3 cases)
+- + Phase 1 tests (7 functions, 14 subtests)
+
+### Next Steps / 다음 단계
+
+Phase 4: Error Inspection (에러 검사 함수)
+- HasCode() 함수 구현
+- HasNumericCode() 함수 구현
+- GetCode() 함수 구현
+- GetNumericCode() 함수 구현
+- GetStackTrace() 함수 구현
+- GetContext() 함수 구현
+
+---
+
 ## [v1.12.006] - 2025-10-17
 
 ### Added / 추가

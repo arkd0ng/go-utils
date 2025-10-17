@@ -371,3 +371,463 @@ func TestWithNumericCodef(t *testing.T) {
 		})
 	}
 }
+
+// TestWrap tests the Wrap function
+// TestWrap는 Wrap 함수를 테스트합니다
+func TestWrap(t *testing.T) {
+	original := New("original error")
+
+	tests := []struct {
+		name      string
+		cause     error
+		message   string
+		want      string
+		wantCause error
+		wantNil   bool
+	}{
+		{
+			name:      "wrap with message",
+			cause:     original,
+			message:   "wrapped message",
+			want:      "wrapped message: original error",
+			wantCause: original,
+			wantNil:   false,
+		},
+		{
+			name:      "wrap nil error",
+			cause:     nil,
+			message:   "this should return nil",
+			want:      "",
+			wantCause: nil,
+			wantNil:   true,
+		},
+		{
+			name:      "wrap with empty message",
+			cause:     original,
+			message:   "",
+			want:      ": original error",
+			wantCause: original,
+			wantNil:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := Wrap(tt.cause, tt.message)
+
+			// Check if nil is expected / nil이 예상되는지 확인
+			if tt.wantNil {
+				if err != nil {
+					t.Errorf("Wrap() = %v, want nil", err)
+				}
+				return
+			}
+
+			// Test Error() method / Error() 메서드 테스트
+			if got := err.Error(); got != tt.want {
+				t.Errorf("Error() = %q, want %q", got, tt.want)
+			}
+
+			// Test Unwrap() method / Unwrap() 메서드 테스트
+			if unwrapper, ok := err.(Unwrapper); ok {
+				if cause := unwrapper.Unwrap(); cause != tt.wantCause {
+					t.Errorf("Unwrap() = %v, want %v", cause, tt.wantCause)
+				}
+			} else {
+				t.Error("Wrap() did not return an Unwrapper")
+			}
+		})
+	}
+}
+
+// TestWrapf tests the Wrapf function
+// TestWrapf는 Wrapf 함수를 테스트합니다
+func TestWrapf(t *testing.T) {
+	original := New("connection failed")
+
+	tests := []struct {
+		name      string
+		cause     error
+		format    string
+		args      []interface{}
+		want      string
+		wantCause error
+		wantNil   bool
+	}{
+		{
+			name:      "wrap with formatted message",
+			cause:     original,
+			format:    "failed to connect to %s",
+			args:      []interface{}{"database"},
+			want:      "failed to connect to database: connection failed",
+			wantCause: original,
+			wantNil:   false,
+		},
+		{
+			name:      "wrap nil error",
+			cause:     nil,
+			format:    "this should return nil",
+			args:      []interface{}{},
+			want:      "",
+			wantCause: nil,
+			wantNil:   true,
+		},
+		{
+			name:      "wrap with multiple args",
+			cause:     original,
+			format:    "retry %d of %d failed",
+			args:      []interface{}{3, 5},
+			want:      "retry 3 of 5 failed: connection failed",
+			wantCause: original,
+			wantNil:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := Wrapf(tt.cause, tt.format, tt.args...)
+
+			// Check if nil is expected / nil이 예상되는지 확인
+			if tt.wantNil {
+				if err != nil {
+					t.Errorf("Wrapf() = %v, want nil", err)
+				}
+				return
+			}
+
+			// Test Error() method / Error() 메서드 테스트
+			if got := err.Error(); got != tt.want {
+				t.Errorf("Error() = %q, want %q", got, tt.want)
+			}
+
+			// Test Unwrap() method / Unwrap() 메서드 테스트
+			if unwrapper, ok := err.(Unwrapper); ok {
+				if cause := unwrapper.Unwrap(); cause != tt.wantCause {
+					t.Errorf("Unwrap() = %v, want %v", cause, tt.wantCause)
+				}
+			}
+		})
+	}
+}
+
+// TestWrapWithCode tests the WrapWithCode function
+// TestWrapWithCode는 WrapWithCode 함수를 테스트합니다
+func TestWrapWithCode(t *testing.T) {
+	original := New("validation failed")
+
+	tests := []struct {
+		name      string
+		cause     error
+		code      string
+		message   string
+		wantMsg   string
+		wantCode  string
+		wantCause error
+		wantNil   bool
+	}{
+		{
+			name:      "wrap with code",
+			cause:     original,
+			code:      "ERR001",
+			message:   "invalid input",
+			wantMsg:   "[ERR001] invalid input: validation failed",
+			wantCode:  "ERR001",
+			wantCause: original,
+			wantNil:   false,
+		},
+		{
+			name:      "wrap nil error",
+			cause:     nil,
+			code:      "ERR002",
+			message:   "this should return nil",
+			wantMsg:   "",
+			wantCode:  "",
+			wantCause: nil,
+			wantNil:   true,
+		},
+		{
+			name:      "wrap with descriptive code",
+			cause:     original,
+			code:      "VALIDATION_ERROR",
+			message:   "field validation failed",
+			wantMsg:   "[VALIDATION_ERROR] field validation failed: validation failed",
+			wantCode:  "VALIDATION_ERROR",
+			wantCause: original,
+			wantNil:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := WrapWithCode(tt.cause, tt.code, tt.message)
+
+			// Check if nil is expected / nil이 예상되는지 확인
+			if tt.wantNil {
+				if err != nil {
+					t.Errorf("WrapWithCode() = %v, want nil", err)
+				}
+				return
+			}
+
+			// Test Error() method / Error() 메서드 테스트
+			if got := err.Error(); got != tt.wantMsg {
+				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
+			}
+
+			// Test Code() method / Code() 메서드 테스트
+			if coder, ok := err.(Coder); ok {
+				if got := coder.Code(); got != tt.wantCode {
+					t.Errorf("Code() = %q, want %q", got, tt.wantCode)
+				}
+			} else {
+				t.Error("WrapWithCode() did not return a Coder")
+			}
+
+			// Test Unwrap() method / Unwrap() 메서드 테스트
+			if unwrapper, ok := err.(Unwrapper); ok {
+				if cause := unwrapper.Unwrap(); cause != tt.wantCause {
+					t.Errorf("Unwrap() = %v, want %v", cause, tt.wantCause)
+				}
+			}
+		})
+	}
+}
+
+// TestWrapWithCodef tests the WrapWithCodef function
+// TestWrapWithCodef는 WrapWithCodef 함수를 테스트합니다
+func TestWrapWithCodef(t *testing.T) {
+	original := New("not found")
+
+	tests := []struct {
+		name      string
+		cause     error
+		code      string
+		format    string
+		args      []interface{}
+		wantMsg   string
+		wantCode  string
+		wantCause error
+		wantNil   bool
+	}{
+		{
+			name:      "wrap with code and format",
+			cause:     original,
+			code:      "ERR404",
+			format:    "user %d not found",
+			args:      []interface{}{123},
+			wantMsg:   "[ERR404] user 123 not found: not found",
+			wantCode:  "ERR404",
+			wantCause: original,
+			wantNil:   false,
+		},
+		{
+			name:      "wrap nil error",
+			cause:     nil,
+			code:      "ERR000",
+			format:    "should return nil",
+			args:      []interface{}{},
+			wantMsg:   "",
+			wantCode:  "",
+			wantCause: nil,
+			wantNil:   true,
+		},
+		{
+			name:      "wrap with multiple args",
+			cause:     original,
+			code:      "DB_ERROR",
+			format:    "query failed: table %s, column %s",
+			args:      []interface{}{"users", "email"},
+			wantMsg:   "[DB_ERROR] query failed: table users, column email: not found",
+			wantCode:  "DB_ERROR",
+			wantCause: original,
+			wantNil:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := WrapWithCodef(tt.cause, tt.code, tt.format, tt.args...)
+
+			// Check if nil is expected / nil이 예상되는지 확인
+			if tt.wantNil {
+				if err != nil {
+					t.Errorf("WrapWithCodef() = %v, want nil", err)
+				}
+				return
+			}
+
+			// Test Error() method / Error() 메서드 테스트
+			if got := err.Error(); got != tt.wantMsg {
+				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
+			}
+
+			// Test Code() method / Code() 메서드 테스트
+			if coder, ok := err.(Coder); ok {
+				if got := coder.Code(); got != tt.wantCode {
+					t.Errorf("Code() = %q, want %q", got, tt.wantCode)
+				}
+			}
+		})
+	}
+}
+
+// TestWrapWithNumericCode tests the WrapWithNumericCode function
+// TestWrapWithNumericCode는 WrapWithNumericCode 함수를 테스트합니다
+func TestWrapWithNumericCode(t *testing.T) {
+	original := New("database error")
+
+	tests := []struct {
+		name      string
+		cause     error
+		code      int
+		message   string
+		wantMsg   string
+		wantCode  int
+		wantCause error
+		wantNil   bool
+	}{
+		{
+			name:      "wrap with numeric code",
+			cause:     original,
+			code:      500,
+			message:   "internal server error",
+			wantMsg:   "[500] internal server error: database error",
+			wantCode:  500,
+			wantCause: original,
+			wantNil:   false,
+		},
+		{
+			name:      "wrap nil error",
+			cause:     nil,
+			code:      404,
+			message:   "should return nil",
+			wantMsg:   "",
+			wantCode:  0,
+			wantCause: nil,
+			wantNil:   true,
+		},
+		{
+			name:      "wrap with HTTP error code",
+			cause:     original,
+			code:      503,
+			message:   "service unavailable",
+			wantMsg:   "[503] service unavailable: database error",
+			wantCode:  503,
+			wantCause: original,
+			wantNil:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := WrapWithNumericCode(tt.cause, tt.code, tt.message)
+
+			// Check if nil is expected / nil이 예상되는지 확인
+			if tt.wantNil {
+				if err != nil {
+					t.Errorf("WrapWithNumericCode() = %v, want nil", err)
+				}
+				return
+			}
+
+			// Test Error() method / Error() 메서드 테스트
+			if got := err.Error(); got != tt.wantMsg {
+				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
+			}
+
+			// Test Code() method / Code() 메서드 테스트
+			if coder, ok := err.(NumericCoder); ok {
+				if got := coder.Code(); got != tt.wantCode {
+					t.Errorf("Code() = %d, want %d", got, tt.wantCode)
+				}
+			} else {
+				t.Error("WrapWithNumericCode() did not return a NumericCoder")
+			}
+
+			// Test Unwrap() method / Unwrap() 메서드 테스트
+			if unwrapper, ok := err.(Unwrapper); ok {
+				if cause := unwrapper.Unwrap(); cause != tt.wantCause {
+					t.Errorf("Unwrap() = %v, want %v", cause, tt.wantCause)
+				}
+			}
+		})
+	}
+}
+
+// TestWrapWithNumericCodef tests the WrapWithNumericCodef function
+// TestWrapWithNumericCodef는 WrapWithNumericCodef 함수를 테스트합니다
+func TestWrapWithNumericCodef(t *testing.T) {
+	original := New("timeout")
+
+	tests := []struct {
+		name      string
+		cause     error
+		code      int
+		format    string
+		args      []interface{}
+		wantMsg   string
+		wantCode  int
+		wantCause error
+		wantNil   bool
+	}{
+		{
+			name:      "wrap with numeric code and format",
+			cause:     original,
+			code:      408,
+			format:    "request timeout after %d seconds",
+			args:      []interface{}{30},
+			wantMsg:   "[408] request timeout after 30 seconds: timeout",
+			wantCode:  408,
+			wantCause: original,
+			wantNil:   false,
+		},
+		{
+			name:      "wrap nil error",
+			cause:     nil,
+			code:      500,
+			format:    "should return nil",
+			args:      []interface{}{},
+			wantMsg:   "",
+			wantCode:  0,
+			wantCause: nil,
+			wantNil:   true,
+		},
+		{
+			name:      "wrap with multiple args",
+			cause:     original,
+			code:      429,
+			format:    "rate limit exceeded: %d requests in %d seconds",
+			args:      []interface{}{100, 60},
+			wantMsg:   "[429] rate limit exceeded: 100 requests in 60 seconds: timeout",
+			wantCode:  429,
+			wantCause: original,
+			wantNil:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := WrapWithNumericCodef(tt.cause, tt.code, tt.format, tt.args...)
+
+			// Check if nil is expected / nil이 예상되는지 확인
+			if tt.wantNil {
+				if err != nil {
+					t.Errorf("WrapWithNumericCodef() = %v, want nil", err)
+				}
+				return
+			}
+
+			// Test Error() method / Error() 메서드 테스트
+			if got := err.Error(); got != tt.wantMsg {
+				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
+			}
+
+			// Test Code() method / Code() 메서드 테스트
+			if coder, ok := err.(NumericCoder); ok {
+				if got := coder.Code(); got != tt.wantCode {
+					t.Errorf("Code() = %d, want %d", got, tt.wantCode)
+				}
+			}
+		})
+	}
+}
