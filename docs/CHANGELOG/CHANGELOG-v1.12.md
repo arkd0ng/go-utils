@@ -6,6 +6,54 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.016] - 2025-10-17
+
+### Changed / 변경
+- examples/errorutil/main.go의 배너를 logger.Banner() 메서드로 변경
+- WithAutoBanner(false) 추가하여 자동 배너 비활성화
+- 다른 예제들과 동일한 배너 출력 방식 사용
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - 버전을 v1.12.015에서 v1.12.016로 증가
+- `examples/errorutil/main.go` - logger.Banner() 사용, WithAutoBanner(false) 추가
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.016 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+"배너 출력을 로그파일에 하고 싶습니다. 다른 예제 로그 파일들 처럼요"
+
+**Why / 이유**:
+- 다른 예제들(mysql, redis 등)은 logger.Banner() 메서드 사용
+- logger.Banner()는 타임스탬프 없이 로그 파일 맨 위에 배너 기록
+- 콘솔과 로그 파일 모두에 동일한 배너 출력
+- 로그 파일 분석 시 어떤 예제인지 즉시 파악 가능
+
+**Implementation Details / 구현 세부사항**:
+
+1. **WithAutoBanner(false) 추가**:
+   - 자동 배너 출력 비활성화
+   - 수동으로 배너 제어 가능
+
+2. **logger.Banner() 사용**:
+   - `logger.Banner("go-utils", version)` - 앱 버전 배너
+   - `logger.Banner("errorutil Package Examples", "go-utils/errorutil")` - 예제 배너
+   - printRaw()를 통해 타임스탬프 없이 출력
+   - 콘솔과 로그 파일 모두에 기록
+
+3. **결과**:
+   - 로그 파일 맨 위에 배너 2개 출력
+   - 타임스탬프 없이 깔끔하게 표시
+   - 다른 예제들과 동일한 형식
+
+**Impact / 영향**:
+- 로그 파일에 배너 정보 포함으로 가독성 향상
+- 다른 예제들과 일관성 있는 출력 형식
+- 로그 분석 시 즉시 예제 식별 가능
+- MySQL, Redis 등 다른 예제와 동일한 패턴
+
+---
+
 ## [v1.12.015] - 2025-10-17
 
 ### Changed / 변경

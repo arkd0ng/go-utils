@@ -113,11 +113,12 @@ func initLogger() *logging.Logger {
 	logger, err := logging.New(
 		logging.WithFilePath(logFilePath),
 		logging.WithLevel(logging.DEBUG),
-		logging.WithMaxSize(10),    // 10 MB
-		logging.WithMaxBackups(5),  // Keep 5 backups / 백업 5개 유지
-		logging.WithMaxAge(30),     // 30 days / 30일
-		logging.WithCompress(true), // Compress old logs / 오래된 로그 압축
-		logging.WithStdout(true),   // Enable console output / 콘솔 출력 활성화
+		logging.WithMaxSize(10),      // 10 MB
+		logging.WithMaxBackups(5),    // Keep 5 backups / 백업 5개 유지
+		logging.WithMaxAge(30),       // 30 days / 30일
+		logging.WithCompress(true),   // Compress old logs / 오래된 로그 압축
+		logging.WithStdout(true),     // Enable console output / 콘솔 출력 활성화
+		logging.WithAutoBanner(false), // Disable auto banner / 자동 배너 비활성화
 	)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to initialize logger: %v\n", err)
@@ -136,12 +137,12 @@ func printBanner(logger *logging.Logger) {
 		version = "unknown" // Fallback if yaml not found / yaml을 찾지 못한 경우 대체값
 	}
 
-	logger.Info("===========================================")
-	logger.Info("   errorutil Package Examples")
-	logger.Info("   errorutil 패키지 예제")
-	logger.Info("===========================================")
-	logger.Info("Version: " + version)
-	logger.Info("Package: github.com/arkd0ng/go-utils/errorutil")
+	// Print banner using logger.Banner() method / logger.Banner() 메서드로 배너 출력
+	// This writes to both console and log file / 콘솔과 로그 파일 모두에 기록됨
+	logger.Banner("go-utils", version)
+	logger.Banner("errorutil Package Examples", "go-utils/errorutil")
+
+	// Log example information / 예제 정보 로그
 	logger.Info("")
 	logger.Info("This example demonstrates:")
 	logger.Info("이 예제는 다음을 시연합니다:")
@@ -149,10 +150,6 @@ func printBanner(logger *logging.Logger) {
 	logger.Info("- Error wrapping / 에러 래핑")
 	logger.Info("- Error inspection / 에러 검사")
 	logger.Info("- Real-world patterns / 실제 패턴")
-	logger.Info("===========================================")
-	logger.Info("")
-	logger.Info("Starting errorutil Package Examples")
-	logger.Info("errorutil 패키지 예제 시작")
 	logger.Info("")
 }
 
