@@ -6,6 +6,91 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.006] - 2025-10-17
+
+### Added / 추가
+- errorutil 패키지 Phase 2 (Error Creation) 완료
+- 6개의 에러 생성 함수 구현:
+  - New(message): 기본 에러 생성
+  - Newf(format, args...): 포맷된 에러 생성
+  - WithCode(code, message): 문자열 코드가 있는 에러 생성
+  - WithCodef(code, format, args...): 문자열 코드와 포맷된 메시지
+  - WithNumericCode(code, message): 숫자 코드가 있는 에러 생성
+  - WithNumericCodef(code, format, args...): 숫자 코드와 포맷된 메시지
+- 모든 에러 생성 함수에 대한 포괄적인 테스트 추가
+
+### Changed / 변경
+- N/A
+
+### Fixed / 수정
+- N/A
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - 버전을 v1.12.005에서 v1.12.006으로 증가
+- `errorutil/error.go` - 새 파일 생성 (180+ 줄, 에러 생성 함수들)
+- `errorutil/error_test.go` - 새 파일 생성 (380+ 줄, 포괄적인 테스트)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.006 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+Phase 1 완료 후 자동으로 Phase 2로 진행
+
+**Why / 이유**:
+- Phase 2는 사용자가 에러를 생성하는 공개 API의 첫 단계
+- New()와 Newf()는 errors.New, fmt.Errorf와 유사하지만 unwrapping 지원
+- WithCode와 WithNumericCode는 에러 분류 및 API 응답에 필수
+- 포맷 변형(Newf, WithCodef, WithNumericCodef)은 동적 메시지 생성 지원
+
+**Implementation Details / 구현 세부사항**:
+
+1. **기본 에러 생성**:
+   - New(): 단순 메시지로 wrappedError 반환
+   - Newf(): fmt.Sprintf로 포맷된 메시지의 wrappedError 반환
+
+2. **코드가 있는 에러**:
+   - WithCode(): 문자열 코드("ERR001", "VALIDATION_ERROR" 등)
+   - WithNumericCode(): 숫자 코드(404, 500 등 HTTP 상태 코드)
+   - 각각 포맷 변형(WithCodef, WithNumericCodef) 제공
+
+3. **인터페이스 호환성**:
+   - 모든 함수는 Phase 1의 타입(wrappedError, codedError, numericCodedError) 반환
+   - Coder, NumericCoder 인터페이스 구현
+   - Unwrapper 인터페이스 구현 (Go 표준 라이브러리 호환)
+
+**Impact / 영향**:
+- 사용자가 간단하게 에러 생성 가능
+- 에러 코드를 통한 분류 가능
+- 다음 단계(Phase 3: Error Wrapping)의 기초 제공
+- 전체 커버리지 98.1%로 목표 80% 초과
+
+### Test Results / 테스트 결과
+
+```
+PASS
+ok  	github.com/arkd0ng/go-utils/errorutil	0.760s
+coverage: 98.1% of statements
+```
+
+All 13 test functions passed with 33 subtests:
+- TestNew (3 cases)
+- TestNewf (4 cases)
+- TestWithCode (4 cases)
+- TestWithCodef (3 cases)
+- TestWithNumericCode (4 cases)
+- TestWithNumericCodef (3 cases)
+- + Phase 1 tests (7 functions, 14 subtests)
+
+### Next Steps / 다음 단계
+
+Phase 3: Error Wrapping (에러 래핑 함수)
+- Wrap() 함수 구현
+- Wrapf() 함수 구현
+- WrapWithCode() 함수 구현
+- WrapWithNumericCode() 함수 구현
+
+---
+
 ## [v1.12.005] - 2025-10-17
 
 ### Added / 추가
