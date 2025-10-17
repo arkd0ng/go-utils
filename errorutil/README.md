@@ -264,6 +264,69 @@ if code, ok := errorutil.GetNumericCode(err); ok {
 }
 ```
 
+#### GetStackTrace(err error) ([]Frame, bool)
+
+Extracts the stack trace from an error or any error in its chain. / 에러 또는 에러 체인에서 스택 트레이스를 추출합니다.
+
+```go
+if stack, ok := errorutil.GetStackTrace(err); ok {
+    for _, frame := range stack {
+        fmt.Println(frame.String())
+    }
+}
+```
+
+#### GetContext(err error) (map[string]interface{}, bool)
+
+Extracts the context data from an error or any error in its chain. / 에러 또는 에러 체인에서 컨텍스트 데이터를 추출합니다.
+
+```go
+if ctx, ok := errorutil.GetContext(err); ok {
+    fmt.Printf("User ID: %v\n", ctx["user_id"])
+}
+```
+
+#### Root(err error) error
+
+Returns the root (innermost) error in the error chain. / 에러 체인의 루트(가장 안쪽) 에러를 반환합니다.
+
+```go
+baseErr := errors.New("base error")
+err1 := errorutil.Wrap(baseErr, "layer 1")
+err2 := errorutil.Wrap(err1, "layer 2")
+
+root := errorutil.Root(err2)
+fmt.Println(root) // Output: base error
+```
+
+#### UnwrapAll(err error) []error
+
+Returns all errors in the error chain as a slice. The first element is the outermost error, and the last is the root error. / 에러 체인의 모든 에러를 슬라이스로 반환합니다. 첫 번째 요소는 가장 바깥쪽 에러이고, 마지막은 루트 에러입니다.
+
+```go
+baseErr := errors.New("base error")
+err1 := errorutil.Wrap(baseErr, "layer 1")
+err2 := errorutil.Wrap(err1, "layer 2")
+
+chain := errorutil.UnwrapAll(err2)
+// chain[0]: "layer 2: layer 1: base error"
+// chain[1]: "layer 1: base error"
+// chain[2]: "base error"
+```
+
+#### Contains(err error, target error) bool
+
+Checks if the error chain contains a specific error using errors.Is(). / errors.Is()를 사용하여 에러 체인이 특정 에러를 포함하는지 확인합니다.
+
+```go
+var ErrNotFound = errors.New("not found")
+err := errorutil.Wrap(ErrNotFound, "failed to get user")
+
+if errorutil.Contains(err, ErrNotFound) {
+    fmt.Println("This is a not found error")
+}
+```
+
 ## Examples / 예제
 
 ### HTTP API Error Handling / HTTP API 에러 처리

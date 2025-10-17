@@ -1094,6 +1094,9 @@ Within each file, organize functions by:
 | GetNumericCode | int, bool | - | inspect.go |
 | GetStackTrace | []Frame, bool | - | inspect.go |
 | GetContext | map[string]interface{}, bool | - | inspect.go |
+| Root | error | - | inspect.go |
+| UnwrapAll | []error | - | inspect.go |
+| Contains | bool | - | inspect.go |
 
 ---
 

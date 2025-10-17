@@ -47,6 +47,7 @@ func main() {
 	example10ErrorClassification(logger)
 	example11MultiLayerWrapping(logger)
 	example12StandardLibraryCompat(logger)
+	example13ErrorChainInspection(logger)
 
 	// Print footer / 푸터 출력
 	logger.Info("===========================================")
@@ -668,4 +669,169 @@ func example12StandardLibraryCompat(logger *logging.Logger) {
 
 	logger.Info("Example 12 completed successfully")
 	logger.Info("예제 12 완료")
+}
+
+// example13ErrorChainInspection demonstrates Root, UnwrapAll, and Contains functions
+// example13ErrorChainInspection은 Root, UnwrapAll, Contains 함수를 시연합니다
+func example13ErrorChainInspection(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 13: Error Chain Inspection / 예제 13: 에러 체인 검사")
+	logger.Info("===========================================")
+
+	logger.Info("Demonstrating Root(), UnwrapAll(), and Contains() functions")
+	logger.Info("Root(), UnwrapAll(), Contains() 함수 시연")
+
+	// Create a multi-layer error chain / 다층 에러 체인 생성
+	logger.Info("")
+	logger.Info("Creating multi-layer error chain")
+	logger.Info("다층 에러 체인 생성")
+
+	baseErr := errors.New("database connection failed")
+	logger.Info("Base error created", "error", baseErr.Error())
+	logger.Info("기본 에러 생성됨", "error", baseErr.Error())
+
+	err1 := errorutil.Wrap(baseErr, "failed to connect to primary database")
+	logger.Info("Layer 1 wrapped", "error", err1.Error())
+	logger.Info("레이어 1 래핑됨", "error", err1.Error())
+
+	err2 := errorutil.WrapWithCode(err1, "DB_ERROR", "database operation failed")
+	logger.Info("Layer 2 wrapped with code", "error", err2.Error())
+	logger.Info("코드와 함께 레이어 2 래핑됨", "error", err2.Error())
+
+	err3 := errorutil.Wrap(err2, "failed to fetch user data")
+	logger.Info("Layer 3 wrapped", "error", err3.Error())
+	logger.Info("레이어 3 래핑됨", "error", err3.Error())
+
+	// Test Root() function / Root() 함수 테스트
+	logger.Info("")
+	logger.Info("Testing Root() function")
+	logger.Info("Root() 함수 테스트")
+
+	root := errorutil.Root(err3)
+	logger.Info("Root error found", "root", root.Error())
+	logger.Info("루트 에러 발견", "root", root.Error())
+	logger.Info("Root matches base error", "matches", root.Error() == baseErr.Error())
+	logger.Info("루트가 기본 에러와 일치", "matches", root.Error() == baseErr.Error())
+
+	// Test UnwrapAll() function / UnwrapAll() 함수 테스트
+	logger.Info("")
+	logger.Info("Testing UnwrapAll() function")
+	logger.Info("UnwrapAll() 함수 테스트")
+
+	chain := errorutil.UnwrapAll(err3)
+	logger.Info("Total errors in chain", "count", len(chain))
+	logger.Info("체인의 총 에러 개수", "count", len(chain))
+
+	for i, e := range chain {
+		logger.Info("Error chain level", "level", i, "error", e.Error())
+		logger.Info("에러 체인 레벨", "level", i, "error", e.Error())
+	}
+
+	// Test Contains() function / Contains() 함수 테스트
+	logger.Info("")
+	logger.Info("Testing Contains() function")
+	logger.Info("Contains() 함수 테스트")
+
+	// Create sentinel errors / 센티널 에러 생성
+	var ErrNotFound = errors.New("not found")
+	var ErrTimeout = errors.New("timeout")
+
+	// Create error chain with sentinel error / 센티널 에러로 에러 체인 생성
+	notFoundErr := errorutil.Wrap(ErrNotFound, "user not found")
+	wrappedNotFound := errorutil.Wrap(notFoundErr, "failed to get user profile")
+
+	containsNotFound := errorutil.Contains(wrappedNotFound, ErrNotFound)
+	logger.Info("Contains ErrNotFound", "result", containsNotFound)
+	logger.Info("ErrNotFound 포함", "result", containsNotFound)
+
+	containsTimeout := errorutil.Contains(wrappedNotFound, ErrTimeout)
+	logger.Info("Contains ErrTimeout", "result", containsTimeout)
+	logger.Info("ErrTimeout 포함", "result", containsTimeout)
+
+	// Real-world use case: Error chain analysis / 실제 사용 사례: 에러 체인 분석
+	logger.Info("")
+	logger.Info("Real-world use case: Error chain analysis")
+	logger.Info("실제 사용 사례: 에러 체인 분석")
+
+	// Create a complex error scenario / 복잡한 에러 시나리오 생성
+	dbErr := errorutil.WithNumericCode(500, "internal database error")
+	serviceErr := errorutil.WrapWithCode(dbErr, "SVC_ERROR", "service unavailable")
+	apiErr := errorutil.WrapWithNumericCode(serviceErr, 503, "API temporarily unavailable")
+
+	logger.Info("Complex error created", "error", apiErr.Error())
+	logger.Info("복잡한 에러 생성됨", "error", apiErr.Error())
+
+	// Analyze the error chain / 에러 체인 분석
+	logger.Info("Analyzing error chain:")
+	logger.Info("에러 체인 분석:")
+
+	allErrors := errorutil.UnwrapAll(apiErr)
+	logger.Info("Chain depth", "depth", len(allErrors))
+	logger.Info("체인 깊이", "depth", len(allErrors))
+
+	rootCause := errorutil.Root(apiErr)
+	logger.Info("Root cause", "error", rootCause.Error())
+	logger.Info("근본 원인", "error", rootCause.Error())
+
+	// Check for specific error codes in the chain / 체인에서 특정 에러 코드 확인
+	if errorutil.HasCode(apiErr, "SVC_ERROR") {
+		logger.Info("Found service error in chain")
+		logger.Info("체인에서 서비스 에러 발견")
+	}
+
+	if errorutil.HasNumericCode(apiErr, 500) {
+		logger.Info("Found HTTP 500 error in chain")
+		logger.Info("체인에서 HTTP 500 에러 발견")
+	}
+
+	// Use case: Detailed error logging / 사용 사례: 상세 에러 로깅
+	logger.Info("")
+	logger.Info("Use case: Detailed error logging for debugging")
+	logger.Info("사용 사례: 디버깅을 위한 상세 에러 로깅")
+
+	testErr := simulateComplexOperation()
+	if testErr != nil {
+		logger.Info("Operation failed, analyzing error chain:")
+		logger.Info("작업 실패, 에러 체인 분석:")
+
+		// Log all errors in the chain / 체인의 모든 에러 로깅
+		errorChain := errorutil.UnwrapAll(testErr)
+		for i, e := range errorChain {
+			logger.Info("Chain analysis",
+				"depth", i,
+				"error", e.Error(),
+				"type", fmt.Sprintf("%T", e))
+			logger.Info("체인 분석",
+				"깊이", i,
+				"에러", e.Error(),
+				"타입", fmt.Sprintf("%T", e))
+		}
+
+		// Get root cause for reporting / 보고를 위한 근본 원인 가져오기
+		root := errorutil.Root(testErr)
+		logger.Info("Root cause for error report", "root", root.Error())
+		logger.Info("에러 보고서를 위한 근본 원인", "root", root.Error())
+	}
+
+	logger.Info("")
+	logger.Info("Example 13 completed successfully")
+	logger.Info("예제 13 완료")
+}
+
+// simulateComplexOperation simulates a complex operation that can fail at multiple levels
+// simulateComplexOperation은 여러 레벨에서 실패할 수 있는 복잡한 작업을 시뮬레이션합니다
+func simulateComplexOperation() error {
+	// Simulate a low-level error / 저수준 에러 시뮬레이션
+	lowLevelErr := errors.New("network timeout")
+
+	// Wrap at middleware layer / 미들웨어 레이어에서 래핑
+	middlewareErr := errorutil.WrapWithCode(lowLevelErr, "MIDDLEWARE_ERROR", "request processing failed")
+
+	// Wrap at service layer / 서비스 레이어에서 래핑
+	serviceErr := errorutil.WrapWithNumericCode(middlewareErr, 504, "gateway timeout")
+
+	// Wrap at API layer / API 레이어에서 래핑
+	apiErr := errorutil.Wrap(serviceErr, "failed to complete user request")
+
+	return apiErr
 }

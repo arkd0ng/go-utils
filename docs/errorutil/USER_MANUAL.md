@@ -1831,6 +1831,149 @@ if code, ok := errorutil.GetNumericCode(err); ok {
 }
 ```
 
+#### GetStackTrace
+```go
+func GetStackTrace(err error) ([]Frame, bool)
+```
+Extracts the stack trace from an error or any error in its chain.
+에러 또는 에러 체인에서 스택 트레이스를 추출합니다.
+
+**Parameters / 매개변수:**
+- `err`: Error to extract stack trace from / 스택 트레이스를 추출할 에러
+
+**Returns / 반환:**
+- `[]Frame`: Stack trace, or nil if not found / 스택 트레이스, 찾지 못하면 nil
+- `bool`: true if stack trace was found / 스택 트레이스를 찾으면 true
+
+**Example / 예제:**
+```go
+if stack, ok := errorutil.GetStackTrace(err); ok {
+    for _, frame := range stack {
+        fmt.Println(frame.String())
+    }
+}
+```
+
+#### GetContext
+```go
+func GetContext(err error) (map[string]interface{}, bool)
+```
+Extracts the context data from an error or any error in its chain.
+에러 또는 에러 체인에서 컨텍스트 데이터를 추출합니다.
+
+**Parameters / 매개변수:**
+- `err`: Error to extract context from / 컨텍스트를 추출할 에러
+
+**Returns / 반환:**
+- `map[string]interface{}`: Context data, or nil if not found / 컨텍스트 데이터, 찾지 못하면 nil
+- `bool`: true if context was found / 컨텍스트를 찾으면 true
+
+**Example / 예제:**
+```go
+if ctx, ok := errorutil.GetContext(err); ok {
+    fmt.Printf("User ID: %v\n", ctx["user_id"])
+    fmt.Printf("Action: %v\n", ctx["action"])
+}
+```
+
+#### Root
+```go
+func Root(err error) error
+```
+Returns the root (innermost) error in the error chain.
+에러 체인의 루트(가장 안쪽) 에러를 반환합니다.
+
+**Parameters / 매개변수:**
+- `err`: Error to get root from / 루트를 가져올 에러
+
+**Returns / 반환:**
+- `error`: Root error, or nil if input is nil / 루트 에러, 입력이 nil이면 nil
+
+**Example / 예제:**
+```go
+baseErr := errors.New("base error")
+err1 := errorutil.Wrap(baseErr, "layer 1")
+err2 := errorutil.Wrap(err1, "layer 2")
+err3 := errorutil.Wrap(err2, "layer 3")
+
+root := errorutil.Root(err3)
+fmt.Println(root) // Output: base error
+```
+
+**Use Cases / 사용 사례:**
+- Finding the original error in a long chain / 긴 체인에서 원본 에러 찾기
+- Logging root causes / 근본 원인 로깅
+- Error analysis / 에러 분석
+
+#### UnwrapAll
+```go
+func UnwrapAll(err error) []error
+```
+Returns all errors in the error chain as a slice. The first element is the outermost error, and the last is the root error.
+에러 체인의 모든 에러를 슬라이스로 반환합니다. 첫 번째 요소는 가장 바깥쪽 에러이고, 마지막은 루트 에러입니다.
+
+**Parameters / 매개변수:**
+- `err`: Error to unwrap / 언래핑할 에러
+
+**Returns / 반환:**
+- `[]error`: Slice of all errors in the chain, or nil if input is nil / 체인의 모든 에러 슬라이스, 입력이 nil이면 nil
+
+**Example / 예제:**
+```go
+baseErr := errors.New("base error")
+err1 := errorutil.Wrap(baseErr, "layer 1")
+err2 := errorutil.Wrap(err1, "layer 2")
+
+chain := errorutil.UnwrapAll(err2)
+for i, e := range chain {
+    fmt.Printf("Level %d: %v\n", i, e)
+}
+// Output:
+// Level 0: layer 2: layer 1: base error
+// Level 1: layer 1: base error
+// Level 2: base error
+```
+
+**Use Cases / 사용 사례:**
+- Analyzing error chains / 에러 체인 분석
+- Detailed error logging / 상세 에러 로깅
+- Debugging multi-layer errors / 다층 에러 디버깅
+
+#### Contains
+```go
+func Contains(err error, target error) bool
+```
+Checks if the error chain contains a specific error using errors.Is().
+errors.Is()를 사용하여 에러 체인이 특정 에러를 포함하는지 확인합니다.
+
+**Parameters / 매개변수:**
+- `err`: Error chain to check / 확인할 에러 체인
+- `target`: Error to look for / 찾을 에러
+
+**Returns / 반환:**
+- `bool`: true if target is found in the chain, false otherwise / 체인에서 target을 찾으면 true, 아니면 false
+
+**Example / 예제:**
+```go
+var ErrNotFound = errors.New("not found")
+var ErrValidation = errors.New("validation error")
+
+err := errorutil.Wrap(ErrNotFound, "failed to get user")
+
+if errorutil.Contains(err, ErrNotFound) {
+    fmt.Println("This is a not found error")
+}
+
+if errorutil.Contains(err, ErrValidation) {
+    fmt.Println("This won't print")
+}
+```
+
+**Use Cases / 사용 사례:**
+- Checking for sentinel errors / 센티널 에러 확인
+- Error type classification / 에러 타입 분류
+- Conditional error handling / 조건부 에러 처리
+
 ---
 
 ## Additional Resources / 추가 자료
