@@ -23,7 +23,8 @@ import (
 //	result, err := db.Upsert(ctx, "users", data, updateColumns)
 //
 // This generates: INSERT INTO users (email, name, age) VALUES (?,?,?)
-//                 ON DUPLICATE KEY UPDATE name=VALUES(name), age=VALUES(age)
+//
+//	ON DUPLICATE KEY UPDATE name=VALUES(name), age=VALUES(age)
 func (c *Client) Upsert(ctx context.Context, table string, data map[string]interface{}, updateColumns []string) (sql.Result, error) {
 	c.mu.RLock()
 	if c.closed {
@@ -52,7 +53,9 @@ func (c *Client) Upsert(ctx context.Context, table string, data map[string]inter
 	// Build value placeholders
 	// 값 플레이스홀더 빌드
 	placeholders := strings.Repeat("?,", len(columns))
-	placeholders = placeholders[:len(placeholders)-1] // Remove last comma / 마지막 쉼표 제거
+	// Remove last comma
+	// 마지막 쉼표 제거
+	placeholders = placeholders[:len(placeholders)-1]
 
 	// Build UPDATE clause
 	// UPDATE 절 빌드
@@ -115,7 +118,8 @@ func (c *Client) Upsert(ctx context.Context, table string, data map[string]inter
 //	err := db.UpsertBatch(ctx, "users", data, updateColumns)
 //
 // This generates: INSERT INTO users (email, name, age) VALUES (?,?,?),(?,?,?)
-//                 ON DUPLICATE KEY UPDATE name=VALUES(name), age=VALUES(age)
+//
+//	ON DUPLICATE KEY UPDATE name=VALUES(name), age=VALUES(age)
 func (c *Client) UpsertBatch(ctx context.Context, table string, data []map[string]interface{}, updateColumns []string) (sql.Result, error) {
 	c.mu.RLock()
 	if c.closed {
@@ -258,7 +262,9 @@ func (c *Client) Replace(ctx context.Context, table string, data map[string]inte
 	// Build value placeholders
 	// 값 플레이스홀더 빌드
 	placeholders := strings.Repeat("?,", len(columns))
-	placeholders = placeholders[:len(placeholders)-1] // Remove last comma / 마지막 쉼표 제거
+	// Remove last comma
+	// 마지막 쉼표 제거
+	placeholders = placeholders[:len(placeholders)-1]
 
 	// Build query
 	// 쿼리 빌드

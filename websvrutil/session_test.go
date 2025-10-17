@@ -377,7 +377,9 @@ func TestSessionStoreDestroy(t *testing.T) {
 // 세션 만료 테스트
 func TestSessionExpiration(t *testing.T) {
 	opts := DefaultSessionOptions()
-	opts.MaxAge = 100 * time.Millisecond // Short expiration for testing / 테스트용 짧은 만료 시간
+	// Short expiration for testing
+	// 테스트용 짧은 만료 시간
+	opts.MaxAge = 100 * time.Millisecond
 	store := NewSessionStore(opts)
 
 	session := store.New()
@@ -410,8 +412,12 @@ func TestSessionExpiration(t *testing.T) {
 // 만료된 세션 자동 정리 테스트
 func TestSessionCleanup(t *testing.T) {
 	opts := DefaultSessionOptions()
-	opts.MaxAge = 100 * time.Millisecond    // Short expiration / 짧은 만료 시간
-	opts.CleanupTime = 150 * time.Millisecond // Short cleanup interval / 짧은 정리 간격
+	// Short expiration
+	// 짧은 만료 시간
+	opts.MaxAge = 100 * time.Millisecond
+	// Short cleanup interval
+	// 짧은 정리 간격
+	opts.CleanupTime = 150 * time.Millisecond
 	store := NewSessionStore(opts)
 
 	// Create multiple sessions

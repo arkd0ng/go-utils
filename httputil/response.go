@@ -15,7 +15,9 @@ import (
 // Response는 추가 기능을 가진 http.Response를 래핑합니다.
 type Response struct {
 	*http.Response
-	body []byte // Cached body for multiple reads / 여러 번 읽기 위한 캐시된 본문
+	// Cached body for multiple reads
+	// 여러 번 읽기 위한 캐시된 본문
+	body []byte
 }
 
 // DoRaw performs an HTTP request and returns the raw response.

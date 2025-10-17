@@ -8,7 +8,8 @@
 // 이 패키지는 10-20줄의 반복적인 시간 조작 코드를 단일 함수 호출로 줄입니다.
 // 모든 함수는 스레드 안전하며 외부 의존성이 없습니다 (표준 라이브러리만).
 //
-// Design Philosophy: "20 lines → 1 line" / 설계 철학: "20줄 → 1줄"
+// Design Philosophy: "20 lines → 1 line"
+// 설계 철학: "20줄 → 1줄"
 //
 // Categories:
 // - Time Difference: SubTime, DiffInSeconds, DiffInMinutes, DiffInHours
@@ -28,26 +29,31 @@
 //
 // // Time difference
 // 시간 차이
+//
 //	diff := timeutil.SubTime(start, end)
 //	fmt.Println(diff.Days())    // 2
 //	fmt.Println(diff.String())  // "2 days 6 hours 30 minutes"
 //
 // // Timezone conversion
 // 타임존 변환
+//
 //	seoulTime, _ := timeutil.ConvertTimezone(time.Now(), "Asia/Seoul")
 //
 // // Date arithmetic
 // 날짜 연산
+//
 //	tomorrow := timeutil.AddDays(time.Now(), 1)
 //	startOfMonth := timeutil.StartOfMonth(time.Now())
 //
 // // Date formatting
 // 날짜 포맷팅
+//
 //	iso := timeutil.FormatISO8601(time.Now())
 //	custom := timeutil.Format(time.Now(), "YYYY-MM-DD HH:mm:ss")
 //
 // // Time comparisons
 // 시간 비교
+//
 //	if timeutil.IsToday(someDate) {
 //	    fmt.Println("It's today!")
 //	}

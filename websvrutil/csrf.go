@@ -32,10 +32,12 @@ type CSRFConfig struct {
 	// Default: "header:X-CSRF-Token"
 	TokenLookup string
 
-	// CookieName is the name of the CSRF cookie (default: "_csrf") / CookieName은 CSRF 쿠키의 이름입니다 (기본값: "_csrf")
+	// CookieName is the name of the CSRF cookie (default: "_csrf")
+	// CookieName은 CSRF 쿠키의 이름입니다 (기본값: "_csrf")
 	CookieName string
 
-	// CookiePath is the path of the CSRF cookie (default: "/") / CookiePath는 CSRF 쿠키의 경로입니다 (기본값: "/")
+	// CookiePath is the path of the CSRF cookie (default: "/")
+	// CookiePath는 CSRF 쿠키의 경로입니다 (기본값: "/")
 	CookiePath string
 
 	// CookieDomain is the domain of the CSRF cookie
@@ -58,7 +60,8 @@ type CSRFConfig struct {
 	// CookieMaxAge는 CSRF 쿠키의 최대 수명(초)입니다 (기본값: 86400 = 24시간)
 	CookieMaxAge int
 
-	// ContextKey is the key used to store the CSRF token in context (default: "csrf_token") / ContextKey는 컨텍스트에 CSRF 토큰을 저장하는 데 사용되는 키입니다 (기본값: "csrf_token")
+	// ContextKey is the key used to store the CSRF token in context (default: "csrf_token")
+	// ContextKey는 컨텍스트에 CSRF 토큰을 저장하는 데 사용되는 키입니다 (기본값: "csrf_token")
 	ContextKey string
 
 	// ErrorHandler is called when CSRF validation fails

@@ -325,7 +325,9 @@ func Zip[T, U any](a []T, b []U) [][2]any {
 // // ❌ INCORRECT usage (will panic!)
 // 잘못된 사용 (패닉 발생!):
 //
-//	badZipped := [][2]any{{1, "one"}, {"wrong", 2}} // Wrong types / 잘못된 타입
+// badZipped := [][2]any{{1, "one"}, {"wrong", 2}} // Wrong types
+// 잘못된 타입
+//
 //	nums, words := sliceutil.Unzip[int, string](badZipped) // PANIC!
 func Unzip[T, U any](slice [][2]any) ([]T, []U) {
 	if len(slice) == 0 {

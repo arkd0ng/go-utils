@@ -97,9 +97,13 @@ func Diff[K comparable, V comparable](m1, m2 map[K]V) map[K]V {
 	for k, v1 := range m1 {
 		if v2, exists := m2[k]; !exists || v1 != v2 {
 			if exists {
-				result[k] = v2 // Use value from m2 / m2의 값 사용
+				// Use value from m2
+				// m2의 값 사용
+				result[k] = v2
 			} else {
-				result[k] = v1 // Use value from m1 / m1의 값 사용
+				// Use value from m1
+				// m1의 값 사용
+				result[k] = v1
 			}
 		}
 	}

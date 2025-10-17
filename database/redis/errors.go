@@ -21,12 +21,24 @@ var (
 // RedisError represents a Redis operation error
 // RedisError는 Redis 작업 에러를 나타냅니다
 type RedisError struct {
-	Op       string        // Operation name / 작업 이름
-	Key      string        // Redis key / Redis 키
-	Args     []interface{} // Command arguments / 명령어 인자
-	Err      error         // Original error / 원본 에러
-	Time     time.Time     // Error timestamp / 에러 타임스탬프
-	Duration time.Duration // Operation duration / 작업 소요 시간
+	// Operation name
+	// 작업 이름
+	Op string
+	// Redis key
+	// Redis 키
+	Key string
+	// Command arguments
+	// 명령어 인자
+	Args []interface{}
+	// Original error
+	// 원본 에러
+	Err error
+	// Error timestamp
+	// 에러 타임스탬프
+	Time time.Time
+	// Operation duration
+	// 작업 소요 시간
+	Duration time.Duration
 }
 
 // Error implements the error interface

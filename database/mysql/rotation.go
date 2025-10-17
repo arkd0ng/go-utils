@@ -66,7 +66,9 @@ func (c *Client) rotateOneConnection() error {
 	// 5. Close old connection gracefully (after 30 seconds)
 	// 5. 오래된 연결을 우아하게 닫기 (30초 후)
 	go func() {
-		time.Sleep(30 * time.Second) // Wait for active queries to complete / 활성 쿼리 완료 대기
+		// Wait for active queries to complete
+		// 활성 쿼리 완료 대기
+		time.Sleep(30 * time.Second)
 		oldDB.Close()
 	}()
 

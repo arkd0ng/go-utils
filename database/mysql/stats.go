@@ -8,21 +8,41 @@ import (
 // QueryStats represents query execution statistics
 // QueryStats는 쿼리 실행 통계를 나타냅니다
 type QueryStats struct {
-	TotalQueries   int64         // Total number of queries executed / 실행된 총 쿼리 수
-	SuccessQueries int64         // Number of successful queries / 성공한 쿼리 수
-	FailedQueries  int64         // Number of failed queries / 실패한 쿼리 수
-	TotalDuration  time.Duration // Total execution time / 총 실행 시간
-	AvgDuration    time.Duration // Average execution time / 평균 실행 시간
-	SlowQueries    int64         // Number of slow queries / 느린 쿼리 수
+	// Total number of queries executed
+	// 실행된 총 쿼리 수
+	TotalQueries int64
+	// Number of successful queries
+	// 성공한 쿼리 수
+	SuccessQueries int64
+	// Number of failed queries
+	// 실패한 쿼리 수
+	FailedQueries int64
+	// Total execution time
+	// 총 실행 시간
+	TotalDuration time.Duration
+	// Average execution time
+	// 평균 실행 시간
+	AvgDuration time.Duration
+	// Number of slow queries
+	// 느린 쿼리 수
+	SlowQueries int64
 }
 
 // SlowQueryInfo represents information about a slow query
 // SlowQueryInfo는 느린 쿼리에 대한 정보를 나타냅니다
 type SlowQueryInfo struct {
-	Query     string        // SQL query / SQL 쿼리
-	Args      []interface{} // Query arguments / 쿼리 인자
-	Duration  time.Duration // Execution time / 실행 시간
-	Timestamp time.Time     // When the query was executed / 쿼리 실행 시간
+	// SQL query
+	// SQL 쿼리
+	Query string
+	// Query arguments
+	// 쿼리 인자
+	Args []interface{}
+	// Execution time
+	// 실행 시간
+	Duration time.Duration
+	// When the query was executed
+	// 쿼리 실행 시간
+	Timestamp time.Time
 }
 
 // SlowQueryHandler is a callback function for handling slow queries
@@ -32,25 +52,49 @@ type SlowQueryHandler func(info SlowQueryInfo)
 // queryStatsTracker tracks query execution statistics
 // queryStatsTracker는 쿼리 실행 통계를 추적합니다
 type queryStatsTracker struct {
-	mu                 sync.RWMutex     // Synchronization / 동기화
-	totalQueries       int64            // Total queries / 총 쿼리
-	successQueries     int64            // Success queries / 성공 쿼리
-	failedQueries      int64            // Failed queries / 실패 쿼리
-	totalDuration      time.Duration    // Total duration / 총 실행 시간
-	slowQueries        int64            // Slow queries / 느린 쿼리
-	slowQueryThreshold time.Duration    // Slow query threshold / 느린 쿼리 임계값
-	slowQueryHandler   SlowQueryHandler // Slow query handler / 느린 쿼리 핸들러
-	slowQueryLog       []SlowQueryInfo  // Slow query log / 느린 쿼리 로그
-	maxSlowQueryLog    int              // Maximum slow query log size / 최대 느린 쿼리 로그 크기
-	enabled            bool             // Whether stats tracking is enabled / 통계 추적 활성화 여부
+	// Synchronization
+	// 동기화
+	mu sync.RWMutex
+	// Total queries
+	// 총 쿼리
+	totalQueries int64
+	// Success queries
+	// 성공 쿼리
+	successQueries int64
+	// Failed queries
+	// 실패 쿼리
+	failedQueries int64
+	// Total duration
+	// 총 실행 시간
+	totalDuration time.Duration
+	// Slow queries
+	// 느린 쿼리
+	slowQueries int64
+	// Slow query threshold
+	// 느린 쿼리 임계값
+	slowQueryThreshold time.Duration
+	// Slow query handler
+	// 느린 쿼리 핸들러
+	slowQueryHandler SlowQueryHandler
+	// Slow query log
+	// 느린 쿼리 로그
+	slowQueryLog []SlowQueryInfo
+	// Maximum slow query log size
+	// 최대 느린 쿼리 로그 크기
+	maxSlowQueryLog int
+	// Whether stats tracking is enabled
+	// 통계 추적 활성화 여부
+	enabled bool
 }
 
 // newQueryStatsTracker creates a new query stats tracker
 // newQueryStatsTracker는 새 쿼리 통계 추적기를 생성합니다
 func newQueryStatsTracker() *queryStatsTracker {
 	return &queryStatsTracker{
-		slowQueryLog:    make([]SlowQueryInfo, 0, 100),
-		maxSlowQueryLog: 100, // Keep last 100 slow queries / 최근 100개의 느린 쿼리 유지
+		slowQueryLog: make([]SlowQueryInfo, 0, 100),
+		// Keep last 100 slow queries
+		// 최근 100개의 느린 쿼리 유지
+		maxSlowQueryLog: 100,
 		enabled:         false,
 	}
 }

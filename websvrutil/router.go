@@ -30,7 +30,8 @@ type Route struct {
 	// Method는 HTTP 메서드입니다 (GET, POST 등)
 	Method string
 
-	// Pattern is the URL pattern (e.g., "/users/:id") / Pattern은 URL 패턴입니다 (예: "/users/:id")
+	// Pattern is the URL pattern (e.g., "/users/:id")
+	// Pattern은 URL 패턴입니다 (예: "/users/:id")
 	Pattern string
 
 	// Handler is the function to call when the route matches
@@ -74,9 +75,12 @@ func newRouter() *Router {
 //
 // Pattern syntax
 // 패턴 구문:
-//   - "/users" - exact match / 정확한 일치
-//   - "/users/:id" - parameter (accessible via Context.Param("id")) / 매개변수
-//   - "/files/*" - wildcard (matches everything after /files/) / 와일드카드
+//   - "/users" - exact match
+//   - "/users" - 정확한 일치
+//   - "/users/:id" - parameter (accessible via Context.Param("id"))
+//   - "/users/:id" - 매개변수 (Context.Param("id")로 접근)
+//   - "/files/*" - wildcard (matches everything after /files/)
+//   - "/files/*" - 와일드카드 ( /files/ 이후 모든 경로와 일치)
 //
 // Example
 // 예제:
@@ -295,9 +299,12 @@ func (route *Route) match(path string) (map[string]string, bool) {
 //
 // Pattern syntax
 // 패턴 구문:
-// - Static segments: "/users/profile" - Exact match required / - 정적 세그먼트: "/users/profile" - 정확한 일치 필요
-// - Parameters: "/users/:id" - Captures value into "id" parameter / - 매개변수: "/users/:id" - "id" 매개변수로 값 캡처
-// - Wildcards: "/files/*" - Matches all remaining path segments / - 와일드카드: "/files/*" - 나머지 모든 경로 세그먼트 일치
+// - Static segments: "/users/profile" - Exact match required
+// - 정적 세그먼트: "/users/profile" - 정확한 일치 필요
+// - Parameters: "/users/:id" - Captures value into "id" parameter
+// - 매개변수: "/users/:id" - "id" 매개변수로 값 캡처
+// - Wildcards: "/files/*" - Matches all remaining path segments
+// - 와일드카드: "/files/*" - 나머지 모든 경로 세그먼트 일치
 //
 // Implementation details
 // 구현 세부사항:
@@ -348,7 +355,9 @@ func parsePattern(pattern string) []segment {
 			// Parameter segment
 			// 매개변수 세그먼트
 			seg.isParam = true
-			seg.value = part[1:] // Remove the : prefix / : 접두사 제거
+			// Remove the : prefix
+			// : 접두사 제거
+			seg.value = part[1:]
 		} else {
 			// Literal segment
 			// 리터럴 세그먼트

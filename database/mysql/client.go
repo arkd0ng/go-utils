@@ -15,10 +15,18 @@ import (
 type Client struct {
 	// Connection pool
 	// 연결 풀
-	connections   []*sql.DB    // Multiple connections for rotation / 순환을 위한 여러 연결
-	currentIdx    int          // Current connection index (round-robin) / 현재 연결 인덱스 (round-robin)
-	rotationIdx   int          // Rotation index / 순환 인덱스
-	connectionsMu sync.RWMutex // Connection array synchronization / 연결 배열 동기화
+	// Multiple connections for rotation
+	// 순환을 위한 여러 연결
+	connections []*sql.DB
+	// Current connection index (round-robin)
+	// 현재 연결 인덱스 (round-robin)
+	currentIdx int
+	// Rotation index
+	// 순환 인덱스
+	rotationIdx int
+	// Connection array synchronization
+	// 연결 배열 동기화
+	connectionsMu sync.RWMutex
 
 	// Configuration
 	// 설정
@@ -30,14 +38,24 @@ type Client struct {
 
 	// Background tasks
 	// 백그라운드 작업
-	stopChan        chan struct{} // Stop signal / 종료 신호
-	healthCheckStop chan struct{} // Health check stop / 헬스 체크 중지
-	rotationStop    chan struct{} // Rotation stop / 순환 중지
+	// Stop signal
+	// 종료 신호
+	stopChan chan struct{}
+	// Health check stop
+	// 헬스 체크 중지
+	healthCheckStop chan struct{}
+	// Rotation stop
+	// 순환 중지
+	rotationStop chan struct{}
 
 	// Synchronization
 	// 동기화
-	mu     sync.RWMutex // General synchronization / 일반 동기화
-	closed bool         // Closed flag / 종료 플래그
+	// General synchronization
+	// 일반 동기화
+	mu sync.RWMutex
+	// Closed flag
+	// 종료 플래그
+	closed bool
 }
 
 // New creates a new MySQL client with the given options

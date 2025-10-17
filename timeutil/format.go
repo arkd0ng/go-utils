@@ -40,21 +40,23 @@ func FormatTime(t time.Time) string {
 //
 // Supported tokens
 // 지원되는 토큰:
-//   YYYY - 4-digit year
-//   YY   - 2-digit year
-//   MM   - 2-digit month
-//   M    - 1 or 2-digit month
-//   DD   - 2-digit day
-//   D    - 1 or 2-digit day
-//   HH   - 2-digit hour (24h)
-//   hh   - 2-digit hour (12h)
-//   mm   - 2-digit minute
-//   ss   - 2-digit second
+//
+//	YYYY - 4-digit year
+//	YY   - 2-digit year
+//	MM   - 2-digit month
+//	M    - 1 or 2-digit month
+//	DD   - 2-digit day
+//	D    - 1 or 2-digit day
+//	HH   - 2-digit hour (24h)
+//	hh   - 2-digit hour (12h)
+//	mm   - 2-digit minute
+//	ss   - 2-digit second
 //
 // Example
 // 예제:
 //
-// timeutil.Format(time.Now(), "YYYY-MM-DD HH:mm:ss") / timeutil.Format(time.Now(), "YYYY년 MM월 DD일")
+// timeutil.Format(time.Now(), "YYYY-MM-DD HH:mm:ss")
+// timeutil.Format(time.Now(), "YYYY년 MM월 DD일")
 func Format(t time.Time, layout string) string {
 	t = t.In(defaultLocation)
 	goLayout := layout
@@ -164,6 +166,7 @@ func WeekdayKoreanShort(t time.Time) string {
 // 예제:
 //
 //	t := time.Date(2025, 10, 14, 15, 30, 0, 0, time.UTC)
+//
 // fmt.Println(timeutil.FormatKoreanDateTime(t))
 // Output: 2025년 10월 14일 (화요일) 15시 30분 00초
 func FormatKoreanDateTime(t time.Time) string {
@@ -181,6 +184,7 @@ func FormatKoreanDateTime(t time.Time) string {
 // 예제:
 //
 //	t := time.Date(2025, 10, 14, 0, 0, 0, 0, time.UTC)
+//
 // fmt.Println(timeutil.FormatKoreanDateWithWeekday(t))
 // Output: 2025년 10월 14일 (화요일)
 func FormatKoreanDateWithWeekday(t time.Time) string {
@@ -198,6 +202,7 @@ func FormatKoreanDateWithWeekday(t time.Time) string {
 // 예제:
 //
 //	t := time.Date(2025, 10, 14, 0, 0, 0, 0, time.UTC)
+//
 // fmt.Println(timeutil.FormatKoreanDateShort(t))
 // Output: 2025년 10월 14일 (화)
 func FormatKoreanDateShort(t time.Time) string {

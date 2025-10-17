@@ -59,9 +59,15 @@ func LevenshteinDistance(a, b string) int {
 			}
 
 			matrix[i][j] = min(
-				matrix[i-1][j]+1,      // deletion / 삭제
-				matrix[i][j-1]+1,      // insertion / 삽입
-				matrix[i-1][j-1]+cost, // substitution / 치환
+				// deletion
+				// 삭제
+				matrix[i-1][j]+1,
+				// insertion
+				// 삽입
+				matrix[i][j-1]+1,
+				// substitution
+				// 치환
+				matrix[i-1][j-1]+cost,
 			)
 		}
 	}

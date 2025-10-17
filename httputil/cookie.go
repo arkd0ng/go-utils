@@ -17,8 +17,10 @@ import (
 // CookieJar manages HTTP cookies with optional persistence
 // CookieJar는 선택적 지속성과 함께 HTTP 쿠키를 관리합니다
 type CookieJar struct {
-	jar      http.CookieJar
-	filePath string // For persistence / 지속성을 위한 파일 경로
+	jar http.CookieJar
+	// For persistence
+	// 지속성을 위한 파일 경로
+	filePath string
 	mu       sync.RWMutex
 }
 
@@ -127,7 +129,9 @@ func (cj *CookieJar) ClearCookies() error {
 // SaveCookies는 쿠키를 파일에 저장합니다 (JSON 형식)
 func (cj *CookieJar) SaveCookies() error {
 	if cj.filePath == "" {
-		return nil // No persistence configured / 지속성이 설정되지 않음
+		// No persistence configured
+		// 지속성이 설정되지 않음
+		return nil
 	}
 
 	cj.mu.RLock()
@@ -158,7 +162,9 @@ func (cj *CookieJar) SaveCookies() error {
 // LoadCookies는 파일에서 쿠키를 로드합니다
 func (cj *CookieJar) LoadCookies() error {
 	if cj.filePath == "" {
-		return nil // No persistence configured / 지속성이 설정되지 않음
+		// No persistence configured
+		// 지속성이 설정되지 않음
+		return nil
 	}
 
 	data, err := os.ReadFile(cj.filePath)

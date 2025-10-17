@@ -15,7 +15,9 @@ func (c *Client) executeWithRetry(ctx context.Context, fn func() error) error {
 		// 함수 실행
 		err := fn()
 		if err == nil {
-			return nil // Success / 성공
+			// Success
+			// 성공
+			return nil
 		}
 
 		lastErr = err
@@ -49,7 +51,9 @@ func (c *Client) executeWithRetry(ctx context.Context, fn func() error) error {
 		// 백오프 지연 계산 (지수)
 		delay := c.config.retryDelay * time.Duration(1<<uint(attempt))
 		if delay > 5*time.Second {
-			delay = 5 * time.Second // Cap at 5 seconds / 최대 5초로 제한
+			// Cap at 5 seconds
+			// 최대 5초로 제한
+			delay = 5 * time.Second
 		}
 
 		if c.config.logger != nil {

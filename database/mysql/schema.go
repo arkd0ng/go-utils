@@ -10,30 +10,58 @@ import (
 // ColumnInfo represents information about a table column
 // ColumnInfo는 테이블 컬럼에 대한 정보를 나타냅니다
 type ColumnInfo struct {
-	Name     string         // Column name / 컬럼 이름
-	Type     string         // Column type / 컬럼 타입
-	Nullable bool           // Whether NULL is allowed / NULL 허용 여부
-	Default  sql.NullString // Default value / 기본값
-	Key      string         // Key type (PRI, UNI, MUL) / 키 타입
-	Extra    string         // Extra information (auto_increment, etc.) / 추가 정보
+	// Column name
+	// 컬럼 이름
+	Name string
+	// Column type
+	// 컬럼 타입
+	Type string
+	// Whether NULL is allowed
+	// NULL 허용 여부
+	Nullable bool
+	// Default value
+	// 기본값
+	Default sql.NullString
+	// Key type (PRI, UNI, MUL)
+	// 키 타입
+	Key string
+	// Extra information (auto_increment, etc.)
+	// 추가 정보
+	Extra string
 }
 
 // IndexInfo represents information about a table index
 // IndexInfo는 테이블 인덱스에 대한 정보를 나타냅니다
 type IndexInfo struct {
-	Name      string   // Index name / 인덱스 이름
-	Columns   []string // Indexed columns / 인덱싱된 컬럼
-	Unique    bool     // Whether index is unique / 유니크 인덱스 여부
-	IndexType string   // Index type (BTREE, HASH, etc.) / 인덱스 타입
+	// Index name
+	// 인덱스 이름
+	Name string
+	// Indexed columns
+	// 인덱싱된 컬럼
+	Columns []string
+	// Whether index is unique
+	// 유니크 인덱스 여부
+	Unique bool
+	// Index type (BTREE, HASH, etc.)
+	// 인덱스 타입
+	IndexType string
 }
 
 // TableInfo represents information about a table
 // TableInfo는 테이블에 대한 정보를 나타냅니다
 type TableInfo struct {
-	Name    string // Table name / 테이블 이름
-	Engine  string // Storage engine / 스토리지 엔진
-	Rows    int64  // Approximate row count / 대략적인 행 수
-	Comment string // Table comment / 테이블 주석
+	// Table name
+	// 테이블 이름
+	Name string
+	// Storage engine
+	// 스토리지 엔진
+	Engine string
+	// Approximate row count
+	// 대략적인 행 수
+	Rows int64
+	// Table comment
+	// 테이블 주석
+	Comment string
 }
 
 // GetTables returns a list of all tables in the current database
@@ -398,11 +426,21 @@ func (c *Client) GetForeignKeys(ctx context.Context, table string) ([]ForeignKey
 // ForeignKeyInfo represents information about a foreign key
 // ForeignKeyInfo는 외래 키에 대한 정보를 나타냅니다
 type ForeignKeyInfo struct {
-	ConstraintName    string // Foreign key constraint name / 외래 키 제약 조건 이름
-	TableName         string // Table name / 테이블 이름
-	ColumnName        string // Column name / 컬럼 이름
-	ReferencedTable   string // Referenced table name / 참조된 테이블 이름
-	ReferencedColumn  string // Referenced column name / 참조된 컬럼 이름
+	// Foreign key constraint name
+	// 외래 키 제약 조건 이름
+	ConstraintName string
+	// Table name
+	// 테이블 이름
+	TableName string
+	// Column name
+	// 컬럼 이름
+	ColumnName string
+	// Referenced table name
+	// 참조된 테이블 이름
+	ReferencedTable string
+	// Referenced column name
+	// 참조된 컬럼 이름
+	ReferencedColumn string
 }
 
 // GetTableSize returns the size of a table in bytes
@@ -543,12 +581,24 @@ func (c *Client) InspectTable(ctx context.Context, table string) (*TableInspecti
 // TableInspection represents comprehensive table information
 // TableInspection은 종합적인 테이블 정보를 나타냅니다
 type TableInspection struct {
-	Info        TableInfo        // Basic table info / 기본 테이블 정보
-	Columns     []ColumnInfo     // Column information / 컬럼 정보
-	Indexes     []IndexInfo      // Index information / 인덱스 정보
-	PrimaryKey  []string         // Primary key columns / 기본 키 컬럼
-	ForeignKeys []ForeignKeyInfo // Foreign key information / 외래 키 정보
-	Size        int64            // Table size in bytes / 테이블 크기 (바이트)
+	// Basic table info
+	// 기본 테이블 정보
+	Info TableInfo
+	// Column information
+	// 컬럼 정보
+	Columns []ColumnInfo
+	// Index information
+	// 인덱스 정보
+	Indexes []IndexInfo
+	// Primary key columns
+	// 기본 키 컬럼
+	PrimaryKey []string
+	// Foreign key information
+	// 외래 키 정보
+	ForeignKeys []ForeignKeyInfo
+	// Table size in bytes
+	// 테이블 크기 (바이트)
+	Size int64
 }
 
 // String returns a formatted string representation of the inspection

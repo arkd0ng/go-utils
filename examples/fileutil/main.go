@@ -1043,7 +1043,9 @@ func example02_FileReading(logger *logging.Logger, tempDir string) {
 // Example 3: Path Operations
 // 예제 3: 경로 작업
 func example03_PathOperations(logger *logging.Logger, tempDir string) {
-	_ = tempDir // Path operations don't require tempDir / 경로 작업은 tempDir이 필요하지 않습니다
+	// Path operations don't require tempDir
+	// 경로 작업은 tempDir이 필요하지 않습니다
+	_ = tempDir
 
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🛤️  Example 3: Path Operations")
@@ -1629,7 +1631,6 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("   💾 Total demonstrations: 12")
 	logger.Info("")
 }
-
 
 // Example 4: File Information
 // 예제 4: 파일 정보
@@ -2265,7 +2266,9 @@ func example13_SymlinksAndSpecialFiles(logger *logging.Logger, tempDir string) {
 
 // Example 14: Walking & Filtering (already covered in Example 8)
 func example14_WalkAndFilter(logger *logging.Logger, tempDir string) {
-	_ = tempDir // This example refers to Example 8 / 이 예제는 예제 8을 참조합니다
+	// This example refers to Example 8
+	// 이 예제는 예제 8을 참조합니다
+	_ = tempDir
 
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🚶 Example 14: Walking & Filtering (Advanced)")

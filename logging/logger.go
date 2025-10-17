@@ -79,7 +79,8 @@ func New(opts ...Option) (*Logger, error) {
 	if cfg.autoBanner {
 		bannerName := cfg.appName
 
-		// If appName is default "Application", extract from filename / appName이 기본값 "Application"이면 파일명에서 추출
+		// If appName is default "Application", extract from filename
+		// appName이 기본값 "Application"이면 파일명에서 추출
 		if bannerName == "Application" && cfg.filename != "" {
 			// Extract filename without path and extension
 			// 경로와 확장자를 제외한 파일명 추출

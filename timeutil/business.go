@@ -206,14 +206,30 @@ func CountBusinessDays(start, end time.Time) int {
 //	timeutil.AddKoreanHolidays(2025)
 func AddKoreanHolidays(year int) {
 	koreanHolidays := []time.Time{
-		time.Date(year, 1, 1, 0, 0, 0, 0, KST),   // New Year's Day / 신정
-		time.Date(year, 3, 1, 0, 0, 0, 0, KST),   // Independence Movement Day / 3.1절
-		time.Date(year, 5, 5, 0, 0, 0, 0, KST),   // Children's Day / 어린이날
-		time.Date(year, 6, 6, 0, 0, 0, 0, KST),   // Memorial Day / 현충일
-		time.Date(year, 8, 15, 0, 0, 0, 0, KST),  // Liberation Day / 광복절
-		time.Date(year, 10, 3, 0, 0, 0, 0, KST),  // National Foundation Day / 개천절
-		time.Date(year, 10, 9, 0, 0, 0, 0, KST),  // Hangul Day / 한글날
-		time.Date(year, 12, 25, 0, 0, 0, 0, KST), // Christmas / 크리스마스
+		// New Year's Day
+		// 신정
+		time.Date(year, 1, 1, 0, 0, 0, 0, KST),
+		// Independence Movement Day
+		// 3.1절
+		time.Date(year, 3, 1, 0, 0, 0, 0, KST),
+		// Children's Day
+		// 어린이날
+		time.Date(year, 5, 5, 0, 0, 0, 0, KST),
+		// Memorial Day
+		// 현충일
+		time.Date(year, 6, 6, 0, 0, 0, 0, KST),
+		// Liberation Day
+		// 광복절
+		time.Date(year, 8, 15, 0, 0, 0, 0, KST),
+		// National Foundation Day
+		// 개천절
+		time.Date(year, 10, 3, 0, 0, 0, 0, KST),
+		// Hangul Day
+		// 한글날
+		time.Date(year, 10, 9, 0, 0, 0, 0, KST),
+		// Christmas
+		// 크리스마스
+		time.Date(year, 12, 25, 0, 0, 0, 0, KST),
 	}
 
 	// Append to existing holidays

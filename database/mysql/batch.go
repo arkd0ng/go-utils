@@ -102,8 +102,12 @@ func (c *Client) BatchInsert(ctx context.Context, table string, data []map[strin
 // BatchUpdateItem represents a single update operation in a batch
 // BatchUpdateItem은 배치의 단일 업데이트 작업을 나타냅니다
 type BatchUpdateItem struct {
-	Data              map[string]interface{} // Columns to update / 업데이트할 컬럼
-	ConditionAndArgs  []interface{}          // WHERE condition and arguments / WHERE 조건 및 인자
+	// Columns to update
+	// 업데이트할 컬럼
+	Data map[string]interface{}
+	// WHERE condition and arguments
+	// WHERE 조건 및 인자
+	ConditionAndArgs []interface{}
 }
 
 // BatchUpdate performs multiple update operations in a transaction
@@ -167,7 +171,9 @@ func (c *Client) BatchDelete(ctx context.Context, table string, idColumn string,
 	// Build placeholders
 	// 플레이스홀더 빌드
 	placeholders := strings.Repeat("?,", len(ids))
-	placeholders = placeholders[:len(placeholders)-1] // Remove last comma / 마지막 쉼표 제거
+	// Remove last comma
+	// 마지막 쉼표 제거
+	placeholders = placeholders[:len(placeholders)-1]
 
 	// Build query
 	// 쿼리 빌드
@@ -222,7 +228,9 @@ func (c *Client) BatchSelectByIDs(ctx context.Context, table string, idColumn st
 	// Build placeholders
 	// 플레이스홀더 빌드
 	placeholders := strings.Repeat("?,", len(ids))
-	placeholders = placeholders[:len(placeholders)-1] // Remove last comma / 마지막 쉼표 제거
+	// Remove last comma
+	// 마지막 쉼표 제거
+	placeholders = placeholders[:len(placeholders)-1]
 
 	// Build query
 	// 쿼리 빌드

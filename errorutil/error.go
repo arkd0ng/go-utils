@@ -72,7 +72,9 @@ func Newf(format string, args ...interface{}) error {
 //
 // Parameters
 // 매개변수:
-//   - code: The error code (e.g., "ERR001", "VALIDATION_ERROR") / 에러 코드 (예: "ERR001", "VALIDATION_ERROR")
+//   - code: The error code (e.g., "ERR001", "VALIDATION_ERROR")
+//
+// 에러 코드 (예: "ERR001", "VALIDATION_ERROR")
 //
 // - message: The error message
 // 에러 메시지

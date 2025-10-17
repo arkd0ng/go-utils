@@ -186,7 +186,8 @@ func Quote(s string) string {
 // Unquote removes surrounding quotes from a string and unescapes internal quotes.
 // Unquote는 문자열에서 주변 따옴표를 제거하고 내부 따옴표의 이스케이프를 해제합니다.
 //
-// Supports both double quotes (") and single quotes ('). / 큰따옴표(")와 작은따옴표(') 모두 지원합니다.
+// Supports both double quotes (") and single quotes (').
+// 큰따옴표(")와 작은따옴표(') 모두 지원합니다.
 //
 // Example:
 //
@@ -255,7 +256,8 @@ func splitIntoWords(s string) []string {
 				continue
 			}
 
-			// Check if next character is lowercase (e.g., "HTTPServer" → "HTTP" "Server") / 다음 문자가 소문자인지 확인 (예: "HTTPServer" → "HTTP" "Server")
+			// Check if next character is lowercase (e.g., "HTTPServer" → "HTTP" "Server")
+			// 다음 문자가 소문자인지 확인 (예: "HTTPServer" → "HTTP" "Server")
 			if i+1 < len(runes) && unicode.IsLower(runes[i+1]) && len(currentWord) > 0 {
 				words = append(words, string(currentWord))
 				currentWord = []rune{r}

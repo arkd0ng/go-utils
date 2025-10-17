@@ -114,8 +114,10 @@ func New(opts ...Option) *App {
 		middleware: make([]MiddlewareFunc, 0),
 		templates:  templateEngine,
 		options:    options,
-		server:     nil, // Will be created in Run() / Run()에서 생성 예정
-		running:    false,
+		// Will be created in Run()
+		// Run()에서 생성 예정
+		server:  nil,
+		running: false,
 	}
 
 	return app
@@ -272,12 +274,14 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 // Static registers a route to serve static files from a directory.
 // Static은 디렉토리에서 정적 파일을 제공하는 라우트를 등록합니다.
 //
-// The prefix is the URL path prefix (e.g., "/static"), and dir is the directory path. / prefix는 URL 경로 접두사(예: "/static")이고, dir은 디렉토리 경로입니다.
+// The prefix is the URL path prefix (e.g., "/static"), and dir is the directory path.
+// prefix는 URL 경로 접두사(예: "/static")이고, dir은 디렉토리 경로입니다.
 //
 // Example
 // 예제:
 //
 //	app.Static("/static", "./public")
+//
 // // Serves files from ./public directory at /static/* URLs
 // ./public 디렉토리의 파일을 /static/* URL에서 제공
 func (a *App) Static(prefix, dir string) *App {
@@ -308,7 +312,8 @@ func (a *App) Static(prefix, dir string) *App {
 // Run starts the HTTP server on the specified address.
 // Run은 지정된 주소에서 HTTP 서버를 시작합니다.
 //
-// The address should be in the format "host:port" (e.g., "localhost:8080" or ":8080"). / 주소는 "host:port" 형식이어야 합니다 (예: "localhost:8080" 또는 ":8080").
+// The address should be in the format "host:port" (e.g., "localhost:8080" or ":8080").
+// 주소는 "host:port" 형식이어야 합니다 (예: "localhost:8080" 또는 ":8080").
 //
 // This method blocks until the server is shut down.
 // 이 메서드는 서버가 종료될 때까지 차단됩니다.

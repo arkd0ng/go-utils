@@ -142,7 +142,9 @@ func BenchmarkAny(b *testing.B) {
 	for i := range numbers {
 		numbers[i] = i*2 + 1
 	}
-	numbers[500] = 1000 // One even number in the middle / 중간에 짝수 하나
+	// One even number in the middle
+	// 중간에 짝수 하나
+	numbers[500] = 1000
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		Any(numbers, func(n int) bool { return n%2 == 0 })

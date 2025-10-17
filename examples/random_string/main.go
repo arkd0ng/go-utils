@@ -79,7 +79,9 @@ func main() {
 	logger, err := logging.New(
 		logging.WithFilePath(logFilePath),
 		logging.WithLevel(logging.DEBUG),
-		logging.WithStdout(true), // Enable stdout for screen output / 화면 출력 활성화
+		// Enable stdout for screen output
+		// 화면 출력 활성화
+		logging.WithStdout(true),
 	)
 	if err != nil {
 		fmt.Printf("Failed to initialize logger: %v\n", err)

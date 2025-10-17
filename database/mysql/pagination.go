@@ -9,13 +9,27 @@ import (
 // PaginationResult represents the result of a paginated query
 // PaginationResult는 페이지네이션 쿼리의 결과를 나타냅니다
 type PaginationResult struct {
-	Data       []map[string]interface{} // Current page data / 현재 페이지 데이터
-	TotalRows  int64                    // Total number of rows / 전체 행 수
-	TotalPages int                      // Total number of pages / 전체 페이지 수
-	Page       int                      // Current page number (1-indexed) / 현재 페이지 번호 (1부터 시작)
-	PageSize   int                      // Number of rows per page / 페이지당 행 수
-	HasNext    bool                     // Whether there is a next page / 다음 페이지 존재 여부
-	HasPrev    bool                     // Whether there is a previous page / 이전 페이지 존재 여부
+	// Current page data
+	// 현재 페이지 데이터
+	Data []map[string]interface{}
+	// Total number of rows
+	// 전체 행 수
+	TotalRows int64
+	// Total number of pages
+	// 전체 페이지 수
+	TotalPages int
+	// Current page number (1-indexed)
+	// 현재 페이지 번호 (1부터 시작)
+	Page int
+	// Number of rows per page
+	// 페이지당 행 수
+	PageSize int
+	// Whether there is a next page
+	// 다음 페이지 존재 여부
+	HasNext bool
+	// Whether there is a previous page
+	// 이전 페이지 존재 여부
+	HasPrev bool
 }
 
 // Paginate performs paginated query on a table
@@ -26,10 +40,12 @@ type PaginationResult struct {
 //
 // // Get page 1 with 10 items per page
 // 페이지 1을 페이지당 10개 항목으로 가져오기
+//
 //	result, err := db.Paginate(ctx, "users", 1, 10)
 //
 // // With WHERE condition and ORDER BY
 // WHERE 조건 및 ORDER BY와 함께
+//
 //	result, err := db.Paginate(ctx, "users", 2, 20,
 //	    mysql.WithColumns("id", "name", "email"),
 //	    mysql.WithWhere("age > ?", 18),

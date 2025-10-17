@@ -9,45 +9,93 @@ import (
 // PoolMetrics represents connection pool metrics
 // PoolMetrics는 연결 풀 메트릭을 나타냅니다
 type PoolMetrics struct {
-	PoolCount        int                 // Number of connection pools / 연결 풀 수
-	TotalConnections int                 // Total connections across all pools / 모든 풀의 총 연결 수
-	PoolStats        []PoolStat          // Individual pool statistics / 개별 풀 통계
-	Healthy          bool                // Overall health status / 전체 상태
-	LastChecked      time.Time           // Last health check time / 마지막 헬스 체크 시간
+	// Number of connection pools
+	// 연결 풀 수
+	PoolCount int
+	// Total connections across all pools
+	// 모든 풀의 총 연결 수
+	TotalConnections int
+	// Individual pool statistics
+	// 개별 풀 통계
+	PoolStats []PoolStat
+	// Overall health status
+	// 전체 상태
+	Healthy bool
+	// Last health check time
+	// 마지막 헬스 체크 시간
+	LastChecked time.Time
 }
 
 // PoolStat represents statistics for a single connection pool
 // PoolStat는 단일 연결 풀의 통계를 나타냅니다
 type PoolStat struct {
-	Index            int           // Pool index / 풀 인덱스
-	MaxOpenConns     int           // Maximum open connections / 최대 열린 연결 수
-	OpenConnections  int           // Currently open connections / 현재 열린 연결 수
-	InUse            int           // Connections in use / 사용 중인 연결 수
-	Idle             int           // Idle connections / 유휴 연결 수
-	WaitCount        int64         // Total number of connections waited for / 대기한 총 연결 수
-	WaitDuration     time.Duration // Total time blocked waiting for connections / 연결 대기로 차단된 총 시간
-	MaxIdleClosed    int64         // Total connections closed due to max idle / 최대 유휴로 인해 닫힌 총 연결 수
-	MaxIdleTimeClosed int64        // Total connections closed due to max idle time / 최대 유휴 시간으로 인해 닫힌 총 연결 수
-	MaxLifetimeClosed int64        // Total connections closed due to max lifetime / 최대 수명으로 인해 닫힌 총 연결 수
+	// Pool index
+	// 풀 인덱스
+	Index int
+	// Maximum open connections
+	// 최대 열린 연결 수
+	MaxOpenConns int
+	// Currently open connections
+	// 현재 열린 연결 수
+	OpenConnections int
+	// Connections in use
+	// 사용 중인 연결 수
+	InUse int
+	// Idle connections
+	// 유휴 연결 수
+	Idle int
+	// Total number of connections waited for
+	// 대기한 총 연결 수
+	WaitCount int64
+	// Total time blocked waiting for connections
+	// 연결 대기로 차단된 총 시간
+	WaitDuration time.Duration
+	// Total connections closed due to max idle
+	// 최대 유휴로 인해 닫힌 총 연결 수
+	MaxIdleClosed int64
+	// Total connections closed due to max idle time
+	// 최대 유휴 시간으로 인해 닫힌 총 연결 수
+	MaxIdleTimeClosed int64
+	// Total connections closed due to max lifetime
+	// 최대 수명으로 인해 닫힌 총 연결 수
+	MaxLifetimeClosed int64
 }
 
 // PoolHealthInfo represents health information for connection pools
 // PoolHealthInfo는 연결 풀의 상태 정보를 나타냅니다
 type PoolHealthInfo struct {
-	Healthy       bool          // Whether all pools are healthy / 모든 풀이 정상인지
-	UnhealthyPool []int         // Indices of unhealthy pools / 비정상 풀의 인덱스
-	LastCheck     time.Time     // Last health check time / 마지막 헬스 체크 시간
-	CheckDuration time.Duration // Duration of last health check / 마지막 헬스 체크 소요 시간
-	Details       []PoolHealth  // Health details per pool / 풀별 상태 세부 정보
+	// Whether all pools are healthy
+	// 모든 풀이 정상인지
+	Healthy bool
+	// Indices of unhealthy pools
+	// 비정상 풀의 인덱스
+	UnhealthyPool []int
+	// Last health check time
+	// 마지막 헬스 체크 시간
+	LastCheck time.Time
+	// Duration of last health check
+	// 마지막 헬스 체크 소요 시간
+	CheckDuration time.Duration
+	// Health details per pool
+	// 풀별 상태 세부 정보
+	Details []PoolHealth
 }
 
 // PoolHealth represents health status for a single pool
 // PoolHealth는 단일 풀의 상태를 나타냅니다
 type PoolHealth struct {
-	Index      int           // Pool index / 풀 인덱스
-	Healthy    bool          // Health status / 상태
-	PingTime   time.Duration // Ping response time / Ping 응답 시간
-	Error      error         // Error if unhealthy / 비정상인 경우 에러
+	// Pool index
+	// 풀 인덱스
+	Index int
+	// Health status
+	// 상태
+	Healthy bool
+	// Ping response time
+	// Ping 응답 시간
+	PingTime time.Duration
+	// Error if unhealthy
+	// 비정상인 경우 에러
+	Error error
 }
 
 // GetPoolMetrics returns connection pool metrics
@@ -255,9 +303,15 @@ func (c *Client) GetWaitStatistics() []WaitStatistic {
 // WaitStatistic represents wait statistics for a connection pool
 // WaitStatistic는 연결 풀의 대기 통계를 나타냅니다
 type WaitStatistic struct {
-	PoolIndex   int           // Pool index / 풀 인덱스
-	WaitCount   int64         // Number of waits / 대기 횟수
-	AvgWaitTime time.Duration // Average wait time / 평균 대기 시간
+	// Pool index
+	// 풀 인덱스
+	PoolIndex int
+	// Number of waits
+	// 대기 횟수
+	WaitCount int64
+	// Average wait time
+	// 평균 대기 시간
+	AvgWaitTime time.Duration
 }
 
 // GetCurrentConnectionIndex returns the current connection index (for round-robin)

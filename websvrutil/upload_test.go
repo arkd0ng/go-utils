@@ -317,7 +317,9 @@ func TestMultipartFormWithMaxUploadSize(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	ctx := NewContext(w, req)
-	ctx.app = app // Set app reference / 앱 참조 설정
+	// Set app reference
+	// 앱 참조 설정
+	ctx.app = app
 
 	// Should succeed with custom size limit
 	// 커스텀 크기 제한으로 성공해야 함
@@ -382,6 +384,8 @@ func BenchmarkSaveUploadedFile(b *testing.B) {
 		fileHeader, _ := ctx.FormFile("upload")
 		dstPath := filepath.Join(tmpDir, "bench.txt")
 		ctx.SaveUploadedFile(fileHeader, dstPath)
-		os.Remove(dstPath) // Clean up / 정리
+		// Clean up
+		// 정리
+		os.Remove(dstPath)
 	}
 }

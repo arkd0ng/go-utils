@@ -218,7 +218,8 @@ func IsValid(path string) bool {
 // IsSafe checks if a path is safe (no path traversal attempts)
 // IsSafe는 경로가 안전한지 확인합니다 (경로 순회 시도 없음)
 //
-// This function checks if the path contains ".." or absolute paths outside the root. / 이 함수는 경로에 ".."가 포함되어 있거나 루트 외부의 절대 경로가 있는지 확인합니다.
+// This function checks if the path contains ".." or absolute paths outside the root.
+// 이 함수는 경로에 ".."가 포함되어 있거나 루트 외부의 절대 경로가 있는지 확인합니다.
 //
 // Example
 // 예제:
@@ -259,7 +260,8 @@ func IsSafe(path, root string) bool {
 			return false
 		}
 
-		// If relative path starts with "..", it's outside root / 상대 경로가 ".."로 시작하면 루트 외부
+		// If relative path starts with "..", it's outside root
+		// 상대 경로가 ".."로 시작하면 루트 외부
 		if strings.HasPrefix(relPath, "..") {
 			return false
 		}

@@ -8,11 +8,21 @@ import (
 // HTTPError represents an HTTP error with status code and response details.
 // HTTPError는 상태 코드 및 응답 세부 정보를 포함하는 HTTP 에러를 나타냅니다.
 type HTTPError struct {
-	StatusCode int    // HTTP status code / HTTP 상태 코드
-	Status     string // HTTP status text / HTTP 상태 텍스트
-	Body       string // Response body / 응답 본문
-	URL        string // Request URL / 요청 URL
-	Method     string // HTTP method / HTTP 메서드
+	// HTTP status code
+	// HTTP 상태 코드
+	StatusCode int
+	// HTTP status text
+	// HTTP 상태 텍스트
+	Status string
+	// Response body
+	// 응답 본문
+	Body string
+	// Request URL
+	// 요청 URL
+	URL string
+	// HTTP method
+	// HTTP 메서드
+	Method string
 }
 
 // Error implements the error interface.
@@ -49,10 +59,18 @@ func GetStatusCode(err error) int {
 // RetryError represents an error after all retry attempts have failed.
 // RetryError는 모든 재시도 시도가 실패한 후의 에러를 나타냅니다.
 type RetryError struct {
-	Attempts int   // Number of retry attempts / 재시도 시도 횟수
-	LastErr  error // Last error encountered / 마지막으로 발생한 에러
-	URL      string // Request URL / 요청 URL
-	Method   string // HTTP method / HTTP 메서드
+	// Number of retry attempts
+	// 재시도 시도 횟수
+	Attempts int
+	// Last error encountered
+	// 마지막으로 발생한 에러
+	LastErr error
+	// Request URL
+	// 요청 URL
+	URL string
+	// HTTP method
+	// HTTP 메서드
+	Method string
 }
 
 // Error implements the error interface.
@@ -78,8 +96,12 @@ func IsRetryError(err error) bool {
 // TimeoutError represents a timeout error.
 // TimeoutError는 타임아웃 에러를 나타냅니다.
 type TimeoutError struct {
-	URL    string // Request URL / 요청 URL
-	Method string // HTTP method / HTTP 메서드
+	// Request URL
+	// 요청 URL
+	URL string
+	// HTTP method
+	// HTTP 메서드
+	Method string
 }
 
 // Error implements the error interface.

@@ -64,7 +64,9 @@ func (c *Client) Transaction(ctx context.Context, fn func(*Tx) error) error {
 	defer func() {
 		if p := recover(); p != nil {
 			tx.Rollback()
-			panic(p) // Re-throw panic / 패닉 다시 발생
+			// Re-throw panic
+			// 패닉 다시 발생
+			panic(p)
 		}
 	}()
 

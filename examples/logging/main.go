@@ -200,9 +200,13 @@ func defaultExample() {
 func customExample() {
 	logger, err := logging.New(
 		logging.WithFilePath("logs/logging-example-custom.log"),
-		logging.WithMaxSize(50),   // 50 MB
-		logging.WithMaxBackups(5), // Keep 5 backups / 5개 백업 유지
-		logging.WithMaxAge(7),     // Keep for 7 days / 7일 동안 보관
+		logging.WithMaxSize(50), // 50 MB
+		// Keep 5 backups
+		// 5개 백업 유지
+		logging.WithMaxBackups(5),
+		// Keep for 7 days
+		// 7일 동안 보관
+		logging.WithMaxAge(7),
 		logging.WithLevel(logging.DEBUG),
 		logging.WithPrefix("[CUSTOM]"),
 	)
@@ -263,7 +267,9 @@ func multipleLoggersExample() {
 func logLevelsExample() {
 	logger, _ := logging.New(
 		logging.WithFilePath("logs/logging-example-levels.log"),
-		logging.WithLevel(logging.DEBUG), // Show all levels / 모든 레벨 표시
+		// Show all levels
+		// 모든 레벨 표시
+		logging.WithLevel(logging.DEBUG),
 	)
 	defer logger.Close()
 
@@ -317,7 +323,9 @@ func structuredLoggingExample() {
 	// API request
 	// API 요청
 	start := time.Now()
-	time.Sleep(50 * time.Millisecond) // Simulate processing / 처리 시뮬레이션
+	// Simulate processing
+	// 처리 시뮬레이션
+	time.Sleep(50 * time.Millisecond)
 	logger.Info("API request completed / API 요청이 완료되었습니다",
 		"method", "GET",
 		"path", "/api/users/12345",

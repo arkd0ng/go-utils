@@ -91,7 +91,8 @@ func Size(path string) (int64, error) {
 	return info.Size(), nil
 }
 
-// SizeHuman returns the file size in a human-readable format (e.g., "1.5 MB") / SizeHuman은 사람이 읽기 쉬운 형식으로 파일 크기를 반환합니다 (예: "1.5 MB")
+// SizeHuman returns the file size in a human-readable format (e.g., "1.5 MB")
+// SizeHuman은 사람이 읽기 쉬운 형식으로 파일 크기를 반환합니다 (예: "1.5 MB")
 //
 // Example
 // 예제:

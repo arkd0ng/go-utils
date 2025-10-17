@@ -609,7 +609,8 @@ func (e *TemplateEngine) RenderWithLayout(w io.Writer, layoutName, templateName 
 		return fmt.Errorf("failed to clone layout: %w", err)
 	}
 
-	// Add content template as "content" to the layout / 콘텐츠 템플릿을 "content"로 레이아웃에 추가
+	// Add content template as "content" to the layout
+	// 콘텐츠 템플릿을 "content"로 레이아웃에 추가
 	_, err = layoutClone.AddParseTree("content", content.Tree)
 	if err != nil {
 		return fmt.Errorf("failed to add content to layout: %w", err)
@@ -656,7 +657,9 @@ func (e *TemplateEngine) ListLayouts() []string {
 //	engine.EnableAutoReload()
 func (e *TemplateEngine) EnableAutoReload() error {
 	if e.autoReload {
-		return nil // Already enabled / 이미 활성화됨
+		// Already enabled
+		// 이미 활성화됨
+		return nil
 	}
 
 	e.autoReload = true
@@ -683,7 +686,9 @@ func (e *TemplateEngine) DisableAutoReload() {
 // watchTemplates watches the template directory for changes and reloads templates.
 // watchTemplates는 템플릿 디렉토리의 변경 사항을 감시하고 템플릿을 다시 로드합니다.
 func (e *TemplateEngine) watchTemplates() {
-	ticker := time.NewTicker(1 * time.Second) // Poll every second / 매 초마다 폴링
+	// Poll every second
+	// 매 초마다 폴링
+	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 
 	// Store last modification times

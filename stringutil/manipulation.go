@@ -6,14 +6,16 @@ import (
 	"unicode"
 )
 
-// Truncate truncates a string to the specified length and appends "...". / Truncate는 문자열을 지정된 길이로 자르고 "..."를 추가합니다.
+// Truncate truncates a string to the specified length and appends "...".
+// Truncate는 문자열을 지정된 길이로 자르고 "..."를 추가합니다.
 //
 // Unicode-safe: uses rune count, not byte count.
 // 유니코드 안전: 바이트 수가 아닌 rune 수 사용.
 //
 // Example:
 //
-// Truncate("Hello World", 8)    // "Hello..." / Truncate("안녕하세요", 3)        // "안녕하..."
+// Truncate("Hello World", 8)    // "Hello..."
+// Truncate("안녕하세요", 3)        // "안녕하..."
 func Truncate(s string, length int) string {
 	return TruncateWithSuffix(s, length, "...")
 }
@@ -23,7 +25,8 @@ func Truncate(s string, length int) string {
 //
 // Example:
 //
-// TruncateWithSuffix("Hello World", 8, "…")  // "Hello Wo…" / TruncateWithSuffix("안녕하세요", 3, "…")      // "안녕하…"
+// TruncateWithSuffix("Hello World", 8, "…")  // "Hello Wo…"
+// TruncateWithSuffix("안녕하세요", 3, "…")      // "안녕하…"
 func TruncateWithSuffix(s string, length int, suffix string) string {
 	runes := []rune(s)
 	if len(runes) <= length {
@@ -37,7 +40,8 @@ func TruncateWithSuffix(s string, length int, suffix string) string {
 //
 // Example:
 //
-// Reverse("hello")  // "olleh" / Reverse("안녕")    // "녕안"
+// Reverse("hello")  // "olleh"
+// Reverse("안녕")    // "녕안"
 func Reverse(s string) string {
 	runes := []rune(s)
 	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
@@ -143,7 +147,9 @@ func Clean(s string) string {
 //
 // Example:
 //
-// Repeat("hello", 3)  // "hellohellohello" / Repeat("안녕", 2)     // "안녕안녕"
+// Repeat("hello", 3)  // "hellohellohello"
+// Repeat("안녕", 2)     // "안녕안녕"
+//
 //	Repeat("*", 5)      // "*****"
 func Repeat(s string, count int) string {
 	if count < 0 {
@@ -165,7 +171,10 @@ func Repeat(s string, count int) string {
 // Example:
 //
 //	Substring("hello world", 0, 5)   // "hello"
-// Substring("hello world", 6, 11)  // "world" / Substring("안녕하세요", 0, 2)       // "안녕"
+//
+// Substring("hello world", 6, 11)  // "world"
+// Substring("안녕하세요", 0, 2)       // "안녕"
+//
 //	Substring("hello", 0, 100)       // "hello" (auto-adjusted)
 func Substring(s string, start, end int) string {
 	runes := []rune(s)
@@ -206,7 +215,9 @@ func Substring(s string, start, end int) string {
 //
 // Example:
 //
-// Left("hello world", 5)  // "hello" / Left("안녕하세요", 2)      // "안녕"
+// Left("hello world", 5)  // "hello"
+// Left("안녕하세요", 2)      // "안녕"
+//
 //	Left("hello", 10)       // "hello"
 func Left(s string, n int) string {
 	if n <= 0 {
@@ -227,7 +238,9 @@ func Left(s string, n int) string {
 //
 // Example:
 //
-// Right("hello world", 5)  // "world" / Right("안녕하세요", 2)       // "세요"
+// Right("hello world", 5)  // "world"
+// Right("안녕하세요", 2)       // "세요"
+//
 //	Right("hello", 10)       // "hello"
 func Right(s string, n int) string {
 	if n <= 0 {
@@ -250,7 +263,9 @@ func Right(s string, n int) string {
 // Example:
 //
 //	Insert("hello world", 5, ",")    // "hello, world"
-// Insert("hello", 0, "say ")       // "say hello" / Insert("안녕하세요", 2, " 반갑습니다 ")  // "안녕 반갑습니다 하세요"
+//
+// Insert("hello", 0, "say ")       // "say hello"
+// Insert("안녕하세요", 2, " 반갑습니다 ")  // "안녕 반갑습니다 하세요"
 func Insert(s string, index int, insert string) string {
 	runes := []rune(s)
 	length := len(runes)

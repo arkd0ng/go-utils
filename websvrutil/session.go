@@ -29,14 +29,30 @@ type Session struct {
 // SessionOptions configures the session store.
 // SessionOptions는 세션 저장소를 설정합니다.
 type SessionOptions struct {
-	CookieName   string        // Name of the session cookie / 세션 쿠키 이름
-	MaxAge       time.Duration // Session expiration time / 세션 만료 시간
-	Secure       bool          // Use secure cookies (HTTPS only) / 보안 쿠키 사용 (HTTPS만)
-	HttpOnly     bool          // Prevent JavaScript access / JavaScript 액세스 방지
-	SameSite     http.SameSite // SameSite cookie attribute / SameSite 쿠키 속성
-	CleanupTime  time.Duration // Cleanup interval / 정리 간격
-	Path         string        // Cookie path / 쿠키 경로
-	Domain       string        // Cookie domain / 쿠키 도메인
+	// Name of the session cookie
+	// 세션 쿠키 이름
+	CookieName string
+	// Session expiration time
+	// 세션 만료 시간
+	MaxAge time.Duration
+	// Use secure cookies (HTTPS only)
+	// 보안 쿠키 사용 (HTTPS만)
+	Secure bool
+	// Prevent JavaScript access
+	// JavaScript 액세스 방지
+	HttpOnly bool
+	// SameSite cookie attribute
+	// SameSite 쿠키 속성
+	SameSite http.SameSite
+	// Cleanup interval
+	// 정리 간격
+	CleanupTime time.Duration
+	// Cookie path
+	// 쿠키 경로
+	Path string
+	// Cookie domain
+	// 쿠키 도메인
+	Domain string
 }
 
 // DefaultSessionOptions returns default session options.
@@ -259,8 +275,9 @@ func (sess *Session) Clear() {
 //
 // Example output
 // 출력 예제:
-//   "kqZ9Xx3vR_5yJKl2Nw8PmQ7VtBcDfGhE1WsIuO6A4ZY"
-//   "9hTmPq2Wz8Lx4Vb7Nc1Yd6Rj3Fg5Ks0Hu9Ia8Qe2Ow7U"
+//
+//	"kqZ9Xx3vR_5yJKl2Nw8PmQ7VtBcDfGhE1WsIuO6A4ZY"
+//	"9hTmPq2Wz8Lx4Vb7Nc1Yd6Rj3Fg5Ks0Hu9Ia8Qe2Ow7U"
 //
 // Performance
 // 성능:
@@ -292,21 +309,34 @@ func (s *SessionStore) generateSessionID() string {
 //
 // Process
 // 프로세스:
-//   1. Create ticker with configured cleanup interval
-//   2. Wait for ticker signal
-//   3. Acquire write lock (blocks all session operations during cleanup)
-//   4. Iterate through all sessions in the store
-//   5. Delete sessions where ExpiresAt < current time
-//   6. Release write lock
-//   7. Repeat indefinitely until program termination
 //
-//   1. 설정된 정리 간격으로 티커 생성
-//   2. 티커 신호 대기
-//   3. 쓰기 락 획득 (정리 중 모든 세션 작업 차단)
-//   4. 저장소의 모든 세션 순회
-//   5. ExpiresAt < 현재 시간인 세션 삭제
-//   6. 쓰기 락 해제
-//   7. 프로그램 종료까지 무한 반복
+//  1. Create ticker with configured cleanup interval
+//
+//  2. Wait for ticker signal
+//
+//  3. Acquire write lock (blocks all session operations during cleanup)
+//
+//  4. Iterate through all sessions in the store
+//
+//  5. Delete sessions where ExpiresAt < current time
+//
+//  6. Release write lock
+//
+//  7. Repeat indefinitely until program termination
+//
+//  1. 설정된 정리 간격으로 티커 생성
+//
+//  2. 티커 신호 대기
+//
+//  3. 쓰기 락 획득 (정리 중 모든 세션 작업 차단)
+//
+//  4. 저장소의 모든 세션 순회
+//
+//  5. ExpiresAt < 현재 시간인 세션 삭제
+//
+//  6. 쓰기 락 해제
+//
+//  7. 프로그램 종료까지 무한 반복
 //
 // Thread safety
 // 스레드 안전성:
@@ -339,16 +369,17 @@ func (s *SessionStore) generateSessionID() string {
 //
 // Example behavior
 // 동작 예제:
-//   CleanupTime = 5 minutes
-//   MaxAge = 1 hour
 //
-//   Session A created at 10:00, expires at 11:00
-//   Session B created at 10:30, expires at 11:30
+//	CleanupTime = 5 minutes
+//	MaxAge = 1 hour
 //
-//   10:05 cleanup: no deletions (both active)
-//   10:10 cleanup: no deletions (both active)
-//   11:05 cleanup: Session A deleted (expired at 11:00)
-//   11:35 cleanup: Session B deleted (expired at 11:30)
+//	Session A created at 10:00, expires at 11:00
+//	Session B created at 10:30, expires at 11:30
+//
+//	10:05 cleanup: no deletions (both active)
+//	10:10 cleanup: no deletions (both active)
+//	11:05 cleanup: Session A deleted (expired at 11:00)
+//	11:35 cleanup: Session B deleted (expired at 11:30)
 func (s *SessionStore) cleanupExpiredSessions() {
 	ticker := time.NewTicker(s.options.CleanupTime)
 	defer ticker.Stop()

@@ -24,9 +24,15 @@ type config struct {
 
 	// Credential rotation (optional)
 	// 자격 증명 순환 (선택)
-	credRefreshFunc  CredentialRefreshFunc // User-provided function / 사용자 제공 함수
-	poolCount        int                   // Number of connection pools / 연결 풀 개수
-	rotationInterval time.Duration         // Rotation interval / 순환 주기
+	// User-provided function
+	// 사용자 제공 함수
+	credRefreshFunc CredentialRefreshFunc
+	// Number of connection pools
+	// 연결 풀 개수
+	poolCount int
+	// Rotation interval
+	// 순환 주기
+	rotationInterval time.Duration
 
 	// Timeout settings
 	// 타임아웃 설정
@@ -66,37 +72,69 @@ func defaultConfig() *config {
 	return &config{
 		// Connection pool defaults
 		// 연결 풀 기본값
-		maxOpenConns:    25,                // 25 connections / 25개 연결
-		maxIdleConns:    10,                // 10 idle connections / 10개 유휴 연결
-		connMaxLifetime: 5 * time.Minute,   // 5 minutes / 5분
-		connMaxIdleTime: 2 * time.Minute,   // 2 minutes / 2분
-		poolCount:       1,                 // Single pool by default / 기본적으로 단일 풀
-		rotationInterval: 1 * time.Hour,    // 1 hour default rotation / 1시간 기본 순환
+		// 25 connections
+		// 25개 연결
+		maxOpenConns: 25,
+		// 10 idle connections
+		// 10개 유휴 연결
+		maxIdleConns: 10,
+		// 5 minutes
+		// 5분
+		connMaxLifetime: 5 * time.Minute,
+		// 2 minutes
+		// 2분
+		connMaxIdleTime: 2 * time.Minute,
+		// Single pool by default
+		// 기본적으로 단일 풀
+		poolCount: 1,
+		// 1 hour default rotation
+		// 1시간 기본 순환
+		rotationInterval: 1 * time.Hour,
 
 		// Timeout defaults
 		// 타임아웃 기본값
-		connectTimeout: 10 * time.Second, // 10 seconds / 10초
-		queryTimeout:   30 * time.Second, // 30 seconds / 30초
+		// 10 seconds
+		// 10초
+		connectTimeout: 10 * time.Second,
+		// 30 seconds
+		// 30초
+		queryTimeout: 30 * time.Second,
 
 		// Retry defaults
 		// 재시도 기본값
-		maxRetries: 3,                      // 3 retries / 3번 재시도
-		retryDelay: 100 * time.Millisecond, // 100ms between retries / 재시도 간 100ms
+		// 3 retries
+		// 3번 재시도
+		maxRetries: 3,
+		// 100ms between retries
+		// 재시도 간 100ms
+		retryDelay: 100 * time.Millisecond,
 
 		// Logging defaults
 		// 로깅 기본값
-		logQueries:         false,          // Don't log all queries by default / 기본적으로 모든 쿼리 로깅 안 함
-		logSlowQueries:     true,           // Log slow queries / 느린 쿼리 로깅
-		slowQueryThreshold: 1 * time.Second, // Queries > 1s are slow / 1초 이상은 느린 쿼리
+		// Don't log all queries by default
+		// 기본적으로 모든 쿼리 로깅 안 함
+		logQueries: false,
+		// Log slow queries
+		// 느린 쿼리 로깅
+		logSlowQueries: true,
+		// Queries > 1s are slow
+		// 1초 이상은 느린 쿼리
+		slowQueryThreshold: 1 * time.Second,
 
 		// Health check defaults
 		// 헬스 체크 기본값
-		enableHealthCheck:   true,           // Enable by default / 기본적으로 활성화
-		healthCheckInterval: 30 * time.Second, // Every 30 seconds / 30초마다
+		// Enable by default
+		// 기본적으로 활성화
+		enableHealthCheck: true,
+		// Every 30 seconds
+		// 30초마다
+		healthCheckInterval: 30 * time.Second,
 
 		// Query statistics defaults
 		// 쿼리 통계 기본값
-		enableStats: false, // Disabled by default for performance / 성능을 위해 기본적으로 비활성화
+		// Disabled by default for performance
+		// 성능을 위해 기본적으로 비활성화
+		enableStats: false,
 
 		// Security defaults
 		// 보안 기본값

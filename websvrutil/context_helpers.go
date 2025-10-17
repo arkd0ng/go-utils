@@ -78,7 +78,8 @@ type CookieOptions struct {
 	// Value는 쿠키 값입니다
 	Value string
 
-	// Path is the cookie path (default: "/") / Path는 쿠키 경로입니다 (기본값: "/")
+	// Path is the cookie path (default: "/")
+	// Path는 쿠키 경로입니다 (기본값: "/")
 	Path string
 
 	// Domain is the cookie domain

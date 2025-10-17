@@ -189,7 +189,8 @@ func TestContextSetCookieAdvancedDefaultPath(t *testing.T) {
 	ctx.SetCookieAdvanced(CookieOptions{
 		Name:  "test",
 		Value: "value",
-		// Path is empty, should default to "/" / Path가 비어 있으면 기본값 "/"
+		// Path is empty, should default to "/"
+		// Path가 비어 있으면 기본값 "/"
 	})
 
 	cookies := w.Result().Cookies()

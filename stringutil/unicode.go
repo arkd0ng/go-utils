@@ -15,7 +15,9 @@ import (
 //
 // Example:
 //
-// RuneCount("hello")    // 5 / RuneCount("안녕하세요")  // 5 (not 15 bytes)
+// RuneCount("hello")    // 5
+// RuneCount("안녕하세요")  // 5 (not 15 bytes)
+//
 //	RuneCount("🔥🔥")      // 2 (not 8 bytes)
 func RuneCount(s string) int {
 	return utf8.RuneCountInString(s)
@@ -32,7 +34,9 @@ func RuneCount(s string) int {
 //
 // Example:
 //
-// Width("hello")      // 5 / Width("안녕")        // 4 (2 characters × 2 width each)
+// Width("hello")      // 5
+// Width("안녕")        // 4 (2 characters × 2 width each)
+//
 //	Width("hello세계")   // 9 (5 + 4)
 func Width(s string) int {
 	totalWidth := 0

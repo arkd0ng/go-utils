@@ -98,7 +98,8 @@ func URLDecode(s string) (string, error) {
 // HTMLEscape escapes special HTML characters.
 // HTMLEscape는 특수 HTML 문자를 이스케이프합니다.
 //
-// Escapes: <, >, &, ", ' / 이스케이프: <, >, &, ", '
+// Escapes: <, >, &, ", '
+// 이스케이프: <, >, &, ", '
 //
 // Example
 // 예제:

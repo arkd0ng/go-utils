@@ -14,14 +14,30 @@ type SelectOption func(*selectConfig)
 // selectConfig holds configuration for SELECT queries
 // selectConfig는 SELECT 쿼리를 위한 설정을 보관합니다
 type selectConfig struct {
-	columns    []string              // Columns to select / 선택할 컬럼
-	joins      []joinClause          // JOIN clauses / JOIN 절
-	orderBy    string                // ORDER BY clause / ORDER BY 절
-	groupBy    []string              // GROUP BY columns / GROUP BY 컬럼
-	having     *whereClause          // HAVING clause / HAVING 절
-	limit      *int                  // LIMIT value / LIMIT 값
-	offset     *int                  // OFFSET value / OFFSET 값
-	distinct   bool                  // DISTINCT flag / DISTINCT 플래그
+	// Columns to select
+	// 선택할 컬럼
+	columns []string
+	// JOIN clauses
+	// JOIN 절
+	joins []joinClause
+	// ORDER BY clause
+	// ORDER BY 절
+	orderBy string
+	// GROUP BY columns
+	// GROUP BY 컬럼
+	groupBy []string
+	// HAVING clause
+	// HAVING 절
+	having *whereClause
+	// LIMIT value
+	// LIMIT 값
+	limit *int
+	// OFFSET value
+	// OFFSET 값
+	offset *int
+	// DISTINCT flag
+	// DISTINCT 플래그
+	distinct bool
 }
 
 // WithColumns specifies which columns to select
@@ -29,7 +45,8 @@ type selectConfig struct {
 //
 // Example
 // 예제:
-//   db.SelectWhere(ctx, "users", "age > ?", 18, WithColumns("name", "email"))
+//
+//	db.SelectWhere(ctx, "users", "age > ?", 18, WithColumns("name", "email"))
 func WithColumns(cols ...string) SelectOption {
 	return func(c *selectConfig) {
 		c.columns = cols
@@ -41,7 +58,8 @@ func WithColumns(cols ...string) SelectOption {
 //
 // Example
 // 예제:
-//   db.SelectWhere(ctx, "users", "age > ?", 18, WithOrderBy("age DESC"))
+//
+//	db.SelectWhere(ctx, "users", "age > ?", 18, WithOrderBy("age DESC"))
 func WithOrderBy(order string) SelectOption {
 	return func(c *selectConfig) {
 		c.orderBy = order
@@ -53,7 +71,8 @@ func WithOrderBy(order string) SelectOption {
 //
 // Example
 // 예제:
-//   db.SelectWhere(ctx, "users", "age > ?", 18, WithLimit(10))
+//
+//	db.SelectWhere(ctx, "users", "age > ?", 18, WithLimit(10))
 func WithLimit(n int) SelectOption {
 	return func(c *selectConfig) {
 		c.limit = &n
@@ -65,7 +84,8 @@ func WithLimit(n int) SelectOption {
 //
 // Example
 // 예제:
-//   db.SelectWhere(ctx, "users", "age > ?", 18, WithLimit(10), WithOffset(20))
+//
+//	db.SelectWhere(ctx, "users", "age > ?", 18, WithLimit(10), WithOffset(20))
 func WithOffset(n int) SelectOption {
 	return func(c *selectConfig) {
 		c.offset = &n
@@ -77,7 +97,8 @@ func WithOffset(n int) SelectOption {
 //
 // Example
 // 예제:
-//   db.SelectWhere(ctx, "users", "", WithGroupBy("city"), WithColumns("city", "COUNT(*) as count"))
+//
+//	db.SelectWhere(ctx, "users", "", WithGroupBy("city"), WithColumns("city", "COUNT(*) as count"))
 func WithGroupBy(cols ...string) SelectOption {
 	return func(c *selectConfig) {
 		c.groupBy = cols
@@ -89,10 +110,11 @@ func WithGroupBy(cols ...string) SelectOption {
 //
 // Example
 // 예제:
-//   db.SelectWhere(ctx, "users", "",
-//     WithColumns("city", "COUNT(*) as count"),
-//     WithGroupBy("city"),
-//     WithHaving("COUNT(*) > ?", 2))
+//
+//	db.SelectWhere(ctx, "users", "",
+//	  WithColumns("city", "COUNT(*) as count"),
+//	  WithGroupBy("city"),
+//	  WithHaving("COUNT(*) > ?", 2))
 func WithHaving(condition string, args ...interface{}) SelectOption {
 	return func(c *selectConfig) {
 		c.having = &whereClause{
@@ -107,9 +129,10 @@ func WithHaving(condition string, args ...interface{}) SelectOption {
 //
 // Example
 // 예제:
-//   db.SelectWhere(ctx, "users u", "u.age > ?", 18,
-//     WithJoin("orders o", "u.id = o.user_id"),
-//     WithColumns("u.name", "o.total"))
+//
+//	db.SelectWhere(ctx, "users u", "u.age > ?", 18,
+//	  WithJoin("orders o", "u.id = o.user_id"),
+//	  WithColumns("u.name", "o.total"))
 func WithJoin(table, condition string) SelectOption {
 	return func(c *selectConfig) {
 		c.joins = append(c.joins, joinClause{
@@ -125,10 +148,11 @@ func WithJoin(table, condition string) SelectOption {
 //
 // Example
 // 예제:
-//   db.SelectWhere(ctx, "users u", "",
-//     WithLeftJoin("orders o", "u.id = o.user_id"),
-//     WithColumns("u.name", "COUNT(o.id) as order_count"),
-//     WithGroupBy("u.id", "u.name"))
+//
+//	db.SelectWhere(ctx, "users u", "",
+//	  WithLeftJoin("orders o", "u.id = o.user_id"),
+//	  WithColumns("u.name", "COUNT(o.id) as order_count"),
+//	  WithGroupBy("u.id", "u.name"))
 func WithLeftJoin(table, condition string) SelectOption {
 	return func(c *selectConfig) {
 		c.joins = append(c.joins, joinClause{
@@ -156,7 +180,8 @@ func WithRightJoin(table, condition string) SelectOption {
 //
 // Example
 // 예제:
-//   db.SelectWhere(ctx, "users", "", WithColumns("city"), WithDistinct())
+//
+//	db.SelectWhere(ctx, "users", "", WithColumns("city"), WithDistinct())
 func WithDistinct() SelectOption {
 	return func(c *selectConfig) {
 		c.distinct = true
@@ -171,25 +196,28 @@ func WithDistinct() SelectOption {
 //
 // // Simple query with columns
 // 컬럼 지정 간단 쿼리
-//   users, _ := db.SelectWhere(ctx, "users", "age > ?", 18,
-//     WithColumns("name", "email"),
-//     WithOrderBy("age DESC"),
-//     WithLimit(10))
+//
+//	users, _ := db.SelectWhere(ctx, "users", "age > ?", 18,
+//	  WithColumns("name", "email"),
+//	  WithOrderBy("age DESC"),
+//	  WithLimit(10))
 //
 // // GROUP BY query
 // GROUP BY 쿼리
-//   results, _ := db.SelectWhere(ctx, "users", "",
-//     WithColumns("city", "COUNT(*) as count"),
-//     WithGroupBy("city"),
-//     WithHaving("COUNT(*) > ?", 2),
-//     WithOrderBy("count DESC"))
+//
+//	results, _ := db.SelectWhere(ctx, "users", "",
+//	  WithColumns("city", "COUNT(*) as count"),
+//	  WithGroupBy("city"),
+//	  WithHaving("COUNT(*) > ?", 2),
+//	  WithOrderBy("count DESC"))
 //
 // // JOIN query
 // JOIN 쿼리
-//   results, _ := db.SelectWhere(ctx, "users u", "u.age > ?", 25,
-//     WithJoin("orders o", "u.id = o.user_id"),
-//     WithColumns("u.name", "o.total"),
-//     WithOrderBy("o.total DESC"))
+//
+//	results, _ := db.SelectWhere(ctx, "users u", "u.age > ?", 25,
+//	  WithJoin("orders o", "u.id = o.user_id"),
+//	  WithColumns("u.name", "o.total"),
+//	  WithOrderBy("o.total DESC"))
 func (c *Client) SelectWhere(ctx context.Context, table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
 	c.mu.RLock()
 	if c.closed {
@@ -262,8 +290,9 @@ func (c *Client) SelectWhere(ctx context.Context, table string, conditionAndArgs
 //
 // Example
 // 예제:
-//   user, _ := db.SelectOneWhere(ctx, "users", "email = ?", "john@example.com",
-//     WithColumns("name", "age", "city"))
+//
+//	user, _ := db.SelectOneWhere(ctx, "users", "email = ?", "john@example.com",
+//	  WithColumns("name", "age", "city"))
 func (c *Client) SelectOneWhere(ctx context.Context, table string, conditionAndArgs ...interface{}) (map[string]interface{}, error) {
 	// Add LIMIT 1
 	// LIMIT 1 추가

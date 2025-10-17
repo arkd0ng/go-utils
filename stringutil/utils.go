@@ -61,7 +61,9 @@ func Map(strs []string, fn func(string) string) []string {
 //	Filter([]string{"a", "ab", "abc"}, func(s string) bool { return len(s) > 2 })  // ["abc"]
 //	Filter([]string{"hello", "world", "hi"}, func(s string) bool { return len(s) > 3 })  // ["hello", "world"]
 func Filter(strs []string, fn func(string) bool) []string {
-	result := make([]string, 0) // Initialize to empty slice, not nil / nil이 아닌 빈 슬라이스로 초기화
+	// Initialize to empty slice, not nil
+	// nil이 아닌 빈 슬라이스로 초기화
+	result := make([]string, 0)
 	for _, s := range strs {
 		if fn(s) {
 			result = append(result, s)

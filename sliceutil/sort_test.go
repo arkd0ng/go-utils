@@ -102,7 +102,9 @@ func TestSort(t *testing.T) {
 func BenchmarkSort(b *testing.B) {
 	slice := make([]int, 1000)
 	for i := range slice {
-		slice[i] = 1000 - i // Reverse sorted / 역순 정렬
+		// Reverse sorted
+		// 역순 정렬
+		slice[i] = 1000 - i
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -199,7 +201,9 @@ func TestSortDesc(t *testing.T) {
 func BenchmarkSortDesc(b *testing.B) {
 	slice := make([]int, 1000)
 	for i := range slice {
-		slice[i] = i // Already sorted ascending / 이미 오름차순 정렬됨
+		// Already sorted ascending
+		// 이미 오름차순 정렬됨
+		slice[i] = i
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -456,7 +460,6 @@ func BenchmarkIsSortedDesc(b *testing.B) {
 		IsSortedDesc(slice)
 	}
 }
-
 
 // TestSortByMulti tests the SortByMulti function.
 // TestSortByMulti는 SortByMulti 함수를 테스트합니다.

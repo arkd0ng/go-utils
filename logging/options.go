@@ -9,26 +9,54 @@ type Option func(*config) error
 type config struct {
 	// Lumberjack file rotation settings
 	// Lumberjack 파일 로테이션 설정
-	filename   string // Log file path / 로그 파일 경로
-	maxSize    int    // Maximum size in megabytes before rotation / 로테이션 전 최대 크기(MB)
-	maxBackups int    // Maximum number of old log files to retain / 보관할 이전 로그 파일의 최대 개수
-	maxAge     int    // Maximum number of days to retain old log files / 이전 로그 파일을 보관할 최대 일수
-	compress   bool   // Whether to compress rotated files / 로테이션된 파일을 압축할지 여부
+	// Log file path
+	// 로그 파일 경로
+	filename string
+	// Maximum size in megabytes before rotation
+	// 로테이션 전 최대 크기(MB)
+	maxSize int
+	// Maximum number of old log files to retain
+	// 보관할 이전 로그 파일의 최대 개수
+	maxBackups int
+	// Maximum number of days to retain old log files
+	// 이전 로그 파일을 보관할 최대 일수
+	maxAge int
+	// Whether to compress rotated files
+	// 로테이션된 파일을 압축할지 여부
+	compress bool
 
 	// Logger settings
 	// Logger 설정
-	level        Level  // Minimum log level / 최소 로그 레벨
-	prefix       string // Log prefix / 로그 프리픽스
-	enableColor  bool   // Enable color output for console / 콘솔 색상 출력 활성화
-	enableStdout bool   // Enable stdout output / 표준 출력 활성화
-	enableFile   bool   // Enable file output / 파일 출력 활성화
-	timeFormat   string // Time format for log entries / 로그 항목의 시간 형식
+	// Minimum log level
+	// 최소 로그 레벨
+	level Level
+	// Log prefix
+	// 로그 프리픽스
+	prefix string
+	// Enable color output for console
+	// 콘솔 색상 출력 활성화
+	enableColor bool
+	// Enable stdout output
+	// 표준 출력 활성화
+	enableStdout bool
+	// Enable file output
+	// 파일 출력 활성화
+	enableFile bool
+	// Time format for log entries
+	// 로그 항목의 시간 형식
+	timeFormat string
 
 	// Banner settings
 	// 배너 설정
-	autoBanner bool   // Automatically print banner on logger creation / 로거 생성 시 자동으로 배너 출력
-	appName    string // Application name for banner / 배너에 표시할 애플리케이션 이름
-	appVersion string // Application version for banner / 배너에 표시할 애플리케이션 버전
+	// Automatically print banner on logger creation
+	// 로거 생성 시 자동으로 배너 출력
+	autoBanner bool
+	// Application name for banner
+	// 배너에 표시할 애플리케이션 이름
+	appName string
+	// Application version for banner
+	// 배너에 표시할 애플리케이션 버전
+	appVersion string
 }
 
 // defaultConfig returns the default configuration
@@ -38,31 +66,49 @@ func defaultConfig() *config {
 	// app.yaml에서 버전 로드 시도
 	appVersion := TryLoadAppVersion()
 	if appVersion == "" {
-		appVersion = "v1.0.0" // Fallback to default / 기본값으로 대체
+		// Fallback to default
+		// 기본값으로 대체
+		appVersion = "v1.0.0"
 	}
 
 	// Try to load app name from app.yaml
 	// app.yaml에서 앱 이름 로드 시도
 	appName := TryLoadAppName()
 	if appName == "" {
-		appName = "Application" // Fallback to default / 기본값으로 대체
+		// Fallback to default
+		// 기본값으로 대체
+		appName = "Application"
 	}
 
 	return &config{
-		filename:     "./logs/app.log",
-		maxSize:      100,  // 100 MB
-		maxBackups:   3,    // Keep 3 backups / 3개 백업 유지
-		maxAge:       28,   // 28 days / 28일
-		compress:     true, // Compress rotated files / 로테이션된 파일 압축
-		level:        INFO,
-		prefix:       "",
-		enableColor:  true,
-		enableStdout: false, // Disabled by default, file only / 기본적으로 비활성화, 파일만 출력
+		filename: "./logs/app.log",
+		maxSize:  100, // 100 MB
+		// Keep 3 backups
+		// 3개 백업 유지
+		maxBackups: 3,
+		// 28 days
+		// 28일
+		maxAge: 28,
+		// Compress rotated files
+		// 로테이션된 파일 압축
+		compress:    true,
+		level:       INFO,
+		prefix:      "",
+		enableColor: true,
+		// Disabled by default, file only
+		// 기본적으로 비활성화, 파일만 출력
+		enableStdout: false,
 		enableFile:   true,
 		timeFormat:   "2006-01-02 15:04:05",
-		autoBanner:   true,    // Auto banner enabled by default / 기본적으로 자동 배너 활성화
-		appName:      appName,    // From app.yaml or default / app.yaml 또는 기본값
-		appVersion:   appVersion, // From app.yaml or default / app.yaml 또는 기본값
+		// Auto banner enabled by default
+		// 기본적으로 자동 배너 활성화
+		autoBanner: true,
+		// From app.yaml or default
+		// app.yaml 또는 기본값
+		appName: appName,
+		// From app.yaml or default
+		// app.yaml 또는 기본값
+		appVersion: appVersion,
 	}
 }
 

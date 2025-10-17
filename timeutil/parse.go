@@ -124,9 +124,15 @@ func ParseWithTimezone(s, tz string) (time.Time, error) {
 //
 // Example layouts
 // 레이아웃 예제:
-//   - "2006-01-02 15:04:05.000" for milliseconds / 밀리초용
-//   - "2006-01-02 15:04:05.999999" for microseconds / 마이크로초용
-//   - "2006/01/02" for date with slashes / 슬래시 구분 날짜
+//   - "2006-01-02 15:04:05.000" for milliseconds
+//
+// 밀리초용
+//   - "2006-01-02 15:04:05.999999" for microseconds
+//
+// 마이크로초용
+//   - "2006/01/02" for date with slashes
+//
+// 슬래시 구분 날짜
 func ParseWithLayout(s, layout string) (time.Time, error) {
 	t, err := time.ParseInLocation(layout, s, defaultLocation)
 	if err != nil {

@@ -148,7 +148,8 @@ func (sb *StringBuilder) ToLower() *StringBuilder {
 	return sb
 }
 
-// Truncate truncates the current value to the specified length and appends "...". / Truncate는 현재 값을 지정된 길이로 자르고 "..."를 추가합니다.
+// Truncate truncates the current value to the specified length and appends "...".
+// Truncate는 현재 값을 지정된 길이로 자르고 "..."를 추가합니다.
 //
 // Example
 // 예제:

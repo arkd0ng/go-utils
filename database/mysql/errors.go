@@ -22,12 +22,24 @@ var (
 // DBError represents a database operation error
 // DBError는 데이터베이스 작업 에러를 나타냅니다
 type DBError struct {
-	Op       string        // Operation name / 작업 이름
-	Query    string        // SQL query / SQL 쿼리
-	Args     []interface{} // Query arguments / 쿼리 인자
-	Err      error         // Original error / 원본 에러
-	Time     time.Time     // Error timestamp / 에러 타임스탬프
-	Duration time.Duration // Operation duration / 작업 소요 시간
+	// Operation name
+	// 작업 이름
+	Op string
+	// SQL query
+	// SQL 쿼리
+	Query string
+	// Query arguments
+	// 쿼리 인자
+	Args []interface{}
+	// Original error
+	// 원본 에러
+	Err error
+	// Error timestamp
+	// 에러 타임스탬프
+	Time time.Time
+	// Operation duration
+	// 작업 소요 시간
+	Duration time.Duration
 }
 
 // Error implements error interface

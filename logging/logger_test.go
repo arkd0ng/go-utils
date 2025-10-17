@@ -241,7 +241,9 @@ func TestLevelParsing(t *testing.T) {
 		{"WARNING", WARN},
 		{"ERROR", ERROR},
 		{"FATAL", FATAL},
-		{"unknown", INFO}, // Default / 기본값
+		// Default
+		// 기본값
+		{"unknown", INFO},
 	}
 
 	for _, tt := range tests {
@@ -283,7 +285,9 @@ func TestLevelString(t *testing.T) {
 func TestBanner(t *testing.T) {
 	logger, err := New(
 		WithFilePath("./test_logs/banner.log"),
-		WithAutoBanner(false), // Disable auto banner for this test / 이 테스트에서는 자동 배너 비활성화
+		// Disable auto banner for this test
+		// 이 테스트에서는 자동 배너 비활성화
+		WithAutoBanner(false),
 	)
 	if err != nil {
 		t.Fatalf("Failed to create logger: %v", err)
@@ -310,8 +314,8 @@ func TestBanner(t *testing.T) {
 // TestAutoBanner는 로거 생성 시 자동 배너 출력을 테스트합니다
 func TestAutoBanner(t *testing.T) {
 	tests := []struct {
-		name           string
-		opts           []Option
+		name             string
+		opts             []Option
 		shouldHaveBanner bool
 	}{
 		{
@@ -398,7 +402,8 @@ func TestAutoBanner(t *testing.T) {
 			// Verify app name in banner
 			// 배너에 앱 이름 확인
 			if logger.config.appName != "" && logger.config.appName != "Application" && tt.shouldHaveBanner {
-				// Verify config appName if it's not the default "Application" / 기본값 "Application"이 아닌 경우 config appName 확인
+				// Verify config appName if it's not the default "Application"
+				// 기본값 "Application"이 아닌 경우 config appName 확인
 				if !strings.Contains(logStr, logger.config.appName) {
 					t.Errorf("Log file should contain app name: %s", logger.config.appName)
 				}

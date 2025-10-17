@@ -16,7 +16,8 @@ var (
 // SetDefaultTimezone sets the default timezone for all timeutil functions.
 // SetDefaultTimezone은 모든 timeutil 함수의 기본 타임존을 설정합니다.
 //
-// Default is "Asia/Seoul" (KST, GMT+9). / 기본값은 "Asia/Seoul" (KST, GMT+9)입니다.
+// Default is "Asia/Seoul" (KST, GMT+9).
+// 기본값은 "Asia/Seoul" (KST, GMT+9)입니다.
 //
 // Example
 // 예제:
@@ -68,7 +69,8 @@ func ConvertTimezone(t time.Time, tz string) (time.Time, error) {
 // ToKST converts a time to KST (Asia/Seoul, GMT+9).
 // ToKST는 시간을 KST (Asia/Seoul, GMT+9)로 변환합니다.
 //
-// This is a convenience function for ConvertTimezone(t, "Asia/Seoul"). / 이것은 ConvertTimezone(t, "Asia/Seoul")의 편의 함수입니다.
+// This is a convenience function for ConvertTimezone(t, "Asia/Seoul").
+// 이것은 ConvertTimezone(t, "Asia/Seoul")의 편의 함수입니다.
 //
 // Example
 // 예제:
@@ -147,21 +149,21 @@ func ListTimezones() []string {
 
 		// Americas
 		// 아메리카
-		"America/New_York",      // EST/EDT (GMT-5/-4)
-		"America/Chicago",       // CST/CDT (GMT-6/-5)
-		"America/Denver",        // MST/MDT (GMT-7/-6)
-		"America/Los_Angeles",   // PST/PDT (GMT-8/-7)
-		"America/Toronto",       // EST/EDT (GMT-5/-4)
-		"America/Vancouver",     // PST/PDT (GMT-8/-7)
-		"America/Mexico_City",   // CST/CDT (GMT-6/-5)
-		"America/Sao_Paulo",     // BRT/BRST (GMT-3/-2)
-		"America/Buenos_Aires",  // ART (GMT-3)
-		"America/Santiago",      // CLT/CLST (GMT-4/-3)
-		"America/Bogota",        // COT (GMT-5)
-		"America/Lima",          // PET (GMT-5)
-		"America/Caracas",       // VET (GMT-4)
-		"America/Panama",        // EST (GMT-5)
-		"America/Havana",        // CST/CDT (GMT-5/-4)
+		"America/New_York",       // EST/EDT (GMT-5/-4)
+		"America/Chicago",        // CST/CDT (GMT-6/-5)
+		"America/Denver",         // MST/MDT (GMT-7/-6)
+		"America/Los_Angeles",    // PST/PDT (GMT-8/-7)
+		"America/Toronto",        // EST/EDT (GMT-5/-4)
+		"America/Vancouver",      // PST/PDT (GMT-8/-7)
+		"America/Mexico_City",    // CST/CDT (GMT-6/-5)
+		"America/Sao_Paulo",      // BRT/BRST (GMT-3/-2)
+		"America/Buenos_Aires",   // ART (GMT-3)
+		"America/Santiago",       // CLT/CLST (GMT-4/-3)
+		"America/Bogota",         // COT (GMT-5)
+		"America/Lima",           // PET (GMT-5)
+		"America/Caracas",        // VET (GMT-4)
+		"America/Panama",         // EST (GMT-5)
+		"America/Havana",         // CST/CDT (GMT-5/-4)
 		"America/Port-au-Prince", // EST/EDT (GMT-5/-4)
 
 		// Pacific
@@ -191,17 +193,17 @@ func ListTimezones() []string {
 
 		// Middle East
 		// 중동
-		"Asia/Jerusalem",  // IST/IDT (GMT+2/+3)
-		"Asia/Riyadh",     // AST (GMT+3)
-		"Asia/Tehran",     // IRST/IRDT (GMT+3:30/+4:30)
-		"Asia/Baghdad",    // AST (GMT+3)
-		"Asia/Kuwait",     // AST (GMT+3)
-		"Asia/Doha",       // AST (GMT+3)
-		"Asia/Muscat",     // GST (GMT+4)
-		"Asia/Karachi",    // PKT (GMT+5)
-		"Asia/Dhaka",      // BST (GMT+6)
-		"Asia/Yangon",     // MMT (GMT+6:30)
-		"Asia/Kathmandu",  // NPT (GMT+5:45)
+		"Asia/Jerusalem", // IST/IDT (GMT+2/+3)
+		"Asia/Riyadh",    // AST (GMT+3)
+		"Asia/Tehran",    // IRST/IRDT (GMT+3:30/+4:30)
+		"Asia/Baghdad",   // AST (GMT+3)
+		"Asia/Kuwait",    // AST (GMT+3)
+		"Asia/Doha",      // AST (GMT+3)
+		"Asia/Muscat",    // GST (GMT+4)
+		"Asia/Karachi",   // PKT (GMT+5)
+		"Asia/Dhaka",     // BST (GMT+6)
+		"Asia/Yangon",    // MMT (GMT+6:30)
+		"Asia/Kathmandu", // NPT (GMT+5:45)
 
 		// UTC
 		"UTC",

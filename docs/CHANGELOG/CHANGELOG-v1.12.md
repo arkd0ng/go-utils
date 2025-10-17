@@ -6,6 +6,78 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.012] - 2025-10-17
+
+### Added / 추가
+- docs/errorutil/DEVELOPER_GUIDE.md 작성 (포괄적인 개발자 가이드)
+- 10개 주요 섹션 포함: 아키텍처 개요, 패키지 구조, 핵심 컴포넌트, 디자인 패턴, 내부 구현, 새 기능 추가, 테스트 가이드, 성능, 기여 가이드라인, 코드 스타일
+- 인터페이스 및 에러 타입 상세 설명 (6개 타입, 5개 인터페이스)
+- 에러 생성/래핑/검사 흐름 다이어그램
+- 새 기능 추가 단계별 가이드 (새 에러 타입, 새 검사 함수)
+
+### Changed / 변경
+- N/A
+
+### Fixed / 수정
+- N/A
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - 버전을 v1.12.011에서 v1.12.012로 증가
+- `docs/errorutil/DEVELOPER_GUIDE.md` - 새 파일 생성 (800+ 줄, 포괄적인 개발자 가이드)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.012 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+errorutil 패키지 문서화 작업 계속 진행 - DEVELOPER_GUIDE.md 작성
+
+**Why / 이유**:
+- USER_MANUAL은 사용자용, DEVELOPER_GUIDE는 패키지 유지보수 및 기여자용
+- 패키지의 내부 아키텍처 및 설계 결정 문서화
+- 새 기능 추가 및 패키지 확장을 위한 가이드 제공
+- 코드 스타일 및 기여 가이드라인 명확화
+
+**Implementation Details / 구현 세부사항**:
+
+1. **가이드 구조**:
+   - Architecture Overview: 설계 원칙 7가지, 상위 수준 아키텍처, 컴포넌트 상호작용
+   - Package Structure: 파일 구성, 파일별 책임 (~2,544 줄 코드)
+   - Core Components: 5개 인터페이스, 6개 에러 타입, Frame 타입 상세 설명
+   - Design Patterns: Factory, Decorator, Chain of Responsibility, Template Method 패턴
+   - Internal Implementation: 에러 생성/래핑/검사 흐름 다이어그램
+   - Adding New Features: 새 에러 타입 추가 5단계, 새 검사 함수 추가 가이드
+   - Testing Guide: 테스트 구조, 4가지 테스트 카테고리, 커버리지 요구사항 (99.2%)
+   - Performance: 할당 벤치마크, 성능 고려사항 3가지
+   - Contributing Guidelines: 개발 워크플로우 4단계, Pull Request 체크리스트
+   - Code Style: 명명 규칙, 주석 스타일 (이중 언어), 에러 메시지 형식
+
+2. **주요 내용**:
+   - 각 인터페이스의 목적 및 구현자 설명 (Unwrapper, Coder, NumericCoder, StackTracer, Contexter)
+   - 6개 내부 에러 타입 상세 (wrappedError, codedError, numericCodedError, stackError, contextError, compositeError)
+   - 에러 생성/래핑/검사의 전체 흐름 다이어그램
+   - 에러 체인 탐색 메커니즘 설명 (errors.As 사용)
+   - 디자인 패턴 적용 예제 (Factory, Decorator, Chain of Responsibility, Template Method)
+   - 새 기능 추가 단계별 가이드 (코드 예제 포함)
+   - 테스트 카테고리 및 실행 방법
+   - 성능 벤치마크 및 최적화 고려사항
+
+3. **개발자 지원 요소**:
+   - 모든 섹션 영문/한글 병기
+   - 코드 예제로 개념 설명
+   - 다이어그램으로 복잡한 흐름 시각화
+   - 실용적인 체크리스트 및 가이드라인
+   - 인터페이스 호환성 매트릭스
+   - 함수 참조 테이블
+
+**Impact / 영향**:
+- 패키지 유지보수자가 내부 구조를 완전히 이해 가능
+- 새 기능 추가 시 일관된 패턴 유지
+- 기여자가 코드 스타일 및 테스트 요구사항 준수
+- 문서 품질: README (Quick Start) → USER_MANUAL (Usage) → DEVELOPER_GUIDE (Architecture)
+- errorutil 예제 코드 작성 준비 완료
+
+---
+
 ## [v1.12.011] - 2025-10-17
 
 ### Added / 추가

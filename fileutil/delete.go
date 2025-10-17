@@ -82,6 +82,7 @@ func DeleteRecursive(path string) error {
 //
 // // Delete all .tmp files
 // 모든 .tmp 파일 삭제
+//
 //	err := fileutil.DeletePattern("*.tmp")
 //	if err != nil {
 //	    log.Fatal(err)
@@ -197,7 +198,9 @@ func RemoveEmpty(path string) error {
 		if err != nil {
 			return fmt.Errorf("fileutil.RemoveEmpty: %w", err)
 		}
-		if isEmpty && dir != path { // Don't remove the root path / 루트 경로는 제거하지 않음
+		// Don't remove the root path
+		// 루트 경로는 제거하지 않음
+		if isEmpty && dir != path {
 			if err := os.Remove(dir); err != nil {
 				return fmt.Errorf("fileutil.RemoveEmpty: %w", err)
 			}

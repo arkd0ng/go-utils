@@ -72,7 +72,9 @@ func WriteString(path string, content string, perm ...os.FileMode) error {
 func WriteLines(path string, lines []string, perm ...os.FileMode) error {
 	content := strings.Join(lines, "\n")
 	if len(lines) > 0 {
-		content += "\n" // Add trailing newline / 후행 개행 추가
+		// Add trailing newline
+		// 후행 개행 추가
+		content += "\n"
 	}
 	return WriteString(path, content, perm...)
 }
@@ -200,7 +202,9 @@ func WriteAtomic(path string, data []byte, perm ...os.FileMode) error {
 	// Rename temporary file to target path
 	// 임시 파일을 대상 경로로 이름 변경
 	if err := os.Rename(tempPath, path); err != nil {
-		os.Remove(tempPath) // Clean up temp file on error / 에러 시 임시 파일 정리
+		// Clean up temp file on error
+		// 에러 시 임시 파일 정리
+		os.Remove(tempPath)
 		return fmt.Errorf("fileutil.WriteAtomic: %w", err)
 	}
 
@@ -270,7 +274,9 @@ func AppendString(path string, content string) error {
 func AppendLines(path string, lines []string) error {
 	content := strings.Join(lines, "\n")
 	if len(lines) > 0 {
-		content += "\n" // Add trailing newline / 후행 개행 추가
+		// Add trailing newline
+		// 후행 개행 추가
+		content += "\n"
 	}
 	return AppendString(path, content)
 }

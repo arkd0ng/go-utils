@@ -261,7 +261,9 @@ func (c *Client) ImportFromCSV(ctx context.Context, table string, filePath strin
 	if opts.Delimiter != 0 && opts.Delimiter != ',' {
 		reader.Comma = opts.Delimiter
 	}
-	reader.FieldsPerRecord = -1 // Allow variable number of fields / 가변 필드 수 허용
+	// Allow variable number of fields
+	// 가변 필드 수 허용
+	reader.FieldsPerRecord = -1
 
 	// Read all records
 	// 모든 레코드 읽기
@@ -352,7 +354,9 @@ func (c *Client) ImportFromCSV(ctx context.Context, table string, filePath strin
 				return fmt.Errorf("failed to insert batch at row %d: %w", i+1, err)
 			}
 			totalRows += len(batch)
-			batch = batch[:0] // Reset batch / 배치 초기화
+			// Reset batch
+			// 배치 초기화
+			batch = batch[:0]
 		}
 	}
 

@@ -32,7 +32,8 @@ func (c *Context) Path() string {
 // q := ctx.Query("q")       // Returns "golang"
 // "golang" 반환
 //
-//	page := ctx.Query("page") // Returns "2" / "2" 반환
+// page := ctx.Query("page") // Returns "2"
+// "2" 반환
 func (c *Context) Query(key string) string {
 	return c.Request.URL.Query().Get(key)
 }
@@ -182,10 +183,12 @@ func (c *Context) Referer() string {
 // X-Forwarded-For:
 // - Standard header set by proxies (nginx, HAProxy, CloudFlare, etc.)
 // - 프록시(nginx, HAProxy, CloudFlare 등)가 설정하는 표준 헤더
-// - Format: "client, proxy1, proxy2" (comma-separated chain) / - 형식: "클라이언트, 프록시1, 프록시2" (쉼표로 구분된 체인)
+// - Format: "client, proxy1, proxy2" (comma-separated chain)
+// - 형식: "클라이언트, 프록시1, 프록시2" (쉼표로 구분된 체인)
 // - Returns ONLY the first IP (original client) for security
 // - 보안을 위해 첫 번째 IP(원본 클라이언트)만 반환
-// - Example: "203.0.113.195, 70.41.3.18" → returns "203.0.113.195" / - 예제: "203.0.113.195, 70.41.3.18" → "203.0.113.195" 반환
+// - Example: "203.0.113.195, 70.41.3.18" → returns "203.0.113.195"
+// - 예제: "203.0.113.195, 70.41.3.18" → "203.0.113.195" 반환
 //
 // X-Real-IP:
 // - Non-standard but widely used by nginx reverse proxies
@@ -198,7 +201,8 @@ func (c *Context) Referer() string {
 // RemoteAddr:
 // - Direct TCP connection source address
 // - 직접 TCP 연결 소스 주소
-// - Format: "IP:Port" (e.g., "192.168.1.100:54321") / - 형식: "IP:포트" (예: "192.168.1.100:54321")
+// - Format: "IP:Port" (e.g., "192.168.1.100:54321")
+// - 형식: "IP:포트" (예: "192.168.1.100:54321")
 // - Returns IP only (strips port number)
 // - IP만 반환 (포트 번호 제거)
 // - Most reliable when no proxies involved
@@ -388,7 +392,8 @@ func (c *Context) IsOPTIONS() bool {
 // IsAjax checks if the request is an AJAX request (XMLHttpRequest).
 // IsAjax는 요청이 AJAX 요청(XMLHttpRequest)인지 확인합니다.
 //
-// It checks for the X-Requested-With header set to "XMLHttpRequest". / X-Requested-With 헤더가 "XMLHttpRequest"로 설정되었는지 확인합니다.
+// It checks for the X-Requested-With header set to "XMLHttpRequest".
+// X-Requested-With 헤더가 "XMLHttpRequest"로 설정되었는지 확인합니다.
 //
 // Example
 // 예제:
@@ -422,7 +427,8 @@ func (c *Context) IsWebSocket() bool {
 // AcceptsJSON checks if the client accepts JSON responses.
 // AcceptsJSON은 클라이언트가 JSON 응답을 수락하는지 확인합니다.
 //
-// It checks the Accept header for "application/json". / Accept 헤더에서 "application/json"을 확인합니다.
+// It checks the Accept header for "application/json".
+// Accept 헤더에서 "application/json"을 확인합니다.
 //
 // Example
 // 예제:
@@ -440,7 +446,8 @@ func (c *Context) AcceptsJSON() bool {
 // AcceptsHTML checks if the client accepts HTML responses.
 // AcceptsHTML은 클라이언트가 HTML 응답을 수락하는지 확인합니다.
 //
-// It checks the Accept header for "text/html". / Accept 헤더에서 "text/html"을 확인합니다.
+// It checks the Accept header for "text/html".
+// Accept 헤더에서 "text/html"을 확인합니다.
 //
 // Example
 // 예제:
@@ -458,7 +465,8 @@ func (c *Context) AcceptsHTML() bool {
 // AcceptsXML checks if the client accepts XML responses.
 // AcceptsXML은 클라이언트가 XML 응답을 수락하는지 확인합니다.
 //
-// It checks the Accept header for "application/xml" or "text/xml". / Accept 헤더에서 "application/xml" 또는 "text/xml"을 확인합니다.
+// It checks the Accept header for "application/xml" or "text/xml".
+// Accept 헤더에서 "application/xml" 또는 "text/xml"을 확인합니다.
 //
 // Example
 // 예제:

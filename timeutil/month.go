@@ -9,7 +9,9 @@ import "time"
 // 예제:
 //
 //	t := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
-// month := timeutil.MonthKorean(t) / fmt.Println(month) // "10월"
+//
+// month := timeutil.MonthKorean(t)
+// fmt.Println(month) // "10월"
 func MonthKorean(t time.Time) string {
 	return t.Format("1월")
 }

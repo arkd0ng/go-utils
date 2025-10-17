@@ -22,7 +22,7 @@ type config struct {
 
 	// Authentication
 	// 인증
-	bearerToken string
+	bearerToken   string
 	basicAuthUser string
 	basicAuthPass string
 
@@ -157,7 +157,8 @@ func WithRetryBackoff(min, max time.Duration) Option {
 // WithUserAgent sets a custom User-Agent header.
 // WithUserAgent는 사용자 정의 User-Agent 헤더를 설정합니다.
 //
-// Default: "go-utils/httputil v{version}" / 기본값: "go-utils/httputil v{version}"
+// Default: "go-utils/httputil v{version}"
+// 기본값: "go-utils/httputil v{version}"
 func WithUserAgent(userAgent string) Option {
 	return func(c *config) {
 		c.userAgent = userAgent
@@ -242,9 +243,10 @@ func WithCookies() Option {
 // 쿠키는 지정된 파일 경로에 자동으로 저장되고 로드됩니다.
 //
 // Example:
-//   client := httputil.NewClient(
-//       httputil.WithPersistentCookies("cookies.json"),
-//   )
+//
+//	client := httputil.NewClient(
+//	    httputil.WithPersistentCookies("cookies.json"),
+//	)
 func WithPersistentCookies(filePath string) Option {
 	return func(c *config) {
 		c.cookieJarPath = filePath

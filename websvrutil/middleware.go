@@ -66,7 +66,8 @@ import (
 // 클라이언트에 대한 응답:
 //   - HTTP 500 Internal Server Error
 //
-// - Generic "Internal Server Error" message (no stack trace exposed) / - 일반적인 "Internal Server Error" 메시지 (스택 트레이스 노출 없음)
+// - Generic "Internal Server Error" message (no stack trace exposed)
+// - 일반적인 "Internal Server Error" 메시지 (스택 트레이스 노출 없음)
 // - Prevents information disclosure to attackers
 // - 공격자에게 정보 공개 방지
 // - Detailed error only in server logs for debugging
@@ -1098,7 +1099,8 @@ type StaticConfig struct {
 	// Root는 파일을 제공할 루트 디렉토리입니다
 	Root string
 
-	// Index is the index file to serve (default: "index.html") / Index는 제공할 인덱스 파일입니다 (기본값: "index.html")
+	// Index is the index file to serve (default: "index.html")
+	// Index는 제공할 인덱스 파일입니다 (기본값: "index.html")
 	Index string
 
 	// Browse enables directory browsing
@@ -1112,7 +1114,8 @@ type StaticConfig struct {
 // Example
 // 예제:
 //
-// // Serve static files from "./public" directory / "./public" 디렉토리에서 정적 파일 제공
+// // Serve static files from "./public" directory
+// "./public" 디렉토리에서 정적 파일 제공
 //
 //	server.Use(Static("./public"))
 func Static(root string) MiddlewareFunc {

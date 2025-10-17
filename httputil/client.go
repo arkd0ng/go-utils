@@ -17,9 +17,11 @@ import (
 // Client wraps http.Client with additional functionality.
 // Client는 추가 기능을 가진 http.Client를 래핑합니다.
 type Client struct {
-	client    *http.Client
-	config    *config
-	cookieJar *CookieJar // Optional cookie jar with persistence / 지속성을 가진 선택적 쿠키 저장소
+	client *http.Client
+	config *config
+	// Optional cookie jar with persistence
+	// 지속성을 가진 선택적 쿠키 저장소
+	cookieJar *CookieJar
 }
 
 // NewClient creates a new HTTP client with the given options.

@@ -32,7 +32,9 @@ func (l *Logger) Banner(appName, version string) {
 	// Combine app name and version
 	// 앱 이름과 버전 결합
 	text := fmt.Sprintf("%s %s", appName, version)
-	width := len(text) + 12 // Padding / 패딩
+	// Padding
+	// 패딩
+	width := len(text) + 12
 
 	if width < 60 {
 		width = 60
@@ -177,7 +179,9 @@ func (l *Logger) DoubleBanner(appName, version, description string) {
 	if len(text2) > width {
 		width = len(text2)
 	}
-	width += 12 // Padding / 패딩
+	// Padding
+	// 패딩
+	width += 12
 
 	if width < 60 {
 		width = 60

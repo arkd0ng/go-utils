@@ -9,11 +9,21 @@ type Level int
 // Log levels in ascending order of severity
 // 심각도 오름차순으로 정렬된 로그 레벨
 const (
-	DEBUG Level = iota // Debug level for detailed information / 상세 정보를 위한 디버그 레벨
-	INFO               // Info level for general information / 일반 정보를 위한 정보 레벨
-	WARN               // Warning level for warning messages / 경고 메시지를 위한 경고 레벨
-	ERROR              // Error level for error messages / 에러 메시지를 위한 에러 레벨
-	FATAL              // Fatal level for critical errors / 치명적 에러를 위한 치명적 레벨
+	// Debug level for detailed information
+	// 상세 정보를 위한 디버그 레벨
+	DEBUG Level = iota
+	// Info level for general information
+	// 일반 정보를 위한 정보 레벨
+	INFO
+	// Warning level for warning messages
+	// 경고 메시지를 위한 경고 레벨
+	WARN
+	// Error level for error messages
+	// 에러 메시지를 위한 에러 레벨
+	ERROR
+	// Fatal level for critical errors
+	// 치명적 에러를 위한 치명적 레벨
+	FATAL
 )
 
 // String returns the string representation of the log level
@@ -69,17 +79,29 @@ func ParseLevel(s string) Level {
 func (l Level) ColorCode() string {
 	switch l {
 	case DEBUG:
-		return "\033[36m" // Cyan / 청록색
+		// Cyan
+		// 청록색
+		return "\033[36m"
 	case INFO:
-		return "\033[32m" // Green / 녹색
+		// Green
+		// 녹색
+		return "\033[32m"
 	case WARN:
-		return "\033[33m" // Yellow / 노란색
+		// Yellow
+		// 노란색
+		return "\033[33m"
 	case ERROR:
-		return "\033[31m" // Red / 빨간색
+		// Red
+		// 빨간색
+		return "\033[31m"
 	case FATAL:
-		return "\033[35m" // Magenta / 자홍색
+		// Magenta
+		// 자홍색
+		return "\033[35m"
 	default:
-		return "\033[0m" // Reset / 재설정
+		// Reset
+		// 재설정
+		return "\033[0m"
 	}
 }
 

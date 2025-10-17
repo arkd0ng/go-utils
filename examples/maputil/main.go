@@ -178,7 +178,9 @@ func main() {
 // 기본 작업 (11개 함수)
 // ============================================================================
 func basicOperations(ctx context.Context, logger *logging.Logger) {
-	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+	// Context not used in this example
+	// 이 예제에서는 context를 사용하지 않습니다
+	_ = ctx
 
 	logger.Info("")
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
@@ -320,7 +322,9 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 // 변환 (10개 함수)
 // ============================================================================
 func transformations(ctx context.Context, logger *logging.Logger) {
-	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+	// Context not used in this example
+	// 이 예제에서는 context를 사용하지 않습니다
+	_ = ctx
 
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔄 Category 2: Transformation (10 functions)")
@@ -367,7 +371,9 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   Purpose: Apply operation to all values")
 	logger.Info("   목적: 모든 값에 작업 적용")
 	bonusScores := maputil.MapValues(scores, func(score int) int {
-		return score + 5 // +5 bonus points / +5 보너스 점수
+		// +5 bonus points
+		// +5 보너스 점수
+		return score + 5
 	})
 	logger.Info("   With bonus:", "bonusScores", bonusScores)
 	logger.Info("   💡 Use case: Apply discounts, tax calculations")
@@ -379,7 +385,9 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   Purpose: Complete transformation of map structure")
 	logger.Info("   목적: 맵 구조의 완전한 변환")
 	reversed := maputil.MapEntries(scores, func(k string, v int) (int, string) {
-		return v, k // Swap key-value / 키-값 교환
+		// Swap key-value
+		// 키-값 교환
+		return v, k
 	})
 	logger.Info("   Reversed (score -> subject):", "reversed", reversed)
 	logger.Info("   💡 Use case: Create reverse lookups, indexes")
@@ -471,7 +479,9 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 // 집계 (9개 함수)
 // ============================================================================
 func aggregations(ctx context.Context, logger *logging.Logger) {
-	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+	// Context not used in this example
+	// 이 예제에서는 context를 사용하지 않습니다
+	_ = ctx
 
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("📊 Category 3: Aggregation (9 functions)")
@@ -609,7 +619,9 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 // 병합 작업 (8개 함수)
 // ============================================================================
 func mergeOperations(ctx context.Context, logger *logging.Logger) {
-	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+	// Context not used in this example
+	// 이 예제에서는 context를 사용하지 않습니다
+	_ = ctx
 
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔗 Category 4: Merge Operations (8 functions)")
@@ -642,7 +654,9 @@ func mergeOperations(ctx context.Context, logger *logging.Logger) {
 	inventory1 := map[string]int{"apple": 10, "banana": 5}
 	inventory2 := map[string]int{"apple": 15, "orange": 8}
 	combined := maputil.MergeWith(func(old, new int) int {
-		return old + new // Sum quantities / 수량 합산
+		// Sum quantities
+		// 수량 합산
+		return old + new
 	}, inventory1, inventory2)
 	logger.Info("   Combined inventory:", "inventory", combined)
 	logger.Info("   💡 Use case: Inventory management, data consolidation")
@@ -734,7 +748,9 @@ func mergeOperations(ctx context.Context, logger *logging.Logger) {
 // 필터 작업 (7개 함수)
 // ============================================================================
 func filterOperations(ctx context.Context, logger *logging.Logger) {
-	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+	// Context not used in this example
+	// 이 예제에서는 context를 사용하지 않습니다
+	_ = ctx
 
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔍 Category 5: Filter Operations (7 functions)")
@@ -838,7 +854,9 @@ func filterOperations(ctx context.Context, logger *logging.Logger) {
 // 변환 (8개 함수)
 // ============================================================================
 func conversions(ctx context.Context, logger *logging.Logger) {
-	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+	// Context not used in this example
+	// 이 예제에서는 context를 사용하지 않습니다
+	_ = ctx
 
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔄 Category 6: Conversion (8 functions)")
@@ -959,7 +977,9 @@ func conversions(ctx context.Context, logger *logging.Logger) {
 // 조건 검사 (7개 함수)
 // ============================================================================
 func predicates(ctx context.Context, logger *logging.Logger) {
-	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+	// Context not used in this example
+	// 이 예제에서는 context를 사용하지 않습니다
+	_ = ctx
 
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("✅ Category 7: Predicate Checks (7 functions)")
@@ -1061,7 +1081,9 @@ func predicates(ctx context.Context, logger *logging.Logger) {
 // 키 작업 (8개 함수)
 // ============================================================================
 func keyOperations(ctx context.Context, logger *logging.Logger) {
-	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+	// Context not used in this example
+	// 이 예제에서는 context를 사용하지 않습니다
+	_ = ctx
 
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔑 Category 8: Key Operations (8 functions)")
@@ -1165,7 +1187,9 @@ func keyOperations(ctx context.Context, logger *logging.Logger) {
 // 값 작업 (7개 함수)
 // ============================================================================
 func valueOperations(ctx context.Context, logger *logging.Logger) {
-	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+	// Context not used in this example
+	// 이 예제에서는 context를 사용하지 않습니다
+	_ = ctx
 
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("💎 Category 9: Value Operations (7 functions)")
@@ -1213,7 +1237,9 @@ func valueOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   Purpose: Apply operation to all values")
 	logger.Info("   목적: 모든 값에 작업 적용")
 	discounted := maputil.UpdateValues(prices, func(k string, price int) int {
-		return price * 90 / 100 // 10% discount / 10% 할인
+		// 10% discount
+		// 10% 할인
+		return price * 90 / 100
 	})
 	logger.Info("   With 10% discount:", "discounted", discounted)
 	logger.Info("   💡 Use case: Bulk calculations, transformations")
@@ -1259,7 +1285,9 @@ func valueOperations(ctx context.Context, logger *logging.Logger) {
 // 비교 (6개 함수)
 // ============================================================================
 func comparisons(ctx context.Context, logger *logging.Logger) {
-	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+	// Context not used in this example
+	// 이 예제에서는 context를 사용하지 않습니다
+	_ = ctx
 
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("⚖️  Category 10: Comparison (6 functions)")
@@ -1346,7 +1374,9 @@ func comparisons(ctx context.Context, logger *logging.Logger) {
 // 고급: 실제 사용 사례
 // ============================================================================
 func realWorldExamples(ctx context.Context, logger *logging.Logger) {
-	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+	// Context not used in this example
+	// 이 예제에서는 context를 사용하지 않습니다
+	_ = ctx
 
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🌟 Advanced: Real-World Use Cases")
@@ -1382,7 +1412,9 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 		"age":    25,
 		"salary": 50000,
 		"bonus":  0,
-		"tax":    -100, // Invalid negative / 잘못된 음수
+		// Invalid negative
+		// 잘못된 음수
+		"tax": -100,
 	}
 	logger.Info("   Raw user input:", "input", userInput)
 
@@ -1447,7 +1479,9 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	// 할인 적용: 수량 > 1이면 10%
 	discountedCart := maputil.MapValues(cart, func(qty int) int {
 		if qty > 1 {
-			return qty * 90 / 100 // 10% off / 10% 할인
+			// 10% off
+			// 10% 할인
+			return qty * 90 / 100
 		}
 		return qty
 	})
@@ -1527,7 +1561,9 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 // 유틸리티 함수 (신규)
 // ============================================================================
 func utilityFunctions(ctx context.Context, logger *logging.Logger) {
-	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
+	// Context not used in this example
+	// 이 예제에서는 context를 사용하지 않습니다
+	_ = ctx
 
 	logger.Info("")
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")

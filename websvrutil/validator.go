@@ -154,7 +154,8 @@ func validateField(fieldName string, field reflect.Value, tag string) error {
 			continue
 		}
 
-		// Parse rule (e.g., "min=3" -> "min", "3") / 규칙 파싱 (예: "min=3" -> "min", "3")
+		// Parse rule (e.g., "min=3" -> "min", "3")
+		// 규칙 파싱 (예: "min=3" -> "min", "3")
 		parts := strings.SplitN(rule, "=", 2)
 		ruleName := parts[0]
 		var ruleValue string
@@ -207,7 +208,9 @@ func applyRule(fieldName string, field reflect.Value, ruleName, ruleValue string
 	case "numeric":
 		return validateNumeric(fieldName, field)
 	default:
-		return nil // Unknown rule, skip / 알 수 없는 규칙, 건너뛰기
+		// Unknown rule, skip
+		// 알 수 없는 규칙, 건너뛰기
+		return nil
 	}
 }
 
@@ -229,7 +232,9 @@ func validateEmail(fieldName string, field reflect.Value) error {
 
 	email := field.String()
 	if email == "" {
-		return nil // Empty is handled by required / 빈 값은 required에서 처리
+		// Empty is handled by required
+		// 빈 값은 required에서 처리
+		return nil
 	}
 
 	// Simple email regex

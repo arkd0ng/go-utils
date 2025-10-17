@@ -508,7 +508,9 @@ func TestClient_CookieMethods(t *testing.T) {
 // TestClient_NoCookieJar tests client behavior without cookie jar.
 // TestClient_NoCookieJar는 쿠키 저장소 없는 클라이언트 동작을 테스트합니다.
 func TestClient_NoCookieJar(t *testing.T) {
-	client := NewClient() // No cookie options / 쿠키 옵션 없음
+	// No cookie options
+	// 쿠키 옵션 없음
+	client := NewClient()
 
 	if client.cookieJar != nil {
 		t.Error("Client cookieJar should be nil without cookie options")

@@ -734,7 +734,9 @@ func transactionOperations(ctx context.Context, rdb *redis.Client, logger *loggi
 			pipe.Set(ctx, "tx:last_update", time.Now().Unix(), 0)
 			return nil
 		})
-	}, "tx:counter") // Watch the counter key / counter 키 감시
+		// Watch the counter key
+		// counter 키 감시
+	}, "tx:counter")
 
 	if err != nil {
 		logger.Error("Transaction failed", "error", err)

@@ -172,7 +172,9 @@ func TestSetDefault(t *testing.T) {
 		m := map[string]int{"a": 1}
 		SetDefault(m, "b", 2)
 		SetDefault(m, "c", 3)
-		SetDefault(m, "a", 10) // Should not overwrite / 덮어쓰지 않아야 함
+		// Should not overwrite
+		// 덮어쓰지 않아야 함
+		SetDefault(m, "a", 10)
 
 		if len(m) != 3 {
 			t.Errorf("Map should have 3 entries: got %v", len(m))
@@ -204,7 +206,9 @@ func TestSetDefault(t *testing.T) {
 
 		SetDefault(config, "port", "8080")
 		SetDefault(config, "timeout", "30s")
-		SetDefault(config, "host", "0.0.0.0") // Should not change / 변경되지 않아야 함
+		// Should not change
+		// 변경되지 않아야 함
+		SetDefault(config, "host", "0.0.0.0")
 
 		if config["host"] != "localhost" {
 			t.Error("Existing config should not be overwritten")

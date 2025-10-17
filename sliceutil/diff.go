@@ -3,9 +3,15 @@ package sliceutil
 // DiffResult holds the result of a diff operation between two slices.
 // DiffResult는 두 슬라이스 간의 차이 연산 결과를 저장합니다.
 type DiffResult[T any] struct {
-	Added     []T // Elements in new but not in old / 새 슬라이스에만 있는 요소
-	Removed   []T // Elements in old but not in new / 이전 슬라이스에만 있는 요소
-	Unchanged []T // Elements in both old and new / 양쪽 모두에 있는 요소
+	// Elements in new but not in old
+	// 새 슬라이스에만 있는 요소
+	Added []T
+	// Elements in old but not in new
+	// 이전 슬라이스에만 있는 요소
+	Removed []T
+	// Elements in both old and new
+	// 양쪽 모두에 있는 요소
+	Unchanged []T
 }
 
 // Diff compares two slices and returns the differences.

@@ -913,7 +913,9 @@ func example7Transaction(ctx context.Context, db *mysql.Client, logger *logging.
 			"city":  "Gwangju",
 		})
 		if err != nil {
-			return err // Auto rollback / 자동 롤백
+			// Auto rollback
+			// 자동 롤백
+			return err
 		}
 		id1, _ := result1.LastInsertId()
 		logger.Info(fmt.Sprintf("  - Inserted Emily Park (ID: %d)", id1))
@@ -928,12 +930,16 @@ func example7Transaction(ctx context.Context, db *mysql.Client, logger *logging.
 			"city":  "Ulsan",
 		})
 		if err != nil {
-			return err // Auto rollback / 자동 롤백
+			// Auto rollback
+			// 자동 롤백
+			return err
 		}
 		id2, _ := result2.LastInsertId()
 		logger.Info(fmt.Sprintf("  - Inserted Frank Lee (ID: %d)", id2))
 
-		return nil // Auto commit / 자동 커밋
+		// Auto commit
+		// 자동 커밋
+		return nil
 	})
 
 	if err != nil {
@@ -1797,7 +1803,9 @@ func example29SlowQueryLog(_ context.Context, db *mysql.Client, logger *logging.
 	// Perform some queries
 	// 일부 쿼리 수행
 	db.SelectAll("users")
-	time.Sleep(150 * time.Millisecond) // Simulate slow query / 느린 쿼리 시뮬레이션
+	// Simulate slow query
+	// 느린 쿼리 시뮬레이션
+	time.Sleep(150 * time.Millisecond)
 
 	// Get slow queries
 	// 느린 쿼리 가져오기

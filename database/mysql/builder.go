@@ -10,33 +10,67 @@ import (
 // QueryBuilder provides a fluent API for building complex SQL queries
 // QueryBuilder는 복잡한 SQL 쿼리를 빌드하기 위한 Fluent API를 제공합니다
 type QueryBuilder struct {
-	client         *Client        // Client reference / 클라이언트 참조
-	tx             *Tx            // Transaction reference (optional) / 트랜잭션 참조 (선택)
-	columns        []string       // SELECT columns / SELECT 컬럼
-	table          string         // FROM table / FROM 테이블
-	joins          []joinClause   // JOIN clauses / JOIN 절
-	whereClauses   []whereClause  // WHERE conditions / WHERE 조건
-	groupByCols    []string       // GROUP BY columns / GROUP BY 컬럼
-	havingClauses  []whereClause  // HAVING conditions / HAVING 조건
-	orderBy        string         // ORDER BY clause / ORDER BY 절
-	limitNum       *int           // LIMIT value / LIMIT 값
-	offsetNum      *int           // OFFSET value / OFFSET 값
-	args           []interface{}  // Query arguments / 쿼리 인자
+	// Client reference
+	// 클라이언트 참조
+	client *Client
+	// Transaction reference (optional)
+	// 트랜잭션 참조 (선택)
+	tx *Tx
+	// SELECT columns
+	// SELECT 컬럼
+	columns []string
+	// FROM table
+	// FROM 테이블
+	table string
+	// JOIN clauses
+	// JOIN 절
+	joins []joinClause
+	// WHERE conditions
+	// WHERE 조건
+	whereClauses []whereClause
+	// GROUP BY columns
+	// GROUP BY 컬럼
+	groupByCols []string
+	// HAVING conditions
+	// HAVING 조건
+	havingClauses []whereClause
+	// ORDER BY clause
+	// ORDER BY 절
+	orderBy string
+	// LIMIT value
+	// LIMIT 값
+	limitNum *int
+	// OFFSET value
+	// OFFSET 값
+	offsetNum *int
+	// Query arguments
+	// 쿼리 인자
+	args []interface{}
 }
 
 // joinClause represents a JOIN clause
 // joinClause는 JOIN 절을 나타냅니다
 type joinClause struct {
-	joinType  string // INNER, LEFT, RIGHT / 조인 타입
-	table     string // Table to join / 조인할 테이블
-	condition string // ON condition / ON 조건
+	// INNER, LEFT, RIGHT
+	// 조인 타입
+	joinType string
+	// Table to join
+	// 조인할 테이블
+	table string
+	// ON condition
+	// ON 조건
+	condition string
 }
 
 // whereClause represents a WHERE or HAVING clause
 // whereClause는 WHERE 또는 HAVING 절을 나타냅니다
 type whereClause struct {
-	condition string        // SQL condition / SQL 조건
-	args      []interface{} // Arguments for placeholders / 플레이스홀더 인자
+	// SQL condition
+	// SQL 조건
+	condition string
+	// Arguments for placeholders
+	// 플레이스홀더 인자
+	args []interface{}
 }
 
 // Select initiates a query builder with specified columns

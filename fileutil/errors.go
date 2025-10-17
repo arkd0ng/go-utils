@@ -49,7 +49,8 @@ var (
 	ErrInvalidChecksum = errors.New("fileutil: invalid checksum")
 )
 
-// IsNotFound checks if the error is a "file not found" error / IsNotFound는 에러가 "파일을 찾을 수 없음" 에러인지 확인합니다
+// IsNotFound checks if the error is a "file not found" error
+// IsNotFound는 에러가 "파일을 찾을 수 없음" 에러인지 확인합니다
 //
 // Example
 // 예제:
@@ -63,7 +64,8 @@ func IsNotFound(err error) bool {
 	return errors.Is(err, os.ErrNotExist) || errors.Is(err, ErrNotFound)
 }
 
-// IsPermission checks if the error is a "permission denied" error / IsPermission은 에러가 "권한 거부됨" 에러인지 확인합니다
+// IsPermission checks if the error is a "permission denied" error
+// IsPermission은 에러가 "권한 거부됨" 에러인지 확인합니다
 //
 // Example
 // 예제:
@@ -77,7 +79,8 @@ func IsPermission(err error) bool {
 	return errors.Is(err, os.ErrPermission) || errors.Is(err, ErrPermission)
 }
 
-// IsExist checks if the error is an "already exists" error / IsExist는 에러가 "이미 존재함" 에러인지 확인합니다
+// IsExist checks if the error is an "already exists" error
+// IsExist는 에러가 "이미 존재함" 에러인지 확인합니다
 //
 // Example
 // 예제:
@@ -91,7 +94,8 @@ func IsExist(err error) bool {
 	return errors.Is(err, os.ErrExist) || errors.Is(err, ErrAlreadyExists)
 }
 
-// IsInvalid checks if the error is an "invalid path" error / IsInvalid는 에러가 "유효하지 않은 경로" 에러인지 확인합니다
+// IsInvalid checks if the error is an "invalid path" error
+// IsInvalid는 에러가 "유효하지 않은 경로" 에러인지 확인합니다
 //
 // Example
 // 예제:
