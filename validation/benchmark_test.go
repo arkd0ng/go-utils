@@ -720,3 +720,53 @@ func BenchmarkAlphaSpace(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkOneOf benchmarks the OneOf validator
+// BenchmarkOneOf는 OneOf 검증기를 벤치마크합니다
+func BenchmarkOneOf(b *testing.B) {
+	status := "active"
+	for i := 0; i < b.N; i++ {
+		v := New(status, "status")
+		v.OneOf("active", "inactive", "pending")
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkNotOneOf benchmarks the NotOneOf validator
+// BenchmarkNotOneOf는 NotOneOf 검증기를 벤치마크합니다
+func BenchmarkNotOneOf(b *testing.B) {
+	username := "user123"
+	for i := 0; i < b.N; i++ {
+		v := New(username, "username")
+		v.NotOneOf("admin", "root", "administrator")
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkWhen benchmarks the When validator
+// BenchmarkWhen는 When 검증기를 벤치마크합니다
+func BenchmarkWhen(b *testing.B) {
+	email := "user@example.com"
+	isRequired := true
+	for i := 0; i < b.N; i++ {
+		v := New(email, "email")
+		v.When(isRequired, func(val *Validator) {
+			val.Required().Email()
+		})
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkUnless benchmarks the Unless validator
+// BenchmarkUnless는 Unless 검증기를 벤치마크합니다
+func BenchmarkUnless(b *testing.B) {
+	email := "user@example.com"
+	isGuest := false
+	for i := 0; i < b.N; i++ {
+		v := New(email, "email")
+		v.Unless(isGuest, func(val *Validator) {
+			val.Required().Email()
+		})
+		_ = v.Validate()
+	}
+}

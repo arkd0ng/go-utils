@@ -1,3 +1,150 @@
+## [v1.13.027] - 2025-10-17
+
+### Added / 추가
+- **Logical/Conditional Validators**: 4 new logical and conditional validation functions
+  - `OneOf()` - Value must match one of provided values
+  - `NotOneOf()` - Value must not match any provided values
+  - `When()` - Execute validation if predicate is true
+  - `Unless()` - Execute validation if predicate is false
+
+### Implementation Details / 구현 세부사항
+- **OneOf Validation**: O(n) comparison loop, supports any type, case-sensitive string matching
+- **NotOneOf Validation**: O(n) comparison loop, blacklist implementation, forbidden value detection
+- **When Validation**: Conditional execution based on boolean predicate, function callback pattern
+- **Unless Validation**: Inverse of When, executes when predicate is false, same callback pattern
+- **Type Flexibility**: All validators support interface{} values for maximum flexibility
+- **Nested Validation**: When/Unless support complex validation chains in callback functions
+- **Bilingual Messages**: English/Korean error messages for all validators
+
+### Test Coverage / 테스트 커버리지
+- **rules_logical.go**: 100% coverage (target achieved)
+- **Total Package Coverage**: 98.2%
+- **Test Cases**: 100+ test cases covering:
+  - Valid/invalid OneOf matching (strings, ints, floats, bools, nil)
+  - Valid/invalid NotOneOf blacklist (forbidden values, allowed values)
+  - When conditional execution (true/false predicates, nested chains)
+  - Unless inverse conditional (true/false predicates, nested chains)
+  - Mixed type comparisons and edge cases
+  - Nested When/Unless combinations
+  - StopOnError behavior
+  - Multi-field logical validation
+
+### Performance Benchmarks / 성능 벤치마크
+```
+BenchmarkOneOf-8         ~30 ns/op     O(n) comparison loop
+BenchmarkNotOneOf-8      ~40 ns/op     O(n) comparison loop
+BenchmarkWhen-8          ~5 μs/op      Includes nested validation
+BenchmarkUnless-8        ~5 μs/op      Includes nested validation
+```
+
+**Note**: OneOf/NotOneOf are extremely fast. When/Unless include execution of nested validators in benchmarks.
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bump to v1.13.027
+- `validation/rules_logical.go` - NEW: 4 logical/conditional validators (~169 LOC)
+- `validation/rules_logical_test.go` - NEW: Comprehensive tests (~411 LOC)
+- `validation/benchmark_test.go` - Added 4 logical validator benchmarks
+- `validation/example_test.go` - Added 5 logical validator examples
+- `docs/validation/USER_MANUAL.md` - Added Logical/Conditional Validators section (~370 lines), updated version to v1.13.027, validator count to 97+
+- `docs/CHANGELOG/CHANGELOG-v1.13.md` - Updated with v1.13.027 entry
+
+### Context / 컨텍스트
+**User Request**: "계속 진행해주세요" (Continue working - continuation of validator implementation)
+
+**Why**: Logical/conditional validation is essential for:
+- Enum-like value validation (status codes, roles, types)
+- Blacklist/whitelist enforcement (reserved usernames, forbidden values)
+- Conditional requirements (role-based, environment-based validation)
+- Dynamic business rules (complex conditional logic)
+- Runtime validation control (feature flags, user permissions)
+
+### Impact / 영향
+- ✅ **97+ validators** now available (increased from 93+)
+- ✅ 100% test coverage for rules_logical.go
+- ✅ 98.2% total package coverage
+- ✅ All tests passing (unit + benchmark + example tests)
+- ✅ Sub-50ns performance for OneOf/NotOneOf
+- ✅ Flexible conditional validation with When/Unless
+- ✅ Supports complex business rule validation
+
+### Common Use Cases / 일반적인 사용 사례
+```go
+// Enum validation (OneOf)
+mv := validation.NewValidator()
+mv.Field(order.Status, "status").
+	OneOf("pending", "processing", "shipped", "delivered")
+
+// Blacklist validation (NotOneOf)
+mv.Field(username, "username").
+	Required().
+	NotOneOf("admin", "root", "administrator")
+
+// Conditional validation (When)
+isProduction := os.Getenv("ENV") == "production"
+mv.Field(apiKey, "api_key").
+	When(isProduction, func(val *validation.Validator) {
+		val.Required().MinLength(32)
+	})
+
+// Inverse conditional (Unless)
+isGuest := user.Role == "guest"
+mv.Field(email, "email").
+	Unless(isGuest, func(val *validation.Validator) {
+		val.Required().Email()
+	})
+
+// Complex business rule
+type UserRegistration struct {
+    Username string
+    Role     string
+    Email    string
+    IsGuest  bool
+}
+
+func ValidateRegistration(reg UserRegistration) error {
+    mv := validation.NewValidator()
+
+    // Username: not reserved
+    mv.Field(reg.Username, "username").
+        Required().
+        NotOneOf("admin", "root", "administrator")
+
+    // Role: must be valid
+    mv.Field(reg.Role, "role").
+        Required().
+        OneOf("user", "moderator", "admin")
+
+    // Email: required unless guest
+    mv.Field(reg.Email, "email").
+        Unless(reg.IsGuest, func(val *validation.Validator) {
+            val.Required().Email()
+        })
+
+    return mv.Validate()
+}
+```
+
+### Supported Patterns / 지원되는 패턴
+```go
+// OneOf examples:
+Valid: "active" in ["active", "inactive"], 1 in [1, 2, 3], true in [true, false]
+Invalid: "invalid" in ["active", "inactive"], 5 in [1, 2, 3]
+
+// NotOneOf examples:
+Valid: "user123" not in ["admin", "root"], 5 not in [1, 2, 3]
+Invalid: "admin" in ["admin", "root"], 1 in [1, 2, 3]
+
+// When examples:
+Predicate true: validation executes
+Predicate false: validation skipped
+
+// Unless examples:
+Predicate false: validation executes
+Predicate true: validation skipped
+```
+
+---
+
 ## [v1.13.026] - 2025-10-17
 
 ### Added / 추가

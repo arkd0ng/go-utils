@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.026
+**Version / 버전**: v1.13.027
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -24,12 +24,13 @@
 15. [Geographic Validators / 지리 좌표 검증기](#geographic-validators--지리-좌표-검증기)
 16. [Security Validators / 보안 검증기](#security-validators--보안-검증기)
 17. [Color/CSS Validators / 색상/CSS 검증기](#colorcss-validators--색상css-검증기)
-18. [Data Format Validators / 데이터 형식 검증기](#data-format-validators--데이터-형식-검증기) 🆕
-19. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
-20. [Error Handling / 에러 처리](#error-handling--에러-처리)
-21. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
-22. [Best Practices / 모범 사례](#best-practices--모범-사례)
-23. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
+18. [Data Format Validators / 데이터 형식 검증기](#data-format-validators--데이터-형식-검증기)
+19. [Logical/Conditional Validators / 논리/조건부 검증기](#logicalconditional-validators--논리조건부-검증기) 🆕
+20. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
+21. [Error Handling / 에러 처리](#error-handling--에러-처리)
+22. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
+23. [Best Practices / 모범 사례](#best-practices--모범-사례)
+24. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
 
 ---
 
@@ -41,7 +42,7 @@ The `validation` package provides a **fluent, type-safe validation library** for
 
 ### Key Features / 주요 기능
 
-- ✅ **93+ Built-in Validators** / **93개 이상의 내장 검증기**
+- ✅ **97+ Built-in Validators** / **97개 이상의 내장 검증기**
 - ✅ **Fluent API with Method Chaining** / **메서드 체이닝을 통한 플루언트 API**
 - ✅ **Type-Safe with Go Generics** / **Go 제네릭을 활용한 타입 안전성**
 - ✅ **Bilingual Error Messages (EN/KR)** / **양방향 에러 메시지 (영어/한글)**
@@ -3581,5 +3582,368 @@ Data format validators are highly optimized with character-by-character validati
 All validators use O(n) time complexity where n is the string length.
 
 모든 검증기는 O(n) 시간 복잡도를 사용합니다 (n은 문자열 길이).
+
+---
+
+## Logical/Conditional Validators / 논리/조건부 검증기
+
+Logical and conditional validators provide flexible validation logic based on runtime conditions and value matching. These validators are essential for complex business rules, conditional requirements, and enum-like value validation.
+
+논리 및 조건부 검증기는 런타임 조건과 값 매칭을 기반으로 유연한 검증 로직을 제공합니다. 이러한 검증기는 복잡한 비즈니스 규칙, 조건부 요구사항 및 열거형 값 검증에 필수적입니다.
+
+### Available Validators / 사용 가능한 검증기
+
+| Validator | Description (EN) | Description (KR) | Use Case |
+|-----------|------------------|------------------|----------|
+| `OneOf()` | Value must match one of provided values | 값이 제공된 값 중 하나와 일치해야 함 | Enum validation, status fields |
+| `NotOneOf()` | Value must not match any provided values | 값이 제공된 값 중 어느 것과도 일치하지 않아야 함 | Blacklist, reserved keywords |
+| `When()` | Execute validation if predicate is true | 조건이 참이면 검증 실행 | Conditional requirements |
+| `Unless()` | Execute validation if predicate is false | 조건이 거짓이면 검증 실행 | Inverse conditions |
+
+### 1. OneOf Validator / OneOf 검증기
+
+The `OneOf()` validator ensures that a value matches one of the provided allowed values. This is useful for validating enum-like fields, status codes, or any field with a restricted set of allowed values.
+
+`OneOf()` 검증기는 값이 제공된 허용 값 중 하나와 일치하는지 확인합니다. 열거형 필드, 상태 코드 또는 제한된 허용 값 집합이 있는 필드를 검증하는 데 유용합니다.
+
+**Validation Rules:**
+- Value must equal one of the provided values
+- Uses == operator for comparison
+- Case-sensitive for strings
+- At least one allowed value required
+
+**Examples:**
+```go
+// Status validation
+v1 := validation.New("active", "status").OneOf("active", "inactive", "pending")
+
+// Priority validation
+v2 := validation.New(1, "priority").OneOf(1, 2, 3, 4, 5)
+
+// Boolean enum
+v3 := validation.New(true, "enabled").OneOf(true, false)
+
+// Multiple types (not recommended but supported)
+v4 := validation.New("high", "level").OneOf("low", "medium", "high")
+```
+
+**Use Cases:**
+- Order status validation (pending, processing, shipped, delivered)
+- User role validation (admin, user, guest)
+- Priority levels (low, medium, high, critical)
+- Payment status (pending, paid, failed, refunded)
+- Boolean flags with restricted values
+
+### 2. NotOneOf Validator / NotOneOf 검증기
+
+The `NotOneOf()` validator ensures that a value does NOT match any of the provided forbidden values. This is useful for blacklisting specific values, preventing reserved keywords, or excluding certain inputs.
+
+`NotOneOf()` 검증기는 값이 제공된 금지 값 중 어느 것과도 일치하지 않는지 확인합니다. 특정 값을 블랙리스트에 추가하거나, 예약어를 방지하거나, 특정 입력을 제외하는 데 유용합니다.
+
+**Validation Rules:**
+- Value must NOT equal any of the provided values
+- Uses == operator for comparison
+- Case-sensitive for strings
+- At least one forbidden value required
+
+**Examples:**
+```go
+// Forbidden usernames
+v1 := validation.New("user123", "username").
+    NotOneOf("admin", "root", "administrator", "superuser")
+
+// Reserved keywords
+v2 := validation.New("myVar", "variable_name").
+    NotOneOf("if", "else", "for", "while", "class")
+
+// Excluded values
+v3 := validation.New(5, "value").NotOneOf(0, -1, 999)
+
+// Forbidden email domains
+v4 := validation.New("user@example.com", "email").
+    Email().
+    NotOneOf("admin@example.com", "noreply@example.com")
+```
+
+**Use Cases:**
+- Reserved username prevention
+- Keyword blacklisting
+- Excluded value ranges
+- Forbidden email addresses
+- Banned words/phrases
+
+### 3. When Validator / When 검증기
+
+The `When()` validator executes validation logic only if a predicate (condition) is true. This enables conditional validation based on runtime state, user roles, configuration, or other dynamic conditions.
+
+`When()` 검증기는 조건이 참일 때만 검증 로직을 실행합니다. 런타임 상태, 사용자 역할, 구성 또는 기타 동적 조건에 따라 조건부 검증을 활성화합니다.
+
+**Validation Rules:**
+- If predicate is true, validation function executes
+- If predicate is false, validation is skipped entirely
+- Validation function receives the Validator instance
+- Supports method chaining inside validation function
+
+**Examples:**
+```go
+// Conditional required field
+age := 25
+isAdult := age >= 18
+v1 := validation.New(age, "age").
+    When(isAdult, func(val *validation.Validator) {
+        val.Min(18).Max(120)
+    })
+
+// Environment-based validation
+isProduction := os.Getenv("ENV") == "production"
+v2 := validation.New(apiKey, "api_key").
+    When(isProduction, func(val *validation.Validator) {
+        val.Required().MinLength(32)
+    })
+
+// Role-based validation
+isAdmin := user.Role == "admin"
+v3 := validation.New(permissions, "permissions").
+    When(isAdmin, func(val *validation.Validator) {
+        val.Required().MinLength(1)
+    })
+
+// Complex conditional validation
+shouldValidateEmail := config.ValidateEmails && !user.IsGuest
+v4 := validation.New(email, "email").
+    When(shouldValidateEmail, func(val *validation.Validator) {
+        val.Required().Email().MaxLength(100)
+    })
+```
+
+**Use Cases:**
+- Environment-specific requirements (dev vs production)
+- Role-based validation (admin vs user)
+- Feature flag controlled validation
+- Conditional required fields
+- Dynamic business rules
+
+### 4. Unless Validator / Unless 검증기
+
+The `Unless()` validator is the inverse of `When()` - it executes validation logic only if a predicate is false. This is useful for "validate unless X" scenarios.
+
+`Unless()` 검증기는 `When()`의 반대입니다 - 조건이 거짓일 때만 검증 로직을 실행합니다. "X가 아닌 경우 검증" 시나리오에 유용합니다.
+
+**Validation Rules:**
+- If predicate is false, validation function executes
+- If predicate is true, validation is skipped entirely
+- Inverse of When validator
+- Same signature and behavior as When, but inverted
+
+**Examples:**
+```go
+// Skip validation for guests
+isGuest := user.Role == "guest"
+v1 := validation.New(email, "email").
+    Unless(isGuest, func(val *validation.Validator) {
+        val.Required().Email()
+    })
+
+// Skip strict validation in test mode
+isTestMode := os.Getenv("ENV") == "test"
+v2 := validation.New(password, "password").
+    Unless(isTestMode, func(val *validation.Validator) {
+        val.MinLength(12).Regex(`[A-Z]`).Regex(`[0-9]`)
+    })
+
+// Skip validation for optional feature
+featureDisabled := !config.EnableFeatureX
+v3 := validation.New(featureData, "feature_data").
+    Unless(featureDisabled, func(val *validation.Validator) {
+        val.Required().MinLength(10)
+    })
+```
+
+**Use Cases:**
+- Guest user exceptions
+- Test mode relaxed validation
+- Optional feature validation
+- Inverse conditional requirements
+- "Validate unless disabled" patterns
+
+### Multi-Field Logical Validation / 다중 필드 논리 검증
+
+```go
+type UserRegistration struct {
+    Username  string
+    Email     string
+    Role      string
+    IsGuest   bool
+    Status    string
+}
+
+func ValidateRegistration(reg UserRegistration) error {
+    mv := validation.NewValidator()
+
+    // Username: not reserved, required
+    mv.Field(reg.Username, "username").
+        Required().
+        NotOneOf("admin", "root", "administrator").
+        MinLength(3).
+        MaxLength(20)
+
+    // Email: required unless guest
+    mv.Field(reg.Email, "email").
+        Unless(reg.IsGuest, func(val *validation.Validator) {
+            val.Required().Email()
+        })
+
+    // Role: must be one of allowed values
+    mv.Field(reg.Role, "role").
+        Required().
+        OneOf("user", "moderator", "admin")
+
+    // Status: validate when role is user
+    isUser := reg.Role == "user"
+    mv.Field(reg.Status, "status").
+        When(isUser, func(val *validation.Validator) {
+            val.OneOf("active", "pending", "suspended")
+        })
+
+    return mv.Validate()
+}
+```
+
+### Real-World Use Cases / 실제 사용 사례
+
+**E-commerce Order Validation:**
+```go
+type Order struct {
+    Status      string
+    PaymentType string
+    IsPremium   bool
+}
+
+mv := validation.NewValidator()
+
+// Status must be one of valid states
+mv.Field(order.Status, "status").
+    OneOf("pending", "processing", "shipped", "delivered", "cancelled")
+
+// Payment type must be supported
+mv.Field(order.PaymentType, "payment_type").
+    OneOf("credit_card", "paypal", "bank_transfer")
+
+// Extra validation for premium orders
+mv.Field(order.DeliverySpeed, "delivery").
+    When(order.IsPremium, func(val *validation.Validator) {
+        val.OneOf("express", "overnight")
+    })
+```
+
+**User Permission Validation:**
+```go
+type User struct {
+    Role        string
+    Permissions []string
+    IsActive    bool
+}
+
+mv := validation.NewValidator()
+
+// Role must be valid
+mv.Field(user.Role, "role").
+    Required().
+    OneOf("admin", "moderator", "user", "guest")
+
+// Permissions required unless guest
+isGuest := user.Role == "guest"
+mv.Field(user.Permissions, "permissions").
+    Unless(isGuest, func(val *validation.Validator) {
+        val.Required().MinLen(1)
+    })
+
+// Active users need additional validation
+mv.Field(user.Email, "email").
+    When(user.IsActive, func(val *validation.Validator) {
+        val.Required().Email()
+    })
+```
+
+**Configuration Validation:**
+```go
+type Config struct {
+    Environment string
+    Debug       bool
+    APIKey      string
+}
+
+mv := validation.NewValidator()
+
+// Environment must be known
+mv.Field(cfg.Environment, "environment").
+    Required().
+    OneOf("development", "staging", "production")
+
+// API key required in production
+isProduction := cfg.Environment == "production"
+mv.Field(cfg.APIKey, "api_key").
+    When(isProduction, func(val *validation.Validator) {
+        val.Required().MinLength(32)
+    })
+
+// Debug mode restrictions
+mv.Field(cfg.Debug, "debug").
+    Unless(isProduction, func(val *validation.Validator) {
+        val.OneOf(true) // Can only be true in non-production
+    })
+```
+
+### Combining Logical Validators / 논리 검증기 조합
+
+```go
+// Complex business rule
+type Transaction struct {
+    Type     string
+    Amount   float64
+    Status   string
+    IsUrgent bool
+}
+
+mv := validation.NewValidator()
+
+// Type must be valid
+mv.Field(tx.Type, "type").
+    OneOf("deposit", "withdrawal", "transfer")
+
+// Amount validation based on type
+isWithdrawal := tx.Type == "withdrawal"
+mv.Field(tx.Amount, "amount").
+    Required().
+    Min(0.01).
+    When(isWithdrawal, func(val *validation.Validator) {
+        val.Max(10000) // Withdrawal limit
+    })
+
+// Status validation
+mv.Field(tx.Status, "status").
+    OneOf("pending", "approved", "rejected", "completed")
+
+// Urgent transactions need immediate approval
+mv.Field(tx.Status, "status").
+    When(tx.IsUrgent, func(val *validation.Validator) {
+        val.NotOneOf("pending") // Cannot be pending if urgent
+    })
+```
+
+### Performance / 성능
+
+Logical validators have minimal performance overhead:
+
+논리 검증기는 최소한의 성능 오버헤드를 가집니다:
+
+- **OneOf**: ~30 ns/op (O(n) where n = number of allowed values)
+- **NotOneOf**: ~40 ns/op (O(n) where n = number of forbidden values)
+- **When**: ~5μs/op (includes nested validation execution)
+- **Unless**: ~5μs/op (includes nested validation execution)
+
+**Note**: When/Unless performance depends on the complexity of the validation function passed to them.
+
+**참고**: When/Unless 성능은 전달된 검증 함수의 복잡도에 따라 달라집니다.
 
 ---

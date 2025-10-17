@@ -1320,3 +1320,105 @@ func Example_dataFormatValidation() {
 	}
 	// Output: All data valid
 }
+
+// ExampleValidator_OneOf demonstrates OneOf validation.
+// ExampleValidator_OneOf는 OneOf 검증을 보여줍니다.
+func ExampleValidator_OneOf() {
+	v := validation.New("active", "status")
+	v.OneOf("active", "inactive", "pending")
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid status")
+	} else {
+		fmt.Println("Valid status")
+	}
+	// Output: Valid status
+}
+
+// ExampleValidator_NotOneOf demonstrates NotOneOf validation.
+// ExampleValidator_NotOneOf는 NotOneOf 검증을 보여줍니다.
+func ExampleValidator_NotOneOf() {
+	v := validation.New("user123", "username")
+	v.NotOneOf("admin", "root", "administrator")
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Forbidden username")
+	} else {
+		fmt.Println("Valid username")
+	}
+	// Output: Valid username
+}
+
+// ExampleValidator_When demonstrates conditional validation with When.
+// ExampleValidator_When는 When을 사용한 조건부 검증을 보여줍니다.
+func ExampleValidator_When() {
+	email := "user@example.com"
+	isRequired := true
+
+	v := validation.New(email, "email")
+	v.When(isRequired, func(val *validation.Validator) {
+		val.Required().Email()
+	})
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid email")
+	} else {
+		fmt.Println("Valid email")
+	}
+	// Output: Valid email
+}
+
+// ExampleValidator_Unless demonstrates conditional validation with Unless.
+// ExampleValidator_Unless는 Unless를 사용한 조건부 검증을 보여줍니다.
+func ExampleValidator_Unless() {
+	email := "user@example.com"
+	isGuest := false
+
+	v := validation.New(email, "email")
+	v.Unless(isGuest, func(val *validation.Validator) {
+		val.Required().Email()
+	})
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid email")
+	} else {
+		fmt.Println("Valid email")
+	}
+	// Output: Valid email
+}
+
+// Example_logicalValidation demonstrates multiple logical validators.
+// Example_logicalValidation는 여러 논리 검증기를 보여줍니다.
+func Example_logicalValidation() {
+	mv := validation.NewValidator()
+
+	// Validate status is one of allowed values
+	mv.Field("active", "status").OneOf("active", "inactive", "pending")
+
+	// Validate username is not forbidden
+	mv.Field("user123", "username").NotOneOf("admin", "root")
+
+	// Conditional validation
+	isProduction := true
+	mv.Field("prod-server", "server").When(isProduction, func(val *validation.Validator) {
+		val.Required().MinLength(5)
+	})
+
+	// Inverse conditional validation
+	isTestMode := false
+	mv.Field("test@example.com", "email").Unless(isTestMode, func(val *validation.Validator) {
+		val.Required().Email()
+	})
+
+	err := mv.Validate()
+	if err != nil {
+		fmt.Println("Invalid data")
+	} else {
+		fmt.Println("All validations passed")
+	}
+	// Output: All validations passed
+}
