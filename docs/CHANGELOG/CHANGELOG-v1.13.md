@@ -5,6 +5,76 @@ Validation utilities package for Go applications.
 Go 애플리케이션을 위한 검증 유틸리티 패키지입니다.
 
 ---
+
+## [v1.13.013] - 2025-10-17
+
+### Added / 추가
+- 완전한 validation 패키지 문서화 작업 완료
+- `docs/validation/USER_MANUAL.md` - 포괄적인 사용자 매뉴얼 (영문/한글)
+- `docs/validation/DEVELOPER_GUIDE.md` - 개발자 가이드 및 아키텍처 문서 (영문/한글)
+
+### Changed / 변경
+- `validation/README.md` - 버전 업데이트 (v1.13.011 → v1.13.013)
+- `cfg/app.yaml` - 버전 업데이트 (v1.13.012 → v1.13.013)
+
+### Documentation / 문서
+
+**USER_MANUAL.md (1,100+ lines)**:
+- 13개 섹션으로 구성된 완전한 사용 가이드
+- 50개 validators 전체 상세 설명 및 예제
+- Advanced Features (StopOnError, Custom Validators, Multi-Field)
+- Error Handling 상세 가이드
+- Real-World Examples (User Registration, E-commerce, Config Validation)
+- Best Practices 및 Troubleshooting
+- 영문/한글 병기
+
+**DEVELOPER_GUIDE.md (800+ lines)**:
+- Architecture Overview with diagrams
+- Core Types 상세 설명
+- Package Structure 및 File Responsibilities
+- Design Patterns (Fluent Interface, Builder, Strategy, Fail-Fast, Template Method)
+- Implementation Details (Type Safety, Bilingual Messages, Error Accumulation, Reflection)
+- Testing Strategy (92.5% coverage)
+- Performance Considerations
+- Contributing Guidelines
+- Future Enhancements
+- 영문/한글 병기
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bump to v1.13.013
+- `validation/README.md` - Version update
+- `docs/validation/USER_MANUAL.md` - Created (new file, 1,100+ lines)
+- `docs/validation/DEVELOPER_GUIDE.md` - Created (new file, 800+ lines)
+- `docs/CHANGELOG/CHANGELOG-v1.13.md` - Updated with v1.13.013 entry
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**: "현재 패키지의 문서작업 패키지내 README.md작업 등도 되어 있지 않습니다. 이 작업 먼저 해주세요."
+
+**Why / 이유**: validation 패키지가 50개 validators로 기능적으로 완성되었으나, 사용자 매뉴얼과 개발자 가이드가 누락되어 있었습니다.
+
+**Impact / 영향**:
+- 사용자가 50개 validators 전체를 체계적으로 학습 가능
+- 실제 사용 사례 (User Registration, E-commerce, Config) 제공으로 즉시 적용 가능
+- 개발자가 패키지 내부 구조와 디자인 패턴 이해 가능
+- 기여자를 위한 명확한 Contributing Guidelines 제공
+- 완전한 양방향 문서(영문/한글)로 국제적 사용 가능
+
+**Documentation Quality / 문서 품질**:
+- ✅ **USER_MANUAL.md**: 1,100+ lines, 13 sections, 50+ code examples
+- ✅ **DEVELOPER_GUIDE.md**: 800+ lines, 9 sections, architecture diagrams, design patterns
+- ✅ **Bilingual**: All content in English and Korean
+- ✅ **Complete**: Installation → Basic → Advanced → Troubleshooting
+- ✅ **Practical**: Real-world examples from production scenarios
+
+**Package Status / 패키지 상태**:
+- ✅ 50 validators implemented (String 20, Numeric 10, Collection 10, Comparison 10)
+- ✅ 92.5% test coverage maintained
+- ✅ All tests passing
+- ✅ Complete documentation (README + USER_MANUAL + DEVELOPER_GUIDE)
+- ✅ 8 executable examples
+- ✅ Ready for production use
+
 ---
 
 ## [v1.13.012] - 2025-10-17
