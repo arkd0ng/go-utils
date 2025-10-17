@@ -843,3 +843,16 @@ func BenchmarkNotEmpty(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkBetweenTime benchmarks the BetweenTime validator
+// BenchmarkBetweenTime는 BetweenTime 검증기를 벤치마크합니다
+func BenchmarkBetweenTime(b *testing.B) {
+	start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+	end := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
+	middle := time.Date(2024, 6, 15, 12, 0, 0, 0, time.UTC)
+	for i := 0; i < b.N; i++ {
+		v := New(middle, "date")
+		v.BetweenTime(start, end)
+		_ = v.Validate()
+	}
+}

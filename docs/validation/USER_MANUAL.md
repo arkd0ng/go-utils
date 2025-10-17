@@ -735,6 +735,33 @@ v.AfterOrEqual(time.Now().Add(-1 * time.Hour))
 // Pass! / 통과!
 ```
 
+#### `BetweenTime(start, end time.Time)` 🆕
+**New in v1.13.029** / **v1.13.029의 새 기능**
+
+Time must be between the given start and end times (inclusive) / 시간이 주어진 시작 시간과 종료 시간 사이여야 합니다 (경계값 포함).
+
+```go
+start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+end := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
+eventDate := time.Date(2024, 6, 15, 12, 0, 0, 0, time.UTC)
+
+v := validation.New(eventDate, "event_date")
+v.BetweenTime(start, end)
+// Pass! Date is within 2024 / 통과! 2024년 이내의 날짜입니다
+```
+
+**Use Cases / 사용 사례:**
+- Event date validation (must be within specific year or date range) / 이벤트 날짜 검증 (특정 연도 또는 날짜 범위 내)
+- Booking date validation (check-in/check-out dates) / 예약 날짜 검증 (체크인/체크아웃 날짜)
+- Campaign period validation / 캠페인 기간 검증
+- License validity period / 라이선스 유효 기간
+- Time-bound access control / 시간 제한 접근 제어
+
+**Edge Cases / 경계 사례:**
+- Boundary times are inclusive (start and end times are valid) / 경계 시간 포함 (시작 및 종료 시간도 유효)
+- Inverted ranges (start > end) will fail validation / 역순 범위 (시작 > 종료)는 검증 실패
+- Non-time.Time values will fail with type error / time.Time이 아닌 값은 타입 오류로 실패
+
 ---
 
 ## Network Validators / 네트워크 검증기

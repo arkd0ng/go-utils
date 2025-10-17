@@ -308,3 +308,106 @@ func TestComparisonChaining(t *testing.T) {
 		}
 	})
 }
+
+// TestBetweenTime tests the BetweenTime validator
+// TestBetweenTime는 BetweenTime 검증기를 테스트합니다
+func TestBetweenTime(t *testing.T) {
+	start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+	end := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
+	middle := time.Date(2024, 6, 15, 12, 0, 0, 0, time.UTC)
+	before := time.Date(2023, 12, 31, 23, 59, 59, 0, time.UTC)
+	after := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+
+	tests := []struct {
+		name      string
+		value     interface{}
+		start     time.Time
+		end       time.Time
+		shouldErr bool
+	}{
+		{"valid time in range", middle, start, end, false},
+		{"valid at start boundary", start, start, end, false},
+		{"valid at end boundary", end, start, end, false},
+		{"invalid before start", before, start, end, true},
+		{"invalid after end", after, start, end, true},
+		{"invalid non-time value", "2024-06-15", start, end, true},
+		{"invalid nil value", nil, start, end, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := New(tt.value, "date")
+			v.BetweenTime(tt.start, tt.end)
+			err := v.Validate()
+
+			if tt.shouldErr && err == nil {
+				t.Errorf("Expected error but got none")
+			}
+			if !tt.shouldErr && err != nil {
+				t.Errorf("Expected no error but got: %v", err)
+			}
+		})
+	}
+}
+
+// TestBetweenTimeStopOnError tests BetweenTime with StopOnError
+// TestBetweenTimeStopOnError는 StopOnError가 있는 BetweenTime을 테스트합니다
+func TestBetweenTimeStopOnError(t *testing.T) {
+	t.Run("BetweenTime StopOnError", func(t *testing.T) {
+		start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+		end := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
+		after := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+
+		v := New(after, "date")
+		v.StopOnError().BetweenTime(start, end).After(end) // After should not run
+
+		errors := v.GetErrors()
+		if len(errors) != 1 {
+			t.Errorf("Expected 1 error (stopped after first), got %d", len(errors))
+		}
+	})
+}
+
+// TestBetweenTimeChaining tests BetweenTime with chaining
+// TestBetweenTimeChaining는 체이닝이 있는 BetweenTime을 테스트합니다
+func TestBetweenTimeChaining(t *testing.T) {
+	t.Run("BetweenTime with chaining", func(t *testing.T) {
+		start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+		end := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
+		middle := time.Date(2024, 6, 15, 12, 0, 0, 0, time.UTC)
+
+		v := New(middle, "date")
+		v.BetweenTime(start, end).After(start).Before(end)
+		err := v.Validate()
+		if err != nil {
+			t.Errorf("Expected no error but got: %v", err)
+		}
+	})
+}
+
+// TestBetweenTimeEdgeCases tests BetweenTime edge cases
+// TestBetweenTimeEdgeCases는 BetweenTime 경계 사례를 테스트합니다
+func TestBetweenTimeEdgeCases(t *testing.T) {
+	t.Run("BetweenTime with same start and end", func(t *testing.T) {
+		now := time.Now()
+		v := New(now, "date")
+		v.BetweenTime(now, now)
+		err := v.Validate()
+		if err != nil {
+			t.Errorf("Expected no error for time equal to start and end, got: %v", err)
+		}
+	})
+
+	t.Run("BetweenTime with inverted range", func(t *testing.T) {
+		start := time.Date(2024, 12, 31, 0, 0, 0, 0, time.UTC)
+		end := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+		middle := time.Date(2024, 6, 15, 0, 0, 0, 0, time.UTC)
+
+		v := New(middle, "date")
+		v.BetweenTime(start, end) // Inverted range
+		err := v.Validate()
+		if err == nil {
+			t.Errorf("Expected error for inverted time range")
+		}
+	})
+}

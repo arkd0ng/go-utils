@@ -1542,3 +1542,24 @@ func ExampleValidator_NotEmpty() {
 	}
 	// Output: Field has a value
 }
+
+// ExampleValidator_BetweenTime demonstrates time range validation.
+// ExampleValidator_BetweenTime는 시간 범위 검증을 보여줍니다.
+func ExampleValidator_BetweenTime() {
+	// Define the valid time range for 2024
+	start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+	end := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
+
+	// Validate a date within the range
+	eventDate := time.Date(2024, 6, 15, 12, 0, 0, 0, time.UTC)
+	v := validation.New(eventDate, "event_date")
+	v.BetweenTime(start, end)
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Date is out of range")
+	} else {
+		fmt.Println("Date is within 2024")
+	}
+	// Output: Date is within 2024
+}

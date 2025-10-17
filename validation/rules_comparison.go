@@ -200,3 +200,31 @@ func (v *Validator) AfterOrEqual(t time.Time) *Validator {
 
 	return v
 }
+
+// BetweenTime checks if the time value is between the given start and end times (inclusive).
+// BetweenTime는 시간 값이 주어진 시작 시간과 종료 시간 사이에 있는지 확인합니다 (경계값 포함).
+//
+// Example / 예제:
+//
+//	start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+//	end := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
+//	v := validation.New(time.Now(), "date")
+//	v.BetweenTime(start, end)
+func (v *Validator) BetweenTime(start, end time.Time) *Validator {
+	if v.stopOnError && len(v.errors) > 0 {
+		return v
+	}
+
+	timeVal, ok := v.value.(time.Time)
+	if !ok {
+		v.addError("betweentime", fmt.Sprintf("%s must be a time.Time value / %s은(는) time.Time 값이어야 합니다", v.fieldName, v.fieldName))
+		return v
+	}
+
+	if timeVal.Before(start) || timeVal.After(end) {
+		v.addError("betweentime", fmt.Sprintf("%s must be between %s and %s / %s은(는) %s와(과) %s 사이여야 합니다",
+			v.fieldName, start.Format(time.RFC3339), end.Format(time.RFC3339), v.fieldName, start.Format(time.RFC3339), end.Format(time.RFC3339)))
+	}
+
+	return v
+}

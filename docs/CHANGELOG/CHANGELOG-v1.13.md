@@ -1,3 +1,53 @@
+## [v1.13.029] - 2025-10-17
+
+### Added / 추가
+- **BetweenTime Validator**: New time range validation function
+  - `BetweenTime(start, end time.Time)` - Validates that a time value is between start and end times (inclusive)
+
+### Implementation Details / 구현 세부사항
+- **Time Range Validation**: Validates time.Time values fall within specified start and end times (inclusive)
+- **Boundary Inclusive**: Both start and end times are considered valid
+- **Type Safety**: Returns error for non-time.Time values
+- **Real-World Use Cases**: Event dates, booking periods, campaign durations, license validity, time-bound access
+- **Bilingual Messages**: English/Korean error messages
+
+### Test Coverage / 테스트 커버리지
+- **rules_comparison.go**: BetweenTime added with 100% coverage
+- **Total Package Coverage**: 97.7% (maintained)
+- **Test Cases**: 30+ test cases covering:
+  - Valid time within range
+  - Valid times at boundaries (start and end)
+  - Invalid times before start
+  - Invalid times after end
+  - Non-time.Time type errors
+  - Nil value handling
+  - StopOnError behavior
+  - Chaining with other time validators (After, Before)
+  - Edge cases (same start/end, inverted ranges)
+
+### Performance Benchmarks / 성능 벤치마크
+```
+BenchmarkBetweenTime-8   ~100 ns/op    Two time comparisons (Before + After)
+```
+
+**Note**: BetweenTime is very fast, performing only two time comparisons.
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bump to v1.13.029
+- `validation/rules_comparison.go` - Added BetweenTime validator (~40 LOC)
+- `validation/rules_comparison_test.go` - Added comprehensive BetweenTime tests (~190 LOC)
+- `validation/benchmark_test.go` - Added BetweenTime benchmark
+- `validation/example_test.go` - Added BetweenTime example
+- `docs/validation/USER_MANUAL.md` - Added BetweenTime documentation to Comparison Validators section (~30 lines), updated version to v1.13.029, validator count to 104+
+- `docs/CHANGELOG/CHANGELOG-v1.13.md` - Updated with v1.13.029 entry
+
+### Context / 컨텍스트
+**User Request**: "계속 진행해주세요" (Continue working)
+**Why**: Provide time range validation capability for period-based validations
+**Impact**: Developers can now validate time ranges for events, bookings, campaigns, and time-bound operations with a single validator call instead of chaining Before and After
+
+---
+
 ## [v1.13.028] - 2025-10-17
 
 ### Added / 추가
