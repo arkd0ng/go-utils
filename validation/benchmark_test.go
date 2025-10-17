@@ -341,3 +341,36 @@ func BenchmarkDateAfter(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkIntRange benchmarks the IntRange validator
+// BenchmarkIntRange는 IntRange 검증기를 벤치마크합니다
+func BenchmarkIntRange(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New(25, "age")
+		v.IntRange(18, 65)
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkFloatRange benchmarks the FloatRange validator
+// BenchmarkFloatRange는 FloatRange 검증기를 벤치마크합니다
+func BenchmarkFloatRange(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New(98.6, "temperature")
+		v.FloatRange(95.0, 105.0)
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkDateRange benchmarks the DateRange validator
+// BenchmarkDateRange는 DateRange 검증기를 벤치마크합니다
+func BenchmarkDateRange(b *testing.B) {
+	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+	end := time.Date(2025, 12, 31, 23, 59, 59, 0, time.UTC)
+	testDate := time.Date(2025, 6, 15, 12, 0, 0, 0, time.UTC)
+	for i := 0; i < b.N; i++ {
+		v := New(testDate, "date")
+		v.DateRange(start, end)
+		_ = v.Validate()
+	}
+}

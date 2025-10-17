@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.017
+**Version / 버전**: v1.13.018
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -16,12 +16,13 @@
 7. [Collection Validators / 컬렉션 검증기](#collection-validators--컬렉션-검증기)
 8. [Comparison Validators / 비교 검증기](#comparison-validators--비교-검증기)
 9. [Network Validators / 네트워크 검증기](#network-validators--네트워크-검증기)
-10. [DateTime Validators / 날짜/시간 검증기](#datetime-validators--날짜시간-검증기) 🆕
-11. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
-12. [Error Handling / 에러 처리](#error-handling--에러-처리)
-13. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
-14. [Best Practices / 모범 사례](#best-practices--모범-사례)
-15. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
+10. [DateTime Validators / 날짜/시간 검증기](#datetime-validators--날짜시간-검증기)
+11. [Range Validators / 범위 검증기](#range-validators--범위-검증기) 🆕
+12. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
+13. [Error Handling / 에러 처리](#error-handling--에러-처리)
+14. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
+15. [Best Practices / 모범 사례](#best-practices--모범-사례)
+16. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
 
 ---
 
@@ -33,7 +34,7 @@ The `validation` package provides a **fluent, type-safe validation library** for
 
 ### Key Features / 주요 기능
 
-- ✅ **58+ Built-in Validators** / **58개 이상의 내장 검증기**
+- ✅ **61+ Built-in Validators** / **61개 이상의 내장 검증기**
 - ✅ **Fluent API with Method Chaining** / **메서드 체이닝을 통한 플루언트 API**
 - ✅ **Type-Safe with Go Generics** / **Go 제네릭을 활용한 타입 안전성**
 - ✅ **Bilingual Error Messages (EN/KR)** / **양방향 에러 메시지 (영어/한글)**
@@ -43,7 +44,8 @@ The `validation` package provides a **fluent, type-safe validation library** for
 - ✅ **Custom Validators** / **사용자 정의 검증기**
 - ✅ **Stop-on-First-Error Support** / **첫 에러에서 멈춤 지원**
 - ✅ **Network Validators (IPv4, IPv6, CIDR, MAC)** / **네트워크 검증기**
-- ✅ **DateTime Validators (DateFormat, TimeFormat, DateBefore, DateAfter)** 🆕 / **날짜/시간 검증기** 🆕
+- ✅ **DateTime Validators (DateFormat, TimeFormat, DateBefore, DateAfter)** / **날짜/시간 검증기**
+- ✅ **Range Validators (IntRange, FloatRange, DateRange)** 🆕 / **범위 검증기** 🆕
 
 ---
 
@@ -1821,3 +1823,56 @@ For more information, see:
 **Last Updated / 최종 업데이트**: 2025-10-17
 **Version / 버전**: v1.13.013
 **License / 라이선스**: MIT
+
+### Range Validators / 범위 검증기
+
+Range validators validate that values are within specified inclusive ranges.
+
+범위 검증기는 값이 지정된 포함 범위 내에 있는지 검증합니다.
+
+#### Available Validators / 사용 가능한 검증기
+
+| Validator | Description | 설명 |
+|-----------|-------------|------|
+| `IntRange(min, max)` | Validates integer is within range | 정수가 범위 내에 있는지 검증 |
+| `FloatRange(min, max)` | Validates float is within range | 실수가 범위 내에 있는지 검증 |
+| `DateRange(start, end)` | Validates date is within range | 날짜가 범위 내에 있는지 검증 |
+
+#### IntRange(min, max) - Integer Range Validation / 정수 범위 검증
+
+```go
+v := validation.New(25, "age")
+v.IntRange(18, 65)
+// Valid: 18-65 (inclusive)
+// Supports all int types (int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64)
+```
+
+#### FloatRange(min, max) - Float Range Validation / 실수 범위 검증
+
+```go
+v := validation.New(98.6, "temperature")
+v.FloatRange(95.0, 105.0)
+// Valid: 95.0-105.0 (inclusive)
+// Supports float32, float64, and all int types
+```
+
+#### DateRange(start, end) - Date Range Validation / 날짜 범위 검증
+
+```go
+start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+end := time.Date(2025, 12, 31, 23, 59, 59, 0, time.UTC)
+v := validation.New(eventDate, "event_date")
+v.DateRange(start, end)
+// Accepts time.Time, RFC3339, or ISO 8601 strings
+```
+
+#### Performance / 성능
+
+| Validator | Avg Time | Allocations |
+|-----------|----------|-------------|
+| IntRange | ~7 ns/op | 0 allocs |
+| FloatRange | ~7 ns/op | 0 allocs |
+| DateRange | ~35 ns/op | 1 alloc |
+
+---
+

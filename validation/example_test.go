@@ -617,3 +617,71 @@ func Example_dateTimeValidation() {
 	}
 	// Output: Valid event schedule
 }
+
+// ExampleValidator_IntRange demonstrates integer range validation
+// ExampleValidator_IntRange는 정수 범위 검증을 보여줍니다
+func ExampleValidator_IntRange() {
+	v := validation.New(25, "age")
+	v.IntRange(18, 65)
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Age is out of range")
+	} else {
+		fmt.Println("Valid age")
+	}
+	// Output: Valid age
+}
+
+// ExampleValidator_FloatRange demonstrates float range validation
+// ExampleValidator_FloatRange는 실수 범위 검증을 보여줍니다
+func ExampleValidator_FloatRange() {
+	v := validation.New(98.6, "temperature")
+	v.FloatRange(95.0, 105.0)
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Temperature is out of range")
+	} else {
+		fmt.Println("Valid temperature")
+	}
+	// Output: Valid temperature
+}
+
+// ExampleValidator_DateRange demonstrates date range validation
+// ExampleValidator_DateRange는 날짜 범위 검증을 보여줍니다
+func ExampleValidator_DateRange() {
+	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+	end := time.Date(2025, 12, 31, 23, 59, 59, 0, time.UTC)
+	testDate := time.Date(2025, 6, 15, 12, 0, 0, 0, time.UTC)
+
+	v := validation.New(testDate, "event_date")
+	v.DateRange(start, end)
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Date is out of range")
+	} else {
+		fmt.Println("Date is within range")
+	}
+	// Output: Date is within range
+}
+
+// Example_rangeValidationComprehensive demonstrates comprehensive range validation
+// Example_rangeValidationComprehensive는 포괄적인 범위 검증을 보여줍니다
+func Example_rangeValidationComprehensive() {
+	// Event validation with multiple range checks
+	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+	end := time.Date(2025, 12, 31, 23, 59, 59, 0, time.UTC)
+	eventDate := time.Date(2025, 6, 15, 12, 0, 0, 0, time.UTC)
+
+	mv := validation.NewValidator()
+	mv.Field(25, "participant_age").IntRange(18, 65)
+	mv.Field(25.50, "ticket_price").FloatRange(10.0, 100.0)
+	mv.Field(eventDate, "event_date").DateRange(start, end)
+
+	err := mv.Validate()
+	if err != nil {
+		fmt.Println("Invalid event data")
+	} else {
+		fmt.Println("Valid event data")
+	}
+	// Output: Valid event data
+}
