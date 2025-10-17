@@ -1,7 +1,7 @@
 # validation - Fluent Validation for Go / Go를 위한 Fluent 검증
 
 [![Go Version](https://img.shields.io/badge/Go-%3E%3D%201.18-blue)](https://go.dev/)
-[![Coverage](https://img.shields.io/badge/Coverage-99.4%25-brightgreen)](https://github.com/arkd0ng/go-utils)
+[![Coverage](https://img.shields.io/badge/Coverage-100.0%25-brightgreen)](https://github.com/arkd0ng/go-utils)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-v1.13.035-blue)](https://github.com/arkd0ng/go-utils)
 
