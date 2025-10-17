@@ -6,6 +6,98 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.005] - 2025-10-17
+
+### Added / 추가
+- errorutil 패키지 Phase 1 (Core Types) 완료
+- 5개의 핵심 인터페이스 정의 (Unwrapper, Coder, NumericCoder, StackTracer, Contexter)
+- Frame 구조체 추가 (스택 트레이스용)
+- 6개의 에러 타입 구현:
+  - wrappedError: 기본 에러 래핑
+  - codedError: 문자열 코드를 가진 에러
+  - numericCodedError: 숫자 코드를 가진 에러
+  - stackError: 스택 트레이스를 캡처하는 에러
+  - contextError: 컨텍스트 데이터를 전달하는 에러
+  - compositeError: 모든 기능을 결합한 에러
+- 모든 에러 타입에 대한 포괄적인 테스트 추가 (97.8% 커버리지)
+
+### Changed / 변경
+- N/A
+
+### Fixed / 수정
+- types.go:261-263의 문법 오류 수정 (함수 시그니처와 중괄호 사이의 불필요한 개행 제거)
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - 버전을 v1.12.004에서 v1.12.005로 증가
+- `errorutil/types.go` - 새 파일 생성 (350+ 줄, 모든 핵심 타입)
+- `errorutil/types_test.go` - 새 파일 생성 (450+ 줄, 포괄적인 테스트)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.005 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+"현재 errorutil패키지 작업중이었습니다. CHANGELOG와 기타 문서들을 확인하고 패키지를 완성해줘"
+
+**Why / 이유**:
+- errorutil 패키지는 12개 Phase로 계획된 대규모 작업
+- Phase 1(Core Types)은 모든 후속 Phase의 기초가 되는 핵심 구현
+- 에러 처리는 Go 애플리케이션의 핵심 기능이며, 표준 라이브러리보다 향상된 기능 제공
+- 에러 코드(문자열/숫자), 스택 트레이스, 컨텍스트 데이터 등 다양한 에러 처리 패턴 지원
+- Go 1.13+ errors 패키지와 완전히 호환되는 Unwrap 인터페이스 구현
+
+**Implementation Details / 구현 세부사항**:
+
+1. **인터페이스 설계**:
+   - Unwrapper: Go 표준 라이브러리 호환 (errors.Is, errors.As 지원)
+   - Coder: API 응답 및 에러 분류를 위한 문자열 코드
+   - NumericCoder: HTTP 상태 코드 등 숫자 코드
+   - StackTracer: 디버깅을 위한 스택 트레이스
+   - Contexter: 구조화된 컨텍스트 데이터 전달
+
+2. **불변성 보장**:
+   - contextError와 compositeError의 Context() 메서드는 복사본 반환
+   - 외부 수정으로부터 내부 데이터 보호
+
+3. **테스트 전략**:
+   - 테이블 기반 테스트로 다양한 시나리오 검증
+   - cause가 있는/없는 경우 모두 테스트
+   - 불변성 테스트 포함
+   - 97.8% 커버리지 달성 (목표 80% 초과)
+
+**Impact / 영향**:
+- Phase 2-12의 모든 공개 API가 이 핵심 타입들을 기반으로 구축됨
+- New(), Wrap(), WithCode() 등 공개 함수들이 이 타입들을 반환
+- 사용자는 인터페이스를 통해 에러 특성 검사 가능
+- Go 표준 라이브러리와 완벽히 호환되어 기존 코드와 통합 용이
+- 다음 단계(Phase 2: Error Creation)로 진행 가능
+
+### Test Results / 테스트 결과
+
+```
+PASS
+ok  	github.com/arkd0ng/go-utils/errorutil	0.791s
+coverage: 97.8% of statements
+```
+
+All 7 test functions passed with 14 subtests:
+- TestWrappedError (2 cases)
+- TestCodedError (2 cases)
+- TestNumericCodedError (2 cases)
+- TestStackError (2 cases)
+- TestContextError (2 cases)
+- TestCompositeError (3 cases)
+- TestFrame (2 cases)
+
+### Next Steps / 다음 단계
+
+Phase 2: Error Creation (에러 생성 함수)
+- New() 함수 구현
+- Newf() 함수 구현
+- WithCode() 함수 구현
+- WithNumericCode() 함수 구현
+
+---
+
 ## [v1.12.004] - 2025-10-17
 
 ### Added / 추가
