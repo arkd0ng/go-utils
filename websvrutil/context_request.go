@@ -5,6 +5,74 @@ import (
 	"strings"
 )
 
+// context_request.go provides HTTP request information retrieval methods for the Context type.
+//
+// This file contains methods for accessing various aspects of incoming HTTP requests:
+//
+// Request Information:
+//   - Method(), Path(): Basic request metadata
+//   - Query(), QueryDefault(): URL query parameter access
+//
+// Headers:
+//   - Header(), SetHeader(), AddHeader(): Request/response header manipulation
+//   - GetHeader(), GetHeaders(), HeaderExists(): Header access utilities
+//   - ContentType(), UserAgent(), Referer(): Common header shortcuts
+//
+// Client IP Detection:
+//   - ClientIP(): Intelligent client IP extraction considering proxies
+//     Priority: X-Forwarded-For → X-Real-IP → RemoteAddr
+//     Handles reverse proxies (nginx, HAProxy, CloudFlare)
+//     Security: Uses only first IP from proxy chains to prevent spoofing
+//
+// HTTP Method Checks:
+//   - IsGET(), IsPOST(), IsPUT(), IsPATCH(), IsDELETE(), IsHEAD(), IsOPTIONS()
+//     Boolean methods for quick method type checking
+//
+// Request Type Detection:
+//   - IsAjax(): Detects AJAX/XMLHttpRequest calls
+//   - IsWebSocket(): Identifies WebSocket upgrade requests
+//
+// Content Negotiation:
+//   - AcceptsJSON(), AcceptsHTML(), AcceptsXML()
+//     Checks Accept header for response format selection
+//
+// All methods operate on the Context's underlying http.Request and http.ResponseWriter,
+// providing a convenient and type-safe API for request handling.
+//
+// context_request.go는 Context 타입을 위한 HTTP 요청 정보 조회 메서드를 제공합니다.
+//
+// 이 파일은 들어오는 HTTP 요청의 다양한 측면에 접근하는 메서드를 포함합니다:
+//
+// 요청 정보:
+//   - Method(), Path(): 기본 요청 메타데이터
+//   - Query(), QueryDefault(): URL 쿼리 매개변수 접근
+//
+// 헤더:
+//   - Header(), SetHeader(), AddHeader(): 요청/응답 헤더 조작
+//   - GetHeader(), GetHeaders(), HeaderExists(): 헤더 접근 유틸리티
+//   - ContentType(), UserAgent(), Referer(): 일반 헤더 단축키
+//
+// 클라이언트 IP 감지:
+//   - ClientIP(): 프록시를 고려한 지능형 클라이언트 IP 추출
+//     우선순위: X-Forwarded-For → X-Real-IP → RemoteAddr
+//     리버스 프록시 처리 (nginx, HAProxy, CloudFlare)
+//     보안: 스푸핑 방지를 위해 프록시 체인에서 첫 번째 IP만 사용
+//
+// HTTP 메서드 확인:
+//   - IsGET(), IsPOST(), IsPUT(), IsPATCH(), IsDELETE(), IsHEAD(), IsOPTIONS()
+//     빠른 메서드 타입 확인을 위한 부울 메서드
+//
+// 요청 타입 감지:
+//   - IsAjax(): AJAX/XMLHttpRequest 호출 감지
+//   - IsWebSocket(): WebSocket 업그레이드 요청 식별
+//
+// 콘텐츠 협상:
+//   - AcceptsJSON(), AcceptsHTML(), AcceptsXML()
+//     응답 형식 선택을 위한 Accept 헤더 확인
+//
+// 모든 메서드는 Context의 기본 http.Request 및 http.ResponseWriter에서 작동하며,
+// 요청 처리를 위한 편리하고 타입 안전한 API를 제공합니다.
+
 // ============================================================================
 // Request Information
 // 요청 정보

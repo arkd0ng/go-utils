@@ -8,6 +8,304 @@ import (
 	"time"
 )
 
+// session.go provides HTTP session management with in-memory storage.
+//
+// This file implements a thread-safe session management system for maintaining
+// user state across multiple HTTP requests:
+//
+// Core Types:
+//
+// SessionStore:
+//   - Central session manager with thread-safe in-memory storage
+//   - RWMutex-protected concurrent access to sessions map
+//   - Automatic cleanup of expired sessions via background goroutine
+//   - Configurable session lifetime, cookie attributes
+//
+// Session:
+//   - Individual user session with unique ID
+//   - Key-value data storage (map[string]interface{})
+//   - Creation and expiration timestamps
+//   - Thread-safe data access with RWMutex
+//
+// SessionOptions:
+//   - Configuration for session behavior and cookie settings
+//   - CookieName: Session cookie identifier (default: "_session")
+//   - MaxAge: Session lifetime (default: 24 hours)
+//   - Secure: HTTPS-only cookie transmission
+//   - HttpOnly: Prevent JavaScript access (default: true)
+//   - SameSite: Cross-site cookie policy (default: SameSiteLaxMode)
+//   - CleanupTime: Interval for expired session removal (default: 30 minutes)
+//   - Path, Domain: Cookie scope control
+//
+// SessionStore Methods:
+//   - NewSessionStore(opts): Create store with background cleanup goroutine
+//   - Get(r): Retrieve existing session or create new one
+//     Validates session ID from cookie, checks expiration
+//   - New(): Create new session with unique ID
+//     Generates cryptographically secure session ID (32 bytes, base64)
+//   - Save(w, session): Persist session and update cookie
+//     Refreshes expiration time, sets cookie with configured options
+//   - Destroy(w, r): Remove session and clear cookie
+//     Deletes from store, sets MaxAge=-1 to delete client cookie
+//   - generateSessionID(): Generate secure random session ID
+//     Uses crypto/rand for unpredictability (32 bytes = 256 bits)
+//   - cleanupExpiredSessions(): Background goroutine removes expired sessions
+//     Runs at CleanupTime intervals (default: every 30 minutes)
+//   - Count(): Get total number of active sessions (for monitoring)
+//
+// Session Methods:
+//   - Set(key, value): Store value in session data
+//   - Get(key): Retrieve value with existence check
+//   - GetString(key): Type-safe string retrieval (empty string if not found)
+//   - GetInt(key): Type-safe int retrieval (0 if not found)
+//   - GetBool(key): Type-safe bool retrieval (false if not found)
+//   - Delete(key): Remove specific key from session
+//   - Clear(): Remove all data from session (keeps session ID)
+//
+// Session Lifecycle:
+//   1. Client makes initial request without session cookie
+//   2. Server creates new session with unique ID
+//   3. Session ID stored in secure cookie, sent to client
+//   4. Client includes cookie in subsequent requests
+//   5. Server retrieves session data using cookie ID
+//   6. Session expires after MaxAge inactivity
+//   7. Cleanup goroutine removes expired sessions periodically
+//
+// Security Features:
+//   - Cryptographically secure session ID generation (crypto/rand)
+//     32-byte random ID provides ~2^256 possible values
+//     Base64 encoding for safe cookie transmission
+//   - HttpOnly cookies prevent XSS attacks (default: true)
+//     JavaScript cannot access session cookie
+//   - Secure cookies for HTTPS-only transmission (configurable)
+//   - SameSite protection against CSRF attacks
+//     SameSiteLaxMode: Blocks cross-site POST but allows GET
+//     SameSiteStrictMode: Blocks all cross-site requests
+//   - Automatic expiration and cleanup prevents indefinite storage
+//   - Thread-safe access prevents race conditions
+//
+// Thread-Safety:
+//   - SessionStore uses RWMutex for concurrent access
+//     Multiple goroutines can read sessions simultaneously
+//     Writes (New, Save, Destroy) acquire exclusive lock
+//   - Individual Sessions have their own RWMutex
+//     Safe concurrent access to session data from multiple requests
+//   - Cleanup goroutine safely removes expired sessions
+//
+// Example usage:
+//
+//	// Create session store
+//	store := NewSessionStore(DefaultSessionOptions())
+//
+//	// In middleware or handler
+//	app.GET("/login", func(w http.ResponseWriter, r *http.Request) {
+//	    session, _ := store.Get(r)
+//	    session.Set("username", "john")
+//	    session.Set("user_id", 123)
+//	    session.Set("is_admin", true)
+//	    store.Save(w, session)
+//	    // Session cookie automatically set
+//	})
+//
+//	app.GET("/profile", func(w http.ResponseWriter, r *http.Request) {
+//	    session, _ := store.Get(r)
+//	    username := session.GetString("username")
+//	    userID := session.GetInt("user_id")
+//	    isAdmin := session.GetBool("is_admin")
+//	    // Use session data...
+//	})
+//
+//	app.POST("/logout", func(w http.ResponseWriter, r *http.Request) {
+//	    store.Destroy(w, r)
+//	    // Session removed, cookie cleared
+//	})
+//
+// Custom configuration:
+//
+//	store := NewSessionStore(SessionOptions{
+//	    CookieName:  "my_session",
+//	    MaxAge:      2 * time.Hour,    // 2-hour sessions
+//	    Secure:      true,              // HTTPS only
+//	    HttpOnly:    true,              // No JavaScript access
+//	    SameSite:    http.SameSiteStrictMode, // Strict CSRF protection
+//	    CleanupTime: 15 * time.Minute,  // Cleanup every 15 minutes
+//	    Path:        "/",
+//	    Domain:      "example.com",
+//	})
+//
+// Performance:
+//   - Session lookup: O(1) map access
+//   - Session creation: ~10µs (crypto/rand ID generation)
+//   - Memory: ~200 bytes per session + data size
+//   - Cleanup: O(n) where n = total sessions (runs infrequently)
+//
+// Limitations:
+//   - In-memory storage (sessions lost on server restart)
+//   - Not suitable for multi-server deployments without sticky sessions
+//   - Memory usage grows with active sessions
+//   - For production/distributed systems, consider:
+//     * Redis-backed session store
+//     * Database-backed sessions
+//     * JWT tokens for stateless authentication
+//
+// Best Practices:
+//   - Always use Secure: true in production (HTTPS)
+//   - Keep HttpOnly: true to prevent XSS attacks
+//   - Use SameSiteLaxMode or SameSiteStrictMode for CSRF protection
+//   - Set appropriate MaxAge (balance security vs. user experience)
+//   - Monitor session count with Count() method
+//   - Consider external session store for production clusters
+//   - Clear sensitive data after use (passwords, tokens)
+//
+// session.go는 인메모리 저장소를 사용한 HTTP 세션 관리를 제공합니다.
+//
+// 이 파일은 여러 HTTP 요청에 걸쳐 사용자 상태를 유지하기 위한
+// 스레드 안전 세션 관리 시스템을 구현합니다:
+//
+// 핵심 타입:
+//
+// SessionStore:
+//   - 스레드 안전 인메모리 저장소를 가진 중앙 세션 관리자
+//   - RWMutex로 보호된 세션 맵에 대한 동시 접근
+//   - 백그라운드 고루틴을 통한 만료된 세션의 자동 정리
+//   - 설정 가능한 세션 수명, 쿠키 속성
+//
+// Session:
+//   - 고유 ID를 가진 개별 사용자 세션
+//   - 키-값 데이터 저장소 (map[string]interface{})
+//   - 생성 및 만료 타임스탬프
+//   - RWMutex를 사용한 스레드 안전 데이터 접근
+//
+// SessionOptions:
+//   - 세션 동작 및 쿠키 설정 구성
+//   - CookieName: 세션 쿠키 식별자 (기본: "_session")
+//   - MaxAge: 세션 수명 (기본: 24시간)
+//   - Secure: HTTPS 전용 쿠키 전송
+//   - HttpOnly: JavaScript 접근 방지 (기본: true)
+//   - SameSite: 크로스 사이트 쿠키 정책 (기본: SameSiteLaxMode)
+//   - CleanupTime: 만료된 세션 제거 간격 (기본: 30분)
+//   - Path, Domain: 쿠키 범위 제어
+//
+// SessionStore 메서드:
+//   - NewSessionStore(opts): 백그라운드 정리 고루틴과 함께 저장소 생성
+//   - Get(r): 기존 세션 검색 또는 새 세션 생성
+//     쿠키에서 세션 ID 검증, 만료 확인
+//   - New(): 고유 ID로 새 세션 생성
+//     암호학적으로 안전한 세션 ID 생성 (32바이트, base64)
+//   - Save(w, session): 세션 지속 및 쿠키 업데이트
+//     만료 시간 갱신, 설정된 옵션으로 쿠키 설정
+//   - Destroy(w, r): 세션 제거 및 쿠키 지우기
+//     저장소에서 삭제, 클라이언트 쿠키 삭제를 위해 MaxAge=-1 설정
+//   - generateSessionID(): 안전한 랜덤 세션 ID 생성
+//     예측 불가능성을 위해 crypto/rand 사용 (32바이트 = 256비트)
+//   - cleanupExpiredSessions(): 만료된 세션을 제거하는 백그라운드 고루틴
+//     CleanupTime 간격으로 실행 (기본: 30분마다)
+//   - Count(): 활성 세션 총 수 가져오기 (모니터링용)
+//
+// Session 메서드:
+//   - Set(key, value): 세션 데이터에 값 저장
+//   - Get(key): 존재 확인과 함께 값 검색
+//   - GetString(key): 타입 안전 문자열 검색 (없으면 빈 문자열)
+//   - GetInt(key): 타입 안전 int 검색 (없으면 0)
+//   - GetBool(key): 타입 안전 bool 검색 (없으면 false)
+//   - Delete(key): 세션에서 특정 키 제거
+//   - Clear(): 세션에서 모든 데이터 제거 (세션 ID 유지)
+//
+// 세션 수명주기:
+//   1. 클라이언트가 세션 쿠키 없이 초기 요청
+//   2. 서버가 고유 ID로 새 세션 생성
+//   3. 세션 ID가 보안 쿠키에 저장되어 클라이언트로 전송
+//   4. 클라이언트가 후속 요청에 쿠키 포함
+//   5. 서버가 쿠키 ID를 사용하여 세션 데이터 검색
+//   6. MaxAge 비활성 후 세션 만료
+//   7. 정리 고루틴이 주기적으로 만료된 세션 제거
+//
+// 보안 기능:
+//   - 암호학적으로 안전한 세션 ID 생성 (crypto/rand)
+//     32바이트 랜덤 ID는 ~2^256개의 가능한 값 제공
+//     안전한 쿠키 전송을 위한 Base64 인코딩
+//   - HttpOnly 쿠키는 XSS 공격 방지 (기본: true)
+//     JavaScript가 세션 쿠키에 접근할 수 없음
+//   - HTTPS 전용 전송을 위한 Secure 쿠키 (설정 가능)
+//   - CSRF 공격에 대한 SameSite 보호
+//     SameSiteLaxMode: 크로스 사이트 POST 차단하지만 GET 허용
+//     SameSiteStrictMode: 모든 크로스 사이트 요청 차단
+//   - 자동 만료 및 정리로 무한 저장 방지
+//   - 스레드 안전 접근으로 경쟁 조건 방지
+//
+// 스레드 안전성:
+//   - SessionStore는 동시 접근을 위해 RWMutex 사용
+//     여러 고루틴이 동시에 세션 읽기 가능
+//     쓰기 (New, Save, Destroy)는 배타적 잠금 획득
+//   - 개별 Session은 자체 RWMutex 보유
+//     여러 요청의 세션 데이터에 대한 안전한 동시 접근
+//   - 정리 고루틴은 만료된 세션을 안전하게 제거
+//
+// 사용 예제:
+//
+//	// 세션 저장소 생성
+//	store := NewSessionStore(DefaultSessionOptions())
+//
+//	// 미들웨어 또는 핸들러에서
+//	app.GET("/login", func(w http.ResponseWriter, r *http.Request) {
+//	    session, _ := store.Get(r)
+//	    session.Set("username", "john")
+//	    session.Set("user_id", 123)
+//	    session.Set("is_admin", true)
+//	    store.Save(w, session)
+//	    // 세션 쿠키 자동 설정
+//	})
+//
+//	app.GET("/profile", func(w http.ResponseWriter, r *http.Request) {
+//	    session, _ := store.Get(r)
+//	    username := session.GetString("username")
+//	    userID := session.GetInt("user_id")
+//	    isAdmin := session.GetBool("is_admin")
+//	    // 세션 데이터 사용...
+//	})
+//
+//	app.POST("/logout", func(w http.ResponseWriter, r *http.Request) {
+//	    store.Destroy(w, r)
+//	    // 세션 제거, 쿠키 지워짐
+//	})
+//
+// 커스텀 설정:
+//
+//	store := NewSessionStore(SessionOptions{
+//	    CookieName:  "my_session",
+//	    MaxAge:      2 * time.Hour,    // 2시간 세션
+//	    Secure:      true,              // HTTPS 전용
+//	    HttpOnly:    true,              // JavaScript 접근 없음
+//	    SameSite:    http.SameSiteStrictMode, // 엄격한 CSRF 보호
+//	    CleanupTime: 15 * time.Minute,  // 15분마다 정리
+//	    Path:        "/",
+//	    Domain:      "example.com",
+//	})
+//
+// 성능:
+//   - 세션 조회: O(1) 맵 접근
+//   - 세션 생성: ~10µs (crypto/rand ID 생성)
+//   - 메모리: 세션당 ~200바이트 + 데이터 크기
+//   - 정리: O(n), n = 총 세션 수 (드물게 실행)
+//
+// 제한사항:
+//   - 인메모리 저장 (서버 재시작 시 세션 손실)
+//   - 스티키 세션 없이 다중 서버 배포에 적합하지 않음
+//   - 메모리 사용량이 활성 세션과 함께 증가
+//   - 프로덕션/분산 시스템의 경우 고려사항:
+//     * Redis 기반 세션 저장소
+//     * 데이터베이스 기반 세션
+//     * 상태 비저장 인증을 위한 JWT 토큰
+//
+// 모범 사례:
+//   - 프로덕션에서 항상 Secure: true 사용 (HTTPS)
+//   - XSS 공격 방지를 위해 HttpOnly: true 유지
+//   - CSRF 보호를 위해 SameSiteLaxMode 또는 SameSiteStrictMode 사용
+//   - 적절한 MaxAge 설정 (보안과 사용자 경험 균형)
+//   - Count() 메서드로 세션 수 모니터링
+//   - 프로덕션 클러스터용 외부 세션 저장소 고려
+//   - 사용 후 민감한 데이터 지우기 (비밀번호, 토큰)
+
 // SessionStore manages HTTP sessions with in-memory storage.
 // SessionStore는 인메모리 저장소로 HTTP 세션을 관리합니다.
 type SessionStore struct {

@@ -2,6 +2,122 @@ package websvrutil
 
 import "net/http"
 
+// group.go provides route grouping functionality for organizing related routes.
+//
+// This file implements the Group type which allows organizing routes under common
+// path prefixes with shared middleware:
+//
+// Route Grouping Features:
+//   - Prefix Management: All routes in a group share a common path prefix
+//   - Middleware Stacking: Group-specific middleware applied to all routes
+//   - Nested Groups: Groups can be nested to create hierarchical structures
+//   - Method Chaining: Fluent API for registering multiple routes
+//
+// Group Structure:
+//   - Group.prefix: Path prefix prepended to all routes
+//   - Group.middleware: Stack of middleware functions
+//   - Group.app: Reference to parent App for route registration
+//
+// Core Methods:
+//   - App.Group(prefix): Create new top-level group
+//   - Group.Group(prefix): Create nested group (inherits parent prefix and middleware)
+//   - Group.Use(middleware...): Add middleware to group
+//   - HTTP method shortcuts: GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD
+//   - registerRoute(): Internal method combining prefix, middleware, and handler
+//
+// Middleware Inheritance:
+//   - Child groups inherit parent middleware
+//   - Middleware is copied (not shared) to prevent cross-contamination
+//   - Middleware is applied in registration order
+//
+// Use Cases:
+//   - API versioning: /api/v1, /api/v2
+//   - Feature-based organization: /users, /products, /orders
+//   - Permission-based routes: /public, /authenticated, /admin
+//   - Microservice-style routing: /auth, /billing, /notifications
+//
+// Example usage:
+//
+//	app := New()
+//
+//	// Public API routes
+//	public := app.Group("/api/public")
+//	public.GET("/health", healthCheck)
+//
+//	// Authenticated API routes
+//	api := app.Group("/api")
+//	api.Use(AuthMiddleware())
+//	api.GET("/users", listUsers)
+//
+//	// Admin routes with nested groups
+//	admin := api.Group("/admin")
+//	admin.Use(AdminMiddleware())
+//	admin.GET("/stats", getStats)        // Route: /api/admin/stats
+//	admin.POST("/settings", updateSettings)
+//
+// Performance:
+// - Group creation is lightweight (no route pre-registration)
+// - Middleware is applied once during route registration (not per request)
+// - Prefix concatenation happens at registration time (efficient request handling)
+//
+// group.go는 관련 라우트를 구성하기 위한 라우트 그룹화 기능을 제공합니다.
+//
+// 이 파일은 공통 경로 접두사와 공유 미들웨어 아래에 라우트를 구성할 수 있는
+// Group 타입을 구현합니다:
+//
+// 라우트 그룹화 기능:
+//   - 접두사 관리: 그룹의 모든 라우트가 공통 경로 접두사 공유
+//   - 미들웨어 스택: 모든 라우트에 적용되는 그룹별 미들웨어
+//   - 중첩 그룹: 계층적 구조를 만들기 위한 그룹 중첩
+//   - 메서드 체이닝: 여러 라우트 등록을 위한 유창한 API
+//
+// Group 구조:
+//   - Group.prefix: 모든 라우트 앞에 추가되는 경로 접두사
+//   - Group.middleware: 미들웨어 함수 스택
+//   - Group.app: 라우트 등록을 위한 부모 App 참조
+//
+// 핵심 메서드:
+//   - App.Group(prefix): 새 최상위 그룹 생성
+//   - Group.Group(prefix): 중첩 그룹 생성 (부모 접두사 및 미들웨어 상속)
+//   - Group.Use(middleware...): 그룹에 미들웨어 추가
+//   - HTTP 메서드 단축키: GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD
+//   - registerRoute(): 접두사, 미들웨어, 핸들러를 결합하는 내부 메서드
+//
+// 미들웨어 상속:
+//   - 자식 그룹은 부모 미들웨어 상속
+//   - 미들웨어는 복사됨 (공유되지 않음) - 교차 오염 방지
+//   - 미들웨어는 등록 순서대로 적용
+//
+// 사용 사례:
+//   - API 버전 관리: /api/v1, /api/v2
+//   - 기능 기반 구성: /users, /products, /orders
+//   - 권한 기반 라우트: /public, /authenticated, /admin
+//   - 마이크로서비스 스타일 라우팅: /auth, /billing, /notifications
+//
+// 사용 예제:
+//
+//	app := New()
+//
+//	// 공개 API 라우트
+//	public := app.Group("/api/public")
+//	public.GET("/health", healthCheck)
+//
+//	// 인증된 API 라우트
+//	api := app.Group("/api")
+//	api.Use(AuthMiddleware())
+//	api.GET("/users", listUsers)
+//
+//	// 중첩 그룹이 있는 관리자 라우트
+//	admin := api.Group("/admin")
+//	admin.Use(AdminMiddleware())
+//	admin.GET("/stats", getStats)        // 라우트: /api/admin/stats
+//	admin.POST("/settings", updateSettings)
+//
+// 성능:
+// - 그룹 생성은 가벼움 (라우트 사전 등록 없음)
+// - 미들웨어는 라우트 등록 중 한 번 적용됨 (요청당 아님)
+// - 접두사 연결은 등록 시점에 발생 (효율적인 요청 처리)
+
 // Group represents a route group with a common prefix and middleware.
 // Group은 공통 접두사와 미들웨어를 가진 라우트 그룹을 나타냅니다.
 //

@@ -17,6 +17,184 @@ import (
 	"time"
 )
 
+// middleware.go provides HTTP middleware components for the websvrutil framework.
+//
+// This file implements a comprehensive collection of middleware functions that can be
+// chained together to add cross-cutting concerns to HTTP request handling:
+//
+// Error Recovery:
+//   - Recovery(): Catches panics, logs stack traces, sends 500 responses
+//   - RecoveryWithConfig(): Customizable panic recovery with LogFunc option
+//
+// Request Logging:
+//   - Logger(): Logs method, path, status, and latency for each request
+//   - LoggerWithConfig(): Customizable logging with user-defined LogFunc
+//
+// Cross-Origin Resource Sharing (CORS):
+//   - CORS(): Default CORS with Allow-Origin: *
+//   - CORSWithConfig(): Fine-grained control over origins, methods, headers
+//     Supports wildcard origins, preflight OPTIONS handling, credentials
+//
+// Request Identification:
+//   - RequestID(): Generates unique request IDs (16-byte hex)
+//   - RequestIDWithConfig(): Custom ID generation and header name
+//     Useful for distributed tracing and log correlation
+//
+// Timeout Management:
+//   - Timeout(): Enforces request timeout with context cancellation
+//   - TimeoutWithConfig(): Custom timeout and error handler
+//     Prevents long-running requests from exhausting resources
+//
+// Authentication:
+//   - BasicAuth(): HTTP Basic Authentication with username/password
+//   - BasicAuthWithConfig(): Customizable validator function and realm
+//     Uses constant-time comparison to prevent timing attacks
+//
+// Rate Limiting:
+//   - RateLimiter(): Token bucket rate limiting per client IP
+//   - RateLimiterWithConfig(): Custom rate, window, and key function
+//     Prevents abuse and DoS attacks with sliding window algorithm
+//     Thread-safe with mutex-protected rate limit tracking
+//
+// Response Compression:
+//   - Compression(): Gzip compression for responses
+//   - CompressionWithConfig(): Custom compression level and min size
+//     Checks Accept-Encoding header, reduces bandwidth usage
+//
+// Security Headers:
+//   - SecureHeaders(): Adds common security headers (CSP, X-Frame-Options, etc.)
+//   - SecureHeadersWithConfig(): Customizable security policy
+//     Protects against XSS, clickjacking, MIME sniffing
+//
+// Body Size Limiting:
+//   - BodyLimit(): Enforces maximum request body size
+//   - BodyLimitWithConfig(): Custom size limit and error handler
+//     Prevents memory exhaustion from large payloads
+//
+// Static File Serving:
+//   - Static(): Serves files from filesystem directory
+//   - StaticWithConfig(): Custom root, index files, browse option
+//
+// URL Redirection:
+//   - Redirect(): Redirects all requests to specified URL
+//   - RedirectWithConfig(): Custom status code (301, 302, 307, 308)
+//   - HTTPSRedirect(): Redirects HTTP to HTTPS
+//   - WWWRedirect(): Adds or removes www prefix
+//
+// All middleware follow the standard MiddlewareFunc signature:
+//
+//	type MiddlewareFunc func(http.Handler) http.Handler
+//
+// Middleware can be chained using App.Use():
+//
+//	app := New()
+//	app.Use(Recovery())
+//	app.Use(Logger())
+//	app.Use(CORS())
+//	app.Use(RateLimiter(100, time.Minute))
+//
+// Performance Considerations:
+// - Middleware is executed in registration order for each request
+// - Rate limiting uses efficient token bucket with cleanup goroutine
+// - Compression checks content size before applying gzip
+// - Request ID generation uses crypto/rand for uniqueness
+//
+// Security Features:
+// - Panic recovery prevents information leakage
+// - Basic auth uses constant-time comparison (subtle.ConstantTimeCompare)
+// - Rate limiting prevents DoS attacks
+// - Secure headers protect against common web vulnerabilities
+// - Body limiting prevents memory exhaustion
+//
+// middleware.go는 websvrutil 프레임워크를 위한 HTTP 미들웨어 컴포넌트를 제공합니다.
+//
+// 이 파일은 HTTP 요청 처리에 횡단 관심사를 추가하기 위해 함께 연결될 수 있는
+// 포괄적인 미들웨어 함수 모음을 구현합니다:
+//
+// 에러 복구:
+//   - Recovery(): 패닉을 잡고, 스택 트레이스를 로깅하고, 500 응답을 전송
+//   - RecoveryWithConfig(): LogFunc 옵션이 있는 사용자 정의 가능한 패닉 복구
+//
+// 요청 로깅:
+//   - Logger(): 각 요청의 메서드, 경로, 상태, 지연시간 로깅
+//   - LoggerWithConfig(): 사용자 정의 LogFunc이 있는 커스터마이징 가능한 로깅
+//
+// Cross-Origin Resource Sharing (CORS):
+//   - CORS(): Allow-Origin: *가 있는 기본 CORS
+//   - CORSWithConfig(): 출처, 메서드, 헤더에 대한 세밀한 제어
+//     와일드카드 출처, preflight OPTIONS 처리, 자격 증명 지원
+//
+// 요청 식별:
+//   - RequestID(): 고유 요청 ID 생성 (16바이트 hex)
+//   - RequestIDWithConfig(): 사용자 정의 ID 생성 및 헤더 이름
+//     분산 추적 및 로그 상관관계에 유용
+//
+// 타임아웃 관리:
+//   - Timeout(): 컨텍스트 취소와 함께 요청 타임아웃 강제
+//   - TimeoutWithConfig(): 사용자 정의 타임아웃 및 에러 핸들러
+//     장시간 실행 요청이 리소스를 고갈시키는 것을 방지
+//
+// 인증:
+//   - BasicAuth(): 사용자 이름/비밀번호로 HTTP 기본 인증
+//   - BasicAuthWithConfig(): 사용자 정의 가능한 검증 함수 및 realm
+//     타이밍 공격 방지를 위해 상수 시간 비교 사용
+//
+// 속도 제한:
+//   - RateLimiter(): 클라이언트 IP당 토큰 버킷 속도 제한
+//   - RateLimiterWithConfig(): 사용자 정의 속도, 윈도우, 키 함수
+//     슬라이딩 윈도우 알고리즘으로 남용 및 DoS 공격 방지
+//     뮤텍스로 보호된 속도 제한 추적으로 스레드 안전
+//
+// 응답 압축:
+//   - Compression(): 응답에 대한 Gzip 압축
+//   - CompressionWithConfig(): 사용자 정의 압축 수준 및 최소 크기
+//     Accept-Encoding 헤더 확인, 대역폭 사용량 감소
+//
+// 보안 헤더:
+//   - SecureHeaders(): 일반 보안 헤더 추가 (CSP, X-Frame-Options 등)
+//   - SecureHeadersWithConfig(): 사용자 정의 가능한 보안 정책
+//     XSS, 클릭재킹, MIME 스니핑으로부터 보호
+//
+// 본문 크기 제한:
+//   - BodyLimit(): 최대 요청 본문 크기 강제
+//   - BodyLimitWithConfig(): 사용자 정의 크기 제한 및 에러 핸들러
+//     대용량 페이로드로 인한 메모리 고갈 방지
+//
+// 정적 파일 서빙:
+//   - Static(): 파일시스템 디렉토리에서 파일 서빙
+//   - StaticWithConfig(): 사용자 정의 루트, 인덱스 파일, 브라우즈 옵션
+//
+// URL 리다이렉션:
+//   - Redirect(): 모든 요청을 지정된 URL로 리다이렉트
+//   - RedirectWithConfig(): 사용자 정의 상태 코드 (301, 302, 307, 308)
+//   - HTTPSRedirect(): HTTP를 HTTPS로 리다이렉트
+//   - WWWRedirect(): www 접두사 추가 또는 제거
+//
+// 모든 미들웨어는 표준 MiddlewareFunc 시그니처를 따릅니다:
+//
+//	type MiddlewareFunc func(http.Handler) http.Handler
+//
+// 미들웨어는 App.Use()를 사용하여 연결할 수 있습니다:
+//
+//	app := New()
+//	app.Use(Recovery())
+//	app.Use(Logger())
+//	app.Use(CORS())
+//	app.Use(RateLimiter(100, time.Minute))
+//
+// 성능 고려사항:
+// - 미들웨어는 각 요청에 대해 등록 순서대로 실행됨
+// - 속도 제한은 정리 고루틴이 있는 효율적인 토큰 버킷 사용
+// - 압축은 gzip 적용 전 콘텐츠 크기 확인
+// - 요청 ID 생성은 고유성을 위해 crypto/rand 사용
+//
+// 보안 기능:
+// - 패닉 복구는 정보 유출 방지
+// - 기본 인증은 상수 시간 비교 사용 (subtle.ConstantTimeCompare)
+// - 속도 제한은 DoS 공격 방지
+// - 보안 헤더는 일반적인 웹 취약점으로부터 보호
+// - 본문 제한은 메모리 고갈 방지
+
 // Recovery returns middleware that wraps handlers with panic recovery and sends a safe HTTP 500 response when a panic occurs.
 // Recovery는 핸들러를 패닉 복구 로직으로 감싸 패닉이 발생하면 안전한 HTTP 500 응답을 보냅니다.
 //

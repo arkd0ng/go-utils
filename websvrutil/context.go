@@ -6,8 +6,59 @@ import (
 	"sync"
 )
 
-// Context represents the context of the current HTTP request.
-// Context는 현재 HTTP 요청의 컨텍스트를 나타냅니다.
+// Context represents the context of a single HTTP request/response cycle.
+// It provides a convenient API for accessing request data, setting response properties,
+// and storing temporary values during request processing.
+//
+// Context is created automatically by the router for each matched route and is passed
+// to handlers through the request's context.Context. Handlers retrieve Context via
+// GetContext(r) or similar helper functions.
+//
+// Context provides:
+// - URL path parameters from dynamic routes (e.g., :id, :name)
+// - Query string parameters
+// - Request headers and cookies
+// - Request body parsing (JSON, form data, files)
+// - Response helpers (JSON, HTML, status codes, redirects)
+// - Custom value storage for middleware communication
+// - Reference to parent App instance
+//
+// Thread-Safety:
+// - Context instances should NOT be shared across goroutines
+// - Each request gets its own Context instance
+// - values map is protected by mutex for custom value storage
+// - params map is read-only after initialization (no mutex needed)
+//
+// Lifecycle:
+// 1. Router creates Context: NewContext(w, r)
+// 2. Router sets params: ctx.setParams(params)
+// 3. Router stores in request context: r.WithContext(contextWithValue(...))
+// 4. Handler retrieves Context: ctx := GetContext(r)
+// 5. Handler uses Context methods
+// 6. Context is garbage collected after request completes
+//
+// Context는 단일 HTTP 요청/응답 사이클의 컨텍스트를 나타냅니다.
+// 요청 데이터 액세스, 응답 속성 설정 및 요청 처리 중 임시 값 저장을 위한
+// 편리한 API를 제공합니다.
+//
+// Context는 각 일치하는 라우트에 대해 라우터에 의해 자동으로 생성되며
+// 요청의 context.Context를 통해 핸들러에 전달됩니다.
+// 핸들러는 GetContext(r) 또는 유사한 헬퍼 함수를 통해 Context를 검색합니다.
+//
+// Context는 다음을 제공합니다:
+// - 동적 라우트의 URL 경로 매개변수(예: :id, :name)
+// - 쿼리 문자열 매개변수
+// - 요청 헤더 및 쿠키
+// - 요청 본문 파싱(JSON, 폼 데이터, 파일)
+// - 응답 헬퍼(JSON, HTML, 상태 코드, 리디렉션)
+// - 미들웨어 통신을 위한 커스텀 값 저장
+// - 부모 App 인스턴스에 대한 참조
+//
+// 스레드 안전성:
+// - Context 인스턴스는 고루틴 간에 공유해서는 안 됩니다
+// - 각 요청은 자체 Context 인스턴스를 받습니다
+// - values 맵은 커스텀 값 저장을 위해 뮤텍스로 보호됩니다
+// - params 맵은 초기화 후 읽기 전용입니다(뮤텍스 불필요)
 type Context struct {
 	// Request is the HTTP request
 	// Request는 HTTP 요청입니다
@@ -44,15 +95,28 @@ const (
 	contextKeyParams contextKey = "params"
 )
 
-// NewContext creates a new Context instance.
-// NewContext는 새 Context 인스턴스를 생성합니다.
+// NewContext creates a new Context instance wrapping an HTTP request and response.
+// This is an internal function called by the router for each matched route.
+// Applications should retrieve Context via GetContext(r), not create manually.
 //
-// Performance optimization
+// Performance Optimizations:
+// - values map is lazily allocated (nil by default, created on first Set() call)
+// - params map is pre-allocated (empty, filled by router after creation)
+// - No allocations for requests without custom values
+//
+// Thread-Safety:
+// - Each request gets unique Context instance
+// - Not safe for concurrent access (single request processing only)
+// - values map protected by mutex when accessed
+//
+// NewContext는 HTTP 요청 및 응답을 래핑하는 새 Context 인스턴스를 생성합니다.
+// 이것은 각 일치하는 라우트에 대해 라우터가 호출하는 내부 함수입니다.
+// 애플리케이션은 수동으로 생성하지 말고 GetContext(r)를 통해 Context를 검색해야 합니다.
+//
 // 성능 최적화:
-// - values map is lazily allocated (nil by default)
-// - values 맵은 지연 할당됩니다 (기본적으로 nil)
-// - Only created when first value is set via Set()
-// - Set()을 통해 첫 번째 값이 설정될 때만 생성됩니다
+// - values 맵은 지연 할당됩니다(기본적으로 nil, 첫 번째 Set() 호출 시 생성)
+// - params 맵은 사전 할당됩니다(비어 있음, 생성 후 라우터에 의해 채워짐)
+// - 커스텀 값이 없는 요청에 대한 할당 없음
 func NewContext(w http.ResponseWriter, r *http.Request) *Context {
 	return &Context{
 		Request:        r,

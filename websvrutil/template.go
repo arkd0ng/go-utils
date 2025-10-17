@@ -12,6 +12,266 @@ import (
 	"time"
 )
 
+// template.go provides HTML template engine functionality for server-side rendering.
+//
+// This file implements a comprehensive template engine with support for:
+//
+// Core Features:
+//   - Template Loading: Load individual files, glob patterns, or entire directories
+//   - Layout System: Wrap templates with reusable layout templates
+//   - Custom Functions: Extensible template function library
+//   - Auto-reload: Watch filesystem for changes and reload templates automatically
+//   - Thread-safety: Mutex-protected concurrent template access
+//   - Custom Delimiters: Override default {{ }} delimiters
+//
+// TemplateEngine Structure:
+//   - templates: Map of parsed template.Template instances
+//   - layouts: Map of layout templates for composition
+//   - dir: Root directory for template files
+//   - layoutDir: Subdirectory for layout templates (default: layouts/)
+//   - funcMap: Registry of custom template functions
+//   - delims: Custom template delimiters (default: {{ }})
+//   - autoReload: Enable/disable automatic template reloading
+//   - mu: RWMutex for thread-safe template access
+//
+// Template Loading Methods:
+//   - NewTemplateEngine(dir): Create engine with root directory
+//   - Load(name): Load single template file
+//   - LoadGlob(pattern): Load templates matching glob pattern
+//   - LoadAll(): Recursively load all templates in directory
+//   - LoadLayout(name): Load layout template
+//   - LoadAllLayouts(): Load all layouts from layoutDir
+//
+// Rendering Methods:
+//   - Render(w, name, data): Execute template with data
+//   - RenderWithLayout(w, layout, template, data): Render with layout wrapper
+//
+// Template Management:
+//   - Has(name): Check if template exists
+//   - List(): Get names of all loaded templates
+//   - Clear(): Remove all loaded templates
+//   - HasLayout(name): Check if layout exists
+//   - ListLayouts(): Get names of all loaded layouts
+//
+// Customization:
+//   - AddFunc(name, fn): Add single custom template function
+//   - AddFuncs(funcMap): Add multiple custom functions
+//   - SetDelimiters(left, right): Override template delimiters
+//   - SetLayoutDir(dir): Change layout directory path
+//
+// Auto-reload:
+//   - EnableAutoReload(): Start filesystem watcher goroutine
+//   - DisableAutoReload(): Stop filesystem watcher
+//   - IsAutoReloadEnabled(): Check auto-reload status
+//   - watchTemplates(): Internal goroutine for file monitoring
+//
+// Built-in Template Functions:
+//
+// String Functions:
+//   - upper, lower, title: Case conversion
+//   - trim, trimPrefix, trimSuffix: Whitespace/prefix/suffix removal
+//   - replace, contains, hasPrefix, hasSuffix: String operations
+//   - split, join, repeat: String manipulation
+//
+// Date/Time Functions:
+//   - now: Get current time
+//   - formatDate(time, layout): Custom date formatting
+//   - formatDateSimple(time): Format as YYYY-MM-DD
+//   - formatDateTime(time): Format as YYYY-MM-DD HH:MM:SS
+//   - formatTime(time): Format as HH:MM:SS
+//
+// URL Functions:
+//   - urlEncode, urlDecode: URL query encoding/decoding
+//
+// HTML Safety Functions:
+//   - safeHTML(string): Mark string as safe HTML (no escaping)
+//   - safeURL(string): Mark string as safe URL
+//   - safeJS(string): Mark string as safe JavaScript
+//
+// Utility Functions:
+//   - default(defaultVal, val): Return default if val is nil/empty
+//   - len(val): Get length of string/slice/map
+//
+// Layout System:
+//   - Layouts are templates that define page structure (header, footer, etc.)
+//   - Content template is inserted into layout via {{ .Content }} placeholder
+//   - Layouts stored separately from regular templates (layouts/ subdirectory)
+//   - Example: base.html layout with {{ .Content }} renders page.html inside it
+//
+// Auto-reload System:
+//   - Goroutine polls filesystem every 2 seconds
+//   - Detects changes to template files (by modification time)
+//   - Automatically reloads changed templates
+//   - Useful for development (hot-reload without server restart)
+//   - Should be disabled in production for performance
+//
+// Thread-safety:
+//   - RWMutex protects templates and layouts maps
+//   - Multiple goroutines can read concurrently (Render)
+//   - Write operations (Load, Reload) acquire exclusive lock
+//   - Safe for concurrent rendering across multiple requests
+//
+// Example usage:
+//
+//	// Setup template engine
+//	engine := NewTemplateEngine("views")
+//	engine.AddFunc("formatCurrency", formatCurrency)
+//	engine.LoadAll()
+//	engine.LoadAllLayouts()
+//	engine.EnableAutoReload() // For development
+//
+//	// Render template
+//	app := New()
+//	app.SetTemplateEngine(engine)
+//	app.GET("/user/:id", func(w http.ResponseWriter, r *http.Request) {
+//	    ctx := GetContext(r)
+//	    user := getUser(ctx.Param("id"))
+//	    ctx.Render(200, "user.html", user)
+//	})
+//
+//	// Render with layout
+//	app.GET("/dashboard", func(w http.ResponseWriter, r *http.Request) {
+//	    ctx := GetContext(r)
+//	    data := getDashboardData()
+//	    ctx.RenderWithLayout(200, "base.html", "dashboard.html", data)
+//	})
+//
+// Performance:
+//   - Templates are parsed once and cached in memory
+//   - Rendering reuses parsed template.Template instances
+//   - Auto-reload adds 2-second polling overhead (disable in production)
+//   - Thread-safe RWMutex allows concurrent reads without blocking
+//
+// template.go는 서버 사이드 렌더링을 위한 HTML 템플릿 엔진 기능을 제공합니다.
+//
+// 이 파일은 다음을 지원하는 포괄적인 템플릿 엔진을 구현합니다:
+//
+// 핵심 기능:
+//   - 템플릿 로딩: 개별 파일, glob 패턴 또는 전체 디렉토리 로드
+//   - 레이아웃 시스템: 재사용 가능한 레이아웃 템플릿으로 템플릿 래핑
+//   - 커스텀 함수: 확장 가능한 템플릿 함수 라이브러리
+//   - 자동 재로드: 파일시스템 변경 감시 및 자동 템플릿 재로드
+//   - 스레드 안전성: 뮤텍스로 보호된 동시 템플릿 접근
+//   - 커스텀 구분자: 기본 {{ }} 구분자 재정의
+//
+// TemplateEngine 구조:
+//   - templates: 파싱된 template.Template 인스턴스 맵
+//   - layouts: 구성을 위한 레이아웃 템플릿 맵
+//   - dir: 템플릿 파일의 루트 디렉토리
+//   - layoutDir: 레이아웃 템플릿 서브디렉토리 (기본: layouts/)
+//   - funcMap: 커스텀 템플릿 함수 레지스트리
+//   - delims: 커스텀 템플릿 구분자 (기본: {{ }})
+//   - autoReload: 자동 템플릿 재로드 활성화/비활성화
+//   - mu: 스레드 안전 템플릿 접근을 위한 RWMutex
+//
+// 템플릿 로딩 메서드:
+//   - NewTemplateEngine(dir): 루트 디렉토리로 엔진 생성
+//   - Load(name): 단일 템플릿 파일 로드
+//   - LoadGlob(pattern): glob 패턴과 일치하는 템플릿 로드
+//   - LoadAll(): 디렉토리의 모든 템플릿을 재귀적으로 로드
+//   - LoadLayout(name): 레이아웃 템플릿 로드
+//   - LoadAllLayouts(): layoutDir에서 모든 레이아웃 로드
+//
+// 렌더링 메서드:
+//   - Render(w, name, data): 데이터로 템플릿 실행
+//   - RenderWithLayout(w, layout, template, data): 레이아웃 래퍼로 렌더링
+//
+// 템플릿 관리:
+//   - Has(name): 템플릿 존재 확인
+//   - List(): 로드된 모든 템플릿 이름 가져오기
+//   - Clear(): 로드된 모든 템플릿 제거
+//   - HasLayout(name): 레이아웃 존재 확인
+//   - ListLayouts(): 로드된 모든 레이아웃 이름 가져오기
+//
+// 커스터마이징:
+//   - AddFunc(name, fn): 단일 커스텀 템플릿 함수 추가
+//   - AddFuncs(funcMap): 여러 커스텀 함수 추가
+//   - SetDelimiters(left, right): 템플릿 구분자 재정의
+//   - SetLayoutDir(dir): 레이아웃 디렉토리 경로 변경
+//
+// 자동 재로드:
+//   - EnableAutoReload(): 파일시스템 감시 고루틴 시작
+//   - DisableAutoReload(): 파일시스템 감시 중지
+//   - IsAutoReloadEnabled(): 자동 재로드 상태 확인
+//   - watchTemplates(): 파일 모니터링을 위한 내부 고루틴
+//
+// 내장 템플릿 함수:
+//
+// 문자열 함수:
+//   - upper, lower, title: 대소문자 변환
+//   - trim, trimPrefix, trimSuffix: 공백/접두사/접미사 제거
+//   - replace, contains, hasPrefix, hasSuffix: 문자열 작업
+//   - split, join, repeat: 문자열 조작
+//
+// 날짜/시간 함수:
+//   - now: 현재 시간 가져오기
+//   - formatDate(time, layout): 커스텀 날짜 형식
+//   - formatDateSimple(time): YYYY-MM-DD로 형식화
+//   - formatDateTime(time): YYYY-MM-DD HH:MM:SS로 형식화
+//   - formatTime(time): HH:MM:SS로 형식화
+//
+// URL 함수:
+//   - urlEncode, urlDecode: URL 쿼리 인코딩/디코딩
+//
+// HTML 안전성 함수:
+//   - safeHTML(string): 문자열을 안전한 HTML로 표시 (이스케이프 없음)
+//   - safeURL(string): 문자열을 안전한 URL로 표시
+//   - safeJS(string): 문자열을 안전한 JavaScript로 표시
+//
+// 유틸리티 함수:
+//   - default(defaultVal, val): val이 nil/빈 값이면 기본값 반환
+//   - len(val): 문자열/슬라이스/맵의 길이 가져오기
+//
+// 레이아웃 시스템:
+//   - 레이아웃은 페이지 구조를 정의하는 템플릿 (헤더, 푸터 등)
+//   - 콘텐츠 템플릿은 {{ .Content }} 플레이스홀더를 통해 레이아웃에 삽입
+//   - 레이아웃은 일반 템플릿과 별도로 저장 (layouts/ 서브디렉토리)
+//   - 예: {{ .Content }}가 있는 base.html 레이아웃은 page.html을 안에 렌더링
+//
+// 자동 재로드 시스템:
+//   - 고루틴이 2초마다 파일시스템 폴링
+//   - 템플릿 파일 변경 감지 (수정 시간 기준)
+//   - 변경된 템플릿 자동 재로드
+//   - 개발에 유용 (서버 재시작 없이 핫 리로드)
+//   - 성능을 위해 프로덕션에서는 비활성화해야 함
+//
+// 스레드 안전성:
+//   - RWMutex가 templates 및 layouts 맵 보호
+//   - 여러 고루틴이 동시에 읽기 가능 (Render)
+//   - 쓰기 작업 (Load, Reload)은 배타적 잠금 획득
+//   - 여러 요청에서 동시 렌더링 안전
+//
+// 사용 예제:
+//
+//	// 템플릿 엔진 설정
+//	engine := NewTemplateEngine("views")
+//	engine.AddFunc("formatCurrency", formatCurrency)
+//	engine.LoadAll()
+//	engine.LoadAllLayouts()
+//	engine.EnableAutoReload() // 개발용
+//
+//	// 템플릿 렌더링
+//	app := New()
+//	app.SetTemplateEngine(engine)
+//	app.GET("/user/:id", func(w http.ResponseWriter, r *http.Request) {
+//	    ctx := GetContext(r)
+//	    user := getUser(ctx.Param("id"))
+//	    ctx.Render(200, "user.html", user)
+//	})
+//
+//	// 레이아웃과 함께 렌더링
+//	app.GET("/dashboard", func(w http.ResponseWriter, r *http.Request) {
+//	    ctx := GetContext(r)
+//	    data := getDashboardData()
+//	    ctx.RenderWithLayout(200, "base.html", "dashboard.html", data)
+//	})
+//
+// 성능:
+//   - 템플릿은 한 번 파싱되어 메모리에 캐시
+//   - 렌더링은 파싱된 template.Template 인스턴스 재사용
+//   - 자동 재로드는 2초 폴링 오버헤드 추가 (프로덕션에서 비활성화)
+//   - 스레드 안전 RWMutex는 차단 없이 동시 읽기 허용
+
 // TemplateEngine manages HTML template rendering.
 // TemplateEngine는 HTML 템플릿 렌더링을 관리합니다.
 type TemplateEngine struct {

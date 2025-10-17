@@ -8,6 +8,338 @@ import (
 	"strings"
 )
 
+// validator.go provides struct field validation using tag-based rules.
+//
+// This file implements a comprehensive validation system that inspects struct
+// field tags to enforce constraints on user input:
+//
+// Core Types:
+//
+// Validator Interface:
+//   - Defines standard interface for validation implementations
+//   - Single method: Validate(interface{}) error
+//   - Allows custom validator implementations
+//
+// DefaultValidator:
+//   - Built-in tag-based validator
+//   - Uses reflection to inspect struct fields
+//   - Parses "validate" struct tags
+//   - Applies validation rules sequentially
+//
+// ValidationError:
+//   - Represents single field validation failure
+//   - Contains: Field name, Tag rule, Actual value
+//   - Formatted error message
+//
+// ValidationErrors:
+//   - Collection of multiple ValidationError instances
+//   - Concatenated error messages (semicolon-separated)
+//   - Returned when multiple fields fail validation
+//
+// Supported Validation Tags:
+//
+// Presence & Equality:
+//   - required: Field must not be zero value (empty string, 0, nil, false)
+//   - eq=<value>: Field must equal specified value
+//   - ne=<value>: Field must not equal specified value
+//
+// String Length:
+//   - min=<n>: String must have at least n characters
+//   - max=<n>: String must have at most n characters
+//   - len=<n>: String must have exactly n characters
+//
+// Numeric Comparisons:
+//   - gt=<n>: Number must be greater than n
+//   - gte=<n>: Number must be greater than or equal to n
+//   - lt=<n>: Number must be less than n
+//   - lte=<n>: Number must be less than or equal to n
+//
+// String Format:
+//   - email: Must be valid email format (RFC 5322 basic pattern)
+//   - alpha: Alphabetic characters only (a-z, A-Z)
+//   - alphanum: Alphanumeric characters only (a-z, A-Z, 0-9)
+//   - numeric: Numeric characters only (0-9)
+//
+// Value Options:
+//   - oneof=<v1,v2,v3>: Field must be one of comma-separated values
+//     Example: oneof=admin,user,guest
+//
+// Tag Syntax:
+//   - Multiple rules: Comma-separated (e.g., "required,min=3,max=50")
+//   - Rule with value: rule=value (e.g., "min=5")
+//   - Rule without value: rule (e.g., "required")
+//
+// Validation Functions:
+//
+// DefaultValidator.Validate(obj):
+//   - Main validation entry point
+//   - Uses reflection to iterate struct fields
+//   - Extracts "validate" tag from each field
+//   - Applies all rules sequentially
+//   - Collects errors for all fields
+//   - Returns ValidationErrors if any failures
+//
+// validateField(fieldName, field, tag):
+//   - Parses comma-separated validation rules
+//   - Applies each rule to field value
+//   - Returns first validation error encountered
+//
+// applyRule(fieldName, field, ruleName, ruleValue):
+//   - Dispatches to specific validation function
+//   - Handles rule parsing (splits "rule=value")
+//   - Returns ValidationError on failure
+//
+// Specific Validators:
+//   - validateRequired(field): Checks non-zero value
+//   - validateEmail(field): Regex pattern matching
+//   - validateMin(field, min): String length or numeric comparison
+//   - validateMax(field, max): String length or numeric comparison
+//   - validateLen(field, len): Exact string length check
+//   - validateEq(field, value): Equality check (string or numeric)
+//   - validateNe(field, value): Inequality check
+//   - validateGt/Gte/Lt/Lte(field, value): Numeric comparisons
+//   - validateOneOf(field, values): String membership check
+//   - validateAlpha/Alphanum/Numeric(field): Character class checks
+//
+// Helper Functions:
+//   - isZero(value): Check if value is zero value for its type
+//     Handles: string, int, float, bool, pointer, slice, map
+//
+// Context Integration:
+//   - Context.BindWithValidation(obj): Bind and validate in one call
+//     Combines BindJSON/BindForm with Validate()
+//     Returns error if binding or validation fails
+//
+// Example usage:
+//
+//	// Define struct with validation tags
+//	type UserRegister struct {
+//	    Username string `json:"username" validate:"required,min=3,max=20,alphanum"`
+//	    Email    string `json:"email" validate:"required,email"`
+//	    Password string `json:"password" validate:"required,min=8"`
+//	    Age      int    `json:"age" validate:"required,gte=18,lte=100"`
+//	    Role     string `json:"role" validate:"required,oneof=admin,user,guest"`
+//	}
+//
+//	// Manual validation
+//	validator := &DefaultValidator{}
+//	user := UserRegister{
+//	    Username: "jo",      // Too short
+//	    Email:    "invalid", // Invalid email
+//	    Age:      15,        // Too young
+//	}
+//	err := validator.Validate(user)
+//	// Returns ValidationErrors with 3 errors
+//
+//	// Validation in handler
+//	app.POST("/register", func(w http.ResponseWriter, r *http.Request) {
+//	    ctx := GetContext(r)
+//	    var user UserRegister
+//	    if err := ctx.BindWithValidation(&user); err != nil {
+//	        // Handle validation errors
+//	        if valErrs, ok := err.(ValidationErrors); ok {
+//	            // Return detailed error messages
+//	            ctx.JSON(400, map[string]interface{}{
+//	                "error": "Validation failed",
+//	                "details": valErrs,
+//	            })
+//	            return
+//	        }
+//	        ctx.JSON(400, map[string]string{"error": err.Error()})
+//	        return
+//	    }
+//	    // Proceed with validated user data
+//	})
+//
+// Performance:
+//   - Validation time: O(n*m) where n = fields, m = rules per field
+//   - Uses reflection (overhead for struct inspection)
+//   - Regex compilation cached for email validation
+//   - Efficient for typical form validation (<100 fields)
+//
+// Limitations:
+//   - Only validates struct fields (no nested struct validation)
+//   - No custom error messages (generic messages only)
+//   - Limited to supported validation rules
+//   - Reflection-based (slower than compiled validators)
+//   - For complex validation, consider third-party libraries:
+//     * github.com/go-playground/validator/v10
+//     * github.com/go-ozzo/ozzo-validation
+//
+// Best Practices:
+//   - Always validate user input before processing
+//   - Use BindWithValidation() for combined bind + validate
+//   - Return detailed ValidationErrors to client for better UX
+//   - Keep validation rules in struct tags for clarity
+//   - Consider custom Validator implementation for complex rules
+//   - Validate business logic separately (e.g., unique email, existing user)
+//
+// validator.go는 태그 기반 규칙을 사용한 구조체 필드 검증을 제공합니다.
+//
+// 이 파일은 사용자 입력에 제약 조건을 적용하기 위해 구조체 필드 태그를
+// 검사하는 포괄적인 검증 시스템을 구현합니다:
+//
+// 핵심 타입:
+//
+// Validator 인터페이스:
+//   - 검증 구현을 위한 표준 인터페이스 정의
+//   - 단일 메서드: Validate(interface{}) error
+//   - 커스텀 검증자 구현 허용
+//
+// DefaultValidator:
+//   - 내장 태그 기반 검증자
+//   - 리플렉션을 사용하여 구조체 필드 검사
+//   - "validate" 구조체 태그 파싱
+//   - 검증 규칙 순차 적용
+//
+// ValidationError:
+//   - 단일 필드 검증 실패 표현
+//   - 포함: 필드 이름, 태그 규칙, 실제 값
+//   - 형식화된 에러 메시지
+//
+// ValidationErrors:
+//   - 여러 ValidationError 인스턴스 모음
+//   - 연결된 에러 메시지 (세미콜론 구분)
+//   - 여러 필드가 검증 실패 시 반환
+//
+// 지원되는 검증 태그:
+//
+// 존재 및 동등성:
+//   - required: 필드가 제로 값이 아니어야 함 (빈 문자열, 0, nil, false)
+//   - eq=<value>: 필드가 지정된 값과 같아야 함
+//   - ne=<value>: 필드가 지정된 값과 달라야 함
+//
+// 문자열 길이:
+//   - min=<n>: 문자열이 최소 n자 이상이어야 함
+//   - max=<n>: 문자열이 최대 n자 이하여야 함
+//   - len=<n>: 문자열이 정확히 n자여야 함
+//
+// 숫자 비교:
+//   - gt=<n>: 숫자가 n보다 커야 함
+//   - gte=<n>: 숫자가 n보다 크거나 같아야 함
+//   - lt=<n>: 숫자가 n보다 작아야 함
+//   - lte=<n>: 숫자가 n보다 작거나 같아야 함
+//
+// 문자열 형식:
+//   - email: 유효한 이메일 형식이어야 함 (RFC 5322 기본 패턴)
+//   - alpha: 알파벳 문자만 (a-z, A-Z)
+//   - alphanum: 영숫자 문자만 (a-z, A-Z, 0-9)
+//   - numeric: 숫자 문자만 (0-9)
+//
+// 값 옵션:
+//   - oneof=<v1,v2,v3>: 필드가 쉼표로 구분된 값 중 하나여야 함
+//     예제: oneof=admin,user,guest
+//
+// 태그 구문:
+//   - 여러 규칙: 쉼표로 구분 (예: "required,min=3,max=50")
+//   - 값이 있는 규칙: rule=value (예: "min=5")
+//   - 값이 없는 규칙: rule (예: "required")
+//
+// 검증 함수:
+//
+// DefaultValidator.Validate(obj):
+//   - 주요 검증 진입점
+//   - 리플렉션을 사용하여 구조체 필드 반복
+//   - 각 필드에서 "validate" 태그 추출
+//   - 모든 규칙 순차 적용
+//   - 모든 필드의 에러 수집
+//   - 실패 시 ValidationErrors 반환
+//
+// validateField(fieldName, field, tag):
+//   - 쉼표로 구분된 검증 규칙 파싱
+//   - 필드 값에 각 규칙 적용
+//   - 첫 번째 검증 에러 반환
+//
+// applyRule(fieldName, field, ruleName, ruleValue):
+//   - 특정 검증 함수로 디스패치
+//   - 규칙 파싱 처리 ("rule=value" 분할)
+//   - 실패 시 ValidationError 반환
+//
+// 특정 검증자:
+//   - validateRequired(field): 제로가 아닌 값 확인
+//   - validateEmail(field): 정규식 패턴 매칭
+//   - validateMin(field, min): 문자열 길이 또는 숫자 비교
+//   - validateMax(field, max): 문자열 길이 또는 숫자 비교
+//   - validateLen(field, len): 정확한 문자열 길이 확인
+//   - validateEq(field, value): 동등성 확인 (문자열 또는 숫자)
+//   - validateNe(field, value): 부등성 확인
+//   - validateGt/Gte/Lt/Lte(field, value): 숫자 비교
+//   - validateOneOf(field, values): 문자열 멤버십 확인
+//   - validateAlpha/Alphanum/Numeric(field): 문자 클래스 확인
+//
+// 헬퍼 함수:
+//   - isZero(value): 타입의 제로 값인지 확인
+//     처리: string, int, float, bool, pointer, slice, map
+//
+// 컨텍스트 통합:
+//   - Context.BindWithValidation(obj): 한 번의 호출로 바인딩 및 검증
+//     BindJSON/BindForm과 Validate() 결합
+//     바인딩 또는 검증 실패 시 에러 반환
+//
+// 사용 예제:
+//
+//	// 검증 태그가 있는 구조체 정의
+//	type UserRegister struct {
+//	    Username string `json:"username" validate:"required,min=3,max=20,alphanum"`
+//	    Email    string `json:"email" validate:"required,email"`
+//	    Password string `json:"password" validate:"required,min=8"`
+//	    Age      int    `json:"age" validate:"required,gte=18,lte=100"`
+//	    Role     string `json:"role" validate:"required,oneof=admin,user,guest"`
+//	}
+//
+//	// 수동 검증
+//	validator := &DefaultValidator{}
+//	user := UserRegister{
+//	    Username: "jo",      // 너무 짧음
+//	    Email:    "invalid", // 유효하지 않은 이메일
+//	    Age:      15,        // 너무 어림
+//	}
+//	err := validator.Validate(user)
+//	// 3개의 에러가 있는 ValidationErrors 반환
+//
+//	// 핸들러에서 검증
+//	app.POST("/register", func(w http.ResponseWriter, r *http.Request) {
+//	    ctx := GetContext(r)
+//	    var user UserRegister
+//	    if err := ctx.BindWithValidation(&user); err != nil {
+//	        // 검증 에러 처리
+//	        if valErrs, ok := err.(ValidationErrors); ok {
+//	            // 상세한 에러 메시지 반환
+//	            ctx.JSON(400, map[string]interface{}{
+//	                "error": "Validation failed",
+//	                "details": valErrs,
+//	            })
+//	            return
+//	        }
+//	        ctx.JSON(400, map[string]string{"error": err.Error()})
+//	        return
+//	    }
+//	    // 검증된 사용자 데이터로 진행
+//	})
+//
+// 성능:
+//   - 검증 시간: O(n*m), n = 필드 수, m = 필드당 규칙 수
+//   - 리플렉션 사용 (구조체 검사 오버헤드)
+//   - 이메일 검증을 위한 정규식 컴파일 캐시
+//   - 일반적인 폼 검증에 효율적 (<100 필드)
+//
+// 제한사항:
+//   - 구조체 필드만 검증 (중첩 구조체 검증 없음)
+//   - 커스텀 에러 메시지 없음 (일반 메시지만)
+//   - 지원되는 검증 규칙으로 제한
+//   - 리플렉션 기반 (컴파일된 검증자보다 느림)
+//   - 복잡한 검증의 경우 서드파티 라이브러리 고려:
+//     * github.com/go-playground/validator/v10
+//     * github.com/go-ozzo/ozzo-validation
+//
+// 모범 사례:
+//   - 처리 전 항상 사용자 입력 검증
+//   - 결합된 바인딩 + 검증을 위해 BindWithValidation() 사용
+//   - 더 나은 UX를 위해 상세한 ValidationErrors를 클라이언트에 반환
+//   - 명확성을 위해 구조체 태그에 검증 규칙 유지
+//   - 복잡한 규칙을 위한 커스텀 Validator 구현 고려
+//   - 비즈니스 로직은 별도로 검증 (예: 고유 이메일, 기존 사용자)
+
 // ============================================================================
 // Validation
 // 검증

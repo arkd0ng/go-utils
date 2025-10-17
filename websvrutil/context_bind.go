@@ -9,6 +9,84 @@ import (
 	"os"
 )
 
+// context_bind.go provides data binding and file handling methods for the Context type.
+//
+// This file contains methods for parsing request data into Go structs and managing
+// cookies, file uploads, and static file serving:
+//
+// Data Binding:
+//   - BindJSON(): Parse JSON request body into struct
+//     Security: Enforces MaxBodySize limit (default 10MB) to prevent DoS
+//     Uses io.LimitReader for efficient size enforcement
+//   - BindForm(): Parse form-urlencoded data using `form` tags
+//   - BindQuery(): Parse URL query parameters using `form` tags
+//   - Bind(): Automatic binding based on Content-Type header
+//     Supports: application/json, application/x-www-form-urlencoded, multipart/form-data
+//
+// Cookie Operations:
+//   - Cookie(): Get cookie from request by name
+//   - SetCookie(): Add Set-Cookie header to response
+//   - DeleteCookie(): Remove cookie by setting MaxAge to -1
+//   - GetCookie(): Convenience method to get cookie value directly
+//
+// File Upload:
+//   - FormFile(): Retrieve uploaded file from multipart form
+//   - MultipartForm(): Get parsed multipart form with all files
+//     Security: Enforces MaxUploadSize limit (default 32MB)
+//   - SaveUploadedFile(): Save uploaded file to disk location
+//
+// Static File Serving:
+//   - File(): Send file response with automatic MIME type detection
+//   - FileAttachment(): Send file as downloadable attachment
+//     Sets Content-Disposition header for download dialog
+//
+// Security Features:
+// - Body size limits prevent memory exhaustion attacks
+// - Uses io.LimitReader for efficient memory-safe parsing
+// - Configurable limits via WithMaxBodySize() and WithMaxUploadSize()
+//
+// All binding methods use struct tags (`form:"fieldname"`) for field mapping,
+// providing a declarative and type-safe approach to request data parsing.
+//
+// context_bind.go는 Context 타입을 위한 데이터 바인딩 및 파일 처리 메서드를 제공합니다.
+//
+// 이 파일은 요청 데이터를 Go 구조체로 파싱하고 쿠키, 파일 업로드,
+// 정적 파일 서빙을 관리하는 메서드를 포함합니다:
+//
+// 데이터 바인딩:
+//   - BindJSON(): JSON 요청 본문을 구조체로 파싱
+//     보안: DoS 방지를 위해 MaxBodySize 제한 강제 (기본 10MB)
+//     효율적인 크기 강제를 위해 io.LimitReader 사용
+//   - BindForm(): `form` 태그를 사용하여 form-urlencoded 데이터 파싱
+//   - BindQuery(): `form` 태그를 사용하여 URL 쿼리 매개변수 파싱
+//   - Bind(): Content-Type 헤더 기반 자동 바인딩
+//     지원: application/json, application/x-www-form-urlencoded, multipart/form-data
+//
+// 쿠키 작업:
+//   - Cookie(): 이름으로 요청에서 쿠키 가져오기
+//   - SetCookie(): 응답에 Set-Cookie 헤더 추가
+//   - DeleteCookie(): MaxAge를 -1로 설정하여 쿠키 제거
+//   - GetCookie(): 쿠키 값을 직접 가져오는 편의 메서드
+//
+// 파일 업로드:
+//   - FormFile(): multipart 폼에서 업로드된 파일 가져오기
+//   - MultipartForm(): 모든 파일이 포함된 파싱된 multipart 폼 가져오기
+//     보안: MaxUploadSize 제한 강제 (기본 32MB)
+//   - SaveUploadedFile(): 업로드된 파일을 디스크 위치에 저장
+//
+// 정적 파일 서빙:
+//   - File(): 자동 MIME 타입 감지와 함께 파일 응답 전송
+//   - FileAttachment(): 다운로드 가능한 첨부 파일로 파일 전송
+//     다운로드 대화상자를 위한 Content-Disposition 헤더 설정
+//
+// 보안 기능:
+// - 본문 크기 제한으로 메모리 고갈 공격 방지
+// - 효율적이고 메모리 안전한 파싱을 위해 io.LimitReader 사용
+// - WithMaxBodySize() 및 WithMaxUploadSize()를 통한 설정 가능한 제한
+//
+// 모든 바인딩 메서드는 필드 매핑을 위해 구조체 태그(`form:"fieldname"`)를 사용하여
+// 요청 데이터 파싱에 대한 선언적이고 타입 안전한 접근 방식을 제공합니다.
+
 // ============================================================================
 // Data Binding
 // 데이터 바인딩

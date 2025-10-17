@@ -7,6 +7,86 @@ import (
 	"net/http"
 )
 
+// context_response.go provides HTTP response writing methods for the Context type.
+//
+// This file contains methods for generating various types of HTTP responses:
+//
+// Basic Response Writing:
+//   - Status(): Set HTTP status code
+//   - Write(), WriteString(): Low-level response body writing
+//
+// JSON Responses:
+//   - JSON(): Standard JSON response with automatic marshaling
+//   - JSONIndent(): JSON with custom indentation (debugging)
+//   - JSONPretty(): JSON with 2-space indentation (convenience)
+//
+// HTML Responses:
+//   - HTML(): Send raw HTML string
+//   - HTMLTemplate(): Parse and execute inline template with data
+//
+// Text Responses:
+//   - Text(): Plain text response
+//   - Textf(): Formatted plain text (uses fmt.Sprintf)
+//
+// XML Responses:
+//   - XML(): Send XML string with proper content-type
+//
+// Template Rendering:
+//   - Render(): Render template file from template engine
+//   - RenderWithLayout(): Render template with layout wrapper
+//   (Requires App's template engine to be initialized)
+//
+// Redirects:
+//   - Redirect(): HTTP redirect with status code (301, 302, 307, 308)
+//   - NoContent(): Send 204 No Content (useful for DELETE)
+//
+// Error Responses:
+//   - Error(): Convenience method for JSON error responses
+//     Automatically includes error text, message, and status code
+//
+// All methods automatically set appropriate Content-Type headers and handle
+// encoding/marshaling internally, providing a high-level API for response generation.
+//
+// context_response.go는 Context 타입을 위한 HTTP 응답 작성 메서드를 제공합니다.
+//
+// 이 파일은 다양한 유형의 HTTP 응답을 생성하는 메서드를 포함합니다:
+//
+// 기본 응답 작성:
+//   - Status(): HTTP 상태 코드 설정
+//   - Write(), WriteString(): 저수준 응답 본문 작성
+//
+// JSON 응답:
+//   - JSON(): 자동 마샬링이 있는 표준 JSON 응답
+//   - JSONIndent(): 사용자 정의 들여쓰기가 있는 JSON (디버깅)
+//   - JSONPretty(): 2칸 들여쓰기가 있는 JSON (편의)
+//
+// HTML 응답:
+//   - HTML(): 원시 HTML 문자열 전송
+//   - HTMLTemplate(): 데이터로 인라인 템플릿 파싱 및 실행
+//
+// 텍스트 응답:
+//   - Text(): 일반 텍스트 응답
+//   - Textf(): 형식화된 일반 텍스트 (fmt.Sprintf 사용)
+//
+// XML 응답:
+//   - XML(): 적절한 콘텐츠 타입과 함께 XML 문자열 전송
+//
+// 템플릿 렌더링:
+//   - Render(): 템플릿 엔진에서 템플릿 파일 렌더링
+//   - RenderWithLayout(): 레이아웃 래퍼와 함께 템플릿 렌더링
+//   (App의 템플릿 엔진이 초기화되어야 함)
+//
+// 리다이렉트:
+//   - Redirect(): 상태 코드가 있는 HTTP 리다이렉트 (301, 302, 307, 308)
+//   - NoContent(): 204 No Content 전송 (DELETE에 유용)
+//
+// 에러 응답:
+//   - Error(): JSON 에러 응답을 위한 편의 메서드
+//     자동으로 에러 텍스트, 메시지, 상태 코드 포함
+//
+// 모든 메서드는 적절한 Content-Type 헤더를 자동으로 설정하고
+// 인코딩/마샬링을 내부적으로 처리하여 응답 생성을 위한 고수준 API를 제공합니다.
+
 // ============================================================================
 // Response Writing
 // 응답 작성

@@ -10,6 +10,274 @@ import (
 	"time"
 )
 
+// csrf.go provides Cross-Site Request Forgery (CSRF) protection middleware.
+//
+// This file implements a comprehensive CSRF protection system that prevents
+// unauthorized commands from being transmitted from a user that the web application trusts:
+//
+// Core Components:
+//
+// CSRFConfig:
+//   - Configuration for CSRF protection behavior
+//   - Token generation, validation, cookie settings
+//   - Customizable token lookup (header/form/query)
+//   - Cookie attributes (Secure, HttpOnly, SameSite)
+//   - Error handling and validation skipping
+//
+// csrfTokenStore:
+//   - Thread-safe in-memory token storage with expiration
+//   - RWMutex-protected concurrent access
+//   - Automatic cleanup of expired tokens (hourly)
+//   - Global singleton instance (globalCSRFStore)
+//
+// Middleware Functions:
+//   - CSRF(): Default CSRF protection with standard config
+//   - CSRFWithConfig(config): Customizable CSRF protection
+//   - GetCSRFToken(ctx): Retrieve token for use in templates
+//
+// Token Management:
+//   - generateCSRFToken(length): Generate cryptographically secure random tokens
+//     Uses crypto/rand for unpredictability
+//     Default length: 32 bytes (256 bits)
+//     Encoded as base64 for safe transmission
+//   - getOrCreateCSRFToken(): Get existing or create new token
+//     Stores token in cookie for client-side persistence
+//     Adds token to server-side store with expiration
+//   - validateCSRFToken(): Verify token matches expected value
+//     Uses subtle.ConstantTimeCompare to prevent timing attacks
+//
+// Token Lookup Strategies:
+//   - Header: "header:X-CSRF-Token" (default, recommended for AJAX)
+//   - Form: "form:csrf_token" (for standard form submissions)
+//   - Query: "query:csrf_token" (less common, useful for GET-based APIs)
+//
+// Protection Flow:
+//   1. Middleware intercepts incoming request
+//   2. If safe method (GET, HEAD, OPTIONS, TRACE), generate/refresh token
+//   3. If unsafe method (POST, PUT, PATCH, DELETE):
+//      - Extract token from configured location (header/form/query)
+//      - Validate token matches server-side stored value
+//      - Return 403 Forbidden if validation fails
+//   4. Token stored in cookie and server-side store
+//   5. Application retrieves token via GetCSRFToken() for rendering
+//
+// Cookie Configuration:
+//   - CookieName: Cookie name (default: "_csrf")
+//   - CookiePath: Cookie path scope (default: "/")
+//   - CookieDomain: Cookie domain restriction
+//   - CookieSecure: HTTPS-only transmission (recommended for production)
+//   - CookieHTTPOnly: Prevent JavaScript access (default: true)
+//   - CookieSameSite: SameSite attribute (default: SameSiteStrictMode)
+//     Options: SameSiteStrictMode, SameSiteLaxMode, SameSiteNoneMode
+//   - CookieMaxAge: Token lifetime in seconds (default: 86400 = 24 hours)
+//
+// Security Features:
+//   - Cryptographically secure token generation (crypto/rand)
+//   - Constant-time comparison (subtle.ConstantTimeCompare)
+//     Prevents timing attacks that could leak token information
+//   - Token expiration with automatic cleanup
+//   - Per-request token validation
+//   - Safe method exemption (GET/HEAD/OPTIONS/TRACE)
+//   - Configurable validation skipping (Skipper function)
+//
+// Token Store:
+//   - Thread-safe with RWMutex
+//   - In-memory storage (tokens lost on server restart)
+//   - Automatic hourly cleanup of expired tokens
+//   - Token expiration tracked server-side
+//
+// Error Handling:
+//   - Default: Returns 403 Forbidden with error message
+//   - Custom: Provide ErrorHandler function in config
+//   - Validation errors include detailed reason
+//
+// Example usage:
+//
+//	// Basic CSRF protection
+//	app := New()
+//	app.Use(CSRF())
+//
+//	// Custom CSRF configuration
+//	app.Use(CSRFWithConfig(CSRFConfig{
+//	    TokenLength:    32,
+//	    TokenLookup:    "header:X-CSRF-Token",
+//	    CookieName:     "_csrf",
+//	    CookieSecure:   true,  // HTTPS only
+//	    CookieSameSite: http.SameSiteStrictMode,
+//	    CookieMaxAge:   86400, // 24 hours
+//	    Skipper: func(r *http.Request) bool {
+//	        // Skip CSRF for API endpoints with Bearer auth
+//	        return strings.HasPrefix(r.Header.Get("Authorization"), "Bearer ")
+//	    },
+//	}))
+//
+//	// Using token in templates
+//	app.GET("/form", func(w http.ResponseWriter, r *http.Request) {
+//	    ctx := GetContext(r)
+//	    csrfToken := GetCSRFToken(ctx)
+//	    // Render form with: <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+//	    ctx.Render(200, "form.html", map[string]string{"CSRFToken": csrfToken})
+//	})
+//
+//	// Form submission protected by CSRF
+//	app.POST("/submit", func(w http.ResponseWriter, r *http.Request) {
+//	    // CSRF validation happens automatically
+//	    // Handler only executes if validation passes
+//	    // Process form submission...
+//	})
+//
+// Performance:
+//   - Token generation: ~10µs (crypto/rand)
+//   - Validation: O(1) map lookup + constant-time comparison
+//   - Memory: ~100 bytes per active token
+//   - Cleanup: Runs hourly, removes expired tokens
+//
+// Limitations:
+//   - In-memory storage (not suitable for multi-server deployments without sticky sessions)
+//   - Tokens lost on server restart
+//   - For distributed systems, consider external token store (Redis, database)
+//
+// Best Practices:
+//   - Always use HTTPS in production (set CookieSecure: true)
+//   - Use SameSiteStrictMode for maximum protection
+//   - Set appropriate token expiration (balance security vs. user experience)
+//   - Include CSRF token in all state-changing forms
+//   - Use header-based tokens for AJAX requests
+//
+// csrf.go는 Cross-Site Request Forgery (CSRF) 보호 미들웨어를 제공합니다.
+//
+// 이 파일은 웹 애플리케이션이 신뢰하는 사용자로부터 전송되는
+// 무단 명령을 방지하는 포괄적인 CSRF 보호 시스템을 구현합니다:
+//
+// 핵심 컴포넌트:
+//
+// CSRFConfig:
+//   - CSRF 보호 동작 설정
+//   - 토큰 생성, 검증, 쿠키 설정
+//   - 커스터마이징 가능한 토큰 조회 (헤더/폼/쿼리)
+//   - 쿠키 속성 (Secure, HttpOnly, SameSite)
+//   - 에러 처리 및 검증 건너뛰기
+//
+// csrfTokenStore:
+//   - 만료가 있는 스레드 안전 인메모리 토큰 저장소
+//   - RWMutex로 보호된 동시 접근
+//   - 만료된 토큰의 자동 정리 (시간당)
+//   - 전역 싱글톤 인스턴스 (globalCSRFStore)
+//
+// 미들웨어 함수:
+//   - CSRF(): 표준 설정으로 기본 CSRF 보호
+//   - CSRFWithConfig(config): 커스터마이징 가능한 CSRF 보호
+//   - GetCSRFToken(ctx): 템플릿에서 사용할 토큰 검색
+//
+// 토큰 관리:
+//   - generateCSRFToken(length): 암호학적으로 안전한 랜덤 토큰 생성
+//     예측 불가능성을 위해 crypto/rand 사용
+//     기본 길이: 32바이트 (256비트)
+//     안전한 전송을 위해 base64로 인코딩
+//   - getOrCreateCSRFToken(): 기존 토큰 가져오기 또는 새 토큰 생성
+//     클라이언트 측 지속성을 위해 쿠키에 토큰 저장
+//     만료와 함께 서버 측 저장소에 토큰 추가
+//   - validateCSRFToken(): 토큰이 예상 값과 일치하는지 확인
+//     타이밍 공격 방지를 위해 subtle.ConstantTimeCompare 사용
+//
+// 토큰 조회 전략:
+//   - 헤더: "header:X-CSRF-Token" (기본, AJAX에 권장)
+//   - 폼: "form:csrf_token" (표준 폼 제출용)
+//   - 쿼리: "query:csrf_token" (덜 일반적, GET 기반 API에 유용)
+//
+// 보호 흐름:
+//   1. 미들웨어가 들어오는 요청 가로챔
+//   2. 안전한 메서드 (GET, HEAD, OPTIONS, TRACE)인 경우, 토큰 생성/갱신
+//   3. 안전하지 않은 메서드 (POST, PUT, PATCH, DELETE)인 경우:
+//      - 설정된 위치 (헤더/폼/쿼리)에서 토큰 추출
+//      - 토큰이 서버 측 저장 값과 일치하는지 검증
+//      - 검증 실패 시 403 Forbidden 반환
+//   4. 토큰을 쿠키 및 서버 측 저장소에 저장
+//   5. 애플리케이션이 렌더링을 위해 GetCSRFToken()을 통해 토큰 검색
+//
+// 쿠키 설정:
+//   - CookieName: 쿠키 이름 (기본: "_csrf")
+//   - CookiePath: 쿠키 경로 범위 (기본: "/")
+//   - CookieDomain: 쿠키 도메인 제한
+//   - CookieSecure: HTTPS 전용 전송 (프로덕션에 권장)
+//   - CookieHTTPOnly: JavaScript 접근 방지 (기본: true)
+//   - CookieSameSite: SameSite 속성 (기본: SameSiteStrictMode)
+//     옵션: SameSiteStrictMode, SameSiteLaxMode, SameSiteNoneMode
+//   - CookieMaxAge: 토큰 수명 (초) (기본: 86400 = 24시간)
+//
+// 보안 기능:
+//   - 암호학적으로 안전한 토큰 생성 (crypto/rand)
+//   - 상수 시간 비교 (subtle.ConstantTimeCompare)
+//     토큰 정보 유출 가능한 타이밍 공격 방지
+//   - 자동 정리가 있는 토큰 만료
+//   - 요청별 토큰 검증
+//   - 안전한 메서드 면제 (GET/HEAD/OPTIONS/TRACE)
+//   - 설정 가능한 검증 건너뛰기 (Skipper 함수)
+//
+// 토큰 저장소:
+//   - RWMutex로 스레드 안전
+//   - 인메모리 저장 (서버 재시작 시 토큰 손실)
+//   - 만료된 토큰의 자동 시간당 정리
+//   - 서버 측 토큰 만료 추적
+//
+// 에러 처리:
+//   - 기본: 에러 메시지와 함께 403 Forbidden 반환
+//   - 커스텀: 설정에서 ErrorHandler 함수 제공
+//   - 검증 에러는 상세한 이유 포함
+//
+// 사용 예제:
+//
+//	// 기본 CSRF 보호
+//	app := New()
+//	app.Use(CSRF())
+//
+//	// 커스텀 CSRF 설정
+//	app.Use(CSRFWithConfig(CSRFConfig{
+//	    TokenLength:    32,
+//	    TokenLookup:    "header:X-CSRF-Token",
+//	    CookieName:     "_csrf",
+//	    CookieSecure:   true,  // HTTPS 전용
+//	    CookieSameSite: http.SameSiteStrictMode,
+//	    CookieMaxAge:   86400, // 24시간
+//	    Skipper: func(r *http.Request) bool {
+//	        // Bearer 인증이 있는 API 엔드포인트는 CSRF 건너뜀
+//	        return strings.HasPrefix(r.Header.Get("Authorization"), "Bearer ")
+//	    },
+//	}))
+//
+//	// 템플릿에서 토큰 사용
+//	app.GET("/form", func(w http.ResponseWriter, r *http.Request) {
+//	    ctx := GetContext(r)
+//	    csrfToken := GetCSRFToken(ctx)
+//	    // 폼 렌더링: <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+//	    ctx.Render(200, "form.html", map[string]string{"CSRFToken": csrfToken})
+//	})
+//
+//	// CSRF로 보호되는 폼 제출
+//	app.POST("/submit", func(w http.ResponseWriter, r *http.Request) {
+//	    // CSRF 검증이 자동으로 발생
+//	    // 검증 통과 시에만 핸들러 실행
+//	    // 폼 제출 처리...
+//	})
+//
+// 성능:
+//   - 토큰 생성: ~10µs (crypto/rand)
+//   - 검증: O(1) 맵 조회 + 상수 시간 비교
+//   - 메모리: 활성 토큰당 ~100바이트
+//   - 정리: 시간당 실행, 만료된 토큰 제거
+//
+// 제한사항:
+//   - 인메모리 저장 (스티키 세션 없이 다중 서버 배포에 적합하지 않음)
+//   - 서버 재시작 시 토큰 손실
+//   - 분산 시스템의 경우 외부 토큰 저장소 고려 (Redis, 데이터베이스)
+//
+// 모범 사례:
+//   - 프로덕션에서 항상 HTTPS 사용 (CookieSecure: true 설정)
+//   - 최대 보호를 위해 SameSiteStrictMode 사용
+//   - 적절한 토큰 만료 설정 (보안과 사용자 경험 균형)
+//   - 모든 상태 변경 폼에 CSRF 토큰 포함
+//   - AJAX 요청에 헤더 기반 토큰 사용
+
 // ============================================================================
 // CSRF Protection
 // CSRF 보호

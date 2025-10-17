@@ -2,6 +2,22 @@ package websvrutil
 
 import "time"
 
+// This file contains package-level constants for websvrutil configuration.
+// These constants provide default values, size limits, and standard HTTP headers.
+//
+// Constant Categories:
+// - Timeout configurations (read, write, idle)
+// - Size limits (headers, body, uploads)
+// - Session configurations (max age, cookie names, cleanup intervals)
+// - Content-Type values (JSON, HTML, XML, form data)
+// - HTTP header names (for consistent header access)
+//
+// These constants are used throughout the package to ensure consistency
+// and provide sensible defaults for web server applications.
+//
+// 이 파일에는 websvrutil 구성을 위한 패키지 수준 상수가 포함되어 있습니다.
+// 이러한 상수는 기본값, 크기 제한 및 표준 HTTP 헤더를 제공합니다.
+
 // Default timeout configurations
 // 기본 타임아웃 설정
 const (
