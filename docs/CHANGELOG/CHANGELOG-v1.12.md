@@ -6,6 +6,56 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.009] - 2025-10-17
+
+### Added / 추가
+- N/A
+
+### Changed / 변경
+- examples/logging/main.go의 모든 주석을 영문/한글 병기로 개선하고 초보자 친화적으로 작성
+- examples/websvrutil/main.go의 인라인 주석에 한글 병기 추가
+- 로그 출력 메시지를 영문/한글 병기로 변경하여 예제 명확성 향상
+- 헤더 정보 섹션을 문서 표준에 맞게 이중 언어로 확장
+- 미들웨어 테스트 설명을 영문과 한글로 명확히 개선
+
+### Fixed / 수정
+- N/A
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - 버전을 v1.12.008에서 v1.12.009로 증가
+- `examples/logging/main.go` - 모든 주석과 로그 메시지를 영문/한글 병기로 개선
+- `examples/websvrutil/main.go` - 인라인 주석 및 미들웨어 설명에 한글 추가
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.009 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+별도 세션에서 진행된 문서/주석 보강 작업을 CHANGELOG에 반영 (CHANGELOG-specials.md 참조)
+
+**Why / 이유**:
+- CLAUDE.md의 언어 사용 정책(영문/한글 병기, 매우 상세하고 친절한 주석) 준수
+- 예제 코드의 교육적 가치 향상
+- 한국어 사용자의 접근성 개선
+- 초보자도 쉽게 이해할 수 있는 친절한 주석 제공
+
+**Implementation Details / 구현 세부사항**:
+
+1. **examples/logging/main.go 개선**:
+   - 모든 함수 주석을 더 상세하고 친절하게 작성
+   - 모든 로그 메시지에 한글 병기
+   - displayHeader 함수의 모든 정보를 이중 언어로 표시
+
+2. **examples/websvrutil/main.go 개선**:
+   - 영문 전용 인라인 주석에 한글 병기
+   - 미들웨어 테스트 설명을 영문과 한글로 명확히 작성
+
+**Impact / 영향**:
+- 한국어 사용자의 예제 코드 이해도 대폭 향상
+- 국제화된 코드베이스 표준 수립
+- 별도 세션 문서 작업이 메인 CHANGELOG에 통합되는 프로세스 확립
+
+---
+
 ## [v1.12.008] - 2025-10-17
 
 ### Added / 추가
