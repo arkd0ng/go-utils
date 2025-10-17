@@ -28,7 +28,10 @@ func (c *Context) Path() string {
 // Example
 // 예제:
 //
-// // URL: /search?q=golang&page=2 / q := ctx.Query("q")       // Returns "golang" / "golang" 반환
+// // URL: /search?q=golang&page=2
+// q := ctx.Query("q")       // Returns "golang"
+// "golang" 반환
+//
 //	page := ctx.Query("page") // Returns "2" / "2" 반환
 func (c *Context) Query(key string) string {
 	return c.Request.URL.Query().Get(key)
@@ -160,13 +163,18 @@ func (c *Context) Referer() string {
 //
 // Priority order for IP detection
 // IP 감지 우선순위:
-//   1. X-Forwarded-For header (first IP in comma-separated list)
-//   2. X-Real-IP header
-//   3. RemoteAddr (direct connection)
 //
-//   1. X-Forwarded-For 헤더 (쉼표로 구분된 목록의 첫 번째 IP)
-//   2. X-Real-IP 헤더
-//   3. RemoteAddr (직접 연결)
+//  1. X-Forwarded-For header (first IP in comma-separated list)
+//
+//  2. X-Real-IP header
+//
+//  3. RemoteAddr (direct connection)
+//
+//  1. X-Forwarded-For 헤더 (쉼표로 구분된 목록의 첫 번째 IP)
+//
+//  2. X-Real-IP 헤더
+//
+//  3. RemoteAddr (직접 연결)
 //
 // Header details
 // 헤더 세부정보:
@@ -220,18 +228,21 @@ func (c *Context) Referer() string {
 // 시나리오 예제:
 //
 // Direct connection (no proxy):
-//   RemoteAddr: "203.0.113.195:54321"
-//   Returns: "203.0.113.195"
+//
+//	RemoteAddr: "203.0.113.195:54321"
+//	Returns: "203.0.113.195"
 //
 // Behind nginx reverse proxy:
-//   X-Real-IP: "203.0.113.195"
-//   RemoteAddr: "127.0.0.1:8080" (nginx internal)
-//   Returns: "203.0.113.195" (from X-Real-IP)
+//
+//	X-Real-IP: "203.0.113.195"
+//	RemoteAddr: "127.0.0.1:8080" (nginx internal)
+//	Returns: "203.0.113.195" (from X-Real-IP)
 //
 // Behind CloudFlare CDN:
-//   X-Forwarded-For: "203.0.113.195, 104.16.133.229"
-//   RemoteAddr: "104.16.133.229:443" (CloudFlare IP)
-//   Returns: "203.0.113.195" (first IP from X-Forwarded-For)
+//
+//	X-Forwarded-For: "203.0.113.195, 104.16.133.229"
+//	RemoteAddr: "104.16.133.229:443" (CloudFlare IP)
+//	Returns: "203.0.113.195" (first IP from X-Forwarded-For)
 //
 // Example usage
 // 사용 예제:

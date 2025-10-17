@@ -73,6 +73,7 @@ func Newf(format string, args ...interface{}) error {
 // Parameters
 // 매개변수:
 //   - code: The error code (e.g., "ERR001", "VALIDATION_ERROR") / 에러 코드 (예: "ERR001", "VALIDATION_ERROR")
+//
 // - message: The error message
 // 에러 메시지
 //
@@ -89,7 +90,11 @@ func Newf(format string, args ...interface{}) error {
 //
 //	err := errorutil.WithCode("ERR001", "invalid input")
 //	fmt.Println(err.Error()) // Output: [ERR001] invalid input
-// if errorutil.HasCode(err, "ERR001") { / handle specific error / 특정 에러 처리
+//
+// if errorutil.HasCode(err, "ERR001") {
+// handle specific error
+// 특정 에러 처리
+//
 //	}
 func WithCode(code, message string) error {
 	return &codedError{
@@ -158,8 +163,11 @@ func WithCodef(code, format string, args ...interface{}) error {
 //
 //	err := errorutil.WithNumericCode(404, "user not found")
 //	fmt.Println(err.Error()) // Output: [404] user not found
+//
 // if errorutil.HasNumericCode(err, 404) {
-// handle 404 error / 404 에러 처리
+// handle 404 error
+// 404 에러 처리
+//
 //	}
 func WithNumericCode(code int, message string) error {
 	return &numericCodedError{
@@ -233,7 +241,9 @@ func WithNumericCodef(code int, format string, args ...interface{}) error {
 // // Check the underlying error
 // 기저 에러 확인
 // if errors.Is(wrapped, original) {
-// handle specific error / 특정 에러 처리
+// handle specific error
+// 특정 에러 처리
+//
 //	}
 func Wrap(cause error, message string) error {
 	if cause == nil {
@@ -313,7 +323,10 @@ func Wrapf(cause error, format string, args ...interface{}) error {
 //
 // // Check error code
 // 에러 코드 확인
-// if errorutil.HasCode(wrapped, "ERR001") { / handle validation error / 검증 에러 처리
+// if errorutil.HasCode(wrapped, "ERR001") {
+// handle validation error
+// 검증 에러 처리
+//
 //	}
 func WrapWithCode(cause error, code, message string) error {
 	if cause == nil {
@@ -398,7 +411,9 @@ func WrapWithCodef(cause error, code, format string, args ...interface{}) error 
 // // Check error code
 // 에러 코드 확인
 // if errorutil.HasNumericCode(wrapped, 500) {
-// handle 500 error / 500 에러 처리
+// handle 500 error
+// 500 에러 처리
+//
 //	}
 func WrapWithNumericCode(cause error, code int, message string) error {
 	if cause == nil {

@@ -30,15 +30,20 @@
 //
 // // Create error with code
 // 코드와 함께 에러 생성
+//
 //	err := errorutil.WithCode("ERR001", "invalid input")
 //
 // // Wrap error with context
 // 컨텍스트와 함께 에러 래핑
+//
 //	err = errorutil.Wrap(err, "failed to process user data")
 //
 // // Check error code
 // 에러 코드 확인
-// if errorutil.HasCode(err, "ERR001") { / handle specific error / 특정 에러 처리
+// if errorutil.HasCode(err, "ERR001") {
+// handle specific error
+// 특정 에러 처리
+//
 //	}
 package errorutil
 

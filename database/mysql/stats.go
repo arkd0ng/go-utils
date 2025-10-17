@@ -32,17 +32,17 @@ type SlowQueryHandler func(info SlowQueryInfo)
 // queryStatsTracker tracks query execution statistics
 // queryStatsTracker는 쿼리 실행 통계를 추적합니다
 type queryStatsTracker struct {
-	mu                 sync.RWMutex        // Synchronization / 동기화
-	totalQueries       int64               // Total queries / 총 쿼리
-	successQueries     int64               // Success queries / 성공 쿼리
-	failedQueries      int64               // Failed queries / 실패 쿼리
-	totalDuration      time.Duration       // Total duration / 총 실행 시간
-	slowQueries        int64               // Slow queries / 느린 쿼리
-	slowQueryThreshold time.Duration       // Slow query threshold / 느린 쿼리 임계값
-	slowQueryHandler   SlowQueryHandler    // Slow query handler / 느린 쿼리 핸들러
-	slowQueryLog       []SlowQueryInfo     // Slow query log / 느린 쿼리 로그
-	maxSlowQueryLog    int                 // Maximum slow query log size / 최대 느린 쿼리 로그 크기
-	enabled            bool                // Whether stats tracking is enabled / 통계 추적 활성화 여부
+	mu                 sync.RWMutex     // Synchronization / 동기화
+	totalQueries       int64            // Total queries / 총 쿼리
+	successQueries     int64            // Success queries / 성공 쿼리
+	failedQueries      int64            // Failed queries / 실패 쿼리
+	totalDuration      time.Duration    // Total duration / 총 실행 시간
+	slowQueries        int64            // Slow queries / 느린 쿼리
+	slowQueryThreshold time.Duration    // Slow query threshold / 느린 쿼리 임계값
+	slowQueryHandler   SlowQueryHandler // Slow query handler / 느린 쿼리 핸들러
+	slowQueryLog       []SlowQueryInfo  // Slow query log / 느린 쿼리 로그
+	maxSlowQueryLog    int              // Maximum slow query log size / 최대 느린 쿼리 로그 크기
+	enabled            bool             // Whether stats tracking is enabled / 통계 추적 활성화 여부
 }
 
 // newQueryStatsTracker creates a new query stats tracker
@@ -195,6 +195,7 @@ func (c *Client) GetQueryStats() QueryStats {
 //
 // // Reset stats to start fresh
 // 새로 시작하기 위해 통계 재설정
+//
 //	client.ResetQueryStats()
 func (c *Client) ResetQueryStats() {
 	if c.statsTracker != nil {
@@ -213,6 +214,7 @@ func (c *Client) ResetQueryStats() {
 //
 // // Log queries that take longer than 1 second
 // 1초 이상 걸리는 쿼리 로깅
+//
 //	client.EnableSlowQueryLog(1*time.Second, func(info mysql.SlowQueryInfo) {
 //	    log.Printf("Slow query detected: %s (took %v)", info.Query, info.Duration)
 //	})
@@ -221,11 +223,14 @@ func (c *Client) ResetQueryStats() {
 // 커스텀 처리 예제:
 //
 // client.EnableSlowQueryLog(500*time.Millisecond, func(info mysql.SlowQueryInfo) {
-// Send to monitoring system / 모니터링 시스템으로 전송
-//	    metrics.RecordSlowQuery(info.Query, info.Duration)
+// Send to monitoring system
+// 모니터링 시스템으로 전송
+//
+//	metrics.RecordSlowQuery(info.Query, info.Duration)
 //
 // // Log with details
 // 세부 정보와 함께 로깅
+//
 //	    logger.Warn("Slow query",
 //	        "query", info.Query,
 //	        "args", info.Args,
@@ -249,6 +254,7 @@ func (c *Client) EnableSlowQueryLog(threshold time.Duration, handler SlowQueryHa
 //
 // // Get last 10 slow queries
 // 최근 10개의 느린 쿼리 가져오기
+//
 //	slowQueries := client.GetSlowQueries(10)
 //	for _, sq := range slowQueries {
 //	    fmt.Printf("Query: %s\n", sq.Query)
@@ -266,7 +272,10 @@ func (c *Client) EnableSlowQueryLog(threshold time.Duration, handler SlowQueryHa
 //	    for _, sq := range slowQueries {
 //	        totalDuration += sq.Duration
 //	    }
-//	    avgDuration := totalDuration / time.Duration(len(slowQueries))
+//
+// avgDuration := totalDuration
+// time.Duration(len(slowQueries))
+//
 //	    fmt.Printf("Average slow query duration: %v\n", avgDuration)
 //	}
 func (c *Client) GetSlowQueries(limit int) []SlowQueryInfo {
@@ -293,6 +302,7 @@ func (c *Client) GetSlowQueries(limit int) []SlowQueryInfo {
 //
 // // Check statistics
 // 통계 확인
+//
 //	stats := client.GetQueryStats()
 //	fmt.Printf("Total queries: %d\n", stats.TotalQueries)
 func (c *Client) EnableQueryStats() {
@@ -314,6 +324,7 @@ func (c *Client) EnableQueryStats() {
 //
 // // Temporarily disable stats tracking
 // 일시적으로 통계 추적 비활성화
+//
 //	client.DisableQueryStats()
 //	// ... perform operations ...
 //	client.EnableQueryStats()

@@ -6,6 +6,78 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.011] - 2025-10-17
+
+### Added / 추가
+- docs/errorutil/USER_MANUAL.md 작성 (포괄적인 사용자 매뉴얼)
+- 12개 주요 섹션 포함: 소개, 설치, 빠른 시작, 핵심 개념, 에러 생성, 에러 래핑, 에러 검사, 고급 사용법, 모범 사례, 일반 패턴, 문제 해결, API 참조
+- 실전 사용 패턴 4가지 제공 (검증 에러, 데이터베이스 에러, 외부 서비스 에러, 재시도 로직)
+- 완전한 API 참조 문서 (18개 함수, 매개변수, 반환값, 예제 포함)
+
+### Changed / 변경
+- N/A
+
+### Fixed / 수정
+- N/A
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - 버전을 v1.12.010에서 v1.12.011로 증가
+- `docs/errorutil/USER_MANUAL.md` - 새 파일 생성 (1000+ 줄, 포괄적인 사용자 매뉴얼)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.011 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+errorutil 패키지 문서화 작업 계속 진행 - USER_MANUAL.md 작성
+
+**Why / 이유**:
+- README는 빠른 시작용, USER_MANUAL은 상세 학습용
+- 사용자가 errorutil의 모든 기능을 완전히 이해할 수 있도록 지원
+- 실전 패턴과 문제 해결 가이드 제공
+- 초보자부터 고급 사용자까지 모든 수준에 대응
+
+**Implementation Details / 구현 세부사항**:
+
+1. **매뉴얼 구조**:
+   - Introduction: errorutil 소개 및 사용 이유
+   - Installation: 설치 및 확인 방법
+   - Quick Start: 5가지 기본 사용 예제
+   - Core Concepts: 에러 체인, 에러 코드, 에러 인터페이스
+   - Error Creation: 6개 함수 상세 설명
+   - Error Wrapping: 6개 함수 상세 설명 및 다중 레벨 래핑
+   - Error Inspection: 4개 함수 상세 설명
+   - Advanced Usage: 표준 라이브러리 호환성, HTTP API, 커스텀 타입, 분류 시스템
+   - Best Practices: 6가지 모범 사례 (✅ Good / ❌ Bad 예제)
+   - Common Patterns: 4가지 실전 패턴 (검증, DB, 외부 서비스, 재시도)
+   - Troubleshooting: 4가지 일반 문제 해결
+   - API Reference: 18개 함수 완전 문서화
+
+2. **주요 내용**:
+   - 각 함수에 대한 상세 설명, 매개변수, 반환값, 예제
+   - Why use errorutil? - 표준 라이브러리 대비 장점
+   - Error chains 개념 및 다중 레벨 래핑 예제
+   - String vs Numeric codes 사용 시기
+   - HTTP API 에러 처리 완전 예제
+   - 커스텀 에러 타입 구현 방법
+   - 에러 분류 시스템 구축 방법
+   - 재시도 로직 구현 패턴
+
+3. **교육적 요소**:
+   - 모든 섹션에 영문/한글 병기
+   - ✅ Good / ❌ Bad 비교 예제
+   - 실전 시나리오 (HTTP handler, database, validation)
+   - 문제 상황과 해결 방법 제시
+   - 완전한 코드 예제 (복사하여 바로 사용 가능)
+
+**Impact / 영향**:
+- 사용자가 errorutil의 모든 기능을 단계적으로 학습 가능
+- 실전 패턴을 통해 즉시 프로젝트에 적용 가능
+- 문제 해결 섹션으로 일반적인 실수 예방
+- DEVELOPER_GUIDE 작성을 위한 기반 마련
+- 문서 품질: README (Quick Start) → USER_MANUAL (Complete Guide) → DEVELOPER_GUIDE (Architecture)
+
+---
+
 ## [v1.12.010] - 2025-10-17
 
 ### Added / 추가

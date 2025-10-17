@@ -168,10 +168,12 @@ func (c *Client) TruncateTable(ctx context.Context, table string) error {
 //
 // // Add column after 'email'
 // 'email' 뒤에 컬럼 추가
+//
 //	err := client.AddColumn(ctx, "users", "phone", "VARCHAR(20) AFTER email")
 //
 // // Add column at the beginning
 // 처음에 컬럼 추가
+//
 //	err := client.AddColumn(ctx, "users", "status", "ENUM('active','inactive') FIRST")
 func (c *Client) AddColumn(ctx context.Context, table string, column string, definition string) error {
 	query := fmt.Sprintf("ALTER TABLE %s ADD COLUMN %s %s", table, column, definition)
@@ -225,7 +227,9 @@ func (c *Client) DropColumn(ctx context.Context, table string, column string) er
 // 예제:
 //
 // ctx := context.Background()
-// Change column type / 컬럼 타입 변경
+// Change column type
+// 컬럼 타입 변경
+//
 //	err := client.ModifyColumn(ctx, "users", "age", "SMALLINT UNSIGNED")
 //	if err != nil {
 //	    log.Fatal(err)
@@ -283,15 +287,19 @@ func (c *Client) RenameColumn(ctx context.Context, table string, oldName string,
 // 예제:
 //
 // ctx := context.Background()
-// Add simple index / 단순 인덱스 추가
+// Add simple index
+// 단순 인덱스 추가
+//
 //	err := client.AddIndex(ctx, "users", "idx_email", []string{"email"}, false)
 //
 // // Add unique index
 // 유니크 인덱스 추가
+//
 //	err := client.AddIndex(ctx, "users", "idx_username", []string{"username"}, true)
 //
 // // Add composite index
 // 복합 인덱스 추가
+//
 //	err := client.AddIndex(ctx, "orders", "idx_user_date",
 //	    []string{"user_id", "created_at"}, false)
 func (c *Client) AddIndex(ctx context.Context, table string, indexName string, columns []string, unique bool) error {
@@ -451,11 +459,14 @@ func (c *Client) DropForeignKey(ctx context.Context, table string, constraintNam
 // 예제:
 //
 // ctx := context.Background()
-// Copy structure and data / 구조와 데이터 복사
+// Copy structure and data
+// 구조와 데이터 복사
+//
 //	err := client.CopyTable(ctx, "users", "users_backup", true)
 //
 // // Copy only structure
 // 구조만 복사
+//
 //	err := client.CopyTable(ctx, "users", "users_template", false)
 func (c *Client) CopyTable(ctx context.Context, sourceTable string, destTable string, withData bool) error {
 	// First, create table structure

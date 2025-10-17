@@ -208,7 +208,10 @@ func ReadBytes(path string, offset, size int64) ([]byte, error) {
 // Example
 // 예제:
 //
-// err := fileutil.ReadChunk("large-file.txt", 1024*1024, func(chunk []byte) error { / Process chunk / 청크 처리
+// err := fileutil.ReadChunk("large-file.txt", 1024*1024, func(chunk []byte) error {
+// Process chunk
+// 청크 처리
+//
 //	    fmt.Printf("Read %d bytes\n", len(chunk))
 //	    return nil
 //	})

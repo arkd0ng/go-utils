@@ -318,9 +318,11 @@ func TestCollisionProbability(t *testing.T) {
 			charsetSize := float64(len(tt.charset))
 			possibleStrings := math.Pow(charsetSize, float64(tt.length))
 
-			// Approximate collision probability: 1 - exp(-n^2 / 2N)
+			// Approximate collision probability: 1 - exp(-n^2
+			// 2N)
 			// where n = iterations, N = possible strings
-			// 근사 충돌 확률: 1 - exp(-n^2 / 2N)
+			// 근사 충돌 확률: 1 - exp(-n^2
+			// 2N)
 			// n = 반복 횟수, N = 가능한 문자열 수
 			n := float64(tt.iterations)
 			theoreticalProb := 1 - math.Exp(-(n*n)/(2*possibleStrings))

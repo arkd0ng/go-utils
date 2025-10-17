@@ -53,17 +53,19 @@ import (
 //
 // Stack trace format example
 // 스택 트레이스 형식 예제:
-//   PANIC: runtime error: index out of range [5] with length 3
-//   goroutine 123 [running]:
-//   runtime/debug.Stack()
-//       /usr/local/go/src/runtime/debug/stack.go:24 +0x65
-//   main.(*App).Recovery.func1.1()
-//       /app/middleware.go:37 +0x89
-//   ...
+//
+//	PANIC: runtime error: index out of range [5] with length 3
+//	goroutine 123 [running]:
+//	runtime/debug.Stack()
+//	    /usr/local/go/src/runtime/debug/stack.go:24 +0x65
+//	main.(*App).Recovery.func1.1()
+//	    /app/middleware.go:37 +0x89
+//	...
 //
 // Response to client
 // 클라이언트에 대한 응답:
 //   - HTTP 500 Internal Server Error
+//
 // - Generic "Internal Server Error" message (no stack trace exposed) / - 일반적인 "Internal Server Error" 메시지 (스택 트레이스 노출 없음)
 // - Prevents information disclosure to attackers
 // - 공격자에게 정보 공개 방지
@@ -93,7 +95,9 @@ import (
 //   - Nil pointer dereference: var p *User; p.Name
 //   - Out of bounds access: arr[999] when len(arr) < 999
 //   - Type assertion failure: val.(int) when val is not int
-//   - Division by zero: x / 0 (for integers)
+//
+// - Division by zero: x
+// 0 (for integers)
 //   - Map concurrent read/write without mutex
 //
 // Best practices
@@ -716,9 +720,9 @@ type RateLimiterConfig struct {
 // rateLimitEntry stores rate limit information for a client.
 // rateLimitEntry는 클라이언트의 rate limit 정보를 저장합니다.
 type rateLimitEntry struct {
-	count      int
-	resetTime  time.Time
-	mu         sync.Mutex
+	count     int
+	resetTime time.Time
+	mu        sync.Mutex
 }
 
 // RateLimiterWithConfig returns a RateLimiter middleware with custom configuration.
@@ -1061,6 +1065,7 @@ type BodyLimitConfig struct {
 //
 // // Limit request body to 5MB
 // 요청 본문을 5MB로 제한
+//
 //	server.Use(BodyLimit(5 * 1024 * 1024))
 func BodyLimit(maxBytes int64) MiddlewareFunc {
 	return BodyLimitWithConfig(BodyLimitConfig{
@@ -1108,6 +1113,7 @@ type StaticConfig struct {
 // 예제:
 //
 // // Serve static files from "./public" directory / "./public" 디렉토리에서 정적 파일 제공
+//
 //	server.Use(Static("./public"))
 func Static(root string) MiddlewareFunc {
 	return StaticWithConfig(StaticConfig{
@@ -1184,6 +1190,7 @@ type RedirectConfig struct {
 //
 // // Redirect all HTTP to HTTPS
 // 모든 HTTP를 HTTPS로 리디렉션
+//
 //	httpServer.Use(Redirect("https://example.com"))
 func Redirect(to string) MiddlewareFunc {
 	return RedirectWithConfig(RedirectConfig{
@@ -1215,6 +1222,7 @@ func RedirectWithConfig(config RedirectConfig) MiddlewareFunc {
 //
 // // Redirect all HTTP to HTTPS
 // 모든 HTTP를 HTTPS로 리디렉션
+//
 //	httpServer.Use(HTTPSRedirect())
 func HTTPSRedirect() MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
@@ -1244,6 +1252,7 @@ func HTTPSRedirect() MiddlewareFunc {
 //
 // // Redirect to www version
 // www 버전으로 리디렉션
+//
 //	server.Use(WWWRedirect(true))
 func WWWRedirect(addWWW bool) MiddlewareFunc {
 	return func(next http.Handler) http.Handler {

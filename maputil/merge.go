@@ -46,8 +46,11 @@ func Merge[K comparable, V any](maps ...map[K]V) map[K]V {
 //
 //	m1 := map[string]int{"a": 1, "b": 2}
 //	m2 := map[string]int{"b": 3, "c": 4}
+//
 // result := maputil.MergeWith(
-// func(old, new int) int { return old + new }, // Sum on conflict / 충돌 시 합산
+// func(old, new int) int { return old + new }, // Sum on conflict
+// 충돌 시 합산
+//
 //	    m1, m2,
 //	) // map[string]int{"a": 1, "b": 5, "c": 4}
 func MergeWith[K comparable, V any](fn func(V, V) V, maps ...map[K]V) map[K]V {
@@ -240,7 +243,11 @@ func SymmetricDifference[K comparable, V any](m1, m2 map[K]V) map[K]V {
 // 예제:
 //
 //	target := map[string]int{"a": 1, "b": 2}
-// source := map[string]int{"b": 3, "c": 4} / result := maputil.Assign(target, source) // target is modified / target이 수정됨
+//
+// source := map[string]int{"b": 3, "c": 4}
+// result := maputil.Assign(target, source) // target is modified
+// target이 수정됨
+//
 //	// result = map[string]int{"a": 1, "b": 3, "c": 4}
 func Assign[K comparable, V any](target map[K]V, sources ...map[K]V) map[K]V {
 	for _, source := range sources {

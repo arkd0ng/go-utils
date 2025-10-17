@@ -52,7 +52,10 @@ func GetOr[K comparable, V any](m map[K]V, key K, defaultValue V) V {
 // 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2}
-// result := maputil.Set(m, "c", 3) // map[string]int{"a": 1, "b": 2, "c": 3} / Original map m is unchanged / 원본 맵 m은 변경되지 않음
+//
+// result := maputil.Set(m, "c", 3) // map[string]int{"a": 1, "b": 2, "c": 3}
+// Original map m is unchanged
+// 원본 맵 m은 변경되지 않음
 func Set[K comparable, V any](m map[K]V, key K, value V) map[K]V {
 	result := make(map[K]V, len(m)+1)
 	for k, v := range m {
@@ -75,7 +78,10 @@ func Set[K comparable, V any](m map[K]V, key K, value V) map[K]V {
 // 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
-// result := maputil.Delete(m, "b", "c") // map[string]int{"a": 1} / Original map m is unchanged / 원본 맵 m은 변경되지 않음
+//
+// result := maputil.Delete(m, "b", "c") // map[string]int{"a": 1}
+// Original map m is unchanged
+// 원본 맵 m은 변경되지 않음
 func Delete[K comparable, V any](m map[K]V, keys ...K) map[K]V {
 	if len(keys) == 0 {
 		return Clone(m)
@@ -176,8 +182,10 @@ func Len[K comparable, V any](m map[K]V) int {
 // 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
+//
 // result := maputil.Clear(m) // map[string]int{}
-// Original map m is unchanged / 원본 맵 m은 변경되지 않음
+// Original map m is unchanged
+// 원본 맵 m은 변경되지 않음
 func Clear[K comparable, V any](m map[K]V) map[K]V {
 	return make(map[K]V)
 }
@@ -193,7 +201,10 @@ func Clear[K comparable, V any](m map[K]V) map[K]V {
 //
 //	m := map[string]int{"a": 1, "b": 2}
 //	clone := maputil.Clone(m) // map[string]int{"a": 1, "b": 2}
-// clone["c"] = 3 / Original map m is unchanged / 원본 맵 m은 변경되지 않음
+//
+// clone["c"] = 3
+// Original map m is unchanged
+// 원본 맵 m은 변경되지 않음
 func Clone[K comparable, V any](m map[K]V) map[K]V {
 	if m == nil {
 		return nil

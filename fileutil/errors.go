@@ -55,7 +55,9 @@ var (
 // 예제:
 //
 // if fileutil.IsNotFound(err) {
-// Handle file not found / 파일을 찾을 수 없음 처리
+// Handle file not found
+// 파일을 찾을 수 없음 처리
+//
 //	}
 func IsNotFound(err error) bool {
 	return errors.Is(err, os.ErrNotExist) || errors.Is(err, ErrNotFound)
@@ -67,7 +69,9 @@ func IsNotFound(err error) bool {
 // 예제:
 //
 // if fileutil.IsPermission(err) {
-// Handle permission denied / 권한 거부됨 처리
+// Handle permission denied
+// 권한 거부됨 처리
+//
 //	}
 func IsPermission(err error) bool {
 	return errors.Is(err, os.ErrPermission) || errors.Is(err, ErrPermission)
@@ -79,7 +83,9 @@ func IsPermission(err error) bool {
 // 예제:
 //
 // if fileutil.IsExist(err) {
-// Handle already exists / 이미 존재함 처리
+// Handle already exists
+// 이미 존재함 처리
+//
 //	}
 func IsExist(err error) bool {
 	return errors.Is(err, os.ErrExist) || errors.Is(err, ErrAlreadyExists)
@@ -91,7 +97,9 @@ func IsExist(err error) bool {
 // 예제:
 //
 // if fileutil.IsInvalid(err) {
-// Handle invalid path / 유효하지 않은 경로 처리
+// Handle invalid path
+// 유효하지 않은 경로 처리
+//
 //	}
 func IsInvalid(err error) bool {
 	return errors.Is(err, ErrInvalidPath)

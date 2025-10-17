@@ -85,8 +85,11 @@ func MapValues[K comparable, V any, R any](m map[K]V, fn func(V) R) map[K]R {
 // 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2}
+//
 // result := maputil.MapEntries(m, func(k string, v int) (int, string) {
-// return v, k // Swap key and value types / 키와 값 타입 교환
+// return v, k // Swap key and value types
+// 키와 값 타입 교환
+//
 //	}) // map[int]string{1: "a", 2: "b"}
 func MapEntries[K1 comparable, V1 any, K2 comparable, V2 any](m map[K1]V1, fn func(K1, V1) (K2, V2)) map[K2]V2 {
 	result := make(map[K2]V2, len(m))

@@ -28,11 +28,19 @@ import (
 // 예제:
 //
 //	err := errorutil.WithCode("ERR001", "validation failed")
-// if errorutil.HasCode(err, "ERR001") { / handle validation error / 검증 에러 처리
+//
+// if errorutil.HasCode(err, "ERR001") {
+// handle validation error
+// 검증 에러 처리
+//
 //	}
 //
 //	wrapped := errorutil.Wrap(err, "failed to process")
-// if errorutil.HasCode(wrapped, "ERR001") { / still found through the chain / 체인을 통해 여전히 찾을 수 있음
+//
+// if errorutil.HasCode(wrapped, "ERR001") {
+// still found through the chain
+// 체인을 통해 여전히 찾을 수 있음
+//
 //	}
 func HasCode(err error, code string) bool {
 	if err == nil {
@@ -79,13 +87,19 @@ func HasCode(err error, code string) bool {
 // 예제:
 //
 //	err := errorutil.WithNumericCode(404, "not found")
+//
 // if errorutil.HasNumericCode(err, 404) {
-// handle 404 error / 404 에러 처리
+// handle 404 error
+// 404 에러 처리
+//
 //	}
 //
 //	wrapped := errorutil.Wrap(err, "failed to fetch user")
+//
 // if errorutil.HasNumericCode(wrapped, 404) {
-// still found through the chain / 체인을 통해 여전히 찾을 수 있음
+// still found through the chain
+// 체인을 통해 여전히 찾을 수 있음
+//
 //	}
 func HasNumericCode(err error, code int) bool {
 	if err == nil {

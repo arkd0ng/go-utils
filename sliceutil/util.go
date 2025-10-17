@@ -90,8 +90,11 @@ func Join[T any](slice []T, separator string) string {
 //
 //	original := []int{1, 2, 3, 4, 5}
 //	cloned := sliceutil.Clone(original)
+//
 // cloned[0] = 99
-// original: [1, 2, 3, 4, 5] (unchanged / 변경되지 않음)
+// original: [1, 2, 3, 4, 5] (unchanged
+// 변경되지 않음)
+//
 //	// cloned: [99, 2, 3, 4, 5]
 func Clone[T any](slice []T) []T {
 	if slice == nil {
@@ -114,8 +117,10 @@ func Clone[T any](slice []T) []T {
 //
 //	slice := []int{1, 2, 3, 4, 5}
 //	filled := sliceutil.Fill(slice, 0)
+//
 // // filled: [0, 0, 0, 0, 0]
-// slice: [1, 2, 3, 4, 5] (unchanged / 변경되지 않음)
+// slice: [1, 2, 3, 4, 5] (unchanged
+// 변경되지 않음)
 func Fill[T any](slice []T, value T) []T {
 	if len(slice) == 0 {
 		return []T{}
@@ -184,8 +189,10 @@ func Insert[T any](slice []T, index int, items ...T) []T {
 //
 //	slice := []int{1, 2, 3, 4, 5}
 //	result := sliceutil.Remove(slice, 2)
+//
 // // result: [1, 2, 4, 5]
-// slice: [1, 2, 3, 4, 5] (unchanged / 변경되지 않음)
+// slice: [1, 2, 3, 4, 5] (unchanged
+// 변경되지 않음)
 func Remove[T any](slice []T, index int) []T {
 	if index < 0 || index >= len(slice) {
 		return Clone(slice)
@@ -237,8 +244,10 @@ func RemoveAll[T comparable](slice []T, item T) []T {
 // 예제:
 //
 //	slice := []int{1, 2, 3, 4, 5}
+//
 // shuffled := sliceutil.Shuffle(slice)
-// shuffled: [3, 1, 5, 2, 4] (random order / 무작위 순서)
+// shuffled: [3, 1, 5, 2, 4] (random order
+// 무작위 순서)
 // // slice: [1, 2, 3, 4, 5] (unchanged
 // 변경되지 않음)
 func Shuffle[T any](slice []T) []T {
@@ -307,6 +316,7 @@ func Zip[T, U any](a []T, b []U) [][2]any {
 //
 // // ✅ CORRECT usage
 // 올바른 사용:
+//
 //	zipped := [][2]any{{1, "one"}, {2, "two"}, {3, "three"}}
 //	numbers, words := sliceutil.Unzip[int, string](zipped)
 //	// numbers: [1, 2, 3]
@@ -314,6 +324,7 @@ func Zip[T, U any](a []T, b []U) [][2]any {
 //
 // // ❌ INCORRECT usage (will panic!)
 // 잘못된 사용 (패닉 발생!):
+//
 //	badZipped := [][2]any{{1, "one"}, {"wrong", 2}} // Wrong types / 잘못된 타입
 //	nums, words := sliceutil.Unzip[int, string](badZipped) // PANIC!
 func Unzip[T, U any](slice [][2]any) ([]T, []U) {
@@ -391,6 +402,7 @@ func Window[T any](slice []T, size int) [][]T {
 //
 // // Useful in chains
 // 체인에서 유용
+//
 //	result2 := sliceutil.Map(
 //	    sliceutil.Tap(
 //	        sliceutil.Filter(numbers, func(n int) bool { return n%2 == 0 }),

@@ -76,7 +76,9 @@ func LevenshteinDistance(a, b string) int {
 // 동일한 문자열은 1.0, 완전히 다른 문자열은 0.0을 반환합니다.
 //
 // Formula: 1 - (distance
-// max(len(a), len(b))) / 공식: 1 - (거리 / max(len(a), len(b)))
+// max(len(a), len(b)))
+// 공식: 1 - (거리
+// max(len(a), len(b)))
 //
 // Example
 // 예제:

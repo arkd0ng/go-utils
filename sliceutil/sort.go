@@ -17,8 +17,10 @@ import (
 //
 //	numbers := []int{3, 1, 4, 1, 5, 9, 2, 6}
 //	sorted := sliceutil.Sort(numbers)
+//
 // // sorted: [1, 1, 2, 3, 4, 5, 6, 9]
-// numbers: [3, 1, 4, 1, 5, 9, 2, 6] (unchanged / 변경되지 않음)
+// numbers: [3, 1, 4, 1, 5, 9, 2, 6] (unchanged
+// 변경되지 않음)
 func Sort[T constraints.Ordered](slice []T) []T {
 	if len(slice) == 0 {
 		return []T{}
@@ -49,8 +51,10 @@ func Sort[T constraints.Ordered](slice []T) []T {
 //
 //	numbers := []int{3, 1, 4, 1, 5, 9, 2, 6}
 //	sorted := sliceutil.SortDesc(numbers)
+//
 // // sorted: [9, 6, 5, 4, 3, 2, 1, 1]
-// numbers: [3, 1, 4, 1, 5, 9, 2, 6] (unchanged / 변경되지 않음)
+// numbers: [3, 1, 4, 1, 5, 9, 2, 6] (unchanged
+// 변경되지 않음)
 func SortDesc[T constraints.Ordered](slice []T) []T {
 	if len(slice) == 0 {
 		return []T{}
@@ -196,6 +200,7 @@ func IsSortedDesc[T constraints.Ordered](slice []T) bool {
 //
 // // Sort by Name (ascending), then Age (ascending), then Score (descending)
 // Name(오름차순), Age(오름차순), Score(내림차순) 순으로 정렬
+//
 //	sorted := sliceutil.SortByMulti(people, func(i, j Person) bool {
 //	    if i.Name != j.Name {
 //	        return i.Name < j.Name

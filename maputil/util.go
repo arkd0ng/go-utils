@@ -60,7 +60,8 @@ func ForEach[K comparable, V any](m map[K]V, fn func(K, V)) {
 // 키가 맵에 존재하지 않으면 해당 위치에 V의 제로 값이 반환됩니다.
 //
 // Time Complexity
-// 시간 복잡도: O(k) where k is the number of keys / k는 키의 개수
+// 시간 복잡도: O(k) where k is the number of keys
+// k는 키의 개수
 // Space Complexity
 // 공간 복잡도: O(k)
 //
@@ -109,7 +110,8 @@ func GetMany[K comparable, V any](m map[K]V, keys ...K) []V {
 // 키가 이미 존재하면 값이 업데이트됩니다.
 //
 // Time Complexity
-// 시간 복잡도: O(n + e) where n is map size, e is entries / n은 맵 크기, e는 항목 개수
+// 시간 복잡도: O(n + e) where n is map size, e is entries
+// n은 맵 크기, e는 항목 개수
 // Space Complexity
 // 공간 복잡도: O(n + e)
 //
@@ -166,7 +168,8 @@ func SetMany[K comparable, V any](m map[K]V, entries ...Entry[K, V]) map[K]V {
 // 원본 맵은 변경되지 않고 반환됩니다.
 //
 // Time Complexity
-// 시간 복잡도: O(n) - depends on fn / fn에 따라 다름
+// 시간 복잡도: O(n) - depends on fn
+// fn에 따라 다름
 // Space Complexity
 // 공간 복잡도: O(1)
 //
@@ -223,7 +226,8 @@ func Tap[K comparable, V any](m map[K]V, fn func(map[K]V)) map[K]V {
 // 키 슬라이스가 비어 있으면 true를 반환합니다 (공허한 진리).
 //
 // Time Complexity
-// 시간 복잡도: O(k) where k is the number of keys / k는 키의 개수
+// 시간 복잡도: O(k) where k is the number of keys
+// k는 키의 개수
 // Space Complexity
 // 공간 복잡도: O(1)
 //

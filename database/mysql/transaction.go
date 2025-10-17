@@ -19,29 +19,39 @@ import (
 // 예제:
 //
 // err := db.Transaction(ctx, func(tx *Tx) error {
-// Insert user / 사용자 삽입
-//	    result, err := tx.Insert(ctx, "users", map[string]interface{}{
-//	        "name": "John",
-//	        "email": "john@example.com",
-//	    })
-// if err != nil {
-// return err // Will rollback / 롤백됨
-//	    }
+// Insert user
+// 사용자 삽입
 //
-//	    userID, _ := result.LastInsertId()
+//	result, err := tx.Insert(ctx, "users", map[string]interface{}{
+//	    "name": "John",
+//	    "email": "john@example.com",
+//	})
+//
+// if err != nil {
+// return err // Will rollback
+// 롤백됨
+//
+//	}
+//
+//	userID, _ := result.LastInsertId()
 //
 // // Insert profile
 // 프로필 삽입
-//	    _, err = tx.Insert(ctx, "profiles", map[string]interface{}{
-//	        "user_id": userID,
-//	        "bio": "Hello world",
-//	    })
+//
+//	_, err = tx.Insert(ctx, "profiles", map[string]interface{}{
+//	    "user_id": userID,
+//	    "bio": "Hello world",
+//	})
+//
 // if err != nil {
-// return err // Will rollback / 롤백됨
-//	    }
+// return err // Will rollback
+// 롤백됨
+//
+//	}
 //
 // return nil // Will commit
 // 커밋됨
+//
 //	})
 func (c *Client) Transaction(ctx context.Context, fn func(*Tx) error) error {
 	tx, err := c.Begin(ctx)

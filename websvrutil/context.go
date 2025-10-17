@@ -2,8 +2,8 @@ package websvrutil
 
 import (
 	"context"
-	"sync"
 	"net/http"
+	"sync"
 )
 
 // Context represents the context of the current HTTP request.
@@ -74,7 +74,10 @@ func NewContext(w http.ResponseWriter, r *http.Request) *Context {
 // 예제:
 //
 //	// Route: /users/:id
-// // URL: /users/123 / id := ctx.Param("id") // Returns "123" / "123" 반환
+//
+// // URL: /users/123
+// id := ctx.Param("id") // Returns "123"
+// "123" 반환
 func (c *Context) Param(name string) string {
 	return c.params[name]
 }

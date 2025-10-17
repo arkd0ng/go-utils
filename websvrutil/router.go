@@ -202,15 +202,15 @@ func contextWithValue(ctx context.Context, c *Context) context.Context {
 //
 // Matching algorithm
 // 매칭 알고리즘:
-//   1. Parse incoming path into segments
-//   2. Check segment count compatibility:
-//      - Without wildcard: must match exactly
-//      - With wildcard: request must have at least (pattern segments - 1)
-//   3. Iterate through pattern segments:
-//      - Wildcard (*): captures all remaining path segments
-//      - Parameter (:name): captures current segment into parameter map
-//      - Literal: must match exactly (case-sensitive)
-//   4. Return parameters map and match status
+//  1. Parse incoming path into segments
+//  2. Check segment count compatibility:
+//     - Without wildcard: must match exactly
+//     - With wildcard: request must have at least (pattern segments - 1)
+//  3. Iterate through pattern segments:
+//     - Wildcard (*): captures all remaining path segments
+//     - Parameter (:name): captures current segment into parameter map
+//     - Literal: must match exactly (case-sensitive)
+//  4. Return parameters map and match status
 //
 // Return values
 // 반환 값:
@@ -219,14 +219,15 @@ func contextWithValue(ctx context.Context, c *Context) context.Context {
 //
 // Examples
 // 예제:
-//   Pattern: "/users/:id", Path: "/users/123"
-//   -> params: {"id": "123"}, matched: true
 //
-//   Pattern: "/files/*", Path: "/files/docs/report.pdf"
-//   -> params: {"*": "docs/report.pdf"}, matched: true
+//	Pattern: "/users/:id", Path: "/users/123"
+//	-> params: {"id": "123"}, matched: true
 //
-//   Pattern: "/users/:id", Path: "/posts/123"
-//   -> params: nil, matched: false
+//	Pattern: "/files/*", Path: "/files/docs/report.pdf"
+//	-> params: {"*": "docs/report.pdf"}, matched: true
+//
+//	Pattern: "/users/:id", Path: "/posts/123"
+//	-> params: nil, matched: false
 //
 // Time complexity: O(n) where n = number of segments
 // 시간 복잡도: O(n), n = 세그먼트 수
@@ -300,22 +301,23 @@ func (route *Route) match(path string) (map[string]string, bool) {
 //
 // Implementation details
 // 구현 세부사항:
-//   1. Trim leading/trailing slashes from pattern
-//   2. Split pattern by "/" separator
-//   3. Identify segment types:
-//      - "*" -> wildcard segment (isWildcard=true)
-//      - ":name" -> parameter segment (isParam=true, value="name")
-//      - "literal" -> static segment (value="literal")
-//   4. Pre-allocate segments slice with capacity for performance
+//  1. Trim leading/trailing slashes from pattern
+//  2. Split pattern by "/" separator
+//  3. Identify segment types:
+//     - "*" -> wildcard segment (isWildcard=true)
+//     - ":name" -> parameter segment (isParam=true, value="name")
+//     - "literal" -> static segment (value="literal")
+//  4. Pre-allocate segments slice with capacity for performance
 //
 // Time complexity: O(n) where n = number of path segments
 // 시간 복잡도: O(n), n = 경로 세그먼트 수
 //
 // Examples
 // 예제:
-//   parsePattern("/users") -> [segment{value: "users"}]
-//   parsePattern("/users/:id") -> [segment{value: "users"}, segment{value: "id", isParam: true}]
-//   parsePattern("/files/*") -> [segment{value: "files"}, segment{isWildcard: true}]
+//
+//	parsePattern("/users") -> [segment{value: "users"}]
+//	parsePattern("/users/:id") -> [segment{value: "users"}, segment{value: "id", isParam: true}]
+//	parsePattern("/files/*") -> [segment{value: "files"}, segment{isWildcard: true}]
 func parsePattern(pattern string) []segment {
 	// Remove leading and trailing slashes
 	// 앞뒤 슬래시 제거
@@ -326,7 +328,8 @@ func parsePattern(pattern string) []segment {
 	}
 
 	// Split by
-	// / 로 분할
+	//
+	// 로 분할
 	parts := strings.Split(pattern, "/")
 	segments := make([]segment, 0, len(parts))
 
@@ -363,19 +366,20 @@ func parsePattern(pattern string) []segment {
 //
 // Process
 // 프로세스:
-//   1. Trim leading and trailing slashes
-//   2. Handle empty path (returns empty slice)
-//   3. Split by "/" separator
-//   4. Filter out empty segments (from consecutive slashes)
-//   5. Return cleaned segment list
+//  1. Trim leading and trailing slashes
+//  2. Handle empty path (returns empty slice)
+//  3. Split by "/" separator
+//  4. Filter out empty segments (from consecutive slashes)
+//  5. Return cleaned segment list
 //
 // Examples
 // 예제:
-//   parsePath("/users/123") -> ["users", "123"]
-//   parsePath("/users/123/") -> ["users", "123"] (trailing slash removed)
-//   parsePath("/api//v1/users") -> ["api", "v1", "users"] (double slash cleaned)
-//   parsePath("/") -> [] (root path)
-//   parsePath("") -> [] (empty path)
+//
+//	parsePath("/users/123") -> ["users", "123"]
+//	parsePath("/users/123/") -> ["users", "123"] (trailing slash removed)
+//	parsePath("/api//v1/users") -> ["api", "v1", "users"] (double slash cleaned)
+//	parsePath("/") -> [] (root path)
+//	parsePath("") -> [] (empty path)
 //
 // Time complexity: O(n) where n = path length
 // 시간 복잡도: O(n), n = 경로 길이
@@ -389,7 +393,8 @@ func parsePath(path string) []string {
 	}
 
 	// Split by
-	// / 로 분할
+	//
+	// 로 분할
 	parts := strings.Split(path, "/")
 	segments := make([]string, 0, len(parts))
 
