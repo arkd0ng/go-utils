@@ -445,3 +445,91 @@ func Example_complexValidation() {
 	}
 	// Output: Registration data is valid
 }
+
+// ExampleValidator_IPv4 demonstrates the IPv4 validator
+// ExampleValidator_IPv4는 IPv4 검증기를 보여줍니다
+func ExampleValidator_IPv4() {
+	v := validation.New("192.168.1.1", "ip_address")
+	v.IPv4()
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid IPv4 address")
+	} else {
+		fmt.Println("Valid IPv4 address")
+	}
+	// Output: Valid IPv4 address
+}
+
+// ExampleValidator_IPv6 demonstrates the IPv6 validator
+// ExampleValidator_IPv6는 IPv6 검증기를 보여줍니다
+func ExampleValidator_IPv6() {
+	v := validation.New("2001:db8::1", "ip_address")
+	v.IPv6()
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid IPv6 address")
+	} else {
+		fmt.Println("Valid IPv6 address")
+	}
+	// Output: Valid IPv6 address
+}
+
+// ExampleValidator_IP demonstrates the IP validator
+// ExampleValidator_IP는 IP 검증기를 보여줍니다
+func ExampleValidator_IP() {
+	v := validation.New("10.0.0.1", "ip_address")
+	v.IP()
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid IP address")
+	} else {
+		fmt.Println("Valid IP address")
+	}
+	// Output: Valid IP address
+}
+
+// ExampleValidator_CIDR demonstrates the CIDR validator
+// ExampleValidator_CIDR는 CIDR 검증기를 보여줍니다
+func ExampleValidator_CIDR() {
+	v := validation.New("192.168.1.0/24", "network")
+	v.CIDR()
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid CIDR notation")
+	} else {
+		fmt.Println("Valid CIDR notation")
+	}
+	// Output: Valid CIDR notation
+}
+
+// ExampleValidator_MAC demonstrates the MAC validator
+// ExampleValidator_MAC는 MAC 검증기를 보여줍니다
+func ExampleValidator_MAC() {
+	v := validation.New("00:1A:2B:3C:4D:5E", "mac_address")
+	v.MAC()
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid MAC address")
+	} else {
+		fmt.Println("Valid MAC address")
+	}
+	// Output: Valid MAC address
+}
+
+// Example_networkValidation demonstrates validating network configuration
+// Example_networkValidation는 네트워크 구성 검증을 보여줍니다
+func Example_networkValidation() {
+	// Validate server configuration
+	mv := validation.NewValidator()
+	mv.Field("192.168.1.10", "server_ip").Required().IPv4()
+	mv.Field("192.168.1.0/24", "subnet").Required().CIDR()
+	mv.Field("00:1A:2B:3C:4D:5E", "mac").Required().MAC()
+
+	err := mv.Validate()
+	if err != nil {
+		fmt.Println("Invalid network configuration")
+	} else {
+		fmt.Println("Valid network configuration")
+	}
+	// Output: Valid network configuration
+}

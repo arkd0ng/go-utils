@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.013
+**Version / 버전**: v1.13.016
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -15,11 +15,12 @@
 6. [Numeric Validators / 숫자 검증기](#numeric-validators--숫자-검증기)
 7. [Collection Validators / 컬렉션 검증기](#collection-validators--컬렉션-검증기)
 8. [Comparison Validators / 비교 검증기](#comparison-validators--비교-검증기)
-9. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
-10. [Error Handling / 에러 처리](#error-handling--에러-처리)
-11. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
-12. [Best Practices / 모범 사례](#best-practices--모범-사례)
-13. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
+9. [Network Validators / 네트워크 검증기](#network-validators--네트워크-검증기) 🆕
+10. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
+11. [Error Handling / 에러 처리](#error-handling--에러-처리)
+12. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
+13. [Best Practices / 모범 사례](#best-practices--모범-사례)
+14. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
 
 ---
 
@@ -31,15 +32,16 @@ The `validation` package provides a **fluent, type-safe validation library** for
 
 ### Key Features / 주요 기능
 
-- ✅ **50+ Built-in Validators** / **50개 이상의 내장 검증기**
+- ✅ **54+ Built-in Validators** / **54개 이상의 내장 검증기**
 - ✅ **Fluent API with Method Chaining** / **메서드 체이닝을 통한 플루언트 API**
 - ✅ **Type-Safe with Go Generics** / **Go 제네릭을 활용한 타입 안전성**
 - ✅ **Bilingual Error Messages (EN/KR)** / **양방향 에러 메시지 (영어/한글)**
 - ✅ **Zero External Dependencies** / **외부 의존성 제로**
-- ✅ **92.5%+ Test Coverage** / **92.5% 이상의 테스트 커버리지**
+- ✅ **100% Test Coverage** / **100% 테스트 커버리지**
 - ✅ **Multi-Field Validation** / **다중 필드 검증**
 - ✅ **Custom Validators** / **사용자 정의 검증기**
 - ✅ **Stop-on-First-Error Support** / **첫 에러에서 멈춤 지원**
+- ✅ **Network Validators (IPv4, IPv6, CIDR, MAC)** 🆕 / **네트워크 검증기** 🆕
 
 ---
 
@@ -671,6 +673,331 @@ v := validation.New(time.Now(), "startDate")
 v.AfterOrEqual(time.Now().Add(-1 * time.Hour))
 // Pass! / 통과!
 ```
+
+---
+
+## Network Validators / 네트워크 검증기
+
+**New in v1.13.016** 🆕 / **v1.13.016의 새 기능** 🆕
+
+Network validators validate IP addresses, CIDR notation, and MAC addresses using Go's standard `net` package.
+
+네트워크 검증기는 Go의 표준 `net` 패키지를 사용하여 IP 주소, CIDR 표기법, MAC 주소를 검증합니다.
+
+### IPv4()
+
+Validates IPv4 addresses only. / IPv4 주소만 검증합니다.
+
+**Validation Rules** / **검증 규칙**:
+- Must be valid IPv4 format (xxx.xxx.xxx.xxx)
+- Each octet must be 0-255
+- No leading zeros (except 0 itself)
+
+**Valid Examples** / **유효한 예시**:
+```go
+v := validation.New("192.168.1.1", "server_ip")
+v.IPv4()
+// Pass! / 통과!
+
+v := validation.New("10.0.0.1", "gateway")
+v.IPv4()
+// Pass! / 통과!
+
+v := validation.New("255.255.255.255", "broadcast")
+v.IPv4()
+// Pass! / 통과!
+```
+
+**Invalid Examples** / **잘못된 예시**:
+```go
+v := validation.New("256.1.1.1", "ip")
+v.IPv4()
+// Fail: octet > 255 / 실패: 옥텟이 255보다 큼
+
+v := validation.New("192.168.1", "ip")
+v.IPv4()
+// Fail: incomplete / 실패: 불완전
+
+v := validation.New("2001:db8::1", "ip")
+v.IPv4()
+// Fail: this is IPv6 / 실패: IPv6임
+```
+
+### IPv6()
+
+Validates IPv6 addresses only. / IPv6 주소만 검증합니다.
+
+**Validation Rules** / **검증 규칙**:
+- Must be valid IPv6 format
+- Supports compressed notation (::)
+- Supports full and partial addresses
+
+**Valid Examples** / **유효한 예시**:
+```go
+v := validation.New("2001:0db8:85a3:0000:0000:8a2e:0370:7334", "ipv6")
+v.IPv6()
+// Pass! Full format / 통과! 전체 형식
+
+v := validation.New("2001:db8:85a3::8a2e:370:7334", "ipv6")
+v.IPv6()
+// Pass! Compressed format / 통과! 압축 형식
+
+v := validation.New("::1", "loopback")
+v.IPv6()
+// Pass! IPv6 loopback / 통과! IPv6 루프백
+
+v := validation.New("fe80::1", "link_local")
+v.IPv6()
+// Pass! Link-local address / 통과! 링크-로컬 주소
+```
+
+**Invalid Examples** / **잘못된 예시**:
+```go
+v := validation.New("192.168.1.1", "ip")
+v.IPv6()
+// Fail: this is IPv4 / 실패: IPv4임
+
+v := validation.New("gggg::1", "ip")
+v.IPv6()
+// Fail: invalid hex / 실패: 잘못된 16진수
+
+v := validation.New("2001:db8::1::2", "ip")
+v.IPv6()
+// Fail: double :: / 실패: :: 중복
+```
+
+### IP()
+
+Validates both IPv4 and IPv6 addresses. / IPv4와 IPv6 주소 모두 검증합니다.
+
+**Use this when** / **다음의 경우 사용**:
+- You want to accept both IPv4 and IPv6 / IPv4와 IPv6를 모두 허용하려는 경우
+- IP version doesn't matter / IP 버전이 중요하지 않은 경우
+
+**Examples** / **예시**:
+```go
+v := validation.New("192.168.1.1", "ip")
+v.IP()
+// Pass! IPv4 accepted / 통과! IPv4 허용됨
+
+v := validation.New("2001:db8::1", "ip")
+v.IP()
+// Pass! IPv6 accepted / 통과! IPv6 허용됨
+
+v := validation.New("not-an-ip", "ip")
+v.IP()
+// Fail: invalid format / 실패: 잘못된 형식
+```
+
+### CIDR()
+
+Validates CIDR notation (IP address with prefix length). / CIDR 표기법(접두사 길이가 있는 IP 주소)을 검증합니다.
+
+**Validation Rules** / **검증 규칙**:
+- Format: `<IP>/<prefix>`
+- IP can be IPv4 or IPv6
+- Prefix must be valid:
+  - IPv4: 0-32
+  - IPv6: 0-128
+
+**Valid Examples** / **유효한 예시**:
+```go
+v := validation.New("192.168.1.0/24", "subnet")
+v.CIDR()
+// Pass! Common private network / 통과! 일반적인 사설 네트워크
+
+v := validation.New("10.0.0.0/8", "network")
+v.CIDR()
+// Pass! Class A private network / 통과! 클래스 A 사설 네트워크
+
+v := validation.New("192.168.1.1/32", "host")
+v.CIDR()
+// Pass! Single host / 통과! 단일 호스트
+
+v := validation.New("2001:db8::/32", "ipv6_network")
+v.CIDR()
+// Pass! IPv6 network / 통과! IPv6 네트워크
+```
+
+**Invalid Examples** / **잘못된 예시**:
+```go
+v := validation.New("192.168.1.0", "network")
+v.CIDR()
+// Fail: missing prefix / 실패: 접두사 누락
+
+v := validation.New("192.168.1.0/33", "network")
+v.CIDR()
+// Fail: prefix > 32 for IPv4 / 실패: IPv4의 경우 접두사가 32보다 큼
+
+v := validation.New("invalid/24", "network")
+v.CIDR()
+// Fail: invalid IP / 실패: 잘못된 IP
+```
+
+### MAC()
+
+Validates MAC (Media Access Control) addresses. / MAC(미디어 액세스 제어) 주소를 검증합니다.
+
+**Supported Formats** / **지원되는 형식**:
+- Colon-separated: `00:1A:2B:3C:4D:5E`
+- Hyphen-separated: `00-1A-2B-3C-4D-5E`
+- Dot-separated (Cisco): `001A.2B3C.4D5E`
+- Case-insensitive / 대소문자 구분 안 함
+
+**Valid Examples** / **유효한 예시**:
+```go
+v := validation.New("00:1A:2B:3C:4D:5E", "mac")
+v.MAC()
+// Pass! Colon-separated uppercase / 통과! 콜론 구분 대문자
+
+v := validation.New("00-1a-2b-3c-4d-5e", "mac")
+v.MAC()
+// Pass! Hyphen-separated lowercase / 통과! 하이픈 구분 소문자
+
+v := validation.New("001A.2B3C.4D5E", "mac")
+v.MAC()
+// Pass! Cisco dot format / 통과! Cisco 점 형식
+
+v := validation.New("FF:FF:FF:FF:FF:FF", "broadcast_mac")
+v.MAC()
+// Pass! Broadcast MAC / 통과! 브로드캐스트 MAC
+```
+
+**Invalid Examples** / **잘못된 예시**:
+```go
+v := validation.New("00:1A:2B:3C:4D", "mac")
+v.MAC()
+// Fail: too short / 실패: 너무 짧음
+
+v := validation.New("GG:1A:2B:3C:4D:5E", "mac")
+v.MAC()
+// Fail: invalid hex / 실패: 잘못된 16진수
+
+v := validation.New("00:1A:2B:3C:4D:5E:6F", "mac")
+v.MAC()
+// Fail: too long / 실패: 너무 김
+```
+
+### Common Use Cases / 일반적인 사용 사례
+
+#### API Endpoint IP Filtering / API 엔드포인트 IP 필터링
+
+```go
+type APIConfig struct {
+    AllowedIPs []string
+    Subnet     string
+}
+
+func ValidateAPIConfig(config APIConfig) error {
+    mv := validation.NewValidator()
+
+    // Validate subnet
+    mv.Field(config.Subnet, "subnet").Required().CIDR()
+
+    // Validate each allowed IP
+    for i, ip := range config.AllowedIPs {
+        fieldName := fmt.Sprintf("allowed_ips[%d]", i)
+        mv.Field(ip, fieldName).Required().IP()
+    }
+
+    return mv.Validate()
+}
+```
+
+#### Network Device Configuration / 네트워크 장치 구성
+
+```go
+type NetworkDevice struct {
+    IPAddress  string
+    Gateway    string
+    Subnet     string
+    MACAddress string
+}
+
+func ValidateNetworkDevice(device NetworkDevice) error {
+    mv := validation.NewValidator()
+
+    mv.Field(device.IPAddress, "ip_address").Required().IPv4()
+    mv.Field(device.Gateway, "gateway").Required().IPv4()
+    mv.Field(device.Subnet, "subnet").Required().CIDR()
+    mv.Field(device.MACAddress, "mac_address").Required().MAC()
+
+    return mv.Validate()
+}
+```
+
+#### Firewall Rule Validation / 방화벽 규칙 검증
+
+```go
+type FirewallRule struct {
+    SourceIP      string
+    DestinationIP string
+    Network       string
+}
+
+func ValidateFirewallRule(rule FirewallRule) error {
+    mv := validation.NewValidator()
+
+    // Source and destination can be any IP (v4 or v6)
+    mv.Field(rule.SourceIP, "source_ip").Required().IP()
+    mv.Field(rule.DestinationIP, "destination_ip").Required().IP()
+
+    // Network must be CIDR notation
+    mv.Field(rule.Network, "network").Required().CIDR()
+
+    return mv.Validate()
+}
+```
+
+### Performance Characteristics / 성능 특성
+
+Network validators use Go's standard `net` package which is highly optimized:
+
+네트워크 검증기는 고도로 최적화된 Go의 표준 `net` 패키지를 사용합니다:
+
+| Validator | Avg Time | Description |
+|-----------|----------|-------------|
+| IPv4() | ~29 ns/op | Very fast, simple parsing / 매우 빠름, 단순 파싱 |
+| IPv6() | ~92 ns/op | Fast, handles compression / 빠름, 압축 처리 |
+| IP() | ~24 ns/op | Fastest, accepts both / 가장 빠름, 둘 다 허용 |
+| CIDR() | ~145 ns/op | Slightly slower, parses prefix / 약간 느림, 접두사 파싱 |
+| MAC() | ~64 ns/op | Fast, multiple format support / 빠름, 여러 형식 지원 |
+
+### Tips and Best Practices / 팁 및 모범 사례
+
+1. **Use Specific Validators When Possible** / **가능한 한 특정 검증기 사용**
+   ```go
+   // Good: Specific requirement
+   v.IPv4()  // If you only accept IPv4
+
+   // Less specific: May accept unwanted formats
+   v.IP()    // Accepts both IPv4 and IPv6
+   ```
+
+2. **Validate CIDR for Network Configuration** / **네트워크 구성에 CIDR 검증**
+   ```go
+   // Always use CIDR for subnets and network ranges
+   v.CIDR()  // Ensures proper network notation with prefix
+   ```
+
+3. **MAC Address Case Doesn't Matter** / **MAC 주소 대소문자는 중요하지 않음**
+   ```go
+   // All valid, case-insensitive
+   "00:1A:2B:3C:4D:5E"  // Uppercase
+   "00:1a:2b:3c:4d:5e"  // Lowercase
+   "00:1a:2B:3C:4d:5E"  // Mixed
+   ```
+
+4. **Combine with Other Validators** / **다른 검증기와 결합**
+   ```go
+   v := validation.New(serverIP, "server_ip")
+   v.Required().IPv4().
+       Custom(func(val interface{}) bool {
+           // Additional business logic
+           ip := val.(string)
+           return !strings.HasPrefix(ip, "127.")  // Reject localhost
+       }, "Server IP cannot be localhost")
+   ```
 
 ---
 

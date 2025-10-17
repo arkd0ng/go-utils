@@ -248,3 +248,52 @@ func BenchmarkValidationErrors(b *testing.B) {
 		}
 	}
 }
+// BenchmarkIPv4 benchmarks the IPv4 validator
+// BenchmarkIPv4는 IPv4 검증기를 벤치마크합니다
+func BenchmarkIPv4(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("192.168.1.1", "ip_address")
+		v.IPv4()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkIPv6 benchmarks the IPv6 validator
+// BenchmarkIPv6는 IPv6 검증기를 벤치마크합니다
+func BenchmarkIPv6(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("2001:0db8:85a3:0000:0000:8a2e:0370:7334", "ip_address")
+		v.IPv6()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkIP benchmarks the IP validator
+// BenchmarkIP는 IP 검증기를 벤치마크합니다
+func BenchmarkIP(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("192.168.1.1", "ip_address")
+		v.IP()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkCIDR benchmarks the CIDR validator
+// BenchmarkCIDR는 CIDR 검증기를 벤치마크합니다
+func BenchmarkCIDR(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("192.168.1.0/24", "network")
+		v.CIDR()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkMAC benchmarks the MAC validator
+// BenchmarkMAC는 MAC 검증기를 벤치마크합니다
+func BenchmarkMAC(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("00:1A:2B:3C:4D:5E", "mac_address")
+		v.MAC()
+		_ = v.Validate()
+	}
+}
