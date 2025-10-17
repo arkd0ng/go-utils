@@ -6,6 +6,84 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.013] - 2025-10-17
+
+### Added / 추가
+- examples/errorutil/main.go 작성 (포괄적인 예제 코드, 12개 예제)
+- 18개 함수 전체를 시연하는 예제 구현
+- 실제 사용 패턴 예제 (HTTP API, 데이터베이스, 검증, 다중 레이어)
+- 에러 분류 시스템 예제
+- 표준 라이브러리 호환성 데모 (errors.Is, errors.As)
+
+### Changed / 변경
+- N/A
+
+### Fixed / 수정
+- N/A
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - 버전을 v1.12.012에서 v1.12.013로 증가
+- `examples/errorutil/main.go` - 새 파일 생성 (600+ 줄, 12개 예제 포함)
+- `logs/errorutil-example.log` - 예제 실행 로그 생성 (22KB)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.013 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+errorutil 패키지 문서화 작업 완료 - 예제 코드 작성
+
+**Why / 이유**:
+- 사용자가 실제로 작동하는 코드를 보고 학습할 수 있도록 지원
+- EXAMPLE_CODE_GUIDE.md의 모든 표준 준수
+- 모든 기능을 커버하는 포괄적인 예제 제공
+- 실제 사용 패턴을 통한 학습 곡선 단축
+
+**Implementation Details / 구현 세부사항**:
+
+1. **예제 구조** (12개 예제):
+   - Example 1: Basic Error Creation (New, Newf)
+   - Example 2: String Coded Errors (WithCode, WithCodef, HasCode)
+   - Example 3: Numeric Coded Errors (WithNumericCode, WithNumericCodef, GetNumericCode)
+   - Example 4: Error Wrapping (Wrap, Wrapf)
+   - Example 5: Error Chain Walking (다중 레이어 체인)
+   - Example 6: Error Inspection (HasCode, HasNumericCode, GetCode, GetNumericCode)
+   - Example 7: HTTP API Error Handling (404, 500, 401 시나리오)
+   - Example 8: Database Error Patterns (연결, 쿼리, Not Found)
+   - Example 9: Validation Error Patterns (필수 필드, 형식, 범위)
+   - Example 10: Error Classification System (에러 분류 및 처리)
+   - Example 11: Multi-Layer Wrapping (4개 레이어: DB → Repo → Service → HTTP)
+   - Example 12: Standard Library Compatibility (errors.Is, errors.As)
+
+2. **로깅 시스템**:
+   - EXAMPLE_CODE_GUIDE.md 표준 완전 준수
+   - 로그 백업 관리 (최근 5개 유지)
+   - 모든 작업을 영문/한글 병기로 로그
+   - 극도로 상세한 로그 (모든 입력, 출력, 에러 기록)
+   - 구조화된 로깅 (key-value 쌍)
+
+3. **주요 특징**:
+   - 모든 18개 함수 시연
+   - 실전 패턴 (HTTP API, DB, 검증)
+   - 에러 체인 탐색 데모
+   - Standard library 호환성 증명
+   - 유니코드 기호 사용 (✅, ❌, 📊)
+   - 모든 주석 영문/한글 병기
+
+4. **테스트 결과**:
+   - 예제 성공적으로 컴파일 및 실행
+   - 로그 파일 정상 생성 (22KB)
+   - 모든 12개 예제 정상 작동
+   - 에러 없이 완료
+
+**Impact / 영향**:
+- 사용자가 복사하여 바로 사용할 수 있는 예제 제공
+- errorutil의 모든 기능을 실제 코드로 학습 가능
+- 실전 패턴을 통해 즉시 프로젝트에 적용 가능
+- errorutil 패키지 문서화 100% 완료 (README → USER_MANUAL → DEVELOPER_GUIDE → Examples)
+- 다음 작업: 테스트 실행 및 커버리지 확인
+
+---
+
 ## [v1.12.012] - 2025-10-17
 
 ### Added / 추가

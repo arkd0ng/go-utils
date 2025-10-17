@@ -10,3 +10,12 @@
 
 - Added bilingual context to previously English-only inline comments / 기존 영문 전용 인라인 주석에 한글을 병기했습니다
 - Clarified middleware test descriptions with English and Korean phrasing / 미들웨어 테스트 설명을 영문과 한글 표현으로 명확히 다듬었습니다
+
+## 2025-10-17 - 코드 전반 주석 형식 정비
+
+- Converted all bilingual inline comments in Go sources to two-line format (English line followed by Korean line) for clarity across logging, database, httputil, websvrutil, fileutil, maputil, sliceutil, stringutil, timeutil, random, examples, and errorutil packages / 로깅, 데이터베이스, httputil, websvrutil, fileutil, maputil, sliceutil, stringutil, timeutil, random, examples, errorutil 패키지 전반의 이중 언어 주석을 영문-한글 두 줄 형식으로 정리했습니다
+- Adjusted struct field and inline documentation comments to precede the code element, keeping bilingual guidance detailed and beginner friendly / 구조체 필드 및 인라인 설명 주석을 코드 앞에 배치하여 영문/한글 설명을 자세하고 친절하게 유지했습니다
+
+### Follow-up 2025-10-17 (database/mysql/batch.go)
+
+- Rewrote batch operation comments to describe intent, retry behaviour, and placeholder handling in both languages / 배치 연산 주석을 의도, 재시도 동작, 플레이스홀더 처리 방식까지 설명하도록 영문·한글로 보강했습니다

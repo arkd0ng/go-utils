@@ -1,0 +1,738 @@
+// errorutil Package Examples / errorutil 패키지 예제
+//
+// This example demonstrates all features of the errorutil package including:
+// - Error creation with and without codes
+// - Error wrapping and chaining
+// - Error inspection and code checking
+// - Real-world usage patterns
+//
+// 이 예제는 errorutil 패키지의 모든 기능을 시연합니다:
+// - 코드가 있거나 없는 에러 생성
+// - 에러 래핑 및 체이닝
+// - 에러 검사 및 코드 확인
+// - 실제 사용 패턴
+
+package main
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
+	"time"
+
+	"github.com/arkd0ng/go-utils/errorutil"
+	"github.com/arkd0ng/go-utils/fileutil"
+	"github.com/arkd0ng/go-utils/logging"
+)
+
+func main() {
+	// Setup log file with backup management / 백업 관리와 함께 로그 파일 설정
+	logger := initLogger()
+	defer logger.Close()
+
+	// Print header / 헤더 출력
+	printBanner(logger)
+
+	// Run all examples / 모든 예제 실행
+	fmt.Println("Example 1: Basic Error Creation / 기본 에러 생성")
+	example1BasicErrorCreation(logger)
+
+	fmt.Println("\nExample 2: Errors with String Codes / 문자열 코드가 있는 에러")
+	example2StringCodedErrors(logger)
+
+	fmt.Println("\nExample 3: Errors with Numeric Codes / 숫자 코드가 있는 에러")
+	example3NumericCodedErrors(logger)
+
+	fmt.Println("\nExample 4: Error Wrapping / 에러 래핑")
+	example4ErrorWrapping(logger)
+
+	fmt.Println("\nExample 5: Error Chain Walking / 에러 체인 탐색")
+	example5ErrorChainWalking(logger)
+
+	fmt.Println("\nExample 6: Error Inspection / 에러 검사")
+	example6ErrorInspection(logger)
+
+	fmt.Println("\nExample 7: HTTP API Error Handling / HTTP API 에러 처리")
+	example7HTTPAPIErrors(logger)
+
+	fmt.Println("\nExample 8: Database Error Patterns / 데이터베이스 에러 패턴")
+	example8DatabaseErrors(logger)
+
+	fmt.Println("\nExample 9: Validation Error Patterns / 검증 에러 패턴")
+	example9ValidationErrors(logger)
+
+	fmt.Println("\nExample 10: Error Classification System / 에러 분류 시스템")
+	example10ErrorClassification(logger)
+
+	fmt.Println("\nExample 11: Multi-Layer Error Wrapping / 다중 레이어 에러 래핑")
+	example11MultiLayerWrapping(logger)
+
+	fmt.Println("\nExample 12: Standard Library Compatibility / 표준 라이브러리 호환성")
+	example12StandardLibraryCompat(logger)
+
+	// Print footer / 푸터 출력
+	fmt.Println("\n=== All Examples Completed / 모든 예제 완료 ===")
+	logger.Info("===========================================")
+	logger.Info("All errorutil examples completed successfully")
+	logger.Info("모든 errorutil 예제가 성공적으로 완료되었습니다")
+	logger.Info("===========================================")
+}
+
+// initLogger initializes the logger with backup management
+// initLogger는 백업 관리와 함께 로거를 초기화합니다
+func initLogger() *logging.Logger {
+	logFilePath := "logs/errorutil-example.log"
+
+	// Check if previous log file exists / 이전 로그 파일 존재 여부 확인
+	if fileutil.Exists(logFilePath) {
+		// Get modification time of existing log file / 기존 로그 파일의 수정 시간 가져오기
+		modTime, err := fileutil.ModTime(logFilePath)
+		if err == nil {
+			// Create backup filename with timestamp / 타임스탬프와 함께 백업 파일명 생성
+			backupName := fmt.Sprintf("logs/errorutil-example-%s.log", modTime.Format("20060102-150405"))
+
+			// Backup existing log file / 기존 로그 파일 백업
+			if err := fileutil.CopyFile(logFilePath, backupName); err == nil {
+				fmt.Printf("✅ Backed up previous log to: %s\n", backupName)
+				// Delete original log file to prevent content duplication / 내용 중복 방지를 위해 원본 로그 파일 삭제
+				fileutil.DeleteFile(logFilePath)
+			}
+		}
+
+		// Cleanup old backup files - keep only 5 most recent / 오래된 백업 파일 정리 - 최근 5개만 유지
+		backupPattern := "logs/errorutil-example-*.log"
+		backupFiles, err := filepath.Glob(backupPattern)
+		if err == nil && len(backupFiles) > 5 {
+			// Sort by modification time / 수정 시간으로 정렬
+			type fileInfo struct {
+				path    string
+				modTime time.Time
+			}
+			var files []fileInfo
+			for _, f := range backupFiles {
+				if mt, err := fileutil.ModTime(f); err == nil {
+					files = append(files, fileInfo{path: f, modTime: mt})
+				}
+			}
+
+			// Sort oldest first / 가장 오래된 것부터 정렬
+			for i := 0; i < len(files)-1; i++ {
+				for j := i + 1; j < len(files); j++ {
+					if files[i].modTime.After(files[j].modTime) {
+						files[i], files[j] = files[j], files[i]
+					}
+				}
+			}
+
+			// Delete oldest files to keep only 5 / 5개만 유지하도록 가장 오래된 파일 삭제
+			for i := 0; i < len(files)-5; i++ {
+				fileutil.DeleteFile(files[i].path)
+				fmt.Printf("🗑️  Deleted old backup: %s\n", files[i].path)
+			}
+		}
+	}
+
+	// Initialize logger with fixed filename / 고정 파일명으로 로거 초기화
+	logger, err := logging.New(
+		logging.WithFilePath(logFilePath),
+		logging.WithLevel(logging.DEBUG),
+		logging.WithMaxSize(10),    // 10 MB
+		logging.WithMaxBackups(5),  // Keep 5 backups / 백업 5개 유지
+		logging.WithMaxAge(30),     // 30 days / 30일
+		logging.WithCompress(true), // Compress old logs / 오래된 로그 압축
+	)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to initialize logger: %v\n", err)
+		os.Exit(1)
+	}
+
+	return logger
+}
+
+// printBanner prints the example banner
+// printBanner는 예제 배너를 출력합니다
+func printBanner(logger *logging.Logger) {
+	banner := `
+===========================================
+   errorutil Package Examples
+   errorutil 패키지 예제
+===========================================
+Version: v1.12.013
+Package: github.com/arkd0ng/go-utils/errorutil
+
+This example demonstrates:
+이 예제는 다음을 시연합니다:
+- Error creation / 에러 생성
+- Error wrapping / 에러 래핑
+- Error inspection / 에러 검사
+- Real-world patterns / 실제 패턴
+===========================================
+`
+	fmt.Println(banner)
+
+	logger.Info("===========================================")
+	logger.Info("Starting errorutil Package Examples")
+	logger.Info("errorutil 패키지 예제 시작")
+	logger.Info("===========================================")
+	logger.Info("Version", "version", "v1.12.013")
+	logger.Info("Package", "package", "github.com/arkd0ng/go-utils/errorutil")
+}
+
+// example1BasicErrorCreation demonstrates basic error creation
+// example1BasicErrorCreation은 기본 에러 생성을 시연합니다
+func example1BasicErrorCreation(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 1: Basic Error Creation / 예제 1: 기본 에러 생성")
+	logger.Info("===========================================")
+
+	// New - Create simple error / New - 간단한 에러 생성
+	logger.Info("Creating simple error with New()")
+	logger.Info("New()로 간단한 에러 생성")
+	err1 := errorutil.New("something went wrong")
+	logger.Info("Error created", "error", err1.Error(), "type", fmt.Sprintf("%T", err1))
+	logger.Info("에러 생성됨", "error", err1.Error(), "type", fmt.Sprintf("%T", err1))
+	fmt.Printf("  ✅ New(): %v\n", err1)
+
+	// Newf - Create formatted error / Newf - 포맷된 에러 생성
+	logger.Info("Creating formatted error with Newf()")
+	logger.Info("Newf()로 포맷된 에러 생성")
+	userID := 123
+	err2 := errorutil.Newf("user %d not found", userID)
+	logger.Info("Formatted error created", "error", err2.Error(), "userID", userID)
+	logger.Info("포맷된 에러 생성됨", "error", err2.Error(), "userID", userID)
+	fmt.Printf("  ✅ Newf(): %v\n", err2)
+
+	logger.Info("Example 1 completed successfully")
+	logger.Info("예제 1 완료")
+}
+
+// example2StringCodedErrors demonstrates errors with string codes
+// example2StringCodedErrors는 문자열 코드가 있는 에러를 시연합니다
+func example2StringCodedErrors(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 2: String Coded Errors / 예제 2: 문자열 코드 에러")
+	logger.Info("===========================================")
+
+	// WithCode - Create error with string code / WithCode - 문자열 코드로 에러 생성
+	logger.Info("Creating error with string code using WithCode()")
+	logger.Info("WithCode()로 문자열 코드가 있는 에러 생성")
+	err1 := errorutil.WithCode("VALIDATION_ERROR", "invalid email format")
+	logger.Info("Coded error created", "code", "VALIDATION_ERROR", "error", err1.Error())
+	logger.Info("코드가 있는 에러 생성됨", "code", "VALIDATION_ERROR", "error", err1.Error())
+	fmt.Printf("  ✅ WithCode(): %v\n", err1)
+
+	// WithCodef - Create formatted error with code / WithCodef - 코드와 포맷된 에러 생성
+	logger.Info("Creating formatted error with code using WithCodef()")
+	logger.Info("WithCodef()로 코드와 포맷된 에러 생성")
+	field := "email"
+	err2 := errorutil.WithCodef("VALIDATION_ERROR", "field %s is required", field)
+	logger.Info("Formatted coded error created", "code", "VALIDATION_ERROR", "field", field, "error", err2.Error())
+	logger.Info("코드와 포맷된 에러 생성됨", "code", "VALIDATION_ERROR", "field", field, "error", err2.Error())
+	fmt.Printf("  ✅ WithCodef(): %v\n", err2)
+
+	// Check if error has code / 에러가 코드를 가지는지 확인
+	logger.Info("Checking if error has code using HasCode()")
+	logger.Info("HasCode()로 에러가 코드를 가지는지 확인")
+	hasCode := errorutil.HasCode(err1, "VALIDATION_ERROR")
+	logger.Info("Code check result", "hasCode", hasCode, "code", "VALIDATION_ERROR")
+	logger.Info("코드 확인 결과", "hasCode", hasCode, "code", "VALIDATION_ERROR")
+	fmt.Printf("  ✅ HasCode(err1, 'VALIDATION_ERROR'): %v\n", hasCode)
+
+	logger.Info("Example 2 completed successfully")
+	logger.Info("예제 2 완료")
+}
+
+// example3NumericCodedErrors demonstrates errors with numeric codes
+// example3NumericCodedErrors는 숫자 코드가 있는 에러를 시연합니다
+func example3NumericCodedErrors(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 3: Numeric Coded Errors / 예제 3: 숫자 코드 에러")
+	logger.Info("===========================================")
+
+	// WithNumericCode - Create error with HTTP status code / WithNumericCode - HTTP 상태 코드로 에러 생성
+	logger.Info("Creating error with numeric code using WithNumericCode()")
+	logger.Info("WithNumericCode()로 숫자 코드가 있는 에러 생성")
+	err1 := errorutil.WithNumericCode(404, "resource not found")
+	logger.Info("Numeric coded error created", "code", 404, "error", err1.Error())
+	logger.Info("숫자 코드 에러 생성됨", "code", 404, "error", err1.Error())
+	fmt.Printf("  ✅ WithNumericCode(404): %v\n", err1)
+
+	// WithNumericCodef - Create formatted error with numeric code / WithNumericCodef - 숫자 코드와 포맷된 에러 생성
+	logger.Info("Creating formatted error with numeric code using WithNumericCodef()")
+	logger.Info("WithNumericCodef()로 숫자 코드와 포맷된 에러 생성")
+	resourceID := "user-123"
+	err2 := errorutil.WithNumericCodef(404, "resource %s not found", resourceID)
+	logger.Info("Formatted numeric coded error created", "code", 404, "resourceID", resourceID, "error", err2.Error())
+	logger.Info("숫자 코드와 포맷된 에러 생성됨", "code", 404, "resourceID", resourceID, "error", err2.Error())
+	fmt.Printf("  ✅ WithNumericCodef(404): %v\n", err2)
+
+	// Get numeric code from error / 에러에서 숫자 코드 가져오기
+	logger.Info("Extracting numeric code using GetNumericCode()")
+	logger.Info("GetNumericCode()로 숫자 코드 추출")
+	code, ok := errorutil.GetNumericCode(err1)
+	logger.Info("Code extraction result", "code", code, "found", ok)
+	logger.Info("코드 추출 결과", "code", code, "found", ok)
+	fmt.Printf("  ✅ GetNumericCode(err1): code=%d, found=%v\n", code, ok)
+
+	logger.Info("Example 3 completed successfully")
+	logger.Info("예제 3 완료")
+}
+
+// example4ErrorWrapping demonstrates error wrapping
+// example4ErrorWrapping은 에러 래핑을 시연합니다
+func example4ErrorWrapping(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 4: Error Wrapping / 예제 4: 에러 래핑")
+	logger.Info("===========================================")
+
+	// Create original error / 원본 에러 생성
+	logger.Info("Step 1: Create original error")
+	logger.Info("단계 1: 원본 에러 생성")
+	originalErr := errorutil.WithCode("DB_ERROR", "connection timeout")
+	logger.Info("Original error created", "error", originalErr.Error())
+	logger.Info("원본 에러 생성됨", "error", originalErr.Error())
+	fmt.Printf("  Original: %v\n", originalErr)
+
+	// Wrap with additional context / 추가 컨텍스트와 함께 래핑
+	logger.Info("Step 2: Wrap with additional context using Wrap()")
+	logger.Info("단계 2: Wrap()으로 추가 컨텍스트와 함께 래핑")
+	wrappedErr := errorutil.Wrap(originalErr, "failed to save user")
+	logger.Info("Error wrapped", "error", wrappedErr.Error())
+	logger.Info("에러 래핑됨", "error", wrappedErr.Error())
+	fmt.Printf("  Wrapped: %v\n", wrappedErr)
+
+	// Verify original code is preserved / 원본 코드가 보존되었는지 확인
+	logger.Info("Step 3: Verify original code is preserved")
+	logger.Info("단계 3: 원본 코드 보존 확인")
+	hasCode := errorutil.HasCode(wrappedErr, "DB_ERROR")
+	logger.Info("Code preservation check", "hasCode", hasCode, "code", "DB_ERROR")
+	logger.Info("코드 보존 확인", "hasCode", hasCode, "code", "DB_ERROR")
+	fmt.Printf("  ✅ Original code preserved: %v\n", hasCode)
+
+	// Wrapf with formatted message / 포맷된 메시지로 래핑
+	logger.Info("Step 4: Wrap with formatted message using Wrapf()")
+	logger.Info("단계 4: Wrapf()로 포맷된 메시지와 함께 래핑")
+	userID := 456
+	wrappedErr2 := errorutil.Wrapf(originalErr, "failed to save user %d", userID)
+	logger.Info("Error wrapped with formatted message", "userID", userID, "error", wrappedErr2.Error())
+	logger.Info("포맷된 메시지로 에러 래핑됨", "userID", userID, "error", wrappedErr2.Error())
+	fmt.Printf("  Wrapf: %v\n", wrappedErr2)
+
+	logger.Info("Example 4 completed successfully")
+	logger.Info("예제 4 완료")
+}
+
+// example5ErrorChainWalking demonstrates error chain walking
+// example5ErrorChainWalking은 에러 체인 탐색을 시연합니다
+func example5ErrorChainWalking(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 5: Error Chain Walking / 예제 5: 에러 체인 탐색")
+	logger.Info("===========================================")
+
+	// Build error chain / 에러 체인 구축
+	logger.Info("Building error chain with 3 layers")
+	logger.Info("3개 레이어로 에러 체인 구축")
+
+	logger.Info("Layer 1: Create base error with code")
+	logger.Info("레이어 1: 코드가 있는 기본 에러 생성")
+	err1 := errorutil.WithCode("DB_TIMEOUT", "connection timeout after 30s")
+	logger.Info("Base error", "layer", 1, "error", err1.Error())
+	logger.Info("기본 에러", "layer", 1, "error", err1.Error())
+
+	logger.Info("Layer 2: Wrap with repository context")
+	logger.Info("레이어 2: 저장소 컨텍스트로 래핑")
+	err2 := errorutil.Wrapf(err1, "failed to query user %d", 789)
+	logger.Info("Repository error", "layer", 2, "error", err2.Error())
+	logger.Info("저장소 에러", "layer", 2, "error", err2.Error())
+
+	logger.Info("Layer 3: Wrap with service context")
+	logger.Info("레이어 3: 서비스 컨텍스트로 래핑")
+	err3 := errorutil.Wrap(err2, "failed to fetch user profile")
+	logger.Info("Service error", "layer", 3, "error", err3.Error())
+	logger.Info("서비스 에러", "layer", 3, "error", err3.Error())
+
+	fmt.Printf("  Error chain:\n")
+	fmt.Printf("    Layer 3 (Service): %v\n", err3)
+
+	// Walk the chain to find the code / 체인을 탐색하여 코드 찾기
+	logger.Info("Walking chain to find original code")
+	logger.Info("원본 코드를 찾기 위해 체인 탐색")
+	hasCode := errorutil.HasCode(err3, "DB_TIMEOUT")
+	logger.Info("Code found in chain", "hasCode", hasCode, "code", "DB_TIMEOUT")
+	logger.Info("체인에서 코드 찾음", "hasCode", hasCode, "code", "DB_TIMEOUT")
+	fmt.Printf("  ✅ Code 'DB_TIMEOUT' found through 3 layers: %v\n", hasCode)
+
+	logger.Info("Example 5 completed successfully")
+	logger.Info("예제 5 완료")
+}
+
+// example6ErrorInspection demonstrates error inspection functions
+// example6ErrorInspection은 에러 검사 함수를 시연합니다
+func example6ErrorInspection(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 6: Error Inspection / 예제 6: 에러 검사")
+	logger.Info("===========================================")
+
+	// Create errors with different codes / 다른 코드로 에러 생성
+	logger.Info("Creating errors with different code types")
+	logger.Info("다른 코드 타입으로 에러 생성")
+	err1 := errorutil.WithCode("AUTH_FAILED", "invalid credentials")
+	err2 := errorutil.WithNumericCode(403, "access denied")
+	logger.Info("Errors created", "stringCode", "AUTH_FAILED", "numericCode", 403)
+	logger.Info("에러 생성됨", "stringCode", "AUTH_FAILED", "numericCode", 403)
+
+	// HasCode - Check for string code / HasCode - 문자열 코드 확인
+	logger.Info("Checking for string code using HasCode()")
+	logger.Info("HasCode()로 문자열 코드 확인")
+	has := errorutil.HasCode(err1, "AUTH_FAILED")
+	logger.Info("String code check", "code", "AUTH_FAILED", "found", has)
+	logger.Info("문자열 코드 확인", "code", "AUTH_FAILED", "found", has)
+	fmt.Printf("  HasCode(err1, 'AUTH_FAILED'): %v\n", has)
+
+	// HasNumericCode - Check for numeric code / HasNumericCode - 숫자 코드 확인
+	logger.Info("Checking for numeric code using HasNumericCode()")
+	logger.Info("HasNumericCode()로 숫자 코드 확인")
+	hasNum := errorutil.HasNumericCode(err2, 403)
+	logger.Info("Numeric code check", "code", 403, "found", hasNum)
+	logger.Info("숫자 코드 확인", "code", 403, "found", hasNum)
+	fmt.Printf("  HasNumericCode(err2, 403): %v\n", hasNum)
+
+	// GetCode - Extract string code / GetCode - 문자열 코드 추출
+	logger.Info("Extracting string code using GetCode()")
+	logger.Info("GetCode()로 문자열 코드 추출")
+	code, ok := errorutil.GetCode(err1)
+	logger.Info("String code extraction", "code", code, "found", ok)
+	logger.Info("문자열 코드 추출", "code", code, "found", ok)
+	fmt.Printf("  GetCode(err1): code='%s', found=%v\n", code, ok)
+
+	// GetNumericCode - Extract numeric code / GetNumericCode - 숫자 코드 추출
+	logger.Info("Extracting numeric code using GetNumericCode()")
+	logger.Info("GetNumericCode()로 숫자 코드 추출")
+	numCode, okNum := errorutil.GetNumericCode(err2)
+	logger.Info("Numeric code extraction", "code", numCode, "found", okNum)
+	logger.Info("숫자 코드 추출", "code", numCode, "found", okNum)
+	fmt.Printf("  GetNumericCode(err2): code=%d, found=%v\n", numCode, okNum)
+
+	logger.Info("Example 6 completed successfully")
+	logger.Info("예제 6 완료")
+}
+
+// example7HTTPAPIErrors demonstrates HTTP API error handling
+// example7HTTPAPIErrors는 HTTP API 에러 처리를 시연합니다
+func example7HTTPAPIErrors(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 7: HTTP API Error Handling / 예제 7: HTTP API 에러 처리")
+	logger.Info("===========================================")
+
+	logger.Info("Simulating HTTP API error scenarios")
+	logger.Info("HTTP API 에러 시나리오 시뮬레이션")
+
+	// 404 Not Found / 404 찾을 수 없음
+	logger.Info("Scenario 1: 404 Not Found")
+	logger.Info("시나리오 1: 404 찾을 수 없음")
+	err404 := errorutil.WithNumericCode(404, "user not found")
+	logger.Info("404 error created", "code", 404, "error", err404.Error())
+	logger.Info("404 에러 생성됨", "code", 404, "error", err404.Error())
+	fmt.Printf("  404 Not Found: %v\n", err404)
+
+	if errorutil.HasNumericCode(err404, 404) {
+		logger.Info("Would return HTTP 404 response")
+		logger.Info("HTTP 404 응답 반환할 것임")
+		fmt.Printf("    ✅ Would return HTTP 404\n")
+	}
+
+	// 500 Internal Server Error / 500 내부 서버 에러
+	logger.Info("Scenario 2: 500 Internal Server Error")
+	logger.Info("시나리오 2: 500 내부 서버 에러")
+	dbErr := errorutil.WithCode("DB_ERROR", "connection failed")
+	err500 := errorutil.WrapWithNumericCode(dbErr, 500, "internal server error")
+	logger.Info("500 error created", "code", 500, "underlyingCode", "DB_ERROR", "error", err500.Error())
+	logger.Info("500 에러 생성됨", "code", 500, "underlyingCode", "DB_ERROR", "error", err500.Error())
+	fmt.Printf("  500 Internal Server Error: %v\n", err500)
+
+	if errorutil.HasNumericCode(err500, 500) {
+		logger.Info("Would return HTTP 500 response")
+		logger.Info("HTTP 500 응답 반환할 것임")
+		fmt.Printf("    ✅ Would return HTTP 500\n")
+	}
+
+	// 401 Unauthorized / 401 인증 필요
+	logger.Info("Scenario 3: 401 Unauthorized")
+	logger.Info("시나리오 3: 401 인증 필요")
+	err401 := errorutil.WithNumericCode(401, "invalid credentials")
+	logger.Info("401 error created", "code", 401, "error", err401.Error())
+	logger.Info("401 에러 생성됨", "code", 401, "error", err401.Error())
+	fmt.Printf("  401 Unauthorized: %v\n", err401)
+
+	logger.Info("Example 7 completed successfully")
+	logger.Info("예제 7 완료")
+}
+
+// example8DatabaseErrors demonstrates database error patterns
+// example8DatabaseErrors는 데이터베이스 에러 패턴을 시연합니다
+func example8DatabaseErrors(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 8: Database Error Patterns / 예제 8: DB 에러 패턴")
+	logger.Info("===========================================")
+
+	logger.Info("Simulating database operation errors")
+	logger.Info("데이터베이스 작업 에러 시뮬레이션")
+
+	// Connection error / 연결 에러
+	logger.Info("Scenario 1: Database connection timeout")
+	logger.Info("시나리오 1: 데이터베이스 연결 타임아웃")
+	connErr := errorutil.WithCode("DB_CONN_TIMEOUT", "connection timeout after 30s")
+	wrappedConnErr := errorutil.Wrap(connErr, "failed to connect to database")
+	logger.Info("Connection error", "code", "DB_CONN_TIMEOUT", "error", wrappedConnErr.Error())
+	logger.Info("연결 에러", "code", "DB_CONN_TIMEOUT", "error", wrappedConnErr.Error())
+	fmt.Printf("  Connection Error: %v\n", wrappedConnErr)
+
+	// Query error / 쿼리 에러
+	logger.Info("Scenario 2: SQL query error")
+	logger.Info("시나리오 2: SQL 쿼리 에러")
+	queryErr := errorutil.WithCode("DB_QUERY_ERROR", "syntax error near 'FORM'")
+	wrappedQueryErr := errorutil.Wrapf(queryErr, "failed to execute query: %s", "SELECT * FORM users")
+	logger.Info("Query error", "code", "DB_QUERY_ERROR", "error", wrappedQueryErr.Error())
+	logger.Info("쿼리 에러", "code", "DB_QUERY_ERROR", "error", wrappedQueryErr.Error())
+	fmt.Printf("  Query Error: %v\n", wrappedQueryErr)
+
+	// Not found error / 찾을 수 없음 에러
+	logger.Info("Scenario 3: Record not found")
+	logger.Info("시나리오 3: 레코드를 찾을 수 없음")
+	notFoundErr := errorutil.WithNumericCode(404, "no rows found")
+	wrappedNotFoundErr := errorutil.Wrapf(notFoundErr, "user %d not found", 999)
+	logger.Info("Not found error", "code", 404, "userID", 999, "error", wrappedNotFoundErr.Error())
+	logger.Info("찾을 수 없음 에러", "code", 404, "userID", 999, "error", wrappedNotFoundErr.Error())
+	fmt.Printf("  Not Found: %v\n", wrappedNotFoundErr)
+
+	logger.Info("Example 8 completed successfully")
+	logger.Info("예제 8 완료")
+}
+
+// example9ValidationErrors demonstrates validation error patterns
+// example9ValidationErrors는 검증 에러 패턴을 시연합니다
+func example9ValidationErrors(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 9: Validation Error Patterns / 예제 9: 검증 에러 패턴")
+	logger.Info("===========================================")
+
+	logger.Info("Simulating validation errors")
+	logger.Info("검증 에러 시뮬레이션")
+
+	// Required field / 필수 필드
+	logger.Info("Scenario 1: Required field missing")
+	logger.Info("시나리오 1: 필수 필드 누락")
+	err1 := errorutil.WithCode("VALIDATION_ERROR", "email is required")
+	logger.Info("Required field error", "code", "VALIDATION_ERROR", "field", "email", "error", err1.Error())
+	logger.Info("필수 필드 에러", "code", "VALIDATION_ERROR", "field", "email", "error", err1.Error())
+	fmt.Printf("  Required Field: %v\n", err1)
+
+	// Format validation / 형식 검증
+	logger.Info("Scenario 2: Invalid format")
+	logger.Info("시나리오 2: 잘못된 형식")
+	err2 := errorutil.WithCodef("VALIDATION_ERROR", "invalid email format: %s", "notanemail")
+	logger.Info("Format validation error", "code", "VALIDATION_ERROR", "input", "notanemail", "error", err2.Error())
+	logger.Info("형식 검증 에러", "code", "VALIDATION_ERROR", "input", "notanemail", "error", err2.Error())
+	fmt.Printf("  Invalid Format: %v\n", err2)
+
+	// Range validation / 범위 검증
+	logger.Info("Scenario 3: Value out of range")
+	logger.Info("시나리오 3: 범위를 벗어난 값")
+	err3 := errorutil.WithCodef("VALIDATION_ERROR", "age must be between 18 and 120, got %d", 150)
+	logger.Info("Range validation error", "code", "VALIDATION_ERROR", "value", 150, "error", err3.Error())
+	logger.Info("범위 검증 에러", "code", "VALIDATION_ERROR", "value", 150, "error", err3.Error())
+	fmt.Printf("  Out of Range: %v\n", err3)
+
+	logger.Info("Example 9 completed successfully")
+	logger.Info("예제 9 완료")
+}
+
+// example10ErrorClassification demonstrates error classification system
+// example10ErrorClassification은 에러 분류 시스템을 시연합니다
+func example10ErrorClassification(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 10: Error Classification / 예제 10: 에러 분류")
+	logger.Info("===========================================")
+
+	logger.Info("Building error classification system")
+	logger.Info("에러 분류 시스템 구축")
+
+	// Define error categories / 에러 카테고리 정의
+	errors := []error{
+		errorutil.WithCode("VALIDATION_ERROR", "invalid input"),
+		errorutil.WithCode("AUTH_ERROR", "unauthorized"),
+		errorutil.WithCode("DB_ERROR", "database failure"),
+		errorutil.WithNumericCode(404, "not found"),
+		errorutil.WithNumericCode(500, "internal error"),
+	}
+
+	logger.Info("Classifying errors", "count", len(errors))
+	logger.Info("에러 분류 중", "count", len(errors))
+
+	fmt.Printf("  Error Classification:\n")
+
+	for i, err := range errors {
+		logger.Info("Processing error", "index", i+1, "error", err.Error())
+		logger.Info("에러 처리 중", "index", i+1, "error", err.Error())
+
+		// Check string codes / 문자열 코드 확인
+		if code, ok := errorutil.GetCode(err); ok {
+			logger.Info("String code found", "code", code)
+			logger.Info("문자열 코드 찾음", "code", code)
+			fmt.Printf("    [%d] String Code: %s - %v\n", i+1, code, err)
+
+			switch code {
+			case "VALIDATION_ERROR":
+				logger.Info("Classification: Client error (validation)")
+				logger.Info("분류: 클라이언트 에러 (검증)")
+			case "AUTH_ERROR":
+				logger.Info("Classification: Client error (auth)")
+				logger.Info("분류: 클라이언트 에러 (인증)")
+			case "DB_ERROR":
+				logger.Info("Classification: Server error (database)")
+				logger.Info("분류: 서버 에러 (데이터베이스)")
+			}
+			continue
+		}
+
+		// Check numeric codes / 숫자 코드 확인
+		if numCode, ok := errorutil.GetNumericCode(err); ok {
+			logger.Info("Numeric code found", "code", numCode)
+			logger.Info("숫자 코드 찾음", "code", numCode)
+			fmt.Printf("    [%d] Numeric Code: %d - %v\n", i+1, numCode, err)
+
+			if numCode >= 400 && numCode < 500 {
+				logger.Info("Classification: Client error (HTTP)")
+				logger.Info("분류: 클라이언트 에러 (HTTP)")
+			} else if numCode >= 500 {
+				logger.Info("Classification: Server error (HTTP)")
+				logger.Info("분류: 서버 에러 (HTTP)")
+			}
+		}
+	}
+
+	logger.Info("Example 10 completed successfully")
+	logger.Info("예제 10 완료")
+}
+
+// example11MultiLayerWrapping demonstrates multi-layer error wrapping
+// example11MultiLayerWrapping은 다중 레이어 에러 래핑을 시연합니다
+func example11MultiLayerWrapping(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 11: Multi-Layer Wrapping / 예제 11: 다중 레이어 래핑")
+	logger.Info("===========================================")
+
+	logger.Info("Demonstrating error propagation through application layers")
+	logger.Info("애플리케이션 레이어를 통한 에러 전파 시연")
+
+	// Layer 1: Database / 레이어 1: 데이터베이스
+	logger.Info("Layer 1: Database error occurs")
+	logger.Info("레이어 1: 데이터베이스 에러 발생")
+	dbErr := errorutil.WithCode("DB_TIMEOUT", "query timeout after 30s")
+	logger.Info("Database error", "layer", "database", "code", "DB_TIMEOUT", "error", dbErr.Error())
+	logger.Info("데이터베이스 에러", "layer", "database", "code", "DB_TIMEOUT", "error", dbErr.Error())
+
+	// Layer 2: Repository / 레이어 2: 저장소
+	logger.Info("Layer 2: Repository wraps database error")
+	logger.Info("레이어 2: 저장소가 데이터베이스 에러 래핑")
+	repoErr := errorutil.WrapWithCode(dbErr, "REPO_ERROR", "failed to fetch user from database")
+	logger.Info("Repository error", "layer", "repository", "code", "REPO_ERROR", "error", repoErr.Error())
+	logger.Info("저장소 에러", "layer", "repository", "code", "REPO_ERROR", "error", repoErr.Error())
+
+	// Layer 3: Service / 레이어 3: 서비스
+	logger.Info("Layer 3: Service wraps repository error")
+	logger.Info("레이어 3: 서비스가 저장소 에러 래핑")
+	serviceErr := errorutil.Wrap(repoErr, "user service error")
+	logger.Info("Service error", "layer", "service", "error", serviceErr.Error())
+	logger.Info("서비스 에러", "layer", "service", "error", serviceErr.Error())
+
+	// Layer 4: HTTP Handler / 레이어 4: HTTP 핸들러
+	logger.Info("Layer 4: HTTP handler wraps service error with status code")
+	logger.Info("레이어 4: HTTP 핸들러가 상태 코드와 함께 서비스 에러 래핑")
+	httpErr := errorutil.WrapWithNumericCode(serviceErr, 503, "service unavailable")
+	logger.Info("HTTP error", "layer", "http", "code", 503, "error", httpErr.Error())
+	logger.Info("HTTP 에러", "layer", "http", "code", 503, "error", httpErr.Error())
+
+	fmt.Printf("  Final error chain:\n")
+	fmt.Printf("    %v\n", httpErr)
+
+	// Verify all codes are accessible / 모든 코드에 접근 가능한지 확인
+	logger.Info("Verifying code accessibility through chain")
+	logger.Info("체인을 통한 코드 접근성 확인")
+
+	hasDBTimeout := errorutil.HasCode(httpErr, "DB_TIMEOUT")
+	hasRepoError := errorutil.HasCode(httpErr, "REPO_ERROR")
+	has503 := errorutil.HasNumericCode(httpErr, 503)
+
+	logger.Info("Code accessibility", "DB_TIMEOUT", hasDBTimeout, "REPO_ERROR", hasRepoError, "503", has503)
+	logger.Info("코드 접근성", "DB_TIMEOUT", hasDBTimeout, "REPO_ERROR", hasRepoError, "503", has503)
+
+	fmt.Printf("  ✅ DB_TIMEOUT accessible: %v\n", hasDBTimeout)
+	fmt.Printf("  ✅ REPO_ERROR accessible: %v\n", hasRepoError)
+	fmt.Printf("  ✅ HTTP 503 accessible: %v\n", has503)
+
+	logger.Info("Example 11 completed successfully")
+	logger.Info("예제 11 완료")
+}
+
+// example12StandardLibraryCompat demonstrates standard library compatibility
+// example12StandardLibraryCompat은 표준 라이브러리 호환성을 시연합니다
+func example12StandardLibraryCompat(logger *logging.Logger) {
+	logger.Info("===========================================")
+	logger.Info("Example 12: Standard Library Compatibility / 예제 12: 표준 라이브러리 호환성")
+	logger.Info("===========================================")
+
+	logger.Info("Demonstrating compatibility with errors.Is and errors.As")
+	logger.Info("errors.Is 및 errors.As와의 호환성 시연")
+
+	// Create sentinel error / 센티널 에러 생성
+	logger.Info("Creating sentinel error")
+	logger.Info("센티널 에러 생성")
+	var ErrNotFound = errorutil.WithCode("NOT_FOUND", "resource not found")
+
+	// Create wrapped error / 래핑된 에러 생성
+	logger.Info("Creating wrapped error")
+	logger.Info("래핑된 에러 생성")
+	err := errorutil.Wrap(ErrNotFound, "failed to fetch user")
+	logger.Info("Wrapped error created", "error", err.Error())
+	logger.Info("래핑된 에러 생성됨", "error", err.Error())
+
+	// Test errors.Is / errors.Is 테스트
+	logger.Info("Testing errors.Is()")
+	logger.Info("errors.Is() 테스트")
+	isNotFound := errors.Is(err, ErrNotFound)
+	logger.Info("errors.Is result", "isNotFound", isNotFound)
+	logger.Info("errors.Is 결과", "isNotFound", isNotFound)
+	fmt.Printf("  ✅ errors.Is(err, ErrNotFound): %v\n", isNotFound)
+
+	// Test errors.As / errors.As 테스트
+	logger.Info("Testing errors.As() with Coder interface")
+	logger.Info("Coder 인터페이스로 errors.As() 테스트")
+	var coder interface{ Code() string }
+	asCoder := errors.As(err, &coder)
+	if asCoder {
+		code := coder.Code()
+		logger.Info("errors.As succeeded", "code", code)
+		logger.Info("errors.As 성공", "code", code)
+		fmt.Printf("  ✅ errors.As found Coder, code: %s\n", code)
+	}
+
+	// Test with NumericCoder / NumericCoder로 테스트
+	logger.Info("Testing with numeric code")
+	logger.Info("숫자 코드로 테스트")
+	numErr := errorutil.WithNumericCode(404, "not found")
+	wrappedNumErr := errorutil.Wrap(numErr, "wrapped")
+
+	var numCoder interface{ Code() int }
+	asNumCoder := errors.As(wrappedNumErr, &numCoder)
+	if asNumCoder {
+		code := numCoder.Code()
+		logger.Info("errors.As with NumericCoder succeeded", "code", code)
+		logger.Info("NumericCoder로 errors.As 성공", "code", code)
+		fmt.Printf("  ✅ errors.As found NumericCoder, code: %d\n", code)
+	}
+
+	logger.Info("Example 12 completed successfully")
+	logger.Info("예제 12 완료")
+}
