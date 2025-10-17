@@ -25,8 +25,8 @@ func TestCreditCard(t *testing.T) {
 		{"valid with mixed", "4532 0151-1283 0366", false},
 
 		// Invalid credit card numbers
-		{"invalid Luhn check", "4532015112830367", true}, // Last digit changed
-		{"invalid too short", "453201511283", true},      // 12 digits
+		{"invalid Luhn check", "4532015112830367", true},   // Last digit changed
+		{"invalid too short", "453201511283", true},        // 12 digits
 		{"invalid too long", "45320151128303661234", true}, // 20 digits
 		{"invalid non-digits", "453201511283036a", true},
 		{"invalid special chars", "4532-0151-1283-036!", true},
@@ -150,7 +150,7 @@ func TestLuhn(t *testing.T) {
 		// Invalid Luhn numbers
 		{"invalid last digit", "4532015112830367", true},
 		{"invalid all zeros", "0000000000000000", false}, // Technically passes Luhn (sum=0, 0%10=0)
-		{"invalid checksum", "1234567812345670", false}, // Actually passes Luhn!
+		{"invalid checksum", "1234567812345670", false},  // Actually passes Luhn!
 
 		// Invalid formats
 		{"invalid non-digits", "453201511283036a", true},
@@ -227,6 +227,10 @@ func TestLuhnCheck(t *testing.T) {
 		{"all zeros passes Luhn", "0000000000000000", true}, // Technically valid by Luhn (sum=0, 0%10=0)
 		{"valid short", "79927398713", true},
 		{"checksum passes Luhn", "1234567812345670", true}, // This actually passes Luhn
+		{"non-digit character", "453201511283036a", false}, // Contains non-digit
+		{"special character", "4532015112830!6", false},    // Contains special char
+		{"space in middle", "4532 015112830366", false},    // Contains space (not cleaned)
+		{"letter in middle", "4532x15112830366", false},    // Contains letter
 	}
 
 	for _, tt := range tests {

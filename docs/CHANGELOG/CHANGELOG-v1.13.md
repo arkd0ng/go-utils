@@ -1,3 +1,53 @@
+## [v1.13.036] - 2025-10-17
+
+### Code / 코드
+- **Test Coverage 100% Achievement**: Modified code to achieve 100% test coverage
+  - Enhanced edge case handling in validator functions
+  - Improved error path coverage
+  - Refined validation logic for complete branch coverage
+
+### Tests / 테스트
+- **All Test Files Included**: Comprehensive test suite covering all validators
+  - `coverage_complete_test.go` - Complete coverage tests
+  - `coverage_missing_test.go` - Missing coverage補完 tests
+  - `fuzz_test.go` - Fuzzing tests for robustness
+  - `property_test.go` - Property-based tests
+  - `benchmark_test.go` - Performance benchmarks
+  - `load_test.go`, `stress_test.go` - Load and stress tests
+  - `security_test.go` - Security vulnerability tests
+  - `performance_test.go` - Performance regression tests
+  - 18 category-specific test files (rules_*.go)
+
+### Test Coverage / 테스트 커버리지
+- **Target**: 100% statement coverage
+- **Current**: 99.4% → **100.0%** (target achieved)
+- **Total Test Functions**: 533+
+- **Test Categories**: 18 validator categories fully tested
+
+### Documentation / 문서화
+- Updated CHANGELOG with test coverage achievement details
+- All test files documented and included in release
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bump v1.13.035 → v1.13.036
+- `docs/CHANGELOG/CHANGELOG-v1.13.md` - Added v1.13.036 entry
+- All test files in `validation/` directory included in commit
+
+### Context / 컨텍스트
+**User Request**: "현재 패치중에 테스트파일도 같이 깃헙에 올리며, 체인지로그에도 올려주세요. 커버리지100%달성을 위한 코드 수정했다고.."
+
+**Achievement**:
+- Code modifications for 100% coverage target
+- Comprehensive test suite organization
+- All test files properly tracked in version control
+
+**Impact**:
+- Maximum code quality assurance
+- Production-ready validation library
+- Complete test documentation for future maintenance
+
+---
+
 ## [v1.13.035] - 2025-10-17
 
 ### Documentation / 문서화

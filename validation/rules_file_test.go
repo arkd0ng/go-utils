@@ -154,6 +154,41 @@ func TestFileWritable(t *testing.T) {
 	}
 	defer os.RemoveAll(tmpDir)
 
+	// Create a read-only file (if possible on this OS)
+	readOnlyFile, err := os.CreateTemp("", "test_readonly_*.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	readOnlyFilePath := readOnlyFile.Name()
+	readOnlyFile.Close()
+	defer os.Remove(readOnlyFilePath)
+	os.Chmod(readOnlyFilePath, 0444)       // Read-only permissions
+	defer os.Chmod(readOnlyFilePath, 0644) // Restore permissions for cleanup
+
+	// Create a read-only directory to test non-writable parent
+	readOnlyDir, err := os.MkdirTemp("", "test_readonly_dir_*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		os.Chmod(readOnlyDir, 0755) // Restore permissions for cleanup
+		os.RemoveAll(readOnlyDir)
+	}()
+	os.Chmod(readOnlyDir, 0555) // Read-only directory
+
+	// Create a file inside a directory, then make the directory inaccessible
+	noAccessDir, err := os.MkdirTemp("", "test_noaccess_dir_*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		os.Chmod(noAccessDir, 0755) // Restore permissions for cleanup
+		os.RemoveAll(noAccessDir)
+	}()
+	noAccessFile := filepath.Join(noAccessDir, "file.txt")
+	os.WriteFile(noAccessFile, []byte("test"), 0644)
+	os.Chmod(noAccessDir, 0000) // No permissions - cannot stat files inside
+
 	tests := []struct {
 		name      string
 		value     interface{}
@@ -167,6 +202,12 @@ func TestFileWritable(t *testing.T) {
 		{"new file in non-existing directory", "/nonexistent/dir/file.txt", true},
 		{"non-string value", 123, true},
 		{"nil value", nil, true},
+		{"directory path", tmpDir, true},                                                     // Directory instead of file
+		{"read-only file", readOnlyFilePath, true},                                           // Read-only file
+		{"new file in read-only directory", filepath.Join(readOnlyDir, "newfile.txt"), true}, // Cannot create file in read-only dir
+		{"parent is not directory", filepath.Join(tmpFile.Name(), "subfile.txt"), true},      // Parent is a file, not a directory
+		{"file in inaccessible directory", noAccessFile, true},                               // Cannot stat file in directory with no permissions
+		{"file with null byte", "/tmp/file\x00test.txt", true},                               // Invalid file path with null byte
 	}
 
 	for _, tt := range tests {

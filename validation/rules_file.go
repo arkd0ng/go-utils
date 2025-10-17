@@ -90,7 +90,7 @@ func (v *Validator) FileWritable() *Validator {
 	}
 
 	// Check if file exists
-	info, err := os.Stat(str)
+	_, err := os.Stat(str)
 	if err == nil {
 		// File exists, check if we can write to it
 		file, err := os.OpenFile(str, os.O_WRONLY|os.O_APPEND, 0666)
@@ -118,11 +118,9 @@ func (v *Validator) FileWritable() *Validator {
 		os.Remove(tmpFile.Name())
 	} else {
 		// Other error (permission, etc.)
-		if info != nil && info.IsDir() {
-			v.addError("file_writable", fmt.Sprintf("%s must be a file, not a directory / %s은(는) 디렉토리가 아닌 파일이어야 합니다", v.fieldName, v.fieldName))
-		} else {
-			v.addError("file_writable", fmt.Sprintf("%s must be accessible / %s에 접근할 수 있어야 합니다", v.fieldName, v.fieldName))
-		}
+		// Note: os.Stat returns nil info when error occurs, so this is a catch-all for any stat errors
+		// 참고: os.Stat은 에러 발생 시 nil info를 반환하므로, 이는 모든 stat 에러에 대한 포괄적 처리입니다
+		v.addError("file_writable", fmt.Sprintf("%s must be accessible / %s에 접근할 수 있어야 합니다", v.fieldName, v.fieldName))
 		return v
 	}
 
