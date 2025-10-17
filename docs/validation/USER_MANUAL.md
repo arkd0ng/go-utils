@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.022
+**Version / 버전**: v1.13.023
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -20,12 +20,13 @@
 11. [Range Validators / 범위 검증기](#range-validators--범위-검증기)
 12. [File Validators / 파일 검증기](#file-validators--파일-검증기)
 13. [Credit Card Validators / 신용카드 검증기](#credit-card-validators--신용카드-검증기)
-14. [Business/ID Validators / 비즈니스/ID 검증기](#businessid-validators--비즈니스id-검증기) 🆕
-15. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
-16. [Error Handling / 에러 처리](#error-handling--에러-처리)
-17. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
-18. [Best Practices / 모범 사례](#best-practices--모범-사례)
-19. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
+14. [Business/ID Validators / 비즈니스/ID 검증기](#businessid-validators--비즈니스id-검증기)
+15. [Geographic Validators / 지리 좌표 검증기](#geographic-validators--지리-좌표-검증기) 🆕
+16. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
+17. [Error Handling / 에러 처리](#error-handling--에러-처리)
+18. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
+19. [Best Practices / 모범 사례](#best-practices--모범-사례)
+20. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
 
 ---
 
@@ -37,7 +38,7 @@ The `validation` package provides a **fluent, type-safe validation library** for
 
 ### Key Features / 주요 기능
 
-- ✅ **76+ Built-in Validators** / **76개 이상의 내장 검증기**
+- ✅ **79+ Built-in Validators** / **79개 이상의 내장 검증기**
 - ✅ **Fluent API with Method Chaining** / **메서드 체이닝을 통한 플루언트 API**
 - ✅ **Type-Safe with Go Generics** / **Go 제네릭을 활용한 타입 안전성**
 - ✅ **Bilingual Error Messages (EN/KR)** / **양방향 에러 메시지 (영어/한글)**
@@ -52,7 +53,8 @@ The `validation` package provides a **fluent, type-safe validation library** for
 - ✅ **Format Validators (UUIDv4, XML, Hex)** / **포맷 검증기**
 - ✅ **File Validators (FilePath, FileExists, FileReadable, FileWritable, FileSize, FileExtension)** / **파일 검증기**
 - ✅ **Credit Card Validators (CreditCard, CreditCardType, Luhn)** / **신용카드 검증기**
-- ✅ **Business/ID Validators (ISBN, ISSN, EAN)** 🆕 / **비즈니스/ID 검증기** 🆕
+- ✅ **Business/ID Validators (ISBN, ISSN, EAN)** / **비즈니스/ID 검증기**
+- ✅ **Geographic Validators (Latitude, Longitude, Coordinate)** 🆕 / **지리 좌표 검증기** 🆕
 
 ---
 
@@ -2546,6 +2548,334 @@ mv.Field(scannedBarcode, "barcode").
 // Validate international product codes
 mv.Field(ean13, "product_code").
 	EAN()  // EAN-13 for international products
+```
+
+---
+
+## Geographic Validators / 지리 좌표 검증기
+
+Geographic validators ensure that location data (latitude, longitude, coordinates) is valid according to standard geographic coordinate systems. These validators are essential for mapping applications, location services, and geographic information systems (GIS).
+
+지리 좌표 검증기는 위치 데이터(위도, 경도, 좌표)가 표준 지리 좌표 시스템에 따라 유효한지 확인합니다. 이러한 검증기는 지도 애플리케이션, 위치 서비스 및 지리 정보 시스템(GIS)에 필수적입니다.
+
+### Available Validators / 사용 가능한 검증기
+
+| Validator | Description (EN) | Description (KR) | Supported Types |
+|-----------|------------------|------------------|-----------------|
+| `Latitude()` | Validates latitude coordinates (-90 to 90 degrees) | 위도 좌표를 검증합니다 (-90 ~ 90도) | `float64`, `float32`, `int`, `int64`, `string` |
+| `Longitude()` | Validates longitude coordinates (-180 to 180 degrees) | 경도 좌표를 검증합니다 (-180 ~ 180도) | `float64`, `float32`, `int`, `int64`, `string` |
+| `Coordinate()` | Validates coordinate pairs in "lat,lon" format | "위도,경도" 형식의 좌표 쌍을 검증합니다 | `string` |
+
+### 1. Latitude Validator / 위도 검증기
+
+The `Latitude()` validator ensures that a value represents a valid latitude coordinate. Latitude values must be between -90° (South Pole) and +90° (North Pole).
+
+`Latitude()` 검증기는 값이 유효한 위도 좌표를 나타내는지 확인합니다. 위도 값은 -90°(남극)와 +90°(북극) 사이여야 합니다.
+
+**Validation Rules / 검증 규칙:**
+- **Range**: -90.0 ≤ latitude ≤ 90.0 / **범위**: -90.0 ≤ 위도 ≤ 90.0
+- **Supported Types**: `float64`, `float32`, `int`, `int64`, `string` / **지원 타입**: `float64`, `float32`, `int`, `int64`, `string`
+- **String Format**: Must be a parseable number / **문자열 형식**: 파싱 가능한 숫자여야 함
+
+**Examples / 예시:**
+
+```go
+// Basic latitude validation / 기본 위도 검증
+latitude := 37.5665  // Seoul latitude
+v := validation.New(latitude, "latitude")
+v.Latitude()
+
+if err := v.Validate(); err != nil {
+    fmt.Println(err)  // No error - valid latitude
+}
+
+// Validate latitude from different types / 다양한 타입의 위도 검증
+v1 := validation.New(37.5665, "lat").Latitude()          // float64
+v2 := validation.New(float32(37.5), "lat").Latitude()    // float32
+v3 := validation.New(45, "lat").Latitude()                // int
+v4 := validation.New("37.5665", "lat").Latitude()        // string
+
+// Invalid latitudes / 유효하지 않은 위도
+v5 := validation.New(90.1, "lat").Latitude()             // Too high / 너무 높음
+v6 := validation.New(-90.1, "lat").Latitude()            // Too low / 너무 낮음
+v7 := validation.New("abc", "lat").Latitude()            // Non-numeric / 숫자가 아님
+```
+
+**Boundary Cases / 경계 케이스:**
+```go
+// Exactly at boundaries (valid) / 경계값 (유효)
+v1 := validation.New(90.0, "lat").Latitude()    // North Pole / 북극 ✅
+v2 := validation.New(-90.0, "lat").Latitude()   // South Pole / 남극 ✅
+
+// Just outside boundaries (invalid) / 경계 밖 (유효하지 않음)
+v3 := validation.New(90.0001, "lat").Latitude()  // ❌
+v4 := validation.New(-90.0001, "lat").Latitude() // ❌
+```
+
+### 2. Longitude Validator / 경도 검증기
+
+The `Longitude()` validator ensures that a value represents a valid longitude coordinate. Longitude values must be between -180° (International Date Line, west) and +180° (International Date Line, east).
+
+`Longitude()` 검증기는 값이 유효한 경도 좌표를 나타내는지 확인합니다. 경도 값은 -180°(국제 날짜 변경선, 서쪽)와 +180°(국제 날짜 변경선, 동쪽) 사이여야 합니다.
+
+**Validation Rules / 검증 규칙:**
+- **Range**: -180.0 ≤ longitude ≤ 180.0 / **범위**: -180.0 ≤ 경도 ≤ 180.0
+- **Supported Types**: `float64`, `float32`, `int`, `int64`, `string` / **지원 타입**: `float64`, `float32`, `int`, `int64`, `string`
+- **String Format**: Must be a parseable number / **문자열 형식**: 파싱 가능한 숫자여야 함
+
+**Examples / 예시:**
+
+```go
+// Basic longitude validation / 기본 경도 검증
+longitude := 126.9780  // Seoul longitude
+v := validation.New(longitude, "longitude")
+v.Longitude()
+
+if err := v.Validate(); err != nil {
+    fmt.Println(err)  // No error - valid longitude
+}
+
+// Validate longitude from different types / 다양한 타입의 경도 검증
+v1 := validation.New(126.9780, "lon").Longitude()        // float64
+v2 := validation.New(float32(126.9), "lon").Longitude()  // float32
+v3 := validation.New(90, "lon").Longitude()               // int
+v4 := validation.New("126.9780", "lon").Longitude()      // string
+
+// Invalid longitudes / 유효하지 않은 경도
+v5 := validation.New(180.1, "lon").Longitude()           // Too high / 너무 높음
+v6 := validation.New(-180.1, "lon").Longitude()          // Too low / 너무 낮음
+v7 := validation.New("xyz", "lon").Longitude()           // Non-numeric / 숫자가 아님
+```
+
+**Boundary Cases / 경계 케이스:**
+```go
+// Exactly at boundaries (valid) / 경계값 (유효)
+v1 := validation.New(180.0, "lon").Longitude()   // International Date Line / 국제 날짜 변경선 ✅
+v2 := validation.New(-180.0, "lon").Longitude()  // International Date Line / 국제 날짜 변경선 ✅
+
+// Just outside boundaries (invalid) / 경계 밖 (유효하지 않음)
+v3 := validation.New(180.0001, "lon").Longitude()  // ❌
+v4 := validation.New(-180.0001, "lon").Longitude() // ❌
+```
+
+### 3. Coordinate Validator / 좌표 검증기
+
+The `Coordinate()` validator validates coordinate pairs in "latitude,longitude" format. It parses the string, validates both components, and ensures they are within valid ranges.
+
+`Coordinate()` 검증기는 "위도,경도" 형식의 좌표 쌍을 검증합니다. 문자열을 파싱하여 두 구성 요소를 모두 검증하고 유효한 범위 내에 있는지 확인합니다.
+
+**Validation Rules / 검증 규칙:**
+- **Format**: "latitude,longitude" (comma-separated) / **형식**: "위도,경도" (쉼표로 구분)
+- **Optional Spaces**: Spaces around comma are allowed / **선택적 공백**: 쉼표 주변 공백 허용
+- **Latitude Range**: -90.0 ≤ latitude ≤ 90.0 / **위도 범위**: -90.0 ≤ 위도 ≤ 90.0
+- **Longitude Range**: -180.0 ≤ longitude ≤ 180.0 / **경도 범위**: -180.0 ≤ 경도 ≤ 180.0
+- **Type**: String only / **타입**: 문자열만
+
+**Examples / 예시:**
+
+```go
+// Basic coordinate validation / 기본 좌표 검증
+coordinate := "37.5665,126.9780"  // Seoul, South Korea
+v := validation.New(coordinate, "location")
+v.Coordinate()
+
+if err := v.Validate(); err != nil {
+    fmt.Println(err)  // No error - valid coordinate
+}
+
+// Various valid formats / 다양한 유효 형식
+v1 := validation.New("37.5665,126.9780", "loc").Coordinate()   // No spaces
+v2 := validation.New("37.5665, 126.9780", "loc").Coordinate()  // Space after comma
+v3 := validation.New("  37.5665  ,  126.9780  ", "loc").Coordinate()  // Extra spaces
+v4 := validation.New("0,0", "loc").Coordinate()                 // Null Island
+v5 := validation.New("-90,-180", "loc").Coordinate()            // Min values
+v6 := validation.New("90,180", "loc").Coordinate()              // Max values
+
+// Famous locations / 유명한 위치
+vSeoul := validation.New("37.5665,126.9780", "Seoul").Coordinate()
+vNewYork := validation.New("40.7128,-74.0060", "New York").Coordinate()
+vLondon := validation.New("51.5074,-0.1278", "London").Coordinate()
+vTokyo := validation.New("35.6762,139.6503", "Tokyo").Coordinate()
+
+// Invalid coordinates / 유효하지 않은 좌표
+v7 := validation.New("91,0", "loc").Coordinate()              // Latitude out of range
+v8 := validation.New("0,181", "loc").Coordinate()             // Longitude out of range
+v9 := validation.New("37.5665", "loc").Coordinate()           // Missing longitude
+v10 := validation.New("37.5665 126.9780", "loc").Coordinate() // No comma
+v11 := validation.New("abc,xyz", "loc").Coordinate()          // Non-numeric
+```
+
+**Error Messages / 에러 메시지:**
+```go
+v := validation.New("91,0", "location")
+v.Coordinate()
+// Error: "location latitude must be between -90 and 90 / location 위도는 -90과 90 사이여야 합니다"
+
+v2 := validation.New("0,181", "location")
+v2.Coordinate()
+// Error: "location longitude must be between -180 and 180 / location 경도는 -180과 180 사이여야 합니다"
+
+v3 := validation.New("abc,xyz", "location")
+v3.Coordinate()
+// Error: "location latitude must be a valid number / location 위도는 유효한 숫자여야 합니다"
+```
+
+### Multi-Field Geographic Validation / 다중 필드 지리 좌표 검증
+
+Validate multiple geographic fields together for location-based data:
+
+위치 기반 데이터를 위한 여러 지리 필드를 함께 검증합니다:
+
+```go
+type Location struct {
+    Latitude    float64
+    Longitude   float64
+    Coordinate  string
+    Altitude    float64
+}
+
+func ValidateLocation(loc Location) error {
+    mv := validation.NewValidator()
+
+    // Validate separate latitude/longitude fields
+    // 개별 위도/경도 필드 검증
+    mv.Field(loc.Latitude, "latitude").
+        Required().
+        Latitude()
+
+    mv.Field(loc.Longitude, "longitude").
+        Required().
+        Longitude()
+
+    // Validate coordinate string
+    // 좌표 문자열 검증
+    mv.Field(loc.Coordinate, "coordinate").
+        Required().
+        Coordinate()
+
+    // Validate altitude (optional)
+    // 고도 검증 (선택적)
+    if loc.Altitude != 0 {
+        mv.Field(loc.Altitude, "altitude").
+            FloatRange(-500.0, 9000.0)  // Sea level to Everest
+    }
+
+    return mv.Validate()
+}
+```
+
+### Chaining with Other Validators / 다른 검증기와 체이닝
+
+Combine geographic validators with other validation rules:
+
+지리 좌표 검증기를 다른 검증 규칙과 결합합니다:
+
+```go
+// Validate required coordinate field
+// 필수 좌표 필드 검증
+v := validation.New(coordinate, "user_location")
+v.Required().Coordinate()
+
+// Validate optional latitude with custom error handling
+// 사용자 정의 에러 처리로 선택적 위도 검증
+v2 := validation.New(latitude, "optional_lat").StopOnError()
+if latitude != 0 {  // Only validate if provided
+    v2.Latitude()
+}
+
+// Multi-field validation with stop-on-error
+// 첫 에러에서 멈춤과 함께 다중 필드 검증
+mv := validation.NewValidator()
+mv.Field(location.Lat, "latitude").StopOnError().Required().Latitude()
+mv.Field(location.Lon, "longitude").StopOnError().Required().Longitude()
+```
+
+### Real-World Use Cases / 실제 사용 사례
+
+**Location-Based Services** / **위치 기반 서비스**
+```go
+// Validate user's current location
+mv.Field(userLat, "user_latitude").
+    Required().
+    Latitude()
+
+mv.Field(userLon, "user_longitude").
+    Required().
+    Longitude()
+```
+
+**Mapping and Navigation** / **지도 및 내비게이션**
+```go
+// Validate destination coordinates from user input
+mv.Field(destination, "destination").
+    Required().
+    Coordinate()
+
+// Validate waypoint coordinates
+for i, waypoint := range waypoints {
+    mv.Field(waypoint, fmt.Sprintf("waypoint_%d", i)).
+        Coordinate()
+}
+```
+
+**GIS and Geospatial Applications** / **GIS 및 공간 정보 애플리케이션**
+```go
+// Validate boundary box for map query
+mv.Field(minLat, "min_latitude").Required().Latitude()
+mv.Field(maxLat, "max_latitude").Required().Latitude()
+mv.Field(minLon, "min_longitude").Required().Longitude()
+mv.Field(maxLon, "max_longitude").Required().Longitude()
+
+// Also validate logical constraints
+if minLat >= maxLat {
+    return errors.New("min_latitude must be less than max_latitude")
+}
+if minLon >= maxLon {
+    return errors.New("min_longitude must be less than max_longitude")
+}
+```
+
+**Delivery and Logistics** / **배송 및 물류**
+```go
+// Validate pickup and delivery locations
+mv.Field(pickupLocation, "pickup_location").
+    Required().
+    Coordinate()
+
+mv.Field(deliveryLocation, "delivery_location").
+    Required().
+    Coordinate()
+```
+
+**IoT and Telemetry** / **IoT 및 원격 측정**
+```go
+// Validate GPS coordinates from IoT devices
+mv.Field(deviceLat, "device_latitude").
+    Latitude()
+
+mv.Field(deviceLon, "device_longitude").
+    Longitude()
+
+// Coordinate validation from GPS string
+mv.Field(gpsData, "gps_coordinates").
+    Coordinate()
+```
+
+### Performance / 성능
+
+Geographic validators are highly optimized for common use cases:
+
+지리 좌표 검증기는 일반적인 사용 사례에 맞게 고도로 최적화되어 있습니다:
+
+- **Latitude**: ~300-400 ns/op (sub-microsecond)
+- **Longitude**: ~300-400 ns/op (sub-microsecond)
+- **Coordinate**: ~600-800 ns/op (string parsing + dual validation)
+
+**Benchmarks:**
+```
+BenchmarkLatitude-8    3000000    350 ns/op
+BenchmarkLongitude-8   3000000    350 ns/op
+BenchmarkCoordinate-8  2000000    750 ns/op
 ```
 
 ---

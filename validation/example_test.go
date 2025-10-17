@@ -1000,3 +1000,68 @@ func Example_businessIDValidation() {
 	}
 	// Output: All IDs valid
 }
+
+// ExampleValidator_Latitude demonstrates latitude validation
+// ExampleValidator_Latitude는 위도 검증을 보여줍니다
+func ExampleValidator_Latitude() {
+	v := validation.New(37.5665, "latitude")
+	v.Latitude()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid latitude")
+	} else {
+		fmt.Println("Valid latitude")
+	}
+	// Output: Valid latitude
+}
+
+// ExampleValidator_Longitude demonstrates longitude validation
+// ExampleValidator_Longitude는 경도 검증을 보여줍니다
+func ExampleValidator_Longitude() {
+	v := validation.New(126.9780, "longitude")
+	v.Longitude()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid longitude")
+	} else {
+		fmt.Println("Valid longitude")
+	}
+	// Output: Valid longitude
+}
+
+// ExampleValidator_Coordinate demonstrates coordinate string validation
+// ExampleValidator_Coordinate는 좌표 문자열 검증을 보여줍니다
+func ExampleValidator_Coordinate() {
+	v := validation.New("37.5665,126.9780", "location")
+	v.Coordinate()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid coordinate")
+	} else {
+		fmt.Println("Valid coordinate")
+	}
+	// Output: Valid coordinate
+}
+
+// Example_geographicValidation demonstrates geographic validation
+// Example_geographicValidation는 지리적 검증을 보여줍니다
+func Example_geographicValidation() {
+	mv := validation.NewValidator()
+
+	// Validate latitude
+	mv.Field(37.5665, "latitude").Latitude()
+
+	// Validate longitude
+	mv.Field(126.9780, "longitude").Longitude()
+
+	// Validate coordinate string
+	mv.Field("40.7128,-74.0060", "nyc_location").Coordinate()
+
+	err := mv.Validate()
+	if err != nil {
+		fmt.Println("Invalid location")
+	} else {
+		fmt.Println("All locations valid")
+	}
+	// Output: All locations valid
+}

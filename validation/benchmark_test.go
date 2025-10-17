@@ -536,3 +536,33 @@ func BenchmarkEAN(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkLatitude benchmarks the Latitude validator
+// BenchmarkLatitude는 Latitude 검증기를 벤치마크합니다
+func BenchmarkLatitude(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New(37.5665, "latitude")
+		v.Latitude()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkLongitude benchmarks the Longitude validator
+// BenchmarkLongitude는 Longitude 검증기를 벤치마크합니다
+func BenchmarkLongitude(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New(126.9780, "longitude")
+		v.Longitude()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkCoordinate benchmarks the Coordinate validator
+// BenchmarkCoordinate는 Coordinate 검증기를 벤치마크합니다
+func BenchmarkCoordinate(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("37.5665,126.9780", "coordinate")
+		v.Coordinate()
+		_ = v.Validate()
+	}
+}
