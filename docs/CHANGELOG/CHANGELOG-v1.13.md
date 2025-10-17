@@ -6,6 +6,68 @@ Go 애플리케이션을 위한 검증 유틸리티 패키지입니다.
 
 ---
 
+## [v1.13.011] - 2025-10-17
+
+### Added / 추가
+- Comparison validators 구현 (10개)
+  - `Equals(value)` - 값이 동일한지 검증
+  - `NotEquals(value)` - 값이 다른지 검증
+  - `GreaterThan(value)` - 숫자 값이 더 큰지 검증
+  - `GreaterThanOrEqual(value)` - 숫자 값이 크거나 같은지 검증
+  - `LessThan(value)` - 숫자 값이 더 작은지 검증
+  - `LessThanOrEqual(value)` - 숫자 값이 작거나 같은지 검증
+  - `Before(time)` - 시간이 이전인지 검증
+  - `After(time)` - 시간이 이후인지 검증
+  - `BeforeOrEqual(time)` - 시간이 이전이거나 같은지 검증
+  - `AfterOrEqual(time)` - 시간이 이후이거나 같은지 검증
+
+### Implementation Details / 구현 세부사항
+- **Numeric Comparison**: validateNumeric helper로 타입 안전 비교
+- **Time Comparison**: time.Time 타입 검사 및 비교
+- **Type Safety**: 타입 불일치 시 명확한 에러 메시지
+- **Bilingual Messages**: 영어/한글 에러 메시지
+
+### Files Changed / 변경된 파일
+- `validation/rules_comparison.go` - 10개 comparison validators (~224줄)
+- `validation/rules_comparison_test.go` - 포괄적 테스트 (~280줄)
+
+### Test Results / 테스트 결과
+```bash
+go test ./validation -cover
+# All 70+ tests passed ✅
+# Coverage: 92.5%
+```
+
+### Context / 컨텍스트
+
+**Why / 이유**:
+- 값 비교는 가장 기본적인 검증 요구사항
+- 숫자 범위 검증, 시간 범위 검증 등 매우 흔함
+- 동등성 검증은 비밀번호 확인 등에 필수
+
+**Impact / 영향**:
+- ✅ 50개 validators 구현 완료 (string 20 + numeric 10 + collection 10 + comparison 10)
+- ✅ 92.5% coverage 유지
+- ✅ 모든 테스트 통과
+
+**Example / 예제**:
+```go
+// Numeric comparison
+v := validation.New(50, "score")
+v.GreaterThan(0).LessThan(100)
+
+// Time comparison
+now := time.Now()
+v := validation.New(someDate, "date")
+v.After(now.Add(-7*24*time.Hour)).Before(now.Add(7*24*time.Hour))
+
+// Equality check
+v := validation.New(password, "password")
+v.Equals(confirmPassword)
+```
+
+---
+
 ## [v1.13.010] - 2025-10-17
 
 ### Added / 추가
