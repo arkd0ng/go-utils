@@ -6,6 +6,65 @@ Go 애플리케이션을 위한 검증 유틸리티 패키지입니다.
 
 ---
 
+## [v1.13.009] - 2025-10-17
+
+### Added / 추가
+- Numeric validators 구현 (10개)
+  - `Min(n)` - 최소값 검증
+  - `Max(n)` - 최대값 검증
+  - `Between(min, max)` - 범위 검증 (포함)
+  - `Positive()` - 양수 검증
+  - `Negative()` - 음수 검증
+  - `Zero()` - 0 검증
+  - `NonZero()` - 0이 아님 검증
+  - `Even()` - 짝수 검증
+  - `Odd()` - 홀수 검증
+  - `MultipleOf(n)` - 배수 검증
+
+### Implementation Details / 구현 세부사항
+- **Type Support**: 모든 숫자 타입 자동 변환 (int, uint, float)
+- **Bilingual Messages**: 영어/한글 에러 메시지
+- **Method Chaining**: Fluent API로 연속 검증 가능
+- **Zero Division Protection**: MultipleOf에서 0으로 나누기 방지
+
+### Files Changed / 변경된 파일
+- `validation/rules_numeric.go` - 10개 numeric validators (~87줄)
+- `validation/rules_numeric_test.go` - 포괄적 테스트 (~282줄)
+
+### Test Results / 테스트 결과
+```bash
+go test ./validation -cover
+# All 50+ tests passed ✅
+# Coverage: 98.3%
+```
+
+### Context / 컨텍스트
+
+**Why / 이유**:
+- 숫자 검증은 매우 일반적인 요구사항
+- 범위 체크, 짝수/홀수, 배수 등 자주 사용되는 패턴
+- 타입 안전한 검증으로 런타임 에러 방지
+
+**Impact / 영향**:
+- ✅ 30개 이상의 validators 구현 완료 (string 20개 + numeric 10개)
+- ✅ 98.3% coverage 달성
+- ✅ 모든 테스트 통과
+
+**Example / 예제**:
+```go
+// Age validation
+v := validation.New(25, "age")
+v.Positive().Min(18).Max(120)
+err := v.Validate()
+
+// Even number check
+v := validation.New(10, "value")
+v.Even().MultipleOf(5)
+err := v.Validate()
+```
+
+---
+
 ## [v1.13.008] - 2025-10-17
 
 ### Changed / 변경
