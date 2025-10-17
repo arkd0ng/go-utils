@@ -6,6 +6,55 @@ Go 애플리케이션을 위한 검증 유틸리티 패키지입니다.
 
 ---
 
+## [v1.13.003] - 2025-10-17
+
+### Added / 추가
+- Validator 핵심 기능 구현
+  - `New()` - 새 Validator 생성
+  - `Validate()` - 검증 실행 및 에러 반환
+  - `GetErrors()` - 모든 에러 조회
+  - `StopOnError()` - 첫 에러에서 중지 설정
+  - `WithMessage()` - 사용자 정의 메시지 설정
+  - `Custom()` - 사용자 정의 검증 함수
+  - `NewValidator()` - MultiValidator 생성
+  - `Field()` - 필드 추가
+  - Helper functions: `validateString()`, `validateNumeric()`
+
+### Implementation Details / 구현 세부사항
+- **Fluent API**: 메서드 체이닝으로 직관적인 사용
+- **Stop on Error**: 첫 번째 에러에서 중지 옵션
+- **Custom Messages**: 각 규칙에 사용자 정의 메시지 지정 가능
+- **Multi-field Validation**: 여러 필드를 한 번에 검증
+- **Type Support**: 모든 숫자 타입 (int, uint, float) 자동 변환
+
+### Files Changed / 변경된 파일
+- `validation/validator.go` - 핵심 검증 로직 (~170줄)
+- `validation/validator_test.go` - 포괄적 테스트 (~280줄)
+
+### Test Results / 테스트 결과
+```bash
+go test ./validation -v -cover
+# All 36 tests passed ✅
+# Coverage: 95.5%
+```
+
+### Context / 컨텍스트
+
+**Why / 이유**:
+- 검증 규칙을 적용하기 위한 핵심 인프라 필요
+- Fluent API로 사용성 극대화
+- Multi-field 검증으로 실제 사용 시나리오 지원
+
+**Impact / 영향**:
+- ✅ 검증 프레임워크 핵심 완성
+- ✅ Custom validators 지원으로 확장성 확보
+- ✅ 95.5% 높은 테스트 커버리지
+
+**Next Steps / 다음 단계**:
+- v1.13.004-008: String validators 구현 (Required, MinLength, Email, URL, etc.)
+
+---
+
 ## [v1.13.002] - 2025-10-17
 
 ### Added / 추가
