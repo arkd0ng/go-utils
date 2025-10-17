@@ -19,11 +19,13 @@ func RelativeTime(t time.Time) string {
 	diff := now.Sub(t)
 
 	if diff < 0 {
-		// Future / 미래
+		// Future
+		// 미래
 		return relativeTimeFuture(-diff)
 	}
 
-	// Past / 과거
+	// Past
+	// 과거
 	return relativeTimePast(diff)
 }
 
@@ -40,11 +42,13 @@ func RelativeTimeShort(t time.Time) string {
 	diff := now.Sub(t)
 
 	if diff < 0 {
-		// Future / 미래
+		// Future
+		// 미래
 		return relativeTimeFutureShort(-diff)
 	}
 
-	// Past / 과거
+	// Past
+	// 과거
 	return relativeTimePastShort(diff)
 }
 
@@ -205,7 +209,8 @@ func relativeTimeFutureShort(d time.Duration) string {
 // HumanizeDuration converts a duration to a human-readable string.
 // HumanizeDuration은 duration을 사람이 읽기 쉬운 문자열로 변환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	d := 2*time.Hour + 30*time.Minute
 //	str := timeutil.HumanizeDuration(d) // "2 hours 30 minutes"

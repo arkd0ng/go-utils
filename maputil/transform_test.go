@@ -17,7 +17,8 @@ func TestMap(t *testing.T) {
 		t.Errorf("Expected length 3, got %d", len(result))
 	}
 
-	// Check that all keys are present / 모든 키가 있는지 확인
+	// Check that all keys are present
+	// 모든 키가 있는지 확인
 	for k := range m {
 		if _, exists := result[k]; !exists {
 			t.Errorf("Key %s should exist in result", k)
@@ -134,20 +135,23 @@ func TestUnflatten(t *testing.T) {
 func TestChunk(t *testing.T) {
 	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}
 
-	// Chunk size 2 / 청크 크기 2
+	// Chunk size 2
+	// 청크 크기 2
 	result := Chunk(m, 2)
 
 	if len(result) != 3 {
 		t.Errorf("Expected 3 chunks, got %d", len(result))
 	}
 
-	// Chunk size 0 (invalid) / 청크 크기 0 (유효하지 않음)
+	// Chunk size 0 (invalid)
+	// 청크 크기 0 (유효하지 않음)
 	result = Chunk(m, 0)
 	if result != nil {
 		t.Error("Expected nil for chunk size 0")
 	}
 
-	// Chunk size larger than map / 맵보다 큰 청크 크기
+	// Chunk size larger than map
+	// 맵보다 큰 청크 크기
 	result = Chunk(m, 10)
 	if len(result) != 1 {
 		t.Errorf("Expected 1 chunk, got %d", len(result))
@@ -192,7 +196,8 @@ func TestCompact(t *testing.T) {
 	}
 }
 
-// Benchmark tests / 벤치마크 테스트
+// Benchmark tests
+// 벤치마크 테스트
 
 func BenchmarkMap(b *testing.B) {
 	m := map[string]int{"a": 1, "b": 2, "c": 3}
@@ -232,7 +237,8 @@ func BenchmarkPartition(b *testing.B) {
 	}
 }
 
-// Helper function for deep comparison / 깊은 비교를 위한 헬퍼 함수
+// Helper function for deep comparison
+// 깊은 비교를 위한 헬퍼 함수
 func mapEqual(m1, m2 map[string]interface{}) bool {
 	return reflect.DeepEqual(m1, m2)
 }

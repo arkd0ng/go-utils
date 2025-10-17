@@ -176,7 +176,8 @@ func WithMaxUploadSize(size int64) Option {
 // Default: 10 MB
 // 기본값: 10 MB
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app := websvrutil.New(
 //	    websvrutil.WithMaxBodySize(5 * 1024 * 1024), // 5 MB

@@ -14,7 +14,8 @@ func TestSort(t *testing.T) {
 		if !Equal(result, expected) {
 			t.Errorf("Sort() = %v, want %v", result, expected)
 		}
-		// Verify original is unchanged / 원본이 변경되지 않았는지 확인
+		// Verify original is unchanged
+		// 원본이 변경되지 않았는지 확인
 		if Equal(input, result) && len(input) > 1 {
 			// This might pass if input was already sorted, check first element
 			// 입력이 이미 정렬되어 있었다면 통과할 수 있음, 첫 번째 요소 확인
@@ -571,7 +572,8 @@ func TestSortByMulti(t *testing.T) {
 			return i.Name < j.Name
 		})
 
-		// Verify original is unchanged / 원본이 변경되지 않았는지 확인
+		// Verify original is unchanged
+		// 원본이 변경되지 않았는지 확인
 		for i := range original {
 			if people[i] != original[i] {
 				t.Error("SortByMulti() should not modify original slice")

@@ -176,7 +176,8 @@ func TestClone(t *testing.T) {
 		if !Equal(original, cloned) {
 			t.Errorf("Clone() = %v, want %v", cloned, original)
 		}
-		// Modify cloned / 복제된 슬라이스 수정
+		// Modify cloned
+		// 복제된 슬라이스 수정
 		cloned[0] = 99
 		if original[0] == 99 {
 			t.Error("Clone() should create independent copy")
@@ -231,7 +232,8 @@ func TestFill(t *testing.T) {
 		if !Equal(filled, expected) {
 			t.Errorf("Fill() = %v, want %v", filled, expected)
 		}
-		// Verify original is unchanged / 원본이 변경되지 않았는지 확인
+		// Verify original is unchanged
+		// 원본이 변경되지 않았는지 확인
 		if slice[0] == 0 {
 			t.Error("Fill() should not modify original slice")
 		}
@@ -488,12 +490,14 @@ func TestShuffle(t *testing.T) {
 		slice := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 		shuffled := Shuffle(slice)
 
-		// Should have same length / 같은 길이여야 함
+		// Should have same length
+		// 같은 길이여야 함
 		if len(shuffled) != len(slice) {
 			t.Errorf("Shuffle() length = %d, want %d", len(shuffled), len(slice))
 		}
 
-		// Should contain same elements / 같은 요소를 포함해야 함
+		// Should contain same elements
+		// 같은 요소를 포함해야 함
 		for _, v := range slice {
 			if !Contains(shuffled, v) {
 				t.Errorf("Shuffle() missing element %d", v)
@@ -566,7 +570,8 @@ func TestZip(t *testing.T) {
 		words := []string{"one", "two"}
 		zipped := Zip(numbers, words)
 
-		// Should use minimum length / 최소 길이를 사용해야 함
+		// Should use minimum length
+		// 최소 길이를 사용해야 함
 		if len(zipped) != 2 {
 			t.Errorf("Zip() with different lengths should use minimum, got %d", len(zipped))
 		}

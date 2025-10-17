@@ -11,13 +11,15 @@ import (
 // TestIntegrationFullApp tests a complete app with multiple features.
 // TestIntegrationFullApp은 여러 기능이 있는 완전한 앱을 테스트합니다.
 func TestIntegrationFullApp(t *testing.T) {
-	// Create app with middleware / 미들웨어가 있는 앱 생성
+	// Create app with middleware
+	// 미들웨어가 있는 앱 생성
 	app := New(WithTemplateDir(""))
 	app.Use(Logger())
 	app.Use(Recovery())
 	app.Use(CORS())
 
-	// Define routes / 라우트 정의
+	// Define routes
+	// 라우트 정의
 	app.GET("/health", func(w http.ResponseWriter, r *http.Request) {
 		ctx := GetContext(r)
 		ctx.JSON(200, map[string]string{"status": "ok"})
@@ -38,7 +40,8 @@ func TestIntegrationFullApp(t *testing.T) {
 		ctx.SuccessJSON(201, "User created", user)
 	})
 
-	// Test GET /health / GET /health 테스트
+	// Test GET /health
+	// GET /health 테스트
 	req := httptest.NewRequest("GET", "/health", nil)
 	rec := httptest.NewRecorder()
 	app.ServeHTTP(rec, req)
@@ -47,7 +50,8 @@ func TestIntegrationFullApp(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", rec.Code)
 	}
 
-	// Test POST /users with valid data / 유효한 데이터로 POST /users 테스트
+	// Test POST /users with valid data
+	// 유효한 데이터로 POST /users 테스트
 	userData := User{Name: "John Doe", Email: "john@example.com"}
 	body, _ := json.Marshal(userData)
 	req = httptest.NewRequest("POST", "/users", bytes.NewReader(body))
@@ -59,7 +63,8 @@ func TestIntegrationFullApp(t *testing.T) {
 		t.Errorf("Expected status 201, got %d", rec.Code)
 	}
 
-	// Test POST /users with invalid data / 무효한 데이터로 POST /users 테스트
+	// Test POST /users with invalid data
+	// 무효한 데이터로 POST /users 테스트
 	invalidUser := User{Name: "Jo", Email: "invalid"}
 	body, _ = json.Marshal(invalidUser)
 	req = httptest.NewRequest("POST", "/users", bytes.NewReader(body))
@@ -77,21 +82,24 @@ func TestIntegrationFullApp(t *testing.T) {
 func TestIntegrationRouteGroups(t *testing.T) {
 	app := New(WithTemplateDir(""))
 
-	// Create API v1 group / API v1 그룹 생성
+	// Create API v1 group
+	// API v1 그룹 생성
 	v1 := app.Group("/api/v1")
 	v1.GET("/users", func(w http.ResponseWriter, r *http.Request) {
 		ctx := GetContext(r)
 		ctx.JSON(200, []string{"user1", "user2"})
 	})
 
-	// Create API v2 group / API v2 그룹 생성
+	// Create API v2 group
+	// API v2 그룹 생성
 	v2 := app.Group("/api/v2")
 	v2.GET("/users", func(w http.ResponseWriter, r *http.Request) {
 		ctx := GetContext(r)
 		ctx.JSON(200, []string{"user1", "user2", "user3"})
 	})
 
-	// Test v1 / v1 테스트
+	// Test v1
+	// v1 테스트
 	req := httptest.NewRequest("GET", "/api/v1/users", nil)
 	rec := httptest.NewRecorder()
 	app.ServeHTTP(rec, req)
@@ -100,7 +108,8 @@ func TestIntegrationRouteGroups(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", rec.Code)
 	}
 
-	// Test v2 / v2 테스트
+	// Test v2
+	// v2 테스트
 	req = httptest.NewRequest("GET", "/api/v2/users", nil)
 	rec = httptest.NewRecorder()
 	app.ServeHTTP(rec, req)
@@ -130,7 +139,8 @@ func TestIntegrationCSRFWithValidation(t *testing.T) {
 		ctx.SuccessJSON(200, "Success", data)
 	})
 
-	// First GET to obtain CSRF token / 먼저 GET으로 CSRF 토큰 얻기
+	// First GET to obtain CSRF token
+	// 먼저 GET으로 CSRF 토큰 얻기
 	app.GET("/form", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 	})
@@ -139,7 +149,8 @@ func TestIntegrationCSRFWithValidation(t *testing.T) {
 	rec := httptest.NewRecorder()
 	app.ServeHTTP(rec, req)
 
-	// Extract CSRF token / CSRF 토큰 추출
+	// Extract CSRF token
+	// CSRF 토큰 추출
 	cookies := rec.Result().Cookies()
 	var csrfToken string
 	for _, cookie := range cookies {
@@ -153,7 +164,8 @@ func TestIntegrationCSRFWithValidation(t *testing.T) {
 		t.Fatal("CSRF token not found")
 	}
 
-	// POST with CSRF token and valid data / CSRF 토큰과 유효한 데이터로 POST
+	// POST with CSRF token and valid data
+	// CSRF 토큰과 유효한 데이터로 POST
 	formData := FormData{Name: "John"}
 	body, _ := json.Marshal(formData)
 	req = httptest.NewRequest("POST", "/submit", bytes.NewReader(body))

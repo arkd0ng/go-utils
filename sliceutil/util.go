@@ -11,7 +11,8 @@ import (
 // The function is executed for its side effects; ForEach does not return a value.
 // 함수는 부수 효과를 위해 실행됩니다; ForEach는 값을 반환하지 않습니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	sliceutil.ForEach(numbers, func(n int) {
@@ -30,7 +31,8 @@ func ForEach[T any](slice []T, fn func(T)) {
 // The function receives both the index and the element.
 // 함수는 인덱스와 요소를 모두 받습니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	words := []string{"apple", "banana", "cherry"}
 //	sliceutil.ForEachIndexed(words, func(i int, word string) {
@@ -52,7 +54,8 @@ func ForEachIndexed[T any](slice []T, fn func(int, T)) {
 // Uses fmt.Sprint to convert elements to strings.
 // fmt.Sprint를 사용하여 요소를 문자열로 변환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	result := sliceutil.Join(numbers, ", ")
@@ -66,7 +69,8 @@ func Join[T any](slice []T, separator string) string {
 		return ""
 	}
 
-	// Convert all elements to strings / 모든 요소를 문자열로 변환
+	// Convert all elements to strings
+	// 모든 요소를 문자열로 변환
 	strSlice := make([]string, len(slice))
 	for i, item := range slice {
 		strSlice[i] = fmt.Sprint(item)
@@ -81,12 +85,13 @@ func Join[T any](slice []T, separator string) string {
 // The returned slice has the same elements but is a different underlying array.
 // 반환된 슬라이스는 동일한 요소를 가지지만 다른 기본 배열입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	original := []int{1, 2, 3, 4, 5}
 //	cloned := sliceutil.Clone(original)
-//	cloned[0] = 99
-//	// original: [1, 2, 3, 4, 5] (unchanged / 변경되지 않음)
+// cloned[0] = 99
+// original: [1, 2, 3, 4, 5] (unchanged / 변경되지 않음)
 //	// cloned: [99, 2, 3, 4, 5]
 func Clone[T any](slice []T) []T {
 	if slice == nil {
@@ -104,12 +109,13 @@ func Clone[T any](slice []T) []T {
 // Returns a new slice with all elements set to the value.
 // 모든 요소가 값으로 설정된 새 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	slice := []int{1, 2, 3, 4, 5}
 //	filled := sliceutil.Fill(slice, 0)
-//	// filled: [0, 0, 0, 0, 0]
-//	// slice: [1, 2, 3, 4, 5] (unchanged / 변경되지 않음)
+// // filled: [0, 0, 0, 0, 0]
+// slice: [1, 2, 3, 4, 5] (unchanged / 변경되지 않음)
 func Fill[T any](slice []T, value T) []T {
 	if len(slice) == 0 {
 		return []T{}
@@ -131,7 +137,8 @@ func Fill[T any](slice []T, value T) []T {
 // If index is negative or greater than slice length, items are appended.
 // 인덱스가 음수이거나 슬라이스 길이보다 크면 항목이 추가됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	slice := []int{1, 2, 5, 6}
 //	result := sliceutil.Insert(slice, 2, 3, 4)
@@ -144,7 +151,8 @@ func Insert[T any](slice []T, index int, items ...T) []T {
 		return Clone(slice)
 	}
 
-	// Clamp index to valid range / 인덱스를 유효한 범위로 제한
+	// Clamp index to valid range
+	// 인덱스를 유효한 범위로 제한
 	if index < 0 {
 		index = 0
 	}
@@ -152,7 +160,8 @@ func Insert[T any](slice []T, index int, items ...T) []T {
 		index = len(slice)
 	}
 
-	// Create new slice with enough capacity / 충분한 용량으로 새 슬라이스 생성
+	// Create new slice with enough capacity
+	// 충분한 용량으로 새 슬라이스 생성
 	result := make([]T, 0, len(slice)+len(items))
 	result = append(result, slice[:index]...)
 	result = append(result, items...)
@@ -170,12 +179,13 @@ func Insert[T any](slice []T, index int, items ...T) []T {
 // If index is out of bounds, returns a copy of the original slice.
 // 인덱스가 범위를 벗어나면 원본 슬라이스의 복사본을 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	slice := []int{1, 2, 3, 4, 5}
 //	result := sliceutil.Remove(slice, 2)
-//	// result: [1, 2, 4, 5]
-//	// slice: [1, 2, 3, 4, 5] (unchanged / 변경되지 않음)
+// // result: [1, 2, 4, 5]
+// slice: [1, 2, 3, 4, 5] (unchanged / 변경되지 않음)
 func Remove[T any](slice []T, index int) []T {
 	if index < 0 || index >= len(slice) {
 		return Clone(slice)
@@ -194,7 +204,8 @@ func Remove[T any](slice []T, index int) []T {
 // Returns a new slice with all occurrences of the item removed.
 // 항목의 모든 발생이 제거된 새 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	slice := []int{1, 2, 3, 2, 4, 2, 5}
 //	result := sliceutil.RemoveAll(slice, 2)
@@ -222,12 +233,14 @@ func RemoveAll[T comparable](slice []T, item T) []T {
 // The original slice is not modified.
 // 원본 슬라이스는 수정되지 않습니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	slice := []int{1, 2, 3, 4, 5}
-//	shuffled := sliceutil.Shuffle(slice)
-//	// shuffled: [3, 1, 5, 2, 4] (random order / 무작위 순서)
-//	// slice: [1, 2, 3, 4, 5] (unchanged / 변경되지 않음)
+// shuffled := sliceutil.Shuffle(slice)
+// shuffled: [3, 1, 5, 2, 4] (random order / 무작위 순서)
+// // slice: [1, 2, 3, 4, 5] (unchanged
+// 변경되지 않음)
 func Shuffle[T any](slice []T) []T {
 	if len(slice) <= 1 {
 		return Clone(slice)
@@ -237,7 +250,8 @@ func Shuffle[T any](slice []T) []T {
 	rngLock.Lock()
 	defer rngLock.Unlock()
 
-	// Fisher-Yates shuffle algorithm / Fisher-Yates 셔플 알고리즘
+	// Fisher-Yates shuffle algorithm
+	// Fisher-Yates 셔플 알고리즘
 	for i := len(result) - 1; i > 0; i-- {
 		j := rng.Intn(i + 1)
 		result[i], result[j] = result[j], result[i]
@@ -255,7 +269,8 @@ func Shuffle[T any](slice []T) []T {
 // The resulting slice length is the minimum of the two input slices.
 // 결과 슬라이스 길이는 두 입력 슬라이스의 최소값입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3}
 //	words := []string{"one", "two", "three"}
@@ -287,15 +302,18 @@ func Zip[T, U any](a []T, b []U) [][2]any {
 // 중요: 슬라이스에 T 및 U 타입이 아닌 요소가 포함되어 있으면 타입 단언이 패닉을 발생시킵니다.
 // 이 함수를 호출하기 전에 모든 쌍이 올바르게 타입이 지정되었는지 확인하세요.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// ✅ CORRECT usage / 올바른 사용:
+// // ✅ CORRECT usage
+// 올바른 사용:
 //	zipped := [][2]any{{1, "one"}, {2, "two"}, {3, "three"}}
 //	numbers, words := sliceutil.Unzip[int, string](zipped)
 //	// numbers: [1, 2, 3]
 //	// words: ["one", "two", "three"]
 //
-//	// ❌ INCORRECT usage (will panic!) / 잘못된 사용 (패닉 발생!):
+// // ❌ INCORRECT usage (will panic!)
+// 잘못된 사용 (패닉 발생!):
 //	badZipped := [][2]any{{1, "one"}, {"wrong", 2}} // Wrong types / 잘못된 타입
 //	nums, words := sliceutil.Unzip[int, string](badZipped) // PANIC!
 func Unzip[T, U any](slice [][2]any) ([]T, []U) {
@@ -323,7 +341,8 @@ func Unzip[T, U any](slice [][2]any) ([]T, []U) {
 // If size is less than or equal to 0, or greater than slice length, returns empty slice.
 // size가 0 이하이거나 슬라이스 길이보다 크면 빈 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	windows := sliceutil.Window(numbers, 3)
@@ -360,7 +379,8 @@ func Window[T any](slice []T, size int) [][]T {
 // 함수는 전체 슬라이스를 받고 모든 작업을 수행할 수 있지만
 // 원본 슬라이스는 변경되지 않고 반환됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	result := sliceutil.Tap(numbers, func(s []int) {
@@ -369,7 +389,8 @@ func Window[T any](slice []T, size int) [][]T {
 //	// Output: Current slice: [1 2 3 4 5]
 //	// result: [1, 2, 3, 4, 5]
 //
-//	// Useful in chains / 체인에서 유용
+// // Useful in chains
+// 체인에서 유용
 //	result2 := sliceutil.Map(
 //	    sliceutil.Tap(
 //	        sliceutil.Filter(numbers, func(n int) bool { return n%2 == 0 }),

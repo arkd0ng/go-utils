@@ -56,7 +56,8 @@ func (c *Client) ensureConnected() error {
 	}
 	c.mu.RUnlock()
 
-	// Try to ping / Ping 시도
+	// Try to ping
+	// Ping 시도
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 

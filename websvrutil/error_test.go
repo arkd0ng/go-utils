@@ -7,7 +7,8 @@ import (
 	"testing"
 )
 
-// TestAbortWithStatus tests AbortWithStatus method / AbortWithStatus 메서드 테스트
+// TestAbortWithStatus tests AbortWithStatus method
+// AbortWithStatus 메서드 테스트
 func TestAbortWithStatus(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -23,7 +24,8 @@ func TestAbortWithStatus(t *testing.T) {
 	}
 }
 
-// TestAbortWithError tests AbortWithError method / AbortWithError 메서드 테스트
+// TestAbortWithError tests AbortWithError method
+// AbortWithError 메서드 테스트
 func TestAbortWithError(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -44,7 +46,8 @@ func TestAbortWithError(t *testing.T) {
 	}
 }
 
-// TestAbortWithJSON tests AbortWithJSON method / AbortWithJSON 메서드 테스트
+// TestAbortWithJSON tests AbortWithJSON method
+// AbortWithJSON 메서드 테스트
 func TestAbortWithJSON(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -70,7 +73,8 @@ func TestAbortWithJSON(t *testing.T) {
 	}
 }
 
-// TestErrorJSON tests ErrorJSON method / ErrorJSON 메서드 테스트
+// TestErrorJSON tests ErrorJSON method
+// ErrorJSON 메서드 테스트
 func TestErrorJSON(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -103,7 +107,8 @@ func TestErrorJSON(t *testing.T) {
 	}
 }
 
-// TestSuccessJSON tests SuccessJSON method / SuccessJSON 메서드 테스트
+// TestSuccessJSON tests SuccessJSON method
+// SuccessJSON 메서드 테스트
 func TestSuccessJSON(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -142,7 +147,8 @@ func TestSuccessJSON(t *testing.T) {
 	}
 }
 
-// TestNotFound tests NotFound method / NotFound 메서드 테스트
+// TestNotFound tests NotFound method
+// NotFound 메서드 테스트
 func TestNotFound(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -158,7 +164,8 @@ func TestNotFound(t *testing.T) {
 	}
 }
 
-// TestUnauthorized tests Unauthorized method / Unauthorized 메서드 테스트
+// TestUnauthorized tests Unauthorized method
+// Unauthorized 메서드 테스트
 func TestUnauthorized(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -174,7 +181,8 @@ func TestUnauthorized(t *testing.T) {
 	}
 }
 
-// TestForbidden tests Forbidden method / Forbidden 메서드 테스트
+// TestForbidden tests Forbidden method
+// Forbidden 메서드 테스트
 func TestForbidden(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -190,7 +198,8 @@ func TestForbidden(t *testing.T) {
 	}
 }
 
-// TestBadRequest tests BadRequest method / BadRequest 메서드 테스트
+// TestBadRequest tests BadRequest method
+// BadRequest 메서드 테스트
 func TestBadRequest(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -206,7 +215,8 @@ func TestBadRequest(t *testing.T) {
 	}
 }
 
-// TestInternalServerError tests InternalServerError method / InternalServerError 메서드 테스트
+// TestInternalServerError tests InternalServerError method
+// InternalServerError 메서드 테스트
 func TestInternalServerError(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -222,7 +232,8 @@ func TestInternalServerError(t *testing.T) {
 	}
 }
 
-// BenchmarkErrorJSON benchmarks ErrorJSON method / ErrorJSON 메서드 벤치마크
+// BenchmarkErrorJSON benchmarks ErrorJSON method
+// ErrorJSON 메서드 벤치마크
 func BenchmarkErrorJSON(b *testing.B) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -239,7 +250,8 @@ func BenchmarkErrorJSON(b *testing.B) {
 	}
 }
 
-// BenchmarkSuccessJSON benchmarks SuccessJSON method / SuccessJSON 메서드 벤치마크
+// BenchmarkSuccessJSON benchmarks SuccessJSON method
+// SuccessJSON 메서드 벤치마크
 func BenchmarkSuccessJSON(b *testing.B) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()

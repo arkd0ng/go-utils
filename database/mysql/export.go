@@ -12,56 +12,72 @@ import (
 // CSVExportOptions represents options for CSV export
 // CSVExportOptions는 CSV 내보내기 옵션을 나타냅니다
 type CSVExportOptions struct {
-	// Include column headers in the first row / 첫 번째 행에 컬럼 헤더 포함
+	// Include column headers in the first row
+	// 첫 번째 행에 컬럼 헤더 포함
 	IncludeHeaders bool
 
-	// Delimiter character (default: comma) / 구분 문자 (기본값: 쉼표)
+	// Delimiter character (default: comma)
+	// 구분 문자 (기본값: 쉼표)
 	Delimiter rune
 
-	// Columns to export (empty means all) / 내보낼 컬럼 (비어 있으면 전체)
+	// Columns to export (empty means all)
+	// 내보낼 컬럼 (비어 있으면 전체)
 	Columns []string
 
-	// WHERE clause filter (without WHERE keyword) / WHERE 절 필터 (WHERE 키워드 제외)
+	// WHERE clause filter (without WHERE keyword)
+	// WHERE 절 필터 (WHERE 키워드 제외)
 	Where string
 
-	// Arguments for WHERE clause / WHERE 절 인자
+	// Arguments for WHERE clause
+	// WHERE 절 인자
 	WhereArgs []interface{}
 
-	// ORDER BY clause / ORDER BY 절
+	// ORDER BY clause
+	// ORDER BY 절
 	OrderBy string
 
-	// LIMIT number of rows / 행 수 제한
+	// LIMIT number of rows
+	// 행 수 제한
 	Limit int
 
-	// NULL value representation / NULL 값 표현
+	// NULL value representation
+	// NULL 값 표현
 	NullValue string
 }
 
 // CSVImportOptions represents options for CSV import
 // CSVImportOptions는 CSV 가져오기 옵션을 나타냅니다
 type CSVImportOptions struct {
-	// First row contains headers / 첫 번째 행에 헤더 포함
+	// First row contains headers
+	// 첫 번째 행에 헤더 포함
 	HasHeaders bool
 
-	// Delimiter character (default: comma) / 구분 문자 (기본값: 쉼표)
+	// Delimiter character (default: comma)
+	// 구분 문자 (기본값: 쉼표)
 	Delimiter rune
 
-	// Columns to import (must match CSV column order if no headers) / 가져올 컬럼 (헤더가 없으면 CSV 컬럼 순서와 일치해야 함)
+	// Columns to import (must match CSV column order if no headers)
+	// 가져올 컬럼 (헤더가 없으면 CSV 컬럼 순서와 일치해야 함)
 	Columns []string
 
-	// Skip first N rows (after headers if present) / 첫 N개 행 건너뛰기 (헤더가 있는 경우 헤더 다음)
+	// Skip first N rows (after headers if present)
+	// 첫 N개 행 건너뛰기 (헤더가 있는 경우 헤더 다음)
 	SkipRows int
 
-	// Batch size for bulk insert / 대량 삽입을 위한 배치 크기
+	// Batch size for bulk insert
+	// 대량 삽입을 위한 배치 크기
 	BatchSize int
 
-	// If true, ignore duplicate key errors / true면 중복 키 에러 무시
+	// If true, ignore duplicate key errors
+	// true면 중복 키 에러 무시
 	IgnoreDuplicates bool
 
-	// If true, replace existing rows on duplicate keys / true면 중복 키에서 기존 행 교체
+	// If true, replace existing rows on duplicate keys
+	// true면 중복 키에서 기존 행 교체
 	ReplaceOnDuplicate bool
 
-	// NULL value representation in CSV / CSV의 NULL 값 표현
+	// NULL value representation in CSV
+	// CSV의 NULL 값 표현
 	NullValue string
 }
 
@@ -91,7 +107,8 @@ func DefaultCSVImportOptions() CSVImportOptions {
 // ExportTableToCSV exports a table to a CSV file
 // ExportTableToCSV는 테이블을 CSV 파일로 내보냅니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	opts := mysql.DefaultCSVExportOptions()
@@ -104,7 +121,8 @@ func DefaultCSVImportOptions() CSVImportOptions {
 //	    log.Fatal(err)
 //	}
 func (c *Client) ExportTableToCSV(ctx context.Context, table string, filePath string, opts CSVExportOptions) error {
-	// Build query / 쿼리 구성
+	// Build query
+	// 쿼리 구성
 	columns := "*"
 	if len(opts.Columns) > 0 {
 		columns = strings.Join(opts.Columns, ", ")
@@ -124,41 +142,47 @@ func (c *Client) ExportTableToCSV(ctx context.Context, table string, filePath st
 		query += fmt.Sprintf(" LIMIT %d", opts.Limit)
 	}
 
-	// Execute query / 쿼리 실행
+	// Execute query
+	// 쿼리 실행
 	rows, err := c.Query(ctx, query, opts.WhereArgs...)
 	if err != nil {
 		return fmt.Errorf("failed to query table: %w", err)
 	}
 	defer rows.Close()
 
-	// Get column names / 컬럼 이름 가져오기
+	// Get column names
+	// 컬럼 이름 가져오기
 	columnNames, err := rows.Columns()
 	if err != nil {
 		return fmt.Errorf("failed to get column names: %w", err)
 	}
 
-	// Create CSV file / CSV 파일 생성
+	// Create CSV file
+	// CSV 파일 생성
 	file, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to create CSV file: %w", err)
 	}
 	defer file.Close()
 
-	// Create CSV writer / CSV writer 생성
+	// Create CSV writer
+	// CSV writer 생성
 	writer := csv.NewWriter(file)
 	if opts.Delimiter != 0 && opts.Delimiter != ',' {
 		writer.Comma = opts.Delimiter
 	}
 	defer writer.Flush()
 
-	// Write headers / 헤더 작성
+	// Write headers
+	// 헤더 작성
 	if opts.IncludeHeaders {
 		if err := writer.Write(columnNames); err != nil {
 			return fmt.Errorf("failed to write headers: %w", err)
 		}
 	}
 
-	// Prepare scan destinations / 스캔 대상 준비
+	// Prepare scan destinations
+	// 스캔 대상 준비
 	values := make([]interface{}, len(columnNames))
 	valuePtrs := make([]interface{}, len(columnNames))
 	for i := range values {
@@ -167,13 +191,15 @@ func (c *Client) ExportTableToCSV(ctx context.Context, table string, filePath st
 
 	rowCount := 0
 
-	// Write rows / 행 작성
+	// Write rows
+	// 행 작성
 	for rows.Next() {
 		if err := rows.Scan(valuePtrs...); err != nil {
 			return fmt.Errorf("failed to scan row: %w", err)
 		}
 
-		// Convert values to strings / 값을 문자열로 변환
+		// Convert values to strings
+		// 값을 문자열로 변환
 		record := make([]string, len(columnNames))
 		for i, val := range values {
 			if val == nil {
@@ -207,7 +233,8 @@ func (c *Client) ExportTableToCSV(ctx context.Context, table string, filePath st
 // ImportFromCSV imports data from a CSV file into a table
 // ImportFromCSV는 CSV 파일에서 테이블로 데이터를 가져옵니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	opts := mysql.DefaultCSVImportOptions()
@@ -220,21 +247,24 @@ func (c *Client) ExportTableToCSV(ctx context.Context, table string, filePath st
 //	    log.Fatal(err)
 //	}
 func (c *Client) ImportFromCSV(ctx context.Context, table string, filePath string, opts CSVImportOptions) error {
-	// Open CSV file / CSV 파일 열기
+	// Open CSV file
+	// CSV 파일 열기
 	file, err := os.Open(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to open CSV file: %w", err)
 	}
 	defer file.Close()
 
-	// Create CSV reader / CSV reader 생성
+	// Create CSV reader
+	// CSV reader 생성
 	reader := csv.NewReader(file)
 	if opts.Delimiter != 0 && opts.Delimiter != ',' {
 		reader.Comma = opts.Delimiter
 	}
 	reader.FieldsPerRecord = -1 // Allow variable number of fields / 가변 필드 수 허용
 
-	// Read all records / 모든 레코드 읽기
+	// Read all records
+	// 모든 레코드 읽기
 	records, err := reader.ReadAll()
 	if err != nil {
 		return fmt.Errorf("failed to read CSV file: %w", err)
@@ -247,7 +277,8 @@ func (c *Client) ImportFromCSV(ctx context.Context, table string, filePath strin
 	startRow := 0
 	columns := opts.Columns
 
-	// Handle headers / 헤더 처리
+	// Handle headers
+	// 헤더 처리
 	if opts.HasHeaders {
 		if len(columns) == 0 {
 			columns = records[0]
@@ -257,20 +288,23 @@ func (c *Client) ImportFromCSV(ctx context.Context, table string, filePath strin
 		return fmt.Errorf("columns must be specified when CSV has no headers")
 	}
 
-	// Skip rows if needed / 필요한 경우 행 건너뛰기
+	// Skip rows if needed
+	// 필요한 경우 행 건너뛰기
 	startRow += opts.SkipRows
 
 	if startRow >= len(records) {
 		return fmt.Errorf("no data rows to import after skipping rows")
 	}
 
-	// Determine batch size / 배치 크기 결정
+	// Determine batch size
+	// 배치 크기 결정
 	batchSize := opts.BatchSize
 	if batchSize <= 0 {
 		batchSize = 1000
 	}
 
-	// Build insert query prefix / 삽입 쿼리 접두사 구성
+	// Build insert query prefix
+	// 삽입 쿼리 접두사 구성
 	var insertPrefix string
 	if opts.ReplaceOnDuplicate {
 		insertPrefix = fmt.Sprintf("REPLACE INTO %s (%s) VALUES ",
@@ -286,16 +320,19 @@ func (c *Client) ImportFromCSV(ctx context.Context, table string, filePath strin
 	totalRows := 0
 	batch := make([][]string, 0, batchSize)
 
-	// Process records in batches / 배치로 레코드 처리
+	// Process records in batches
+	// 배치로 레코드 처리
 	for i := startRow; i < len(records); i++ {
 		record := records[i]
 
-		// Skip empty rows / 빈 행 건너뛰기
+		// Skip empty rows
+		// 빈 행 건너뛰기
 		if len(record) == 0 || (len(record) == 1 && record[0] == "") {
 			continue
 		}
 
-		// Validate record length / 레코드 길이 검증
+		// Validate record length
+		// 레코드 길이 검증
 		if len(record) != len(columns) {
 			if c.config.logger != nil {
 				c.config.logger.Warn("Skipping row with mismatched column count",
@@ -308,7 +345,8 @@ func (c *Client) ImportFromCSV(ctx context.Context, table string, filePath strin
 
 		batch = append(batch, record)
 
-		// Execute batch when full / 배치가 가득 차면 실행
+		// Execute batch when full
+		// 배치가 가득 차면 실행
 		if len(batch) >= batchSize {
 			if err := c.executeBatchInsert(ctx, insertPrefix, columns, batch, opts.NullValue); err != nil {
 				return fmt.Errorf("failed to insert batch at row %d: %w", i+1, err)
@@ -318,7 +356,8 @@ func (c *Client) ImportFromCSV(ctx context.Context, table string, filePath strin
 		}
 	}
 
-	// Insert remaining records / 남은 레코드 삽입
+	// Insert remaining records
+	// 남은 레코드 삽입
 	if len(batch) > 0 {
 		if err := c.executeBatchInsert(ctx, insertPrefix, columns, batch, opts.NullValue); err != nil {
 			return fmt.Errorf("failed to insert final batch: %w", err)
@@ -341,7 +380,8 @@ func (c *Client) ImportFromCSV(ctx context.Context, table string, filePath strin
 func (c *Client) executeBatchInsert(ctx context.Context, insertPrefix string, columns []string,
 	batch [][]string, nullValue string) error {
 
-	// Build values part of query / 쿼리의 값 부분 구성
+	// Build values part of query
+	// 쿼리의 값 부분 구성
 	valuePlaceholders := make([]string, len(batch))
 	args := make([]interface{}, 0, len(batch)*len(columns))
 
@@ -349,7 +389,8 @@ func (c *Client) executeBatchInsert(ctx context.Context, insertPrefix string, co
 		placeholders := make([]string, len(columns))
 		for j, value := range record {
 			placeholders[j] = "?"
-			// Convert NULL values / NULL 값 변환
+			// Convert NULL values
+			// NULL 값 변환
 			if value == nullValue {
 				args = append(args, nil)
 			} else {
@@ -361,7 +402,8 @@ func (c *Client) executeBatchInsert(ctx context.Context, insertPrefix string, co
 
 	query := insertPrefix + strings.Join(valuePlaceholders, ", ")
 
-	// Execute query / 쿼리 실행
+	// Execute query
+	// 쿼리 실행
 	_, err := c.Exec(ctx, query, args...)
 	return err
 }
@@ -369,7 +411,8 @@ func (c *Client) executeBatchInsert(ctx context.Context, insertPrefix string, co
 // ExportQueryToCSV exports the result of a query to a CSV file
 // ExportQueryToCSV는 쿼리 결과를 CSV 파일로 내보냅니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	query := `
@@ -387,41 +430,47 @@ func (c *Client) executeBatchInsert(ctx context.Context, insertPrefix string, co
 func (c *Client) ExportQueryToCSV(ctx context.Context, query string, args []interface{},
 	filePath string, opts CSVExportOptions) error {
 
-	// Execute query / 쿼리 실행
+	// Execute query
+	// 쿼리 실행
 	rows, err := c.Query(ctx, query, args...)
 	if err != nil {
 		return fmt.Errorf("failed to execute query: %w", err)
 	}
 	defer rows.Close()
 
-	// Get column names / 컬럼 이름 가져오기
+	// Get column names
+	// 컬럼 이름 가져오기
 	columnNames, err := rows.Columns()
 	if err != nil {
 		return fmt.Errorf("failed to get column names: %w", err)
 	}
 
-	// Create CSV file / CSV 파일 생성
+	// Create CSV file
+	// CSV 파일 생성
 	file, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to create CSV file: %w", err)
 	}
 	defer file.Close()
 
-	// Create CSV writer / CSV writer 생성
+	// Create CSV writer
+	// CSV writer 생성
 	writer := csv.NewWriter(file)
 	if opts.Delimiter != 0 && opts.Delimiter != ',' {
 		writer.Comma = opts.Delimiter
 	}
 	defer writer.Flush()
 
-	// Write headers / 헤더 작성
+	// Write headers
+	// 헤더 작성
 	if opts.IncludeHeaders {
 		if err := writer.Write(columnNames); err != nil {
 			return fmt.Errorf("failed to write headers: %w", err)
 		}
 	}
 
-	// Prepare scan destinations / 스캔 대상 준비
+	// Prepare scan destinations
+	// 스캔 대상 준비
 	values := make([]interface{}, len(columnNames))
 	valuePtrs := make([]interface{}, len(columnNames))
 	for i := range values {
@@ -430,19 +479,22 @@ func (c *Client) ExportQueryToCSV(ctx context.Context, query string, args []inte
 
 	rowCount := 0
 
-	// Write rows / 행 작성
+	// Write rows
+	// 행 작성
 	for rows.Next() {
 		if err := rows.Scan(valuePtrs...); err != nil {
 			return fmt.Errorf("failed to scan row: %w", err)
 		}
 
-		// Convert values to strings / 값을 문자열로 변환
+		// Convert values to strings
+		// 값을 문자열로 변환
 		record := make([]string, len(columnNames))
 		for i, val := range values {
 			if val == nil {
 				record[i] = opts.NullValue
 			} else {
-				// Handle different types / 다양한 타입 처리
+				// Handle different types
+				// 다양한 타입 처리
 				switch v := val.(type) {
 				case []byte:
 					record[i] = string(v)

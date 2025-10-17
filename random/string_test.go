@@ -28,7 +28,8 @@ func TestLetters(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			// Check length / 길이 확인
+			// Check length
+			// 길이 확인
 			if len(result) < tt.min || len(result) > tt.max {
 				t.Errorf("Letters() length = %d, want between %d and %d", len(result), tt.min, tt.max)
 			}
@@ -64,7 +65,8 @@ func TestAlnum(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			// Check length / 길이 확인
+			// Check length
+			// 길이 확인
 			if len(result) < tt.min || len(result) > tt.max {
 				t.Errorf("Alnum() length = %d, want between %d and %d", len(result), tt.min, tt.max)
 			}
@@ -99,7 +101,8 @@ func TestComplex(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			// Check length / 길이 확인
+			// Check length
+			// 길이 확인
 			if len(result) < tt.min || len(result) > tt.max {
 				t.Errorf("Complex() length = %d, want between %d and %d", len(result), tt.min, tt.max)
 			}
@@ -135,7 +138,8 @@ func TestStandard(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			// Check length / 길이 확인
+			// Check length
+			// 길이 확인
 			if len(result) < tt.min || len(result) > tt.max {
 				t.Errorf("Standard() length = %d, want between %d and %d", len(result), tt.min, tt.max)
 			}
@@ -173,7 +177,8 @@ func TestCustom(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			// Check length / 길이 확인
+			// Check length
+			// 길이 확인
 			if len(result) < tt.min || len(result) > tt.max {
 				t.Errorf("Custom() length = %d, want between %d and %d", len(result), tt.min, tt.max)
 			}
@@ -409,7 +414,8 @@ func TestDigits(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			// Check length / 길이 확인
+			// Check length
+			// 길이 확인
 			if len(result) < tt.min || len(result) > tt.max {
 				t.Errorf("Digits() length = %d, want between %d and %d", len(result), tt.min, tt.max)
 			}
@@ -433,7 +439,8 @@ func TestHex(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	// Check length / 길이 확인
+	// Check length
+	// 길이 확인
 	if len(result) < 8 || len(result) > 16 {
 		t.Errorf("Hex() length = %d, want between 8 and 16", len(result))
 	}
@@ -455,7 +462,8 @@ func TestHexLower(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	// Check length / 길이 확인
+	// Check length
+	// 길이 확인
 	if len(result) < 8 || len(result) > 16 {
 		t.Errorf("HexLower() length = %d, want between 8 and 16", len(result))
 	}
@@ -477,7 +485,8 @@ func TestAlphaUpper(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	// Check length / 길이 확인
+	// Check length
+	// 길이 확인
 	if len(result) < 8 || len(result) > 12 {
 		t.Errorf("AlphaUpper() length = %d, want between 8 and 12", len(result))
 	}
@@ -499,7 +508,8 @@ func TestAlphaLower(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	// Check length / 길이 확인
+	// Check length
+	// 길이 확인
 	if len(result) < 8 || len(result) > 12 {
 		t.Errorf("AlphaLower() length = %d, want between 8 and 12", len(result))
 	}
@@ -521,7 +531,8 @@ func TestAlnumUpper(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	// Check length / 길이 확인
+	// Check length
+	// 길이 확인
 	if len(result) < 16 || len(result) > 20 {
 		t.Errorf("AlnumUpper() length = %d, want between 16 and 20", len(result))
 	}
@@ -543,7 +554,8 @@ func TestAlnumLower(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	// Check length / 길이 확인
+	// Check length
+	// 길이 확인
 	if len(result) < 16 || len(result) > 20 {
 		t.Errorf("AlnumLower() length = %d, want between 16 and 20", len(result))
 	}
@@ -565,7 +577,8 @@ func TestBase64(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	// Check length / 길이 확인
+	// Check length
+	// 길이 확인
 	if len(result) < 16 || len(result) > 32 {
 		t.Errorf("Base64() length = %d, want between 16 and 32", len(result))
 	}
@@ -587,7 +600,8 @@ func TestBase64URL(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	// Check length / 길이 확인
+	// Check length
+	// 길이 확인
 	if len(result) < 16 || len(result) > 32 {
 		t.Errorf("Base64URL() length = %d, want between 16 and 32", len(result))
 	}

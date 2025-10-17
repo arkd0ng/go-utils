@@ -11,7 +11,8 @@ import (
 // Upsert inserts a row or updates it if it already exists (INSERT ... ON DUPLICATE KEY UPDATE)
 // Upsert는 행을 삽입하거나 이미 존재하면 업데이트합니다 (INSERT ... ON DUPLICATE KEY UPDATE)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	data := map[string]interface{}{
 //	    "email": "john@example.com",  // Unique key
@@ -35,7 +36,8 @@ func (c *Client) Upsert(ctx context.Context, table string, data map[string]inter
 		return nil, fmt.Errorf("no data to upsert")
 	}
 
-	// Extract columns and values / 컬럼과 값 추출
+	// Extract columns and values
+	// 컬럼과 값 추출
 	var columns []string
 	var values []interface{}
 	for col, val := range data {
@@ -43,14 +45,17 @@ func (c *Client) Upsert(ctx context.Context, table string, data map[string]inter
 		values = append(values, val)
 	}
 
-	// Build column list / 컬럼 목록 빌드
+	// Build column list
+	// 컬럼 목록 빌드
 	columnList := strings.Join(columns, ", ")
 
-	// Build value placeholders / 값 플레이스홀더 빌드
+	// Build value placeholders
+	// 값 플레이스홀더 빌드
 	placeholders := strings.Repeat("?,", len(columns))
 	placeholders = placeholders[:len(placeholders)-1] // Remove last comma / 마지막 쉼표 제거
 
-	// Build UPDATE clause / UPDATE 절 빌드
+	// Build UPDATE clause
+	// UPDATE 절 빌드
 	var updateClauses []string
 	if len(updateColumns) == 0 {
 		// If no update columns specified, update all columns except those in data
@@ -59,7 +64,8 @@ func (c *Client) Upsert(ctx context.Context, table string, data map[string]inter
 			updateClauses = append(updateClauses, fmt.Sprintf("%s=VALUES(%s)", col, col))
 		}
 	} else {
-		// Update only specified columns / 지정된 컬럼만 업데이트
+		// Update only specified columns
+		// 지정된 컬럼만 업데이트
 		for _, col := range updateColumns {
 			updateClauses = append(updateClauses, fmt.Sprintf("%s=VALUES(%s)", col, col))
 		}
@@ -67,13 +73,15 @@ func (c *Client) Upsert(ctx context.Context, table string, data map[string]inter
 
 	updateClause := strings.Join(updateClauses, ", ")
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s",
 		table, columnList, placeholders, updateClause)
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var result sql.Result
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -96,7 +104,8 @@ func (c *Client) Upsert(ctx context.Context, table string, data map[string]inter
 // UpsertBatch performs multiple upsert operations in a single query
 // UpsertBatch는 단일 쿼리로 여러 upsert 작업을 수행합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	data := []map[string]interface{}{
 //	    {"email": "john@example.com", "name": "John", "age": 30},
@@ -119,7 +128,8 @@ func (c *Client) UpsertBatch(ctx context.Context, table string, data []map[strin
 		return nil, fmt.Errorf("no data to upsert")
 	}
 
-	// Get column names from first row / 첫 번째 행에서 컬럼 이름 가져오기
+	// Get column names from first row
+	// 첫 번째 행에서 컬럼 이름 가져오기
 	var columns []string
 	for col := range data[0] {
 		columns = append(columns, col)
@@ -129,20 +139,24 @@ func (c *Client) UpsertBatch(ctx context.Context, table string, data []map[strin
 		return nil, fmt.Errorf("no columns to upsert")
 	}
 
-	// Build column list / 컬럼 목록 빌드
+	// Build column list
+	// 컬럼 목록 빌드
 	columnList := strings.Join(columns, ", ")
 
-	// Build value placeholders / 값 플레이스홀더 빌드
+	// Build value placeholders
+	// 값 플레이스홀더 빌드
 	valuePlaceholder := "(" + strings.Repeat("?,", len(columns))
 	valuePlaceholder = valuePlaceholder[:len(valuePlaceholder)-1] + ")"
 
-	// Build multiple value placeholders / 여러 값 플레이스홀더 빌드
+	// Build multiple value placeholders
+	// 여러 값 플레이스홀더 빌드
 	var valuePlaceholders []string
 	for i := 0; i < len(data); i++ {
 		valuePlaceholders = append(valuePlaceholders, valuePlaceholder)
 	}
 
-	// Build UPDATE clause / UPDATE 절 빌드
+	// Build UPDATE clause
+	// UPDATE 절 빌드
 	var updateClauses []string
 	if len(updateColumns) == 0 {
 		// If no update columns specified, update all columns
@@ -151,7 +165,8 @@ func (c *Client) UpsertBatch(ctx context.Context, table string, data []map[strin
 			updateClauses = append(updateClauses, fmt.Sprintf("%s=VALUES(%s)", col, col))
 		}
 	} else {
-		// Update only specified columns / 지정된 컬럼만 업데이트
+		// Update only specified columns
+		// 지정된 컬럼만 업데이트
 		for _, col := range updateColumns {
 			updateClauses = append(updateClauses, fmt.Sprintf("%s=VALUES(%s)", col, col))
 		}
@@ -159,11 +174,13 @@ func (c *Client) UpsertBatch(ctx context.Context, table string, data []map[strin
 
 	updateClause := strings.Join(updateClauses, ", ")
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("INSERT INTO %s (%s) VALUES %s ON DUPLICATE KEY UPDATE %s",
 		table, columnList, strings.Join(valuePlaceholders, ","), updateClause)
 
-	// Collect all values / 모든 값 수집
+	// Collect all values
+	// 모든 값 수집
 	var args []interface{}
 	for _, row := range data {
 		for _, col := range columns {
@@ -173,7 +190,8 @@ func (c *Client) UpsertBatch(ctx context.Context, table string, data []map[strin
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var result sql.Result
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -201,7 +219,8 @@ func (c *Client) UpsertBatch(ctx context.Context, table string, data []map[strin
 // 주의: REPLACE는 기존 행을 삭제하고 새 행을 삽입하므로 외래 키 및 auto_increment 값에
 // 부작용이 있을 수 있습니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	data := map[string]interface{}{
 //	    "id": 1,
@@ -223,7 +242,8 @@ func (c *Client) Replace(ctx context.Context, table string, data map[string]inte
 		return nil, fmt.Errorf("no data to replace")
 	}
 
-	// Extract columns and values / 컬럼과 값 추출
+	// Extract columns and values
+	// 컬럼과 값 추출
 	var columns []string
 	var values []interface{}
 	for col, val := range data {
@@ -231,20 +251,24 @@ func (c *Client) Replace(ctx context.Context, table string, data map[string]inte
 		values = append(values, val)
 	}
 
-	// Build column list / 컬럼 목록 빌드
+	// Build column list
+	// 컬럼 목록 빌드
 	columnList := strings.Join(columns, ", ")
 
-	// Build value placeholders / 값 플레이스홀더 빌드
+	// Build value placeholders
+	// 값 플레이스홀더 빌드
 	placeholders := strings.Repeat("?,", len(columns))
 	placeholders = placeholders[:len(placeholders)-1] // Remove last comma / 마지막 쉼표 제거
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("REPLACE INTO %s (%s) VALUES (%s)",
 		table, columnList, placeholders)
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var result sql.Result
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()

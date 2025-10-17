@@ -6,7 +6,8 @@ package maputil
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	sum := maputil.Reduce(m, 0, func(acc int, k string, v int) int {
@@ -26,7 +27,8 @@ func Reduce[K comparable, V any, R any](m map[K]V, initial R, fn func(R, K, V) R
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	total := maputil.Sum(m) // total = 6
@@ -50,7 +52,8 @@ func Sum[K comparable, V Number](m map[K]V) V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 3, "b": 1, "c": 2}
 //	key, value, ok := maputil.Min(m) // key = "b", value = 1, ok = true
@@ -88,7 +91,8 @@ func Min[K comparable, V Ordered](m map[K]V) (K, V, bool) {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 3, "b": 1, "c": 2}
 //	key, value, ok := maputil.Max(m) // key = "a", value = 3, ok = true
@@ -126,7 +130,8 @@ func Max[K comparable, V Ordered](m map[K]V) (K, V, bool) {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type User struct { Name string; Age int }
 //	m := map[string]User{
@@ -173,7 +178,8 @@ func MinBy[K comparable, V any](m map[K]V, fn func(V) float64) (K, V, bool) {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type User struct { Name string; Score int }
 //	m := map[string]User{
@@ -217,7 +223,8 @@ func MaxBy[K comparable, V any](m map[K]V, fn func(V) float64) (K, V, bool) {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 //	avg := maputil.Average(m) // avg = 2.5
@@ -240,7 +247,8 @@ func Average[K comparable, V Number](m map[K]V) float64 {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type User struct { Name string; City string }
 //	users := []User{
@@ -272,7 +280,8 @@ func GroupBy[K comparable, V any, G comparable](slice []V, fn func(V) G) map[G][
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type User struct { Name string; City string }
 //	users := []User{
@@ -305,17 +314,25 @@ func CountBy[K comparable, V any, G comparable](slice []V, fn func(V) G) map[G]i
 // 짝수 길이 맵의 경우 두 중간 값의 평균을 반환합니다.
 // 빈 맵의 경우 (0, false)를 반환합니다.
 //
-// Time Complexity / 시간 복잡도: O(n log n) due to sorting
-// Space Complexity / 공간 복잡도: O(n) for collecting values
+// Time Complexity
+// 시간 복잡도: O(n log n) due to sorting
+// Space Complexity
+// 공간 복잡도: O(n) for collecting values
 //
-// Parameters / 매개변수:
-//   - m: The input map with numeric values / 숫자 값이 있는 입력 맵
+// Parameters
+// 매개변수:
+// - m: The input map with numeric values
+// 숫자 값이 있는 입력 맵
 //
-// Returns / 반환값:
-//   - float64: The median value / 중앙값
-//   - bool: false if map is empty, true otherwise / 맵이 비어있으면 false, 그렇지 않으면 true
+// Returns
+// 반환값:
+// - float64: The median value
+// 중앙값
+// - bool: false if map is empty, true otherwise
+// 맵이 비어있으면 false, 그렇지 않으면 true
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	scores := map[string]int{
 //		"Alice":   85,
@@ -334,11 +351,16 @@ func CountBy[K comparable, V any, G comparable](slice []V, fn func(V) G) map[G]i
 //	}
 //	median2, ok2 := maputil.Median(evenScores) // median2 = 85.0 (average of 80 and 90)
 //
-// Use Case / 사용 사례:
-//   - Statistical analysis / 통계 분석
-//   - Grade distribution analysis / 성적 분포 분석
-//   - Performance metrics / 성능 메트릭
-//   - Finding typical values / 대표값 찾기
+// Use Case
+// 사용 사례:
+// - Statistical analysis
+// 통계 분석
+// - Grade distribution analysis
+// 성적 분포 분석
+// - Performance metrics
+// 성능 메트릭
+// - Finding typical values
+// 대표값 찾기
 func Median[K comparable, V Number](m map[K]V) (float64, bool) {
 	if len(m) == 0 {
 		return 0, false
@@ -381,16 +403,23 @@ func Median[K comparable, V Number](m map[K]V) (float64, bool) {
 // 이 함수는 맵 구조를 반전하여 키가 원래 값이고 값이 출현 횟수인 맵을 생성합니다.
 // 중복 값을 찾거나 값 분포를 분석하는 데 유용합니다.
 //
-// Time Complexity / 시간 복잡도: O(n)
-// Space Complexity / 공간 복잡도: O(u) where u is unique values
+// Time Complexity
+// 시간 복잡도: O(n)
+// Space Complexity
+// 공간 복잡도: O(u) where u is unique values
 //
-// Parameters / 매개변수:
-//   - m: The input map / 입력 맵
+// Parameters
+// 매개변수:
+// - m: The input map
+// 입력 맵
 //
-// Returns / 반환값:
-//   - map[V]int: Map of value → count / 값 → 개수 맵
+// Returns
+// 반환값:
+// - map[V]int: Map of value → count
+// 값 → 개수 맵
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	grades := map[string]string{
 //		"Alice":   "A",
@@ -413,11 +442,16 @@ func Median[K comparable, V Number](m map[K]V) (float64, bool) {
 //	scoreFreq := maputil.Frequencies(scores)
 //	// scoreFreq = map[int]int{85: 2, 90: 2, 75: 1}
 //
-// Use Case / 사용 사례:
-//   - Finding duplicate values / 중복 값 찾기
-//   - Value distribution analysis / 값 분포 분석
-//   - Histogram generation / 히스토그램 생성
-//   - Data quality checks / 데이터 품질 확인
+// Use Case
+// 사용 사례:
+// - Finding duplicate values
+// 중복 값 찾기
+// - Value distribution analysis
+// 값 분포 분석
+// - Histogram generation
+// 히스토그램 생성
+// - Data quality checks
+// 데이터 품질 확인
 func Frequencies[K comparable, V comparable](m map[K]V) map[V]int {
 	result := make(map[V]int)
 

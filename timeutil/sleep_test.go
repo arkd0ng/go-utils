@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-// TestSleepUntil tests SleepUntil function / SleepUntil 함수 테스트
+// TestSleepUntil tests SleepUntil function
+// SleepUntil 함수 테스트
 func TestSleepUntil(t *testing.T) {
 	// Test with past time (should return immediately)
 	// 과거 시간으로 테스트 (즉시 반환되어야 함)
@@ -39,7 +40,8 @@ func TestSleepUntil(t *testing.T) {
 	})
 }
 
-// TestSleepUntilNextHour tests SleepUntilNextHour function / SleepUntilNextHour 함수 테스트
+// TestSleepUntilNextHour tests SleepUntilNextHour function
+// SleepUntilNextHour 함수 테스트
 func TestSleepUntilNextHour(t *testing.T) {
 	t.Skip("Skipping SleepUntilNextHour test - takes too long")
 
@@ -61,7 +63,8 @@ func TestSleepUntilNextHour(t *testing.T) {
 	t.Logf("Slept for %v", time.Since(start))
 }
 
-// TestSleepUntilNextDay tests SleepUntilNextDay function / SleepUntilNextDay 함수 테스트
+// TestSleepUntilNextDay tests SleepUntilNextDay function
+// SleepUntilNextDay 함수 테스트
 func TestSleepUntilNextDay(t *testing.T) {
 	t.Skip("Skipping SleepUntilNextDay test - takes too long")
 
@@ -83,7 +86,8 @@ func TestSleepUntilNextDay(t *testing.T) {
 	t.Logf("Slept for %v", time.Since(start))
 }
 
-// TestSleepUntilNextWeek tests SleepUntilNextWeek function / SleepUntilNextWeek 함수 테스트
+// TestSleepUntilNextWeek tests SleepUntilNextWeek function
+// SleepUntilNextWeek 함수 테스트
 func TestSleepUntilNextWeek(t *testing.T) {
 	t.Skip("Skipping SleepUntilNextWeek test - takes too long")
 
@@ -105,9 +109,11 @@ func TestSleepUntilNextWeek(t *testing.T) {
 	t.Logf("Slept for %v", time.Since(start))
 }
 
-// Benchmark tests for sleep functions / sleep 함수 벤치마크 테스트
+// Benchmark tests for sleep functions
+// sleep 함수 벤치마크 테스트
 
-// BenchmarkSleepUntil benchmarks SleepUntil function / SleepUntil 함수 벤치마크
+// BenchmarkSleepUntil benchmarks SleepUntil function
+// SleepUntil 함수 벤치마크
 func BenchmarkSleepUntil(b *testing.B) {
 	// Use past time to benchmark the overhead
 	// 과거 시간을 사용하여 오버헤드 벤치마크

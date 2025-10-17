@@ -6,7 +6,8 @@ import (
 	"testing"
 )
 
-// TestCountWords tests the CountWords function / CountWords 함수 테스트
+// TestCountWords tests the CountWords function
+// CountWords 함수 테스트
 func TestCountWords(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -36,7 +37,8 @@ func TestCountWords(t *testing.T) {
 	}
 }
 
-// TestCountOccurrences tests the CountOccurrences function / CountOccurrences 함수 테스트
+// TestCountOccurrences tests the CountOccurrences function
+// CountOccurrences 함수 테스트
 func TestCountOccurrences(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -65,7 +67,8 @@ func TestCountOccurrences(t *testing.T) {
 	}
 }
 
-// TestJoin tests the Join function / Join 함수 테스트
+// TestJoin tests the Join function
+// Join 함수 테스트
 func TestJoin(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -93,7 +96,8 @@ func TestJoin(t *testing.T) {
 	}
 }
 
-// TestMap tests the Map function / Map 함수 테스트
+// TestMap tests the Map function
+// Map 함수 테스트
 func TestMap(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -144,7 +148,8 @@ func TestMap(t *testing.T) {
 	}
 }
 
-// TestFilter tests the Filter function / Filter 함수 테스트
+// TestFilter tests the Filter function
+// Filter 함수 테스트
 func TestFilter(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -201,7 +206,8 @@ func TestFilter(t *testing.T) {
 	}
 }
 
-// TestPadLeft tests the PadLeft function / PadLeft 함수 테스트
+// TestPadLeft tests the PadLeft function
+// PadLeft 함수 테스트
 func TestPadLeft(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -231,7 +237,8 @@ func TestPadLeft(t *testing.T) {
 	}
 }
 
-// TestPadRight tests the PadRight function / PadRight 함수 테스트
+// TestPadRight tests the PadRight function
+// PadRight 함수 테스트
 func TestPadRight(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -261,7 +268,8 @@ func TestPadRight(t *testing.T) {
 	}
 }
 
-// TestLines tests the Lines function / Lines 함수 테스트
+// TestLines tests the Lines function
+// Lines 함수 테스트
 func TestLines(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -287,7 +295,8 @@ func TestLines(t *testing.T) {
 	}
 }
 
-// TestWords tests the Words function / Words 함수 테스트
+// TestWords tests the Words function
+// Words 함수 테스트
 func TestWords(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -315,7 +324,8 @@ func TestWords(t *testing.T) {
 	}
 }
 
-// Benchmarks / 벤치마크
+// Benchmarks
+// 벤치마크
 
 func BenchmarkCountWords(b *testing.B) {
 	s := "hello world foo bar baz qux quux corge grault garply"

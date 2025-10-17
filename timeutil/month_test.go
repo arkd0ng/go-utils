@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-// TestMonthKorean tests MonthKorean function / MonthKorean 함수 테스트
+// TestMonthKorean tests MonthKorean function
+// MonthKorean 함수 테스트
 func TestMonthKorean(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -39,7 +40,8 @@ func TestMonthKorean(t *testing.T) {
 	}
 }
 
-// TestMonthName tests MonthName function / MonthName 함수 테스트
+// TestMonthName tests MonthName function
+// MonthName 함수 테스트
 func TestMonthName(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -73,7 +75,8 @@ func TestMonthName(t *testing.T) {
 	}
 }
 
-// TestMonthNameShort tests MonthNameShort function / MonthNameShort 함수 테스트
+// TestMonthNameShort tests MonthNameShort function
+// MonthNameShort 함수 테스트
 func TestMonthNameShort(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -107,7 +110,8 @@ func TestMonthNameShort(t *testing.T) {
 	}
 }
 
-// TestQuarter tests Quarter function / Quarter 함수 테스트
+// TestQuarter tests Quarter function
+// Quarter 함수 테스트
 func TestQuarter(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -166,9 +170,11 @@ func TestQuarter(t *testing.T) {
 	}
 }
 
-// Benchmark tests for month functions / month 함수 벤치마크 테스트
+// Benchmark tests for month functions
+// month 함수 벤치마크 테스트
 
-// BenchmarkMonthKorean benchmarks MonthKorean function / MonthKorean 함수 벤치마크
+// BenchmarkMonthKorean benchmarks MonthKorean function
+// MonthKorean 함수 벤치마크
 func BenchmarkMonthKorean(b *testing.B) {
 	t := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 
@@ -178,7 +184,8 @@ func BenchmarkMonthKorean(b *testing.B) {
 	}
 }
 
-// BenchmarkMonthName benchmarks MonthName function / MonthName 함수 벤치마크
+// BenchmarkMonthName benchmarks MonthName function
+// MonthName 함수 벤치마크
 func BenchmarkMonthName(b *testing.B) {
 	t := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 
@@ -188,7 +195,8 @@ func BenchmarkMonthName(b *testing.B) {
 	}
 }
 
-// BenchmarkQuarter benchmarks Quarter function / Quarter 함수 벤치마크
+// BenchmarkQuarter benchmarks Quarter function
+// Quarter 함수 벤치마크
 func BenchmarkQuarter(b *testing.B) {
 	t := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 

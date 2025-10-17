@@ -23,14 +23,20 @@ type Logger struct {
 // New creates a new Logger with the given options
 // New는 주어진 옵션으로 새로운 Logger를 생성합니다
 //
-// Parameters / 매개변수:
-//   - opts: configuration options / 설정 옵션
+// Parameters
+// 매개변수:
+// - opts: configuration options
+// 설정 옵션
 //
-// Returns / 반환값:
-//   - *Logger: new logger instance / 새 로거 인스턴스
-//   - error: error if any / 에러가 있으면 에러
+// Returns
+// 반환값:
+// - *Logger: new logger instance
+// 새 로거 인스턴스
+// - error: error if any
+// 에러가 있으면 에러
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger, err := logging.New(
 //	    logging.WithFilePath("./logs/app.log"),
@@ -52,7 +58,8 @@ func New(opts ...Option) (*Logger, error) {
 	// Create file writer if file output is enabled
 	// 파일 출력이 활성화된 경우 파일 writer 생성
 	if cfg.enableFile {
-		// Ensure log directory exists / 로그 디렉토리가 존재하는지 확인
+		// Ensure log directory exists
+		// 로그 디렉토리가 존재하는지 확인
 		logDir := filepath.Dir(cfg.filename)
 		if err := os.MkdirAll(logDir, 0755); err != nil {
 			return nil, fmt.Errorf("failed to create log directory: %w", err)
@@ -67,12 +74,12 @@ func New(opts ...Option) (*Logger, error) {
 		}
 	}
 
-	// Print auto banner if enabled / 자동 배너가 활성화된 경우 배너 출력
+	// Print auto banner if enabled
+	// 자동 배너가 활성화된 경우 배너 출력
 	if cfg.autoBanner {
 		bannerName := cfg.appName
 
-		// If appName is default "Application", extract from filename
-		// appName이 기본값 "Application"이면 파일명에서 추출
+		// If appName is default "Application", extract from filename / appName이 기본값 "Application"이면 파일명에서 추출
 		if bannerName == "Application" && cfg.filename != "" {
 			// Extract filename without path and extension
 			// 경로와 확장자를 제외한 파일명 추출
@@ -94,10 +101,13 @@ func New(opts ...Option) (*Logger, error) {
 // Default creates a Logger with default settings
 // Default는 기본 설정으로 Logger를 생성합니다
 //
-// Returns / 반환값:
-//   - *Logger: logger with default configuration / 기본 설정의 로거
+// Returns
+// 반환값:
+// - *Logger: logger with default configuration
+// 기본 설정의 로거
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger := logging.Default()
 //	logger.Info("Application started")
@@ -118,13 +128,16 @@ func (l *Logger) log(level Level, msg string, keysAndValues ...interface{}) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	// Format timestamp / 타임스탬프 형식화
+	// Format timestamp
+	// 타임스탬프 형식화
 	timestamp := time.Now().Format(l.config.timeFormat)
 
-	// Build log message / 로그 메시지 작성
+	// Build log message
+	// 로그 메시지 작성
 	var logMsg string
 
-	// Add prefix if configured / 설정된 경우 프리픽스 추가
+	// Add prefix if configured
+	// 설정된 경우 프리픽스 추가
 	prefix := l.config.prefix
 	if prefix != "" {
 		prefix = prefix + " "
@@ -134,7 +147,8 @@ func (l *Logger) log(level Level, msg string, keysAndValues ...interface{}) {
 	// 형식: 타임스탬프 [레벨] 프리픽스 메시지 키=값 키=값...
 	logMsg = fmt.Sprintf("%s [%s] %s%s", timestamp, level.String(), prefix, msg)
 
-	// Add structured key-value pairs / 구조화된 키-값 쌍 추가
+	// Add structured key-value pairs
+	// 구조화된 키-값 쌍 추가
 	if len(keysAndValues) > 0 {
 		logMsg += " "
 		for i := 0; i < len(keysAndValues); i += 2 {
@@ -146,7 +160,8 @@ func (l *Logger) log(level Level, msg string, keysAndValues ...interface{}) {
 
 	logMsg += "\n"
 
-	// Write to stdout with color if enabled / 활성화된 경우 색상으로 stdout에 작성
+	// Write to stdout with color if enabled
+	// 활성화된 경우 색상으로 stdout에 작성
 	if l.config.enableStdout {
 		colorMsg := logMsg
 		if l.config.enableColor {
@@ -155,7 +170,8 @@ func (l *Logger) log(level Level, msg string, keysAndValues ...interface{}) {
 		l.stdoutWriter.Write([]byte(colorMsg))
 	}
 
-	// Write to file without color / 색상 없이 파일에 작성
+	// Write to file without color
+	// 색상 없이 파일에 작성
 	if l.config.enableFile && l.fileWriter != nil {
 		l.fileWriter.Write([]byte(logMsg))
 	}
@@ -164,11 +180,15 @@ func (l *Logger) log(level Level, msg string, keysAndValues ...interface{}) {
 // Debug logs a message at DEBUG level
 // Debug는 DEBUG 레벨로 메시지를 로깅합니다
 //
-// Parameters / 매개변수:
-//   - msg: log message / 로그 메시지
-//   - keysAndValues: optional key-value pairs for structured logging / 구조화된 로깅을 위한 선택적 키-값 쌍
+// Parameters
+// 매개변수:
+// - msg: log message
+// 로그 메시지
+// - keysAndValues: optional key-value pairs for structured logging
+// 구조화된 로깅을 위한 선택적 키-값 쌍
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger.Debug("Processing request", "user_id", 12345, "ip", "192.168.1.1")
 func (l *Logger) Debug(msg string, keysAndValues ...interface{}) {
@@ -178,11 +198,15 @@ func (l *Logger) Debug(msg string, keysAndValues ...interface{}) {
 // Info logs a message at INFO level
 // Info는 INFO 레벨로 메시지를 로깅합니다
 //
-// Parameters / 매개변수:
-//   - msg: log message / 로그 메시지
-//   - keysAndValues: optional key-value pairs for structured logging / 구조화된 로깅을 위한 선택적 키-값 쌍
+// Parameters
+// 매개변수:
+// - msg: log message
+// 로그 메시지
+// - keysAndValues: optional key-value pairs for structured logging
+// 구조화된 로깅을 위한 선택적 키-값 쌍
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger.Info("Server started", "port", 8080)
 func (l *Logger) Info(msg string, keysAndValues ...interface{}) {
@@ -192,11 +216,15 @@ func (l *Logger) Info(msg string, keysAndValues ...interface{}) {
 // Warn logs a message at WARN level
 // Warn은 WARN 레벨로 메시지를 로깅합니다
 //
-// Parameters / 매개변수:
-//   - msg: log message / 로그 메시지
-//   - keysAndValues: optional key-value pairs for structured logging / 구조화된 로깅을 위한 선택적 키-값 쌍
+// Parameters
+// 매개변수:
+// - msg: log message
+// 로그 메시지
+// - keysAndValues: optional key-value pairs for structured logging
+// 구조화된 로깅을 위한 선택적 키-값 쌍
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger.Warn("High memory usage", "usage", "85%")
 func (l *Logger) Warn(msg string, keysAndValues ...interface{}) {
@@ -206,11 +234,15 @@ func (l *Logger) Warn(msg string, keysAndValues ...interface{}) {
 // Error logs a message at ERROR level
 // Error는 ERROR 레벨로 메시지를 로깅합니다
 //
-// Parameters / 매개변수:
-//   - msg: log message / 로그 메시지
-//   - keysAndValues: optional key-value pairs for structured logging / 구조화된 로깅을 위한 선택적 키-값 쌍
+// Parameters
+// 매개변수:
+// - msg: log message
+// 로그 메시지
+// - keysAndValues: optional key-value pairs for structured logging
+// 구조화된 로깅을 위한 선택적 키-값 쌍
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger.Error("Failed to connect", "error", err, "retry", 3)
 func (l *Logger) Error(msg string, keysAndValues ...interface{}) {
@@ -220,11 +252,15 @@ func (l *Logger) Error(msg string, keysAndValues ...interface{}) {
 // Fatal logs a message at FATAL level and exits the program
 // Fatal은 FATAL 레벨로 메시지를 로깅하고 프로그램을 종료합니다
 //
-// Parameters / 매개변수:
-//   - msg: log message / 로그 메시지
-//   - keysAndValues: optional key-value pairs for structured logging / 구조화된 로깅을 위한 선택적 키-값 쌍
+// Parameters
+// 매개변수:
+// - msg: log message
+// 로그 메시지
+// - keysAndValues: optional key-value pairs for structured logging
+// 구조화된 로깅을 위한 선택적 키-값 쌍
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger.Fatal("Critical error", "error", err)
 func (l *Logger) Fatal(msg string, keysAndValues ...interface{}) {
@@ -241,7 +277,8 @@ func (l *Logger) logf(level Level, format string, args ...interface{}) {
 		return
 	}
 
-	// Format the message / 메시지 형식화
+	// Format the message
+	// 메시지 형식화
 	msg := fmt.Sprintf(format, args...)
 
 	// Use the existing log function without key-value pairs
@@ -252,11 +289,15 @@ func (l *Logger) logf(level Level, format string, args ...interface{}) {
 // Debugf logs a formatted message at DEBUG level
 // Debugf는 DEBUG 레벨로 형식화된 메시지를 로깅합니다
 //
-// Parameters / 매개변수:
-//   - format: format string / 형식 문자열
-//   - args: arguments for formatting / 형식화를 위한 인자
+// Parameters
+// 매개변수:
+// - format: format string
+// 형식 문자열
+// - args: arguments for formatting
+// 형식화를 위한 인자
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger.Debugf("Processing request from %s (ID: %d)", username, userID)
 func (l *Logger) Debugf(format string, args ...interface{}) {
@@ -266,11 +307,15 @@ func (l *Logger) Debugf(format string, args ...interface{}) {
 // Infof logs a formatted message at INFO level
 // Infof는 INFO 레벨로 형식화된 메시지를 로깅합니다
 //
-// Parameters / 매개변수:
-//   - format: format string / 형식 문자열
-//   - args: arguments for formatting / 형식화를 위한 인자
+// Parameters
+// 매개변수:
+// - format: format string
+// 형식 문자열
+// - args: arguments for formatting
+// 형식화를 위한 인자
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger.Infof("Server started on port %d", port)
 func (l *Logger) Infof(format string, args ...interface{}) {
@@ -280,11 +325,15 @@ func (l *Logger) Infof(format string, args ...interface{}) {
 // Warnf logs a formatted message at WARN level
 // Warnf는 WARN 레벨로 형식화된 메시지를 로깅합니다
 //
-// Parameters / 매개변수:
-//   - format: format string / 형식 문자열
-//   - args: arguments for formatting / 형식화를 위한 인자
+// Parameters
+// 매개변수:
+// - format: format string
+// 형식 문자열
+// - args: arguments for formatting
+// 형식화를 위한 인자
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger.Warnf("Memory usage at %d%%", memPercent)
 func (l *Logger) Warnf(format string, args ...interface{}) {
@@ -294,11 +343,15 @@ func (l *Logger) Warnf(format string, args ...interface{}) {
 // Errorf logs a formatted message at ERROR level
 // Errorf는 ERROR 레벨로 형식화된 메시지를 로깅합니다
 //
-// Parameters / 매개변수:
-//   - format: format string / 형식 문자열
-//   - args: arguments for formatting / 형식화를 위한 인자
+// Parameters
+// 매개변수:
+// - format: format string
+// 형식 문자열
+// - args: arguments for formatting
+// 형식화를 위한 인자
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger.Errorf("Failed to connect to %s: %v", host, err)
 func (l *Logger) Errorf(format string, args ...interface{}) {
@@ -308,11 +361,15 @@ func (l *Logger) Errorf(format string, args ...interface{}) {
 // Fatalf logs a formatted message at FATAL level and exits the program
 // Fatalf는 FATAL 레벨로 형식화된 메시지를 로깅하고 프로그램을 종료합니다
 //
-// Parameters / 매개변수:
-//   - format: format string / 형식 문자열
-//   - args: arguments for formatting / 형식화를 위한 인자
+// Parameters
+// 매개변수:
+// - format: format string
+// 형식 문자열
+// - args: arguments for formatting
+// 형식화를 위한 인자
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger.Fatalf("Critical error: %v", err)
 func (l *Logger) Fatalf(format string, args ...interface{}) {
@@ -323,10 +380,13 @@ func (l *Logger) Fatalf(format string, args ...interface{}) {
 // SetLevel changes the minimum log level
 // SetLevel은 최소 로그 레벨을 변경합니다
 //
-// Parameters / 매개변수:
-//   - level: new minimum log level / 새 최소 로그 레벨
+// Parameters
+// 매개변수:
+// - level: new minimum log level
+// 새 최소 로그 레벨
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	logger.SetLevel(logging.DEBUG)
 func (l *Logger) SetLevel(level Level) {
@@ -338,8 +398,10 @@ func (l *Logger) SetLevel(level Level) {
 // GetLevel returns the current log level
 // GetLevel은 현재 로그 레벨을 반환합니다
 //
-// Returns / 반환값:
-//   - Level: current log level / 현재 로그 레벨
+// Returns
+// 반환값:
+// - Level: current log level
+// 현재 로그 레벨
 func (l *Logger) GetLevel() Level {
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -349,10 +411,13 @@ func (l *Logger) GetLevel() Level {
 // Close closes the logger and flushes any buffered data
 // Close는 로거를 닫고 버퍼링된 데이터를 플러시합니다
 //
-// Returns / 반환값:
-//   - error: error if any / 에러가 있으면 에러
+// Returns
+// 반환값:
+// - error: error if any
+// 에러가 있으면 에러
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	defer logger.Close()
 func (l *Logger) Close() error {
@@ -368,10 +433,13 @@ func (l *Logger) Close() error {
 // Rotate manually triggers log file rotation
 // Rotate는 로그 파일 로테이션을 수동으로 트리거합니다
 //
-// Returns / 반환값:
-//   - error: error if any / 에러가 있으면 에러
+// Returns
+// 반환값:
+// - error: error if any
+// 에러가 있으면 에러
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	if err := logger.Rotate(); err != nil {
 //	    log.Printf("Failed to rotate log: %v", err)

@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-// TestWeekdayKorean tests WeekdayKorean function / WeekdayKorean 함수 테스트
+// TestWeekdayKorean tests WeekdayKorean function
+// WeekdayKorean 함수 테스트
 func TestWeekdayKorean(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -59,7 +60,8 @@ func TestWeekdayKorean(t *testing.T) {
 	}
 }
 
-// TestWeekdayKoreanShort tests WeekdayKoreanShort function / WeekdayKoreanShort 함수 테스트
+// TestWeekdayKoreanShort tests WeekdayKoreanShort function
+// WeekdayKoreanShort 함수 테스트
 func TestWeekdayKoreanShort(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -113,7 +115,8 @@ func TestWeekdayKoreanShort(t *testing.T) {
 	}
 }
 
-// TestFormatKoreanDateTime tests FormatKoreanDateTime function / FormatKoreanDateTime 함수 테스트
+// TestFormatKoreanDateTime tests FormatKoreanDateTime function
+// FormatKoreanDateTime 함수 테스트
 func TestFormatKoreanDateTime(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 30, 45, 0, KST) // Tuesday
 
@@ -125,7 +128,8 @@ func TestFormatKoreanDateTime(t *testing.T) {
 	}
 }
 
-// TestFormatKoreanDateWithWeekday tests FormatKoreanDateWithWeekday function / FormatKoreanDateWithWeekday 함수 테스트
+// TestFormatKoreanDateWithWeekday tests FormatKoreanDateWithWeekday function
+// FormatKoreanDateWithWeekday 함수 테스트
 func TestFormatKoreanDateWithWeekday(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 30, 45, 0, KST) // Tuesday
 
@@ -137,7 +141,8 @@ func TestFormatKoreanDateWithWeekday(t *testing.T) {
 	}
 }
 
-// TestFormatKoreanDateShort tests FormatKoreanDateShort function / FormatKoreanDateShort 함수 테스트
+// TestFormatKoreanDateShort tests FormatKoreanDateShort function
+// FormatKoreanDateShort 함수 테스트
 func TestFormatKoreanDateShort(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 30, 45, 0, KST) // Tuesday
 
@@ -149,7 +154,8 @@ func TestFormatKoreanDateShort(t *testing.T) {
 	}
 }
 
-// BenchmarkWeekdayKorean benchmarks WeekdayKorean function / WeekdayKorean 함수 벤치마크
+// BenchmarkWeekdayKorean benchmarks WeekdayKorean function
+// WeekdayKorean 함수 벤치마크
 func BenchmarkWeekdayKorean(b *testing.B) {
 	testTime := time.Now()
 	b.ResetTimer()
@@ -158,7 +164,8 @@ func BenchmarkWeekdayKorean(b *testing.B) {
 	}
 }
 
-// BenchmarkWeekdayKoreanShort benchmarks WeekdayKoreanShort function / WeekdayKoreanShort 함수 벤치마크
+// BenchmarkWeekdayKoreanShort benchmarks WeekdayKoreanShort function
+// WeekdayKoreanShort 함수 벤치마크
 func BenchmarkWeekdayKoreanShort(b *testing.B) {
 	testTime := time.Now()
 	b.ResetTimer()
@@ -167,7 +174,8 @@ func BenchmarkWeekdayKoreanShort(b *testing.B) {
 	}
 }
 
-// BenchmarkFormatKoreanDateTime benchmarks FormatKoreanDateTime function / FormatKoreanDateTime 함수 벤치마크
+// BenchmarkFormatKoreanDateTime benchmarks FormatKoreanDateTime function
+// FormatKoreanDateTime 함수 벤치마크
 func BenchmarkFormatKoreanDateTime(b *testing.B) {
 	testTime := time.Now()
 	b.ResetTimer()

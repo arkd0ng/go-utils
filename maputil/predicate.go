@@ -9,7 +9,8 @@ package maputil
 // Time complexity: O(n) worst case, early termination on first false
 // 시간 복잡도: 최악의 경우 O(n), 첫 번째 false에서 조기 종료
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 2, "b": 4, "c": 6}
 //	allEven := maputil.Every(m, func(k string, v int) bool {
@@ -33,7 +34,8 @@ func Every[K comparable, V any](m map[K]V, fn func(K, V) bool) bool {
 // Time complexity: O(n) worst case, early termination on first true
 // 시간 복잡도: 최악의 경우 O(n), 첫 번째 true에서 조기 종료
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	hasEven := maputil.Some(m, func(k string, v int) bool {
@@ -57,7 +59,8 @@ func Some[K comparable, V any](m map[K]V, fn func(K, V) bool) bool {
 // Time complexity: O(n) worst case, early termination on first true
 // 시간 복잡도: 최악의 경우 O(n), 첫 번째 true에서 조기 종료
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 3, "c": 5}
 //	noEven := maputil.None(m, func(k string, v int) bool {
@@ -78,7 +81,8 @@ func None[K comparable, V any](m map[K]V, fn func(K, V) bool) bool {
 // Time complexity: O(1)
 // 시간 복잡도: O(1)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2}
 //	exists := maputil.HasKey(m, "a") // true
@@ -92,7 +96,8 @@ func HasKey[K comparable, V any](m map[K]V, key K) bool {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	exists := maputil.HasValue(m, 2) // true
@@ -112,7 +117,8 @@ func HasValue[K comparable, V comparable](m map[K]V, value V) bool {
 // Time complexity: O(1)
 // 시간 복잡도: O(1)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	exists := maputil.HasEntry(m, "b", 2) // true
@@ -133,7 +139,8 @@ func HasEntry[K comparable, V comparable](m map[K]V, key K, value V) bool {
 // Time complexity: O(n) where n is the size of the subset
 // 시간 복잡도: O(n) 여기서 n은 부분집합의 크기
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	subset := map[string]int{"a": 1, "b": 2}
 //	superset := map[string]int{"a": 1, "b": 2, "c": 3}
@@ -161,7 +168,8 @@ func IsSubset[K comparable, V comparable](subset, superset map[K]V) bool {
 // Time complexity: O(n) where n is the size of subset
 // 시간 복잡도: O(n) 여기서 n은 subset의 크기
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	superset := map[string]int{"a": 1, "b": 2, "c": 3}
 //	subset := map[string]int{"a": 1, "b": 2}

@@ -10,33 +10,38 @@ import (
 // 1. 시간 차이 함수 (8개 함수)
 // ============================================================
 
-// TestSubTime tests SubTime function / SubTime 함수 테스트
+// TestSubTime tests SubTime function
+// SubTime 함수 테스트
 func TestSubTime(t *testing.T) {
 	start := time.Date(2025, 1, 1, 9, 0, 0, 0, time.UTC)
 	end := time.Date(2025, 1, 10, 15, 30, 45, 0, time.UTC)
 
 	diff := SubTime(start, end)
 
-	// Test Days / Days 테스트
+	// Test Days
+	// Days 테스트
 	days := diff.Days()
 	if days < 9 || days > 10 {
 		t.Errorf("SubTime().Days() = %v, want between 9 and 10", days)
 	}
 
-	// Test String / String 테스트
+	// Test String
+	// String 테스트
 	str := diff.String()
 	if str == "" {
 		t.Error("SubTime().String() returned empty string")
 	}
 
-	// Test Humanize / Humanize 테스트
+	// Test Humanize
+	// Humanize 테스트
 	humanized := diff.Humanize()
 	if humanized == "" {
 		t.Error("SubTime().Humanize() returned empty string")
 	}
 }
 
-// TestDiffInSeconds tests DiffInSeconds function / DiffInSeconds 함수 테스트
+// TestDiffInSeconds tests DiffInSeconds function
+// DiffInSeconds 함수 테스트
 func TestDiffInSeconds(t *testing.T) {
 	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
 	end := time.Date(2025, 1, 2, 0, 0, 0, 0, time.UTC)
@@ -46,14 +51,16 @@ func TestDiffInSeconds(t *testing.T) {
 		t.Errorf("DiffInSeconds() = %v, want 86400", seconds)
 	}
 
-	// Test negative difference / 음수 차이 테스트
+	// Test negative difference
+	// 음수 차이 테스트
 	negSeconds := DiffInSeconds(end, start)
 	if negSeconds != -86400 {
 		t.Errorf("DiffInSeconds() = %v, want -86400", negSeconds)
 	}
 }
 
-// TestDiffInMinutes tests DiffInMinutes function / DiffInMinutes 함수 테스트
+// TestDiffInMinutes tests DiffInMinutes function
+// DiffInMinutes 함수 테스트
 func TestDiffInMinutes(t *testing.T) {
 	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
 	end := time.Date(2025, 1, 1, 1, 0, 0, 0, time.UTC)
@@ -64,7 +71,8 @@ func TestDiffInMinutes(t *testing.T) {
 	}
 }
 
-// TestDiffInHours tests DiffInHours function / DiffInHours 함수 테스트
+// TestDiffInHours tests DiffInHours function
+// DiffInHours 함수 테스트
 func TestDiffInHours(t *testing.T) {
 	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
 	end := time.Date(2025, 1, 2, 0, 0, 0, 0, time.UTC)
@@ -75,7 +83,8 @@ func TestDiffInHours(t *testing.T) {
 	}
 }
 
-// TestDiffInDays tests DiffInDays function / DiffInDays 함수 테스트
+// TestDiffInDays tests DiffInDays function
+// DiffInDays 함수 테스트
 func TestDiffInDays(t *testing.T) {
 	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
 	end := time.Date(2025, 1, 8, 0, 0, 0, 0, time.UTC)
@@ -86,7 +95,8 @@ func TestDiffInDays(t *testing.T) {
 	}
 }
 
-// TestDiffInWeeks tests DiffInWeeks function / DiffInWeeks 함수 테스트
+// TestDiffInWeeks tests DiffInWeeks function
+// DiffInWeeks 함수 테스트
 func TestDiffInWeeks(t *testing.T) {
 	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
 	end := time.Date(2025, 1, 15, 0, 0, 0, 0, time.UTC)
@@ -97,7 +107,8 @@ func TestDiffInWeeks(t *testing.T) {
 	}
 }
 
-// TestDiffInMonths tests DiffInMonths function / DiffInMonths 함수 테스트
+// TestDiffInMonths tests DiffInMonths function
+// DiffInMonths 함수 테스트
 func TestDiffInMonths(t *testing.T) {
 	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
 	end := time.Date(2025, 4, 1, 0, 0, 0, 0, time.UTC)
@@ -108,7 +119,8 @@ func TestDiffInMonths(t *testing.T) {
 	}
 }
 
-// TestDiffInYears tests DiffInYears function / DiffInYears 함수 테스트
+// TestDiffInYears tests DiffInYears function
+// DiffInYears 함수 테스트
 func TestDiffInYears(t *testing.T) {
 	start := time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)
 	end := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
@@ -124,7 +136,8 @@ func TestDiffInYears(t *testing.T) {
 // 2. 타임존 작업 (10개 함수)
 // ============================================================
 
-// TestGetDefaultTimezone tests GetDefaultTimezone function / GetDefaultTimezone 함수 테스트
+// TestGetDefaultTimezone tests GetDefaultTimezone function
+// GetDefaultTimezone 함수 테스트
 func TestGetDefaultTimezone(t *testing.T) {
 	tz := GetDefaultTimezone()
 	if tz != "Asia/Seoul" && tz != "KST" {
@@ -132,7 +145,8 @@ func TestGetDefaultTimezone(t *testing.T) {
 	}
 }
 
-// TestNowKST tests NowKST function / NowKST 함수 테스트
+// TestNowKST tests NowKST function
+// NowKST 함수 테스트
 func TestNowKST(t *testing.T) {
 	kstTime := NowKST()
 	if kstTime.IsZero() {
@@ -140,11 +154,13 @@ func TestNowKST(t *testing.T) {
 	}
 }
 
-// TestConvertTimezone tests ConvertTimezone function / ConvertTimezone 함수 테스트
+// TestConvertTimezone tests ConvertTimezone function
+// ConvertTimezone 함수 테스트
 func TestConvertTimezone(t *testing.T) {
 	now := time.Now()
 
-	// Test valid timezone / 유효한 타임존 테스트
+	// Test valid timezone
+	// 유효한 타임존 테스트
 	nyTime, err := ConvertTimezone(now, "America/New_York")
 	if err != nil {
 		t.Errorf("ConvertTimezone() error = %v", err)
@@ -153,14 +169,16 @@ func TestConvertTimezone(t *testing.T) {
 		t.Error("ConvertTimezone() returned zero time")
 	}
 
-	// Test invalid timezone / 잘못된 타임존 테스트
+	// Test invalid timezone
+	// 잘못된 타임존 테스트
 	_, err = ConvertTimezone(now, "Invalid/Timezone")
 	if err == nil {
 		t.Error("ConvertTimezone() should return error for invalid timezone")
 	}
 }
 
-// TestToUTC tests ToUTC function / ToUTC 함수 테스트
+// TestToUTC tests ToUTC function
+// ToUTC 함수 테스트
 func TestToUTC(t *testing.T) {
 	kstTime := time.Date(2025, 10, 14, 15, 0, 0, 0, KST)
 	utcTime := ToUTC(kstTime)
@@ -170,7 +188,8 @@ func TestToUTC(t *testing.T) {
 	}
 }
 
-// TestToKST tests ToKST function / ToKST 함수 테스트
+// TestToKST tests ToKST function
+// ToKST 함수 테스트
 func TestToKST(t *testing.T) {
 	utcTime := time.Date(2025, 10, 14, 6, 0, 0, 0, time.UTC)
 	kstTime := ToKST(utcTime)
@@ -180,7 +199,8 @@ func TestToKST(t *testing.T) {
 	}
 }
 
-// TestGetTimezoneOffset tests GetTimezoneOffset function / GetTimezoneOffset 함수 테스트
+// TestGetTimezoneOffset tests GetTimezoneOffset function
+// GetTimezoneOffset 함수 테스트
 func TestGetTimezoneOffset(t *testing.T) {
 	offset, err := GetTimezoneOffset("Asia/Seoul")
 	if err != nil {
@@ -190,14 +210,16 @@ func TestGetTimezoneOffset(t *testing.T) {
 		t.Log("GetTimezoneOffset() returned 0, expected non-zero for KST")
 	}
 
-	// Test invalid timezone / 잘못된 타임존 테스트
+	// Test invalid timezone
+	// 잘못된 타임존 테스트
 	_, err = GetTimezoneOffset("Invalid/Timezone")
 	if err == nil {
 		t.Error("GetTimezoneOffset() should return error for invalid timezone")
 	}
 }
 
-// TestGetLocalTimezone tests GetLocalTimezone function / GetLocalTimezone 함수 테스트
+// TestGetLocalTimezone tests GetLocalTimezone function
+// GetLocalTimezone 함수 테스트
 func TestGetLocalTimezone(t *testing.T) {
 	localTz := GetLocalTimezone()
 	if localTz == "" {
@@ -205,27 +227,32 @@ func TestGetLocalTimezone(t *testing.T) {
 	}
 }
 
-// TestIsValidTimezone tests IsValidTimezone function / IsValidTimezone 함수 테스트
+// TestIsValidTimezone tests IsValidTimezone function
+// IsValidTimezone 함수 테스트
 func TestIsValidTimezone(t *testing.T) {
-	// Test valid timezones / 유효한 타임존 테스트
+	// Test valid timezones
+	// 유효한 타임존 테스트
 	if !IsValidTimezone("America/New_York") {
 		t.Error("IsValidTimezone('America/New_York') = false, want true")
 	}
 
-	// Test invalid timezone / 잘못된 타임존 테스트
+	// Test invalid timezone
+	// 잘못된 타임존 테스트
 	if IsValidTimezone("Invalid/Timezone") {
 		t.Error("IsValidTimezone('Invalid/Timezone') = true, want false")
 	}
 }
 
-// TestListTimezones tests ListTimezones function / ListTimezones 함수 테스트
+// TestListTimezones tests ListTimezones function
+// ListTimezones 함수 테스트
 func TestListTimezones(t *testing.T) {
 	timezones := ListTimezones()
 	if len(timezones) == 0 {
 		t.Error("ListTimezones() returned empty list")
 	}
 
-	// Check if common timezones are present / 일반적인 타임존이 포함되어 있는지 확인
+	// Check if common timezones are present
+	// 일반적인 타임존이 포함되어 있는지 확인
 	found := false
 	for _, tz := range timezones {
 		if tz == "Asia/Seoul" || tz == "America/New_York" {
@@ -243,7 +270,8 @@ func TestListTimezones(t *testing.T) {
 // 3. 날짜 연산 함수 (16개 함수)
 // ============================================================
 
-// TestAddSeconds tests AddSeconds function / AddSeconds 함수 테스트
+// TestAddSeconds tests AddSeconds function
+// AddSeconds 함수 테스트
 func TestAddSeconds(t *testing.T) {
 	base := time.Date(2025, 10, 14, 15, 0, 0, 0, KST)
 	result := AddSeconds(base, 30)
@@ -253,7 +281,8 @@ func TestAddSeconds(t *testing.T) {
 	}
 }
 
-// TestAddMinutes tests AddMinutes function / AddMinutes 함수 테스트
+// TestAddMinutes tests AddMinutes function
+// AddMinutes 함수 테스트
 func TestAddMinutes(t *testing.T) {
 	base := time.Date(2025, 10, 14, 15, 0, 0, 0, KST)
 	result := AddMinutes(base, 15)
@@ -263,7 +292,8 @@ func TestAddMinutes(t *testing.T) {
 	}
 }
 
-// TestAddHours tests AddHours function / AddHours 함수 테스트
+// TestAddHours tests AddHours function
+// AddHours 함수 테스트
 func TestAddHours(t *testing.T) {
 	base := time.Date(2025, 10, 14, 15, 0, 0, 0, KST)
 	result := AddHours(base, 2)
@@ -273,7 +303,8 @@ func TestAddHours(t *testing.T) {
 	}
 }
 
-// TestAddDays tests AddDays function / AddDays 함수 테스트
+// TestAddDays tests AddDays function
+// AddDays 함수 테스트
 func TestAddDays(t *testing.T) {
 	base := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 	result := AddDays(base, 7)
@@ -283,7 +314,8 @@ func TestAddDays(t *testing.T) {
 	}
 }
 
-// TestAddWeeks tests AddWeeks function / AddWeeks 함수 테스트
+// TestAddWeeks tests AddWeeks function
+// AddWeeks 함수 테스트
 func TestAddWeeks(t *testing.T) {
 	base := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 	result := AddWeeks(base, 2)
@@ -294,7 +326,8 @@ func TestAddWeeks(t *testing.T) {
 	}
 }
 
-// TestAddMonths tests AddMonths function / AddMonths 함수 테스트
+// TestAddMonths tests AddMonths function
+// AddMonths 함수 테스트
 func TestAddMonths(t *testing.T) {
 	base := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 	result := AddMonths(base, 3)
@@ -304,7 +337,8 @@ func TestAddMonths(t *testing.T) {
 	}
 }
 
-// TestAddYears tests AddYears function / AddYears 함수 테스트
+// TestAddYears tests AddYears function
+// AddYears 함수 테스트
 func TestAddYears(t *testing.T) {
 	base := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 	result := AddYears(base, 1)
@@ -314,7 +348,8 @@ func TestAddYears(t *testing.T) {
 	}
 }
 
-// TestStartOfDay tests StartOfDay function / StartOfDay 함수 테스트
+// TestStartOfDay tests StartOfDay function
+// StartOfDay 함수 테스트
 func TestStartOfDay(t *testing.T) {
 	base := time.Date(2025, 10, 14, 15, 30, 45, 0, KST)
 	result := StartOfDay(base)
@@ -324,7 +359,8 @@ func TestStartOfDay(t *testing.T) {
 	}
 }
 
-// TestEndOfDay tests EndOfDay function / EndOfDay 함수 테스트
+// TestEndOfDay tests EndOfDay function
+// EndOfDay 함수 테스트
 func TestEndOfDay(t *testing.T) {
 	base := time.Date(2025, 10, 14, 15, 30, 45, 0, KST)
 	result := EndOfDay(base)
@@ -334,7 +370,8 @@ func TestEndOfDay(t *testing.T) {
 	}
 }
 
-// TestStartOfWeek tests StartOfWeek function / StartOfWeek 함수 테스트
+// TestStartOfWeek tests StartOfWeek function
+// StartOfWeek 함수 테스트
 func TestStartOfWeek(t *testing.T) {
 	// Tuesday, October 14, 2025
 	base := time.Date(2025, 10, 14, 15, 30, 45, 0, KST)
@@ -348,7 +385,8 @@ func TestStartOfWeek(t *testing.T) {
 	}
 }
 
-// TestEndOfWeek tests EndOfWeek function / EndOfWeek 함수 테스트
+// TestEndOfWeek tests EndOfWeek function
+// EndOfWeek 함수 테스트
 func TestEndOfWeek(t *testing.T) {
 	// Tuesday, October 14, 2025
 	base := time.Date(2025, 10, 14, 15, 30, 45, 0, KST)
@@ -362,7 +400,8 @@ func TestEndOfWeek(t *testing.T) {
 	}
 }
 
-// TestStartOfMonth tests StartOfMonth function / StartOfMonth 함수 테스트
+// TestStartOfMonth tests StartOfMonth function
+// StartOfMonth 함수 테스트
 func TestStartOfMonth(t *testing.T) {
 	base := time.Date(2025, 10, 14, 15, 30, 45, 0, KST)
 	result := StartOfMonth(base)
@@ -375,7 +414,8 @@ func TestStartOfMonth(t *testing.T) {
 	}
 }
 
-// TestEndOfMonth tests EndOfMonth function / EndOfMonth 함수 테스트
+// TestEndOfMonth tests EndOfMonth function
+// EndOfMonth 함수 테스트
 func TestEndOfMonth(t *testing.T) {
 	base := time.Date(2025, 10, 14, 15, 30, 45, 0, KST)
 	result := EndOfMonth(base)
@@ -388,7 +428,8 @@ func TestEndOfMonth(t *testing.T) {
 	}
 }
 
-// TestStartOfYear tests StartOfYear function / StartOfYear 함수 테스트
+// TestStartOfYear tests StartOfYear function
+// StartOfYear 함수 테스트
 func TestStartOfYear(t *testing.T) {
 	base := time.Date(2025, 10, 14, 15, 30, 45, 0, KST)
 	result := StartOfYear(base)
@@ -401,7 +442,8 @@ func TestStartOfYear(t *testing.T) {
 	}
 }
 
-// TestEndOfYear tests EndOfYear function / EndOfYear 함수 테스트
+// TestEndOfYear tests EndOfYear function
+// EndOfYear 함수 테스트
 func TestEndOfYear(t *testing.T) {
 	base := time.Date(2025, 10, 14, 15, 30, 45, 0, KST)
 	result := EndOfYear(base)
@@ -414,7 +456,8 @@ func TestEndOfYear(t *testing.T) {
 	}
 }
 
-// TestStartOfQuarter tests StartOfQuarter function / StartOfQuarter 함수 테스트
+// TestStartOfQuarter tests StartOfQuarter function
+// StartOfQuarter 함수 테스트
 func TestStartOfQuarter(t *testing.T) {
 	// Q4 2025 (October)
 	base := time.Date(2025, 10, 14, 15, 30, 45, 0, KST)
@@ -433,7 +476,8 @@ func TestStartOfQuarter(t *testing.T) {
 // 4. 날짜 포맷팅 함수 (8개 함수)
 // ============================================================
 
-// TestFormatISO8601 tests FormatISO8601 function / FormatISO8601 함수 테스트
+// TestFormatISO8601 tests FormatISO8601 function
+// FormatISO8601 함수 테스트
 func TestFormatISO8601(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 4, 5, 0, KST)
 	result := FormatISO8601(testTime)
@@ -447,7 +491,8 @@ func TestFormatISO8601(t *testing.T) {
 	}
 }
 
-// TestFormatRFC3339 tests FormatRFC3339 function / FormatRFC3339 함수 테스트
+// TestFormatRFC3339 tests FormatRFC3339 function
+// FormatRFC3339 함수 테스트
 func TestFormatRFC3339(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 4, 5, 0, KST)
 	result := FormatRFC3339(testTime)
@@ -457,7 +502,8 @@ func TestFormatRFC3339(t *testing.T) {
 	}
 }
 
-// TestFormatDate tests FormatDate function / FormatDate 함수 테스트
+// TestFormatDate tests FormatDate function
+// FormatDate 함수 테스트
 func TestFormatDate(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 4, 5, 0, KST)
 	result := FormatDate(testTime)
@@ -467,7 +513,8 @@ func TestFormatDate(t *testing.T) {
 	}
 }
 
-// TestFormatDateTime tests FormatDateTime function / FormatDateTime 함수 테스트
+// TestFormatDateTime tests FormatDateTime function
+// FormatDateTime 함수 테스트
 func TestFormatDateTime(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 4, 5, 0, KST)
 	result := FormatDateTime(testTime)
@@ -477,7 +524,8 @@ func TestFormatDateTime(t *testing.T) {
 	}
 }
 
-// TestFormatTime tests FormatTime function / FormatTime 함수 테스트
+// TestFormatTime tests FormatTime function
+// FormatTime 함수 테스트
 func TestFormatTime(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 4, 5, 0, KST)
 	result := FormatTime(testTime)
@@ -487,18 +535,21 @@ func TestFormatTime(t *testing.T) {
 	}
 }
 
-// TestFormat tests Format function with custom tokens / Format 함수 커스텀 토큰 테스트
+// TestFormat tests Format function with custom tokens
+// Format 함수 커스텀 토큰 테스트
 func TestFormat(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 4, 5, 0, KST)
 
-	// Test various format tokens / 다양한 포맷 토큰 테스트
+	// Test various format tokens
+	// 다양한 포맷 토큰 테스트
 	result := Format(testTime, "YYYY-MM-DD HH:mm:ss")
 	if result == "" {
 		t.Error("Format() returned empty string")
 	}
 }
 
-// TestFormatKorean tests FormatKorean function / FormatKorean 함수 테스트
+// TestFormatKorean tests FormatKorean function
+// FormatKorean 함수 테스트
 func TestFormatKorean(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 4, 5, 0, KST)
 	result := FormatKorean(testTime)
@@ -506,13 +557,15 @@ func TestFormatKorean(t *testing.T) {
 	if result == "" {
 		t.Error("FormatKorean() returned empty string")
 	}
-	// Should contain Korean characters / 한글 문자를 포함해야 함
+	// Should contain Korean characters
+	// 한글 문자를 포함해야 함
 	if len(result) < 10 {
 		t.Errorf("FormatKorean() = %v, seems too short", result)
 	}
 }
 
-// TestFormatWithTimezone tests FormatWithTimezone function / FormatWithTimezone 함수 테스트
+// TestFormatWithTimezone tests FormatWithTimezone function
+// FormatWithTimezone 함수 테스트
 func TestFormatWithTimezone(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 4, 5, 0, KST)
 
@@ -524,7 +577,8 @@ func TestFormatWithTimezone(t *testing.T) {
 		t.Error("FormatWithTimezone() returned empty string")
 	}
 
-	// Test invalid timezone / 잘못된 타임존 테스트
+	// Test invalid timezone
+	// 잘못된 타임존 테스트
 	_, err = FormatWithTimezone(testTime, "Invalid/Timezone")
 	if err == nil {
 		t.Error("FormatWithTimezone() should return error for invalid timezone")
@@ -536,7 +590,8 @@ func TestFormatWithTimezone(t *testing.T) {
 // 5. 시간 파싱 함수 (6개 함수)
 // ============================================================
 
-// TestParseISO8601 tests ParseISO8601 function / ParseISO8601 함수 테스트
+// TestParseISO8601 tests ParseISO8601 function
+// ParseISO8601 함수 테스트
 func TestParseISO8601(t *testing.T) {
 	result, err := ParseISO8601("2025-10-14T15:04:05+09:00")
 	if err != nil {
@@ -546,14 +601,16 @@ func TestParseISO8601(t *testing.T) {
 		t.Errorf("ParseISO8601() = %v, want 2025-10-14", result)
 	}
 
-	// Test invalid format / 잘못된 포맷 테스트
+	// Test invalid format
+	// 잘못된 포맷 테스트
 	_, err = ParseISO8601("invalid")
 	if err == nil {
 		t.Error("ParseISO8601() should return error for invalid format")
 	}
 }
 
-// TestParseRFC3339 tests ParseRFC3339 function / ParseRFC3339 함수 테스트
+// TestParseRFC3339 tests ParseRFC3339 function
+// ParseRFC3339 함수 테스트
 func TestParseRFC3339(t *testing.T) {
 	result, err := ParseRFC3339("2025-10-14T15:04:05+09:00")
 	if err != nil {
@@ -564,7 +621,8 @@ func TestParseRFC3339(t *testing.T) {
 	}
 }
 
-// TestParseDate tests ParseDate function / ParseDate 함수 테스트
+// TestParseDate tests ParseDate function
+// ParseDate 함수 테스트
 func TestParseDate(t *testing.T) {
 	result, err := ParseDate("2025-10-14")
 	if err != nil {
@@ -574,14 +632,16 @@ func TestParseDate(t *testing.T) {
 		t.Errorf("ParseDate() = %v, want 2025-10-14", result)
 	}
 
-	// Test invalid format / 잘못된 포맷 테스트
+	// Test invalid format
+	// 잘못된 포맷 테스트
 	_, err = ParseDate("invalid")
 	if err == nil {
 		t.Error("ParseDate() should return error for invalid format")
 	}
 }
 
-// TestParseDateTime tests ParseDateTime function / ParseDateTime 함수 테스트
+// TestParseDateTime tests ParseDateTime function
+// ParseDateTime 함수 테스트
 func TestParseDateTime(t *testing.T) {
 	result, err := ParseDateTime("2025-10-14 15:04:05")
 	if err != nil {
@@ -592,9 +652,11 @@ func TestParseDateTime(t *testing.T) {
 	}
 }
 
-// TestParse tests Parse function with auto-detection / Parse 함수 자동 감지 테스트
+// TestParse tests Parse function with auto-detection
+// Parse 함수 자동 감지 테스트
 func TestParse(t *testing.T) {
-	// Test date format / 날짜 포맷 테스트
+	// Test date format
+	// 날짜 포맷 테스트
 	result1, err := Parse("2025-10-14")
 	if err != nil {
 		t.Errorf("Parse() error = %v", err)
@@ -603,7 +665,8 @@ func TestParse(t *testing.T) {
 		t.Error("Parse() returned zero time for date format")
 	}
 
-	// Test datetime format / 날짜시간 포맷 테스트
+	// Test datetime format
+	// 날짜시간 포맷 테스트
 	result2, err := Parse("2025-10-14 15:04:05")
 	if err != nil {
 		t.Errorf("Parse() error = %v", err)
@@ -612,14 +675,16 @@ func TestParse(t *testing.T) {
 		t.Error("Parse() returned zero time for datetime format")
 	}
 
-	// Test invalid format / 잘못된 포맷 테스트
+	// Test invalid format
+	// 잘못된 포맷 테스트
 	_, err = Parse("invalid")
 	if err == nil {
 		t.Error("Parse() should return error for invalid format")
 	}
 }
 
-// TestParseWithTimezone tests ParseWithTimezone function / ParseWithTimezone 함수 테스트
+// TestParseWithTimezone tests ParseWithTimezone function
+// ParseWithTimezone 함수 테스트
 func TestParseWithTimezone(t *testing.T) {
 	result, err := ParseWithTimezone("2025-10-14 15:04:05", "America/New_York")
 	if err != nil {
@@ -629,7 +694,8 @@ func TestParseWithTimezone(t *testing.T) {
 		t.Error("ParseWithTimezone() returned zero time")
 	}
 
-	// Test invalid timezone / 잘못된 타임존 테스트
+	// Test invalid timezone
+	// 잘못된 타임존 테스트
 	_, err = ParseWithTimezone("2025-10-14 15:04:05", "Invalid/Timezone")
 	if err == nil {
 		t.Error("ParseWithTimezone() should return error for invalid timezone")
@@ -641,7 +707,8 @@ func TestParseWithTimezone(t *testing.T) {
 // 6. 시간 비교 함수 (18개 함수)
 // ============================================================
 
-// TestIsBefore tests IsBefore function / IsBefore 함수 테스트
+// TestIsBefore tests IsBefore function
+// IsBefore 함수 테스트
 func TestIsBefore(t *testing.T) {
 	t1 := time.Date(2025, 10, 13, 0, 0, 0, 0, KST)
 	t2 := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
@@ -654,7 +721,8 @@ func TestIsBefore(t *testing.T) {
 	}
 }
 
-// TestIsAfter tests IsAfter function / IsAfter 함수 테스트
+// TestIsAfter tests IsAfter function
+// IsAfter 함수 테스트
 func TestIsAfter(t *testing.T) {
 	t1 := time.Date(2025, 10, 15, 0, 0, 0, 0, KST)
 	t2 := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
@@ -667,7 +735,8 @@ func TestIsAfter(t *testing.T) {
 	}
 }
 
-// TestIsBetween tests IsBetween function / IsBetween 함수 테스트
+// TestIsBetween tests IsBetween function
+// IsBetween 함수 테스트
 func TestIsBetween(t *testing.T) {
 	start := time.Date(2025, 10, 13, 0, 0, 0, 0, KST)
 	middle := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
@@ -681,7 +750,8 @@ func TestIsBetween(t *testing.T) {
 	}
 }
 
-// TestIsToday tests IsToday function / IsToday 함수 테스트
+// TestIsToday tests IsToday function
+// IsToday 함수 테스트
 func TestIsToday(t *testing.T) {
 	now := time.Now()
 	if !IsToday(now) {
@@ -694,7 +764,8 @@ func TestIsToday(t *testing.T) {
 	}
 }
 
-// TestIsYesterday tests IsYesterday function / IsYesterday 함수 테스트
+// TestIsYesterday tests IsYesterday function
+// IsYesterday 함수 테스트
 func TestIsYesterday(t *testing.T) {
 	yesterday := time.Now().AddDate(0, 0, -1)
 	if !IsYesterday(yesterday) {
@@ -707,7 +778,8 @@ func TestIsYesterday(t *testing.T) {
 	}
 }
 
-// TestIsTomorrow tests IsTomorrow function / IsTomorrow 함수 테스트
+// TestIsTomorrow tests IsTomorrow function
+// IsTomorrow 함수 테스트
 func TestIsTomorrow(t *testing.T) {
 	tomorrow := time.Now().AddDate(0, 0, 1)
 	if !IsTomorrow(tomorrow) {
@@ -720,7 +792,8 @@ func TestIsTomorrow(t *testing.T) {
 	}
 }
 
-// TestIsWeekend tests IsWeekend function / IsWeekend 함수 테스트
+// TestIsWeekend tests IsWeekend function
+// IsWeekend 함수 테스트
 func TestIsWeekend(t *testing.T) {
 	saturday := time.Date(2025, 10, 18, 0, 0, 0, 0, KST) // Saturday
 	sunday := time.Date(2025, 10, 19, 0, 0, 0, 0, KST)   // Sunday
@@ -737,7 +810,8 @@ func TestIsWeekend(t *testing.T) {
 	}
 }
 
-// TestIsWeekday tests IsWeekday function / IsWeekday 함수 테스트
+// TestIsWeekday tests IsWeekday function
+// IsWeekday 함수 테스트
 func TestIsWeekday(t *testing.T) {
 	monday := time.Date(2025, 10, 13, 0, 0, 0, 0, KST) // Monday
 	saturday := time.Date(2025, 10, 18, 0, 0, 0, 0, KST) // Saturday
@@ -750,7 +824,8 @@ func TestIsWeekday(t *testing.T) {
 	}
 }
 
-// TestIsThisWeek tests IsThisWeek function / IsThisWeek 함수 테스트
+// TestIsThisWeek tests IsThisWeek function
+// IsThisWeek 함수 테스트
 func TestIsThisWeek(t *testing.T) {
 	now := time.Now()
 	if !IsThisWeek(now) {
@@ -763,7 +838,8 @@ func TestIsThisWeek(t *testing.T) {
 	}
 }
 
-// TestIsThisMonth tests IsThisMonth function / IsThisMonth 함수 테스트
+// TestIsThisMonth tests IsThisMonth function
+// IsThisMonth 함수 테스트
 func TestIsThisMonth(t *testing.T) {
 	now := time.Now()
 	if !IsThisMonth(now) {
@@ -776,7 +852,8 @@ func TestIsThisMonth(t *testing.T) {
 	}
 }
 
-// TestIsThisYear tests IsThisYear function / IsThisYear 함수 테스트
+// TestIsThisYear tests IsThisYear function
+// IsThisYear 함수 테스트
 func TestIsThisYear(t *testing.T) {
 	now := time.Now()
 	if !IsThisYear(now) {
@@ -789,7 +866,8 @@ func TestIsThisYear(t *testing.T) {
 	}
 }
 
-// TestIsSameDay tests IsSameDay function / IsSameDay 함수 테스트
+// TestIsSameDay tests IsSameDay function
+// IsSameDay 함수 테스트
 func TestIsSameDay(t *testing.T) {
 	t1 := time.Date(2025, 10, 14, 10, 0, 0, 0, KST)
 	t2 := time.Date(2025, 10, 14, 15, 0, 0, 0, KST)
@@ -803,7 +881,8 @@ func TestIsSameDay(t *testing.T) {
 	}
 }
 
-// TestIsSameWeek tests IsSameWeek function / IsSameWeek 함수 테스트
+// TestIsSameWeek tests IsSameWeek function
+// IsSameWeek 함수 테스트
 func TestIsSameWeek(t *testing.T) {
 	// Both are in the same week (Oct 13-19, 2025)
 	t1 := time.Date(2025, 10, 14, 0, 0, 0, 0, KST) // Tuesday
@@ -818,7 +897,8 @@ func TestIsSameWeek(t *testing.T) {
 	}
 }
 
-// TestIsSameMonth tests IsSameMonth function / IsSameMonth 함수 테스트
+// TestIsSameMonth tests IsSameMonth function
+// IsSameMonth 함수 테스트
 func TestIsSameMonth(t *testing.T) {
 	t1 := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 	t2 := time.Date(2025, 10, 20, 0, 0, 0, 0, KST)
@@ -832,7 +912,8 @@ func TestIsSameMonth(t *testing.T) {
 	}
 }
 
-// TestIsSameYear tests IsSameYear function / IsSameYear 함수 테스트
+// TestIsSameYear tests IsSameYear function
+// IsSameYear 함수 테스트
 func TestIsSameYear(t *testing.T) {
 	t1 := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 	t2 := time.Date(2025, 12, 31, 0, 0, 0, 0, KST)
@@ -846,7 +927,8 @@ func TestIsSameYear(t *testing.T) {
 	}
 }
 
-// TestIsLeapYear tests IsLeapYear function / IsLeapYear 함수 테스트
+// TestIsLeapYear tests IsLeapYear function
+// IsLeapYear 함수 테스트
 func TestIsLeapYear(t *testing.T) {
 	leap2024 := time.Date(2024, 1, 1, 0, 0, 0, 0, KST)
 	notLeap2025 := time.Date(2025, 1, 1, 0, 0, 0, 0, KST)
@@ -859,7 +941,8 @@ func TestIsLeapYear(t *testing.T) {
 	}
 }
 
-// TestIsPast tests IsPast function / IsPast 함수 테스트
+// TestIsPast tests IsPast function
+// IsPast 함수 테스트
 func TestIsPast(t *testing.T) {
 	past := time.Now().Add(-1 * time.Hour)
 	future := time.Now().Add(1 * time.Hour)
@@ -872,7 +955,8 @@ func TestIsPast(t *testing.T) {
 	}
 }
 
-// TestIsFuture tests IsFuture function / IsFuture 함수 테스트
+// TestIsFuture tests IsFuture function
+// IsFuture 함수 테스트
 func TestIsFuture(t *testing.T) {
 	future := time.Now().Add(1 * time.Hour)
 	past := time.Now().Add(-1 * time.Hour)
@@ -890,7 +974,8 @@ func TestIsFuture(t *testing.T) {
 // 7. 나이 계산 함수 (4개 함수)
 // ============================================================
 
-// TestAgeInYears tests AgeInYears function / AgeInYears 함수 테스트
+// TestAgeInYears tests AgeInYears function
+// AgeInYears 함수 테스트
 func TestAgeInYears(t *testing.T) {
 	birthDate := time.Date(1990, 5, 15, 0, 0, 0, 0, KST)
 	years := AgeInYears(birthDate)
@@ -903,7 +988,8 @@ func TestAgeInYears(t *testing.T) {
 	}
 }
 
-// TestAgeInMonths tests AgeInMonths function / AgeInMonths 함수 테스트
+// TestAgeInMonths tests AgeInMonths function
+// AgeInMonths 함수 테스트
 func TestAgeInMonths(t *testing.T) {
 	birthDate := time.Now().AddDate(-1, -6, 0) // 1 year 6 months ago
 	months := AgeInMonths(birthDate)
@@ -913,7 +999,8 @@ func TestAgeInMonths(t *testing.T) {
 	}
 }
 
-// TestAgeInDays tests AgeInDays function / AgeInDays 함수 테스트
+// TestAgeInDays tests AgeInDays function
+// AgeInDays 함수 테스트
 func TestAgeInDays(t *testing.T) {
 	birthDate := time.Now().AddDate(0, 0, -30) // 30 days ago
 	days := AgeInDays(birthDate)
@@ -923,7 +1010,8 @@ func TestAgeInDays(t *testing.T) {
 	}
 }
 
-// TestAge tests Age function / Age 함수 테스트
+// TestAge tests Age function
+// Age 함수 테스트
 func TestAge(t *testing.T) {
 	birthDate := time.Date(1990, 5, 15, 0, 0, 0, 0, KST)
 	age := Age(birthDate)
@@ -938,7 +1026,8 @@ func TestAge(t *testing.T) {
 		t.Errorf("Age().Years = %v, expected around 35", age.Years)
 	}
 
-	// Test String method / String 메서드 테스트
+	// Test String method
+	// String 메서드 테스트
 	str := age.String()
 	if str == "" {
 		t.Error("Age().String() returned empty string")
@@ -950,16 +1039,19 @@ func TestAge(t *testing.T) {
 // 8. 상대 시간 함수 (4개 함수)
 // ============================================================
 
-// TestRelativeTime tests RelativeTime function / RelativeTime 함수 테스트
+// TestRelativeTime tests RelativeTime function
+// RelativeTime 함수 테스트
 func TestRelativeTime(t *testing.T) {
-	// Test past time / 과거 시간 테스트
+	// Test past time
+	// 과거 시간 테스트
 	past := time.Now().Add(-2 * time.Hour)
 	pastStr := RelativeTime(past)
 	if pastStr == "" {
 		t.Error("RelativeTime() returned empty string for past")
 	}
 
-	// Test future time / 미래 시간 테스트
+	// Test future time
+	// 미래 시간 테스트
 	future := time.Now().Add(3 * time.Hour)
 	futureStr := RelativeTime(future)
 	if futureStr == "" {
@@ -967,7 +1059,8 @@ func TestRelativeTime(t *testing.T) {
 	}
 }
 
-// TestRelativeTimeShort tests RelativeTimeShort function / RelativeTimeShort 함수 테스트
+// TestRelativeTimeShort tests RelativeTimeShort function
+// RelativeTimeShort 함수 테스트
 func TestRelativeTimeShort(t *testing.T) {
 	past := time.Now().Add(-2 * time.Hour)
 	short := RelativeTimeShort(past)
@@ -977,7 +1070,8 @@ func TestRelativeTimeShort(t *testing.T) {
 	}
 }
 
-// TestTimeAgo tests TimeAgo function / TimeAgo 함수 테스트
+// TestTimeAgo tests TimeAgo function
+// TimeAgo 함수 테스트
 func TestTimeAgo(t *testing.T) {
 	past := time.Now().Add(-30 * time.Minute)
 	ago := TimeAgo(past)
@@ -987,9 +1081,11 @@ func TestTimeAgo(t *testing.T) {
 	}
 }
 
-// TestHumanizeDuration tests HumanizeDuration function / HumanizeDuration 함수 테스트
+// TestHumanizeDuration tests HumanizeDuration function
+// HumanizeDuration 함수 테스트
 func TestHumanizeDuration(t *testing.T) {
-	// Test 2 hours 30 minutes / 2시간 30분 테스트
+	// Test 2 hours 30 minutes
+	// 2시간 30분 테스트
 	duration := 2*time.Hour + 30*time.Minute
 	humanized := HumanizeDuration(duration)
 
@@ -1003,7 +1099,8 @@ func TestHumanizeDuration(t *testing.T) {
 // 9. Unix 타임스탬프 함수 (12개 함수)
 // ============================================================
 
-// TestNow tests Now function / Now 함수 테스트
+// TestNow tests Now function
+// Now 함수 테스트
 func TestNow(t *testing.T) {
 	unix := Now()
 	if unix <= 0 {
@@ -1011,7 +1108,8 @@ func TestNow(t *testing.T) {
 	}
 }
 
-// TestNowMilli tests NowMilli function / NowMilli 함수 테스트
+// TestNowMilli tests NowMilli function
+// NowMilli 함수 테스트
 func TestNowMilli(t *testing.T) {
 	milli := NowMilli()
 	if milli <= 0 {
@@ -1019,7 +1117,8 @@ func TestNowMilli(t *testing.T) {
 	}
 }
 
-// TestNowMicro tests NowMicro function / NowMicro 함수 테스트
+// TestNowMicro tests NowMicro function
+// NowMicro 함수 테스트
 func TestNowMicro(t *testing.T) {
 	micro := NowMicro()
 	if micro <= 0 {
@@ -1027,7 +1126,8 @@ func TestNowMicro(t *testing.T) {
 	}
 }
 
-// TestNowNano tests NowNano function / NowNano 함수 테스트
+// TestNowNano tests NowNano function
+// NowNano 함수 테스트
 func TestNowNano(t *testing.T) {
 	nano := NowNano()
 	if nano <= 0 {
@@ -1035,7 +1135,8 @@ func TestNowNano(t *testing.T) {
 	}
 }
 
-// TestFromUnix tests FromUnix function / FromUnix 함수 테스트
+// TestFromUnix tests FromUnix function
+// FromUnix 함수 테스트
 func TestFromUnix(t *testing.T) {
 	unix := int64(1634198400) // 2021-10-14 12:00:00 UTC
 	result := FromUnix(unix)
@@ -1048,7 +1149,8 @@ func TestFromUnix(t *testing.T) {
 	}
 }
 
-// TestFromUnixMilli tests FromUnixMilli function / FromUnixMilli 함수 테스트
+// TestFromUnixMilli tests FromUnixMilli function
+// FromUnixMilli 함수 테스트
 func TestFromUnixMilli(t *testing.T) {
 	milli := int64(1634198400000)
 	result := FromUnixMilli(milli)
@@ -1058,7 +1160,8 @@ func TestFromUnixMilli(t *testing.T) {
 	}
 }
 
-// TestFromUnixMicro tests FromUnixMicro function / FromUnixMicro 함수 테스트
+// TestFromUnixMicro tests FromUnixMicro function
+// FromUnixMicro 함수 테스트
 func TestFromUnixMicro(t *testing.T) {
 	micro := int64(1634198400000000)
 	result := FromUnixMicro(micro)
@@ -1068,7 +1171,8 @@ func TestFromUnixMicro(t *testing.T) {
 	}
 }
 
-// TestFromUnixNano tests FromUnixNano function / FromUnixNano 함수 테스트
+// TestFromUnixNano tests FromUnixNano function
+// FromUnixNano 함수 테스트
 func TestFromUnixNano(t *testing.T) {
 	nano := int64(1634198400000000000)
 	result := FromUnixNano(nano)
@@ -1078,7 +1182,8 @@ func TestFromUnixNano(t *testing.T) {
 	}
 }
 
-// TestToUnix tests ToUnix function / ToUnix 함수 테스트
+// TestToUnix tests ToUnix function
+// ToUnix 함수 테스트
 func TestToUnix(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 0, 0, 0, KST)
 	unix := ToUnix(testTime)
@@ -1087,14 +1192,16 @@ func TestToUnix(t *testing.T) {
 		t.Errorf("ToUnix() = %v, should be positive", unix)
 	}
 
-	// Verify round-trip / 왕복 변환 검증
+	// Verify round-trip
+	// 왕복 변환 검증
 	converted := FromUnix(unix)
 	if converted.Unix() != testTime.Unix() {
 		t.Error("ToUnix() round-trip failed")
 	}
 }
 
-// TestToUnixMilli tests ToUnixMilli function / ToUnixMilli 함수 테스트
+// TestToUnixMilli tests ToUnixMilli function
+// ToUnixMilli 함수 테스트
 func TestToUnixMilli(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 0, 0, 0, KST)
 	milli := ToUnixMilli(testTime)
@@ -1104,7 +1211,8 @@ func TestToUnixMilli(t *testing.T) {
 	}
 }
 
-// TestToUnixMicro tests ToUnixMicro function / ToUnixMicro 함수 테스트
+// TestToUnixMicro tests ToUnixMicro function
+// ToUnixMicro 함수 테스트
 func TestToUnixMicro(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 0, 0, 0, KST)
 	micro := ToUnixMicro(testTime)
@@ -1114,7 +1222,8 @@ func TestToUnixMicro(t *testing.T) {
 	}
 }
 
-// TestToUnixNano tests ToUnixNano function / ToUnixNano 함수 테스트
+// TestToUnixNano tests ToUnixNano function
+// ToUnixNano 함수 테스트
 func TestToUnixNano(t *testing.T) {
 	testTime := time.Date(2025, 10, 14, 15, 0, 0, 0, KST)
 	nano := ToUnixNano(testTime)
@@ -1129,9 +1238,11 @@ func TestToUnixNano(t *testing.T) {
 // 10. 영업일 함수 (7개 함수)
 // ============================================================
 
-// TestIsBusinessDay tests IsBusinessDay function / IsBusinessDay 함수 테스트
+// TestIsBusinessDay tests IsBusinessDay function
+// IsBusinessDay 함수 테스트
 func TestIsBusinessDay(t *testing.T) {
-	// Clear holidays first / 먼저 공휴일 초기화
+	// Clear holidays first
+	// 먼저 공휴일 초기화
 	ClearHolidays()
 
 	monday := time.Date(2025, 10, 13, 0, 0, 0, 0, KST) // Monday
@@ -1144,7 +1255,8 @@ func TestIsBusinessDay(t *testing.T) {
 		t.Error("IsBusinessDay() = true for Saturday, want false")
 	}
 
-	// Test with holiday / 공휴일 테스트
+	// Test with holiday
+	// 공휴일 테스트
 	AddKoreanHolidays(2025)
 	christmas := time.Date(2025, 12, 25, 0, 0, 0, 0, KST)
 	if IsBusinessDay(christmas) {
@@ -1152,7 +1264,8 @@ func TestIsBusinessDay(t *testing.T) {
 	}
 }
 
-// TestAddKoreanHolidays tests AddKoreanHolidays function / AddKoreanHolidays 함수 테스트
+// TestAddKoreanHolidays tests AddKoreanHolidays function
+// AddKoreanHolidays 함수 테스트
 func TestAddKoreanHolidays(t *testing.T) {
 	ClearHolidays()
 	AddKoreanHolidays(2025)
@@ -1163,24 +1276,28 @@ func TestAddKoreanHolidays(t *testing.T) {
 	}
 }
 
-// TestIsHoliday tests IsHoliday function / IsHoliday 함수 테스트
+// TestIsHoliday tests IsHoliday function
+// IsHoliday 함수 테스트
 func TestIsHoliday(t *testing.T) {
 	ClearHolidays()
 	christmas := time.Date(2025, 12, 25, 0, 0, 0, 0, KST)
 
-	// Before adding holiday / 공휴일 추가 전
+	// Before adding holiday
+	// 공휴일 추가 전
 	if IsHoliday(christmas) {
 		t.Error("IsHoliday() = true before adding, want false")
 	}
 
-	// After adding holiday / 공휴일 추가 후
+	// After adding holiday
+	// 공휴일 추가 후
 	SetHolidays([]time.Time{christmas})
 	if !IsHoliday(christmas) {
 		t.Error("IsHoliday() = false after adding, want true")
 	}
 }
 
-// TestAddBusinessDays tests AddBusinessDays function / AddBusinessDays 함수 테스트
+// TestAddBusinessDays tests AddBusinessDays function
+// AddBusinessDays 함수 테스트
 func TestAddBusinessDays(t *testing.T) {
 	ClearHolidays()
 
@@ -1193,7 +1310,8 @@ func TestAddBusinessDays(t *testing.T) {
 	}
 }
 
-// TestNextBusinessDay tests NextBusinessDay function / NextBusinessDay 함수 테스트
+// TestNextBusinessDay tests NextBusinessDay function
+// NextBusinessDay 함수 테스트
 func TestNextBusinessDay(t *testing.T) {
 	ClearHolidays()
 
@@ -1206,7 +1324,8 @@ func TestNextBusinessDay(t *testing.T) {
 	}
 }
 
-// TestPreviousBusinessDay tests PreviousBusinessDay function / PreviousBusinessDay 함수 테스트
+// TestPreviousBusinessDay tests PreviousBusinessDay function
+// PreviousBusinessDay 함수 테스트
 func TestPreviousBusinessDay(t *testing.T) {
 	ClearHolidays()
 
@@ -1219,7 +1338,8 @@ func TestPreviousBusinessDay(t *testing.T) {
 	}
 }
 
-// TestCountBusinessDays tests CountBusinessDays function / CountBusinessDays 함수 테스트
+// TestCountBusinessDays tests CountBusinessDays function
+// CountBusinessDays 함수 테스트
 func TestCountBusinessDays(t *testing.T) {
 	ClearHolidays()
 
@@ -1239,7 +1359,8 @@ func TestCountBusinessDays(t *testing.T) {
 // 추가 공휴일 관리 테스트
 // ============================================================
 
-// TestGetHolidays tests GetHolidays function / GetHolidays 함수 테스트
+// TestGetHolidays tests GetHolidays function
+// GetHolidays 함수 테스트
 func TestGetHolidays(t *testing.T) {
 	ClearHolidays()
 	AddKoreanHolidays(2025)
@@ -1250,7 +1371,8 @@ func TestGetHolidays(t *testing.T) {
 	}
 }
 
-// TestSetHolidays tests SetHolidays function / SetHolidays 함수 테스트
+// TestSetHolidays tests SetHolidays function
+// SetHolidays 함수 테스트
 func TestSetHolidays(t *testing.T) {
 	christmas := time.Date(2025, 12, 25, 0, 0, 0, 0, KST)
 	newYear := time.Date(2025, 1, 1, 0, 0, 0, 0, KST)
@@ -1263,7 +1385,8 @@ func TestSetHolidays(t *testing.T) {
 	}
 }
 
-// TestClearHolidays tests ClearHolidays function / ClearHolidays 함수 테스트
+// TestClearHolidays tests ClearHolidays function
+// ClearHolidays 함수 테스트
 func TestClearHolidays(t *testing.T) {
 	AddKoreanHolidays(2025)
 	ClearHolidays()
@@ -1275,10 +1398,12 @@ func TestClearHolidays(t *testing.T) {
 }
 
 // ============================================================
-// Benchmark Tests / 벤치마크 테스트
+// Benchmark Tests
+// 벤치마크 테스트
 // ============================================================
 
-// BenchmarkSubTime benchmarks SubTime function / SubTime 함수 벤치마크
+// BenchmarkSubTime benchmarks SubTime function
+// SubTime 함수 벤치마크
 func BenchmarkSubTime(b *testing.B) {
 	start := time.Now()
 	end := start.Add(24 * time.Hour)
@@ -1289,7 +1414,8 @@ func BenchmarkSubTime(b *testing.B) {
 	}
 }
 
-// BenchmarkDiffInDays benchmarks DiffInDays function / DiffInDays 함수 벤치마크
+// BenchmarkDiffInDays benchmarks DiffInDays function
+// DiffInDays 함수 벤치마크
 func BenchmarkDiffInDays(b *testing.B) {
 	start := time.Now()
 	end := start.Add(24 * time.Hour)
@@ -1300,7 +1426,8 @@ func BenchmarkDiffInDays(b *testing.B) {
 	}
 }
 
-// BenchmarkConvertTimezone benchmarks ConvertTimezone function / ConvertTimezone 함수 벤치마크
+// BenchmarkConvertTimezone benchmarks ConvertTimezone function
+// ConvertTimezone 함수 벤치마크
 func BenchmarkConvertTimezone(b *testing.B) {
 	t := time.Now()
 
@@ -1310,7 +1437,8 @@ func BenchmarkConvertTimezone(b *testing.B) {
 	}
 }
 
-// BenchmarkFormatDate benchmarks FormatDate function / FormatDate 함수 벤치마크
+// BenchmarkFormatDate benchmarks FormatDate function
+// FormatDate 함수 벤치마크
 func BenchmarkFormatDate(b *testing.B) {
 	t := time.Now()
 
@@ -1320,7 +1448,8 @@ func BenchmarkFormatDate(b *testing.B) {
 	}
 }
 
-// BenchmarkFormatDateTime benchmarks FormatDateTime function / FormatDateTime 함수 벤치마크
+// BenchmarkFormatDateTime benchmarks FormatDateTime function
+// FormatDateTime 함수 벤치마크
 func BenchmarkFormatDateTime(b *testing.B) {
 	t := time.Now()
 
@@ -1330,7 +1459,8 @@ func BenchmarkFormatDateTime(b *testing.B) {
 	}
 }
 
-// BenchmarkFormat benchmarks Format function with custom tokens / 커스텀 토큰으로 Format 함수 벤치마크
+// BenchmarkFormat benchmarks Format function with custom tokens
+// 커스텀 토큰으로 Format 함수 벤치마크
 func BenchmarkFormat(b *testing.B) {
 	t := time.Now()
 
@@ -1340,7 +1470,8 @@ func BenchmarkFormat(b *testing.B) {
 	}
 }
 
-// BenchmarkParseDate benchmarks ParseDate function / ParseDate 함수 벤치마크
+// BenchmarkParseDate benchmarks ParseDate function
+// ParseDate 함수 벤치마크
 func BenchmarkParseDate(b *testing.B) {
 	dateStr := "2025-10-14"
 
@@ -1350,7 +1481,8 @@ func BenchmarkParseDate(b *testing.B) {
 	}
 }
 
-// BenchmarkParseDateTime benchmarks ParseDateTime function / ParseDateTime 함수 벤치마크
+// BenchmarkParseDateTime benchmarks ParseDateTime function
+// ParseDateTime 함수 벤치마크
 func BenchmarkParseDateTime(b *testing.B) {
 	dateTimeStr := "2025-10-14 15:04:05"
 
@@ -1360,7 +1492,8 @@ func BenchmarkParseDateTime(b *testing.B) {
 	}
 }
 
-// BenchmarkParse benchmarks Parse function with auto-detection / 자동 감지로 Parse 함수 벤치마크
+// BenchmarkParse benchmarks Parse function with auto-detection
+// 자동 감지로 Parse 함수 벤치마크
 func BenchmarkParse(b *testing.B) {
 	dateStr := "2025-10-14"
 
@@ -1370,7 +1503,8 @@ func BenchmarkParse(b *testing.B) {
 	}
 }
 
-// BenchmarkRelativeTime benchmarks RelativeTime function / RelativeTime 함수 벤치마크
+// BenchmarkRelativeTime benchmarks RelativeTime function
+// RelativeTime 함수 벤치마크
 func BenchmarkRelativeTime(b *testing.B) {
 	t := time.Now().Add(-2 * time.Hour)
 
@@ -1380,7 +1514,8 @@ func BenchmarkRelativeTime(b *testing.B) {
 	}
 }
 
-// BenchmarkAge benchmarks Age function / Age 함수 벤치마크
+// BenchmarkAge benchmarks Age function
+// Age 함수 벤치마크
 func BenchmarkAge(b *testing.B) {
 	birthDate := time.Date(1990, 5, 15, 0, 0, 0, 0, KST)
 
@@ -1390,7 +1525,8 @@ func BenchmarkAge(b *testing.B) {
 	}
 }
 
-// BenchmarkIsBusinessDay benchmarks IsBusinessDay function / IsBusinessDay 함수 벤치마크
+// BenchmarkIsBusinessDay benchmarks IsBusinessDay function
+// IsBusinessDay 함수 벤치마크
 func BenchmarkIsBusinessDay(b *testing.B) {
 	AddKoreanHolidays(2025)
 	t := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)

@@ -2,7 +2,8 @@ package websvrutil
 
 import "time"
 
-// Default timeout configurations / 기본 타임아웃 설정
+// Default timeout configurations
+// 기본 타임아웃 설정
 const (
 	// DefaultReadTimeout is the maximum duration for reading the entire request, including the body.
 	// DefaultReadTimeout은 본문을 포함한 전체 요청을 읽기 위한 최대 기간입니다.
@@ -17,7 +18,8 @@ const (
 	DefaultIdleTimeout = 60 * time.Second
 )
 
-// Default size limits / 기본 크기 제한
+// Default size limits
+// 기본 크기 제한
 const (
 	// DefaultMaxHeaderBytes is the maximum number of bytes the server will read parsing the request header.
 	// DefaultMaxHeaderBytes는 서버가 요청 헤더를 파싱할 때 읽을 최대 바이트 수입니다.
@@ -34,7 +36,8 @@ const (
 	DefaultMaxUploadSize = 32 << 20 // 32 MB
 )
 
-// Default session configurations / 기본 세션 설정
+// Default session configurations
+// 기본 세션 설정
 const (
 	// DefaultSessionMaxAge is the maximum age of a session before it expires.
 	// DefaultSessionMaxAge는 세션이 만료되기 전까지의 최대 유효 기간입니다.
@@ -49,7 +52,8 @@ const (
 	DefaultSessionCleanup = 5 * time.Minute
 )
 
-// Content-Type constants / Content-Type 상수
+// Content-Type constants
+// Content-Type 상수
 const (
 	// ContentTypeJSON represents JSON content type with UTF-8 charset.
 	// ContentTypeJSON은 UTF-8 문자셋을 가진 JSON 콘텐츠 타입을 나타냅니다.
@@ -76,7 +80,8 @@ const (
 	ContentTypeMultipart = "multipart/form-data"
 )
 
-// HTTP header names / HTTP 헤더 이름
+// HTTP header names
+// HTTP 헤더 이름
 const (
 	// HeaderContentType is the Content-Type header name.
 	// HeaderContentType은 Content-Type 헤더 이름입니다.

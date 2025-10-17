@@ -5,7 +5,8 @@ import (
 	"testing"
 )
 
-// TestValuesSorted tests the ValuesSorted function / ValuesSorted 함수 테스트
+// TestValuesSorted tests the ValuesSorted function
+// ValuesSorted 함수 테스트
 func TestValuesSorted(t *testing.T) {
 	data := map[string]int{"a": 3, "b": 1, "c": 2}
 
@@ -16,7 +17,8 @@ func TestValuesSorted(t *testing.T) {
 		t.Errorf("ValuesSorted() = %v, want %v", result, expected)
 	}
 
-	// Test with strings / 문자열로 테스트
+	// Test with strings
+	// 문자열로 테스트
 	strData := map[int]string{1: "c", 2: "a", 3: "b"}
 	strResult := ValuesSorted(strData)
 	expectedStr := []string{"a", "b", "c"}
@@ -26,7 +28,8 @@ func TestValuesSorted(t *testing.T) {
 	}
 }
 
-// TestUniqueValues tests the UniqueValues function / UniqueValues 함수 테스트
+// TestUniqueValues tests the UniqueValues function
+// UniqueValues 함수 테스트
 func TestUniqueValues(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 1, "d": 3, "e": 2}
 
@@ -36,7 +39,8 @@ func TestUniqueValues(t *testing.T) {
 		t.Errorf("UniqueValues() returned %d values, want 3", len(result))
 	}
 
-	// Check all unique values are present / 모든 고유 값이 존재하는지 확인
+	// Check all unique values are present
+	// 모든 고유 값이 존재하는지 확인
 	hasOne := false
 	hasTwo := false
 	hasThree := false
@@ -57,7 +61,8 @@ func TestUniqueValues(t *testing.T) {
 	}
 }
 
-// TestUniqueValuesEmpty tests UniqueValues with all same values / 모두 같은 값으로 UniqueValues 테스트
+// TestUniqueValuesEmpty tests UniqueValues with all same values
+// 모두 같은 값으로 UniqueValues 테스트
 func TestUniqueValuesAllSame(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 1, "c": 1}
 
@@ -68,11 +73,13 @@ func TestUniqueValuesAllSame(t *testing.T) {
 	}
 }
 
-// TestReplaceValue tests the ReplaceValue function / ReplaceValue 함수 테스트
+// TestReplaceValue tests the ReplaceValue function
+// ReplaceValue 함수 테스트
 func TestReplaceValue(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 1, "d": 3, "e": 2}
 
-	// Replace all 1s with 10 / 모든 1을 10으로 교체
+	// Replace all 1s with 10
+	// 모든 1을 10으로 교체
 	result := ReplaceValue(data, 1, 10)
 
 	if result["a"] != 10 || result["c"] != 10 {
@@ -82,23 +89,27 @@ func TestReplaceValue(t *testing.T) {
 		t.Error("ReplaceValue(1, 10) changed other values")
 	}
 
-	// Test immutability / 불변성 테스트
+	// Test immutability
+	// 불변성 테스트
 	if data["a"] != 1 {
 		t.Error("ReplaceValue() modified original map")
 	}
 
-	// Replace non-existent value / 존재하지 않는 값 교체
+	// Replace non-existent value
+	// 존재하지 않는 값 교체
 	result = ReplaceValue(data, 99, 100)
 	if !reflect.DeepEqual(result, data) {
 		t.Error("ReplaceValue(non-existent) changed map")
 	}
 }
 
-// TestUpdateValues tests the UpdateValues function / UpdateValues 함수 테스트
+// TestUpdateValues tests the UpdateValues function
+// UpdateValues 함수 테스트
 func TestUpdateValues(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3}
 
-	// Double all values / 모든 값을 2배로
+	// Double all values
+	// 모든 값을 2배로
 	result := UpdateValues(data, func(k string, v int) int {
 		return v * 2
 	})
@@ -108,13 +119,15 @@ func TestUpdateValues(t *testing.T) {
 		t.Errorf("UpdateValues(*2) = %v, want %v", result, expected)
 	}
 
-	// Test immutability / 불변성 테스트
+	// Test immutability
+	// 불변성 테스트
 	if data["a"] != 1 {
 		t.Error("UpdateValues() modified original map")
 	}
 }
 
-// TestMinValue tests the MinValue function / MinValue 함수 테스트
+// TestMinValue tests the MinValue function
+// MinValue 함수 테스트
 func TestMinValue(t *testing.T) {
 	data := map[string]int{"a": 3, "b": 1, "c": 2}
 
@@ -126,7 +139,8 @@ func TestMinValue(t *testing.T) {
 		t.Errorf("MinValue() = %d, want 1", min)
 	}
 
-	// Empty map / 빈 맵
+	// Empty map
+	// 빈 맵
 	empty := map[string]int{}
 	_, found = MinValue(empty)
 	if found {
@@ -134,7 +148,8 @@ func TestMinValue(t *testing.T) {
 	}
 }
 
-// TestMaxValue tests the MaxValue function / MaxValue 함수 테스트
+// TestMaxValue tests the MaxValue function
+// MaxValue 함수 테스트
 func TestMaxValue(t *testing.T) {
 	data := map[string]int{"a": 3, "b": 1, "c": 2}
 
@@ -146,7 +161,8 @@ func TestMaxValue(t *testing.T) {
 		t.Errorf("MaxValue() = %d, want 3", max)
 	}
 
-	// Empty map / 빈 맵
+	// Empty map
+	// 빈 맵
 	empty := map[string]int{}
 	_, found = MaxValue(empty)
 	if found {
@@ -154,7 +170,8 @@ func TestMaxValue(t *testing.T) {
 	}
 }
 
-// TestSumValues tests the SumValues function / SumValues 함수 테스트
+// TestSumValues tests the SumValues function
+// SumValues 함수 테스트
 func TestSumValues(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 
@@ -163,14 +180,16 @@ func TestSumValues(t *testing.T) {
 		t.Errorf("SumValues() = %d, want 10", sum)
 	}
 
-	// Empty map / 빈 맵
+	// Empty map
+	// 빈 맵
 	empty := map[string]int{}
 	sum = SumValues(empty)
 	if sum != 0 {
 		t.Errorf("SumValues(empty) = %d, want 0", sum)
 	}
 
-	// Float values / 실수 값
+	// Float values
+	// 실수 값
 	floatData := map[string]float64{"a": 1.5, "b": 2.5, "c": 3.0}
 	floatSum := SumValues(floatData)
 	if floatSum != 7.0 {
@@ -178,7 +197,8 @@ func TestSumValues(t *testing.T) {
 	}
 }
 
-// Benchmarks / 벤치마크
+// Benchmarks
+// 벤치마크
 
 func BenchmarkValuesSorted(b *testing.B) {
 	data := map[string]int{"a": 5, "b": 3, "c": 1, "d": 4, "e": 2}

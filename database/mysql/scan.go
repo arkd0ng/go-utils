@@ -11,13 +11,15 @@ import (
 func scanRows(rows *sql.Rows) ([]map[string]interface{}, error) {
 	defer rows.Close()
 
-	// Get column names / 컬럼 이름 가져오기
+	// Get column names
+	// 컬럼 이름 가져오기
 	columns, err := rows.Columns()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get columns: %w", err)
 	}
 
-	// Get column types / 컬럼 타입 가져오기
+	// Get column types
+	// 컬럼 타입 가져오기
 	columnTypes, err := rows.ColumnTypes()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get column types: %w", err)
@@ -34,24 +36,28 @@ func scanRows(rows *sql.Rows) ([]map[string]interface{}, error) {
 			valuePtrs[i] = &values[i]
 		}
 
-		// Scan the row / 행 스캔
+		// Scan the row
+		// 행 스캔
 		if err := rows.Scan(valuePtrs...); err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
 
-		// Create a map for this row / 이 행에 대한 map 생성
+		// Create a map for this row
+		// 이 행에 대한 map 생성
 		row := make(map[string]interface{})
 		for i, col := range columns {
 			val := values[i]
 
-			// Convert types / 타입 변환
+			// Convert types
+			// 타입 변환
 			row[col] = convertValue(val, columnTypes[i])
 		}
 
 		results = append(results, row)
 	}
 
-	// Check for errors from iterating over rows / 행 반복 중 에러 확인
+	// Check for errors from iterating over rows
+	// 행 반복 중 에러 확인
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("error iterating rows: %w", err)
 	}
@@ -64,13 +70,15 @@ func scanRows(rows *sql.Rows) ([]map[string]interface{}, error) {
 func scanRow(rows *sql.Rows) (map[string]interface{}, error) {
 	defer rows.Close()
 
-	// Get column names / 컬럼 이름 가져오기
+	// Get column names
+	// 컬럼 이름 가져오기
 	columns, err := rows.Columns()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get columns: %w", err)
 	}
 
-	// Get column types / 컬럼 타입 가져오기
+	// Get column types
+	// 컬럼 타입 가져오기
 	columnTypes, err := rows.ColumnTypes()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get column types: %w", err)
@@ -91,12 +99,14 @@ func scanRow(rows *sql.Rows) (map[string]interface{}, error) {
 		valuePtrs[i] = &values[i]
 	}
 
-	// Scan the row / 행 스캔
+	// Scan the row
+	// 행 스캔
 	if err := rows.Scan(valuePtrs...); err != nil {
 		return nil, fmt.Errorf("failed to scan row: %w", err)
 	}
 
-	// Create a map for this row / 이 행에 대한 map 생성
+	// Create a map for this row
+	// 이 행에 대한 map 생성
 	row := make(map[string]interface{})
 	for i, col := range columns {
 		val := values[i]
@@ -117,7 +127,8 @@ func convertValue(val interface{}, colType *sql.ColumnType) interface{} {
 	// 텍스트 타입에 대해 []byte를 string으로 변환
 	switch v := val.(type) {
 	case []byte:
-		// Check if it's a text/varchar type / text/varchar 타입인지 확인
+		// Check if it's a text/varchar type
+		// text/varchar 타입인지 확인
 		dbType := colType.DatabaseTypeName()
 		if isTextType(dbType) {
 			return string(v)

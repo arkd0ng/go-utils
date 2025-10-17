@@ -7,17 +7,26 @@
 // 이 패키지는 30줄 이상의 반복적인 HTTP 코드를 자동 JSON 처리, 재시도 로직,
 // 타입 안전 작업을 통해 단 2-3줄로 줄입니다.
 //
-// # Key Features / 주요 기능
+// # Key Features
+// 주요 기능
 //
-//   - Simple HTTP methods (GET, POST, PUT, PATCH, DELETE) / 간단한 HTTP 메서드
-//   - Automatic JSON encoding/decoding / 자동 JSON 인코딩/디코딩
-//   - Automatic retry with exponential backoff / 지수 백오프를 사용한 자동 재시도
-//   - Type-safe response parsing with generics / 제네릭을 사용한 타입 안전 응답 파싱
-//   - Context support for cancellation and timeouts / 취소 및 타임아웃을 위한 Context 지원
-//   - Rich error types with debugging information / 디버깅 정보를 포함한 풍부한 에러 타입
-//   - Zero external dependencies / 외부 의존성 제로
+// - Simple HTTP methods (GET, POST, PUT, PATCH, DELETE)
+// 간단한 HTTP 메서드
+// - Automatic JSON encoding/decoding
+// 자동 JSON 인코딩/디코딩
+// - Automatic retry with exponential backoff
+// 지수 백오프를 사용한 자동 재시도
+// - Type-safe response parsing with generics
+// 제네릭을 사용한 타입 안전 응답 파싱
+// - Context support for cancellation and timeouts
+// 취소 및 타임아웃을 위한 Context 지원
+// - Rich error types with debugging information
+// 디버깅 정보를 포함한 풍부한 에러 타입
+// - Zero external dependencies
+// 외부 의존성 제로
 //
-// # Quick Start / 빠른 시작
+// # Quick Start
+// 빠른 시작
 //
 // Simple GET request:
 //
@@ -48,7 +57,8 @@
 //	var result MyStruct
 //	err := client.Get("/data", &result)
 //
-// # Categories / 카테고리
+// # Categories
+// 카테고리
 //
 //   - Simple HTTP Methods (10 functions): Get, Post, Put, Patch, Delete with Context variants
 //   - Request Builders (8 functions): Query params, headers, auth, form data
@@ -59,7 +69,8 @@
 //
 // Total: ~54 functions across 6 categories
 //
-// # Design Philosophy / 설계 철학
+// # Design Philosophy
+// 설계 철학
 //
 // "30 lines → 2-3 lines" - Extreme Simplicity
 //
@@ -68,11 +79,13 @@
 //   - Zero configuration needed
 //   - Context support everywhere
 //
-// # Version / 버전
+// # Version
+// 버전
 //
 // Current version: v1.10.004
 //
-// # License / 라이선스
+// # License
+// 라이선스
 //
 // MIT License
 package httputil

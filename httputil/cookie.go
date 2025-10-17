@@ -54,9 +54,11 @@ func NewPersistentCookieJar(filePath string) (*CookieJar, error) {
 
 	cj.filePath = filePath
 
-	// Try to load existing cookies / 기존 쿠키 로드 시도
+	// Try to load existing cookies
+	// 기존 쿠키 로드 시도
 	if err := cj.LoadCookies(); err != nil {
-		// Ignore error if file doesn't exist / 파일이 없으면 에러 무시
+		// Ignore error if file doesn't exist
+		// 파일이 없으면 에러 무시
 		if !os.IsNotExist(err) {
 			return nil, err
 		}
@@ -99,7 +101,8 @@ func (cj *CookieJar) ClearCookies() error {
 	cj.mu.Lock()
 	defer cj.mu.Unlock()
 
-	// Create new empty jar / 새 빈 저장소 생성
+	// Create new empty jar
+	// 새 빈 저장소 생성
 	jar, err := cookiejar.New(&cookiejar.Options{
 		PublicSuffixList: publicsuffix.List,
 	})
@@ -109,7 +112,8 @@ func (cj *CookieJar) ClearCookies() error {
 
 	cj.jar = jar
 
-	// Clear persisted cookies if file path is set / 파일 경로가 설정된 경우 지속된 쿠키 삭제
+	// Clear persisted cookies if file path is set
+	// 파일 경로가 설정된 경우 지속된 쿠키 삭제
 	if cj.filePath != "" {
 		if err := os.Remove(cj.filePath); err != nil && !os.IsNotExist(err) {
 			return err
@@ -170,7 +174,8 @@ func (cj *CookieJar) LoadCookies() error {
 	cj.mu.Lock()
 	defer cj.mu.Unlock()
 
-	// Restore cookies / 쿠키 복원
+	// Restore cookies
+	// 쿠키 복원
 	for _, entry := range entries {
 		u, err := url.Parse(entry.URL)
 		if err != nil {
@@ -207,7 +212,8 @@ func (cj *CookieJar) RemoveCookie(u *url.URL, name string) {
 		}
 	}
 
-	// Set expired cookie to remove it / 만료된 쿠키를 설정하여 제거
+	// Set expired cookie to remove it
+	// 만료된 쿠키를 설정하여 제거
 	expiredCookie := &http.Cookie{
 		Name:    name,
 		Value:   "",
@@ -251,7 +257,8 @@ func (cj *CookieJar) GetCookie(u *url.URL, name string) *http.Cookie {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// CLIENT INTEGRATION / 클라이언트 통합
+// CLIENT INTEGRATION
+// 클라이언트 통합
 // ═══════════════════════════════════════════════════════════════════════════
 
 // GetCookies returns cookies for a URL from the client's cookie jar

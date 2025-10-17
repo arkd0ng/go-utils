@@ -44,7 +44,8 @@ func TestPermutations(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := Permutations(tt.input)
 
-			// Check count / 개수 확인
+			// Check count
+			// 개수 확인
 			if len(result) != tt.expected {
 				t.Errorf("Permutations() returned %d permutations, want %d", len(result), tt.expected)
 			}
@@ -170,7 +171,8 @@ func TestCombinations(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := Combinations(tt.input, tt.k)
 
-			// Check count / 개수 확인
+			// Check count
+			// 개수 확인
 			if len(result) != tt.expected {
 				t.Errorf("Combinations() returned %d combinations, want %d", len(result), tt.expected)
 			}

@@ -32,13 +32,15 @@ func (c *Client) DoRawContext(ctx context.Context, method, path string, body int
 	cfg := *c.config
 	cfg.apply(opts)
 
-	// Build full URL / 전체 URL 구축
+	// Build full URL
+	// 전체 URL 구축
 	fullURL := path
 	if cfg.baseURL != "" && !strings.HasPrefix(path, "http://") && !strings.HasPrefix(path, "https://") {
 		fullURL = strings.TrimRight(cfg.baseURL, "/") + "/" + strings.TrimLeft(path, "/")
 	}
 
-	// Add query parameters / 쿼리 매개변수 추가
+	// Add query parameters
+	// 쿼리 매개변수 추가
 	if len(cfg.queryParams) > 0 {
 		u, err := url.Parse(fullURL)
 		if err != nil {
@@ -52,7 +54,8 @@ func (c *Client) DoRawContext(ctx context.Context, method, path string, body int
 		fullURL = u.String()
 	}
 
-	// Prepare request body / 요청 본문 준비
+	// Prepare request body
+	// 요청 본문 준비
 	var bodyReader io.Reader
 	if body != nil {
 		jsonData, err := json.Marshal(body)
@@ -62,20 +65,23 @@ func (c *Client) DoRawContext(ctx context.Context, method, path string, body int
 		bodyReader = bytes.NewReader(jsonData)
 	}
 
-	// Create request / 요청 생성
+	// Create request
+	// 요청 생성
 	req, err := http.NewRequestWithContext(ctx, method, fullURL, bodyReader)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	// Set headers / 헤더 설정
+	// Set headers
+	// 헤더 설정
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", cfg.userAgent)
 	for k, v := range cfg.headers {
 		req.Header.Set(k, v)
 	}
 
-	// Set authentication / 인증 설정
+	// Set authentication
+	// 인증 설정
 	if cfg.bearerToken != "" {
 		req.Header.Set("Authorization", "Bearer "+cfg.bearerToken)
 	}
@@ -83,13 +89,15 @@ func (c *Client) DoRawContext(ctx context.Context, method, path string, body int
 		req.SetBasicAuth(cfg.basicAuthUser, cfg.basicAuthPass)
 	}
 
-	// Execute request / 요청 실행
+	// Execute request
+	// 요청 실행
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	// Read and cache body / 본문 읽기 및 캐시
+	// Read and cache body
+	// 본문 읽기 및 캐시
 	bodyBytes, err := io.ReadAll(resp.Body)
 	resp.Body.Close()
 	if err != nil {
@@ -183,7 +191,8 @@ func (r *Response) ContentLength() int64 {
 	return r.Response.ContentLength
 }
 
-// Status checks / 상태 확인 함수들
+// Status checks
+// 상태 확인 함수들
 
 // IsOK returns true if status code is 200.
 // IsOK는 상태 코드가 200이면 true를 반환합니다.

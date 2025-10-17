@@ -12,30 +12,38 @@ import (
 )
 
 func main() {
-	// Setup log file with backup management / 백업 관리와 함께 로그 파일 설정
+	// Setup log file with backup management
+	// 백업 관리와 함께 로그 파일 설정
 	logFilePath := "logs/maputil-example.log"
 
-	// Check if previous log file exists / 이전 로그 파일 존재 여부 확인
+	// Check if previous log file exists
+	// 이전 로그 파일 존재 여부 확인
 	if fileutil.Exists(logFilePath) {
-		// Get modification time of existing log file / 기존 로그 파일의 수정 시간 가져오기
+		// Get modification time of existing log file
+		// 기존 로그 파일의 수정 시간 가져오기
 		modTime, err := fileutil.ModTime(logFilePath)
 		if err == nil {
-			// Create backup filename with timestamp / 타임스탬프와 함께 백업 파일명 생성
+			// Create backup filename with timestamp
+			// 타임스탬프와 함께 백업 파일명 생성
 			backupName := fmt.Sprintf("logs/maputil-example-%s.log", modTime.Format("20060102-150405"))
 
-			// Backup existing log file / 기존 로그 파일 백업
+			// Backup existing log file
+			// 기존 로그 파일 백업
 			if err := fileutil.CopyFile(logFilePath, backupName); err == nil {
 				fmt.Printf("✅ Backed up previous log to: %s\n", backupName)
-				// Delete original log file to prevent content duplication / 내용 중복 방지를 위해 원본 로그 파일 삭제
+				// Delete original log file to prevent content duplication
+				// 내용 중복 방지를 위해 원본 로그 파일 삭제
 				fileutil.DeleteFile(logFilePath)
 			}
 		}
 
-		// Cleanup old backup files - keep only 5 most recent / 오래된 백업 파일 정리 - 최근 5개만 유지
+		// Cleanup old backup files - keep only 5 most recent
+		// 오래된 백업 파일 정리 - 최근 5개만 유지
 		backupPattern := "logs/maputil-example-*.log"
 		backupFiles, err := filepath.Glob(backupPattern)
 		if err == nil && len(backupFiles) > 5 {
-			// Sort by modification time / 수정 시간으로 정렬
+			// Sort by modification time
+			// 수정 시간으로 정렬
 			type fileInfo struct {
 				path    string
 				modTime time.Time
@@ -47,7 +55,8 @@ func main() {
 				}
 			}
 
-			// Sort oldest first / 가장 오래된 것부터 정렬
+			// Sort oldest first
+			// 가장 오래된 것부터 정렬
 			for i := 0; i < len(files)-1; i++ {
 				for j := i + 1; j < len(files); j++ {
 					if files[i].modTime.After(files[j].modTime) {
@@ -56,7 +65,8 @@ func main() {
 				}
 			}
 
-			// Delete oldest files to keep only 5 / 5개만 유지하도록 가장 오래된 파일 삭제
+			// Delete oldest files to keep only 5
+			// 5개만 유지하도록 가장 오래된 파일 삭제
 			for i := 0; i < len(files)-5; i++ {
 				fileutil.DeleteFile(files[i].path)
 				fmt.Printf("🗑️  Deleted old backup: %s\n", files[i].path)
@@ -64,7 +74,8 @@ func main() {
 		}
 	}
 
-	// Initialize logger with fixed filename / 고정 파일명으로 로거 초기화
+	// Initialize logger with fixed filename
+	// 고정 파일명으로 로거 초기화
 	logger, err := logging.New(
 		logging.WithLevel(logging.DEBUG),
 		logging.WithFilePath(logFilePath),
@@ -75,7 +86,8 @@ func main() {
 	}
 	defer logger.Close()
 
-	// Display banner / 배너 표시
+	// Display banner
+	// 배너 표시
 	logger.Banner("maputil Package - Comprehensive Examples", maputil.Version)
 	logger.Info("")
 	logger.Info("╔════════════════════════════════════════════════════════════════════════════╗")
@@ -102,43 +114,56 @@ func main() {
 	logger.Info("   • 92.8% Test Coverage: 90+ subtests, 17+ benchmarks")
 	logger.Info("")
 
-	// Run all examples / 모든 예제 실행
+	// Run all examples
+	// 모든 예제 실행
 	ctx := context.Background()
 
-	// Category 1: Basic Operations (11 functions) / 기본 작업 (11개 함수)
+	// Category 1: Basic Operations (11 functions)
+	// 기본 작업 (11개 함수)
 	basicOperations(ctx, logger)
 
-	// Category 2: Transformation (10 functions) / 변환 (10개 함수)
+	// Category 2: Transformation (10 functions)
+	// 변환 (10개 함수)
 	transformations(ctx, logger)
 
-	// Category 3: Aggregation (9 functions) / 집계 (9개 함수)
+	// Category 3: Aggregation (9 functions)
+	// 집계 (9개 함수)
 	aggregations(ctx, logger)
 
-	// Category 4: Merge Operations (8 functions) / 병합 작업 (8개 함수)
+	// Category 4: Merge Operations (8 functions)
+	// 병합 작업 (8개 함수)
 	mergeOperations(ctx, logger)
 
-	// Category 5: Filter Operations (7 functions) / 필터 작업 (7개 함수)
+	// Category 5: Filter Operations (7 functions)
+	// 필터 작업 (7개 함수)
 	filterOperations(ctx, logger)
 
-	// Category 6: Conversion (8 functions) / 변환 (8개 함수)
+	// Category 6: Conversion (8 functions)
+	// 변환 (8개 함수)
 	conversions(ctx, logger)
 
-	// Category 7: Predicate Checks (7 functions) / 조건 검사 (7개 함수)
+	// Category 7: Predicate Checks (7 functions)
+	// 조건 검사 (7개 함수)
 	predicates(ctx, logger)
 
-	// Category 8: Key Operations (8 functions) / 키 작업 (8개 함수)
+	// Category 8: Key Operations (8 functions)
+	// 키 작업 (8개 함수)
 	keyOperations(ctx, logger)
 
-	// Category 9: Value Operations (7 functions) / 값 작업 (7개 함수)
+	// Category 9: Value Operations (7 functions)
+	// 값 작업 (7개 함수)
 	valueOperations(ctx, logger)
 
-	// Category 10: Comparison (6 functions) / 비교 (6개 함수)
+	// Category 10: Comparison (6 functions)
+	// 비교 (6개 함수)
 	comparisons(ctx, logger)
 
-	// Category 11: Utility Functions (NEW) / 유틸리티 함수 (신규)
+	// Category 11: Utility Functions (NEW)
+	// 유틸리티 함수 (신규)
 	utilityFunctions(ctx, logger)
 
-	// Advanced: Real-World Use Cases / 고급: 실제 사용 사례
+	// Advanced: Real-World Use Cases
+	// 고급: 실제 사용 사례
 	realWorldExamples(ctx, logger)
 
 	logger.Info("")
@@ -149,7 +174,8 @@ func main() {
 }
 
 // ============================================================================
-// Category 1: Basic Operations (11 functions) / 기본 작업 (11개 함수)
+// Category 1: Basic Operations (11 functions)
+// 기본 작업 (11개 함수)
 // ============================================================================
 func basicOperations(ctx context.Context, logger *logging.Logger) {
 	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
@@ -161,7 +187,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("")
 
-	// Sample data / 샘플 데이터
+	// Sample data
+	// 샘플 데이터
 	products := map[string]int{
 		"laptop":  1200,
 		"mouse":   25,
@@ -170,7 +197,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("📋 Sample data (product prices):", "products", products)
 	logger.Info("")
 
-	// 1. Get - Retrieve value by key / 키로 값 가져오기
+	// 1. Get - Retrieve value by key
+	// 키로 값 가져오기
 	logger.Info("1️⃣  Get() - Retrieve value by key / 키로 값 가져오기")
 	logger.Info("   Purpose: Safely get a value with existence check")
 	logger.Info("   목적: 존재 여부 확인과 함께 안전하게 값 가져오기")
@@ -179,7 +207,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Check if key exists before using value")
 	logger.Info("")
 
-	// 2. GetOr - Get value with default / 기본값과 함께 가져오기
+	// 2. GetOr - Get value with default
+	// 기본값과 함께 가져오기
 	logger.Info("2️⃣  GetOr() - Get value with default fallback / 기본값으로 대체하여 가져오기")
 	logger.Info("   Purpose: Get value or return default if key doesn't exist")
 	logger.Info("   목적: 키가 없으면 기본값 반환")
@@ -188,7 +217,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Provide sensible defaults for missing config values")
 	logger.Info("")
 
-	// 3. Set - Add or update value / 값 추가 또는 업데이트
+	// 3. Set - Add or update value
+	// 값 추가 또는 업데이트
 	logger.Info("3️⃣  Set() - Add or update a key-value pair / 키-값 쌍 추가 또는 업데이트")
 	logger.Info("   Purpose: Create a new map with added/updated value (immutable)")
 	logger.Info("   목적: 값이 추가/업데이트된 새 맵 생성 (불변)")
@@ -198,7 +228,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Immutable updates for concurrent scenarios")
 	logger.Info("")
 
-	// 4. Delete - Remove key / 키 제거
+	// 4. Delete - Remove key
+	// 키 제거
 	logger.Info("4️⃣  Delete() - Remove a key from map / 맵에서 키 제거")
 	logger.Info("   Purpose: Create new map without specified key")
 	logger.Info("   목적: 지정된 키가 제거된 새 맵 생성")
@@ -207,7 +238,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Remove deprecated configuration keys")
 	logger.Info("")
 
-	// 5. Has - Check if key exists / 키 존재 확인
+	// 5. Has - Check if key exists
+	// 키 존재 확인
 	logger.Info("5️⃣  Has() - Check if key exists in map / 맵에 키가 있는지 확인")
 	logger.Info("   Purpose: Boolean check for key existence")
 	logger.Info("   목적: 키 존재 여부 불리언 확인")
@@ -218,7 +250,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Validate required keys in configuration")
 	logger.Info("")
 
-	// 6. IsEmpty - Check if map is empty / 맵이 비어있는지 확인
+	// 6. IsEmpty - Check if map is empty
+	// 맵이 비어있는지 확인
 	logger.Info("6️⃣  IsEmpty() - Check if map has no elements / 맵에 요소가 없는지 확인")
 	logger.Info("   Purpose: Quick emptiness check")
 	logger.Info("   목적: 빠른 비어있음 확인")
@@ -228,7 +261,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Validate data before processing")
 	logger.Info("")
 
-	// 7. IsNotEmpty - Check if map has elements / 맵에 요소가 있는지 확인
+	// 7. IsNotEmpty - Check if map has elements
+	// 맵에 요소가 있는지 확인
 	logger.Info("7️⃣  IsNotEmpty() - Check if map has elements / 맵에 요소가 있는지 확인")
 	logger.Info("   Purpose: Inverse of IsEmpty for readability")
 	logger.Info("   목적: 가독성을 위한 IsEmpty의 반대")
@@ -236,7 +270,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Guard clauses in functions")
 	logger.Info("")
 
-	// 8. Len - Get map length / 맵 길이 가져오기
+	// 8. Len - Get map length
+	// 맵 길이 가져오기
 	logger.Info("8️⃣  Len() - Get number of elements in map / 맵의 요소 개수 가져오기")
 	logger.Info("   Purpose: Count key-value pairs")
 	logger.Info("   목적: 키-값 쌍 개수 세기")
@@ -245,7 +280,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Pagination, statistics, validation")
 	logger.Info("")
 
-	// 9. Clear - Remove all elements / 모든 요소 제거
+	// 9. Clear - Remove all elements
+	// 모든 요소 제거
 	logger.Info("9️⃣  Clear() - Remove all elements from map / 맵의 모든 요소 제거")
 	logger.Info("   Purpose: Create empty map (immutable)")
 	logger.Info("   목적: 빈 맵 생성 (불변)")
@@ -254,7 +290,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Reset state while preserving map reference")
 	logger.Info("")
 
-	// 10. Clone - Deep copy / 깊은 복사
+	// 10. Clone - Deep copy
+	// 깊은 복사
 	logger.Info("🔟 Clone() - Create deep copy of map / 맵의 깊은 복사본 생성")
 	logger.Info("   Purpose: Independent copy for safe modifications")
 	logger.Info("   목적: 안전한 수정을 위한 독립적인 복사본")
@@ -264,7 +301,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Create snapshots, protect against mutations")
 	logger.Info("")
 
-	// 11. Equal - Compare two maps / 두 맵 비교
+	// 11. Equal - Compare two maps
+	// 두 맵 비교
 	logger.Info("1️⃣1️⃣ Equal() - Compare two maps for equality / 두 맵의 동등성 비교")
 	logger.Info("   Purpose: Deep equality check")
 	logger.Info("   목적: 깊은 동등성 확인")
@@ -278,7 +316,8 @@ func basicOperations(ctx context.Context, logger *logging.Logger) {
 }
 
 // ============================================================================
-// Category 2: Transformation (10 functions) / 변환 (10개 함수)
+// Category 2: Transformation (10 functions)
+// 변환 (10개 함수)
 // ============================================================================
 func transformations(ctx context.Context, logger *logging.Logger) {
 	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
@@ -293,7 +332,8 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("📋 Sample data (test scores):", "scores", scores)
 	logger.Info("")
 
-	// 1. Map - Transform to new type / 새 타입으로 변환
+	// 1. Map - Transform to new type
+	// 새 타입으로 변환
 	logger.Info("1️⃣  Map() - Transform map values to a new type / 맵 값을 새 타입으로 변환")
 	logger.Info("   Purpose: Convert map[K]V to map[K]R")
 	logger.Info("   목적: map[K]V를 map[K]R로 변환")
@@ -309,7 +349,8 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Convert price integers to formatted strings")
 	logger.Info("")
 
-	// 2. MapKeys - Transform keys / 키 변환
+	// 2. MapKeys - Transform keys
+	// 키 변환
 	logger.Info("2️⃣  MapKeys() - Transform all keys with a function / 모든 키를 함수로 변환")
 	logger.Info("   Purpose: Change key format/type")
 	logger.Info("   목적: 키 형식/타입 변경")
@@ -320,7 +361,8 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Standardize key naming conventions")
 	logger.Info("")
 
-	// 3. MapValues - Transform values / 값 변환
+	// 3. MapValues - Transform values
+	// 값 변환
 	logger.Info("3️⃣  MapValues() - Transform all values with a function / 모든 값을 함수로 변환")
 	logger.Info("   Purpose: Apply operation to all values")
 	logger.Info("   목적: 모든 값에 작업 적용")
@@ -331,7 +373,8 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Apply discounts, tax calculations")
 	logger.Info("")
 
-	// 4. MapEntries - Transform both keys and values / 키와 값 모두 변환
+	// 4. MapEntries - Transform both keys and values
+	// 키와 값 모두 변환
 	logger.Info("4️⃣  MapEntries() - Transform both keys and values / 키와 값 모두 변환")
 	logger.Info("   Purpose: Complete transformation of map structure")
 	logger.Info("   목적: 맵 구조의 완전한 변환")
@@ -342,7 +385,8 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Create reverse lookups, indexes")
 	logger.Info("")
 
-	// 5. Invert - Swap keys and values / 키와 값 교환
+	// 5. Invert - Swap keys and values
+	// 키와 값 교환
 	logger.Info("5️⃣  Invert() - Swap keys and values / 키와 값 교환")
 	logger.Info("   Purpose: Create reverse mapping")
 	logger.Info("   목적: 역방향 매핑 생성")
@@ -351,7 +395,8 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Bidirectional lookups")
 	logger.Info("")
 
-	// 6. Flatten - Flatten nested map / 중첩 맵 평탄화
+	// 6. Flatten - Flatten nested map
+	// 중첩 맵 평탄화
 	logger.Info("6️⃣  Flatten() - Flatten nested map structure / 중첩된 맵 구조 평탄화")
 	logger.Info("   Purpose: Convert nested maps to flat structure")
 	logger.Info("   목적: 중첩 맵을 평면 구조로 변환")
@@ -365,7 +410,8 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Configuration flattening, database denormalization")
 	logger.Info("")
 
-	// 7. Unflatten - Create nested structure / 중첩 구조 생성
+	// 7. Unflatten - Create nested structure
+	// 중첩 구조 생성
 	logger.Info("7️⃣  Unflatten() - Create nested map from flat keys / 평면 키로부터 중첩 맵 생성")
 	logger.Info("   Purpose: Convert flat keys to nested structure")
 	logger.Info("   목적: 평면 키를 중첩 구조로 변환")
@@ -380,7 +426,8 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Parse dotted configuration keys")
 	logger.Info("")
 
-	// 8. Chunk - Split into smaller maps / 작은 맵으로 분할
+	// 8. Chunk - Split into smaller maps
+	// 작은 맵으로 분할
 	logger.Info("8️⃣  Chunk() - Split map into chunks of specified size / 지정된 크기의 청크로 분할")
 	logger.Info("   Purpose: Batch processing")
 	logger.Info("   목적: 배치 처리")
@@ -393,7 +440,8 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Parallel processing, rate limiting")
 	logger.Info("")
 
-	// 9. Partition - Split by predicate / 조건으로 분할
+	// 9. Partition - Split by predicate
+	// 조건으로 분할
 	logger.Info("9️⃣  Partition() - Split map into two by predicate / 조건으로 두 개로 분할")
 	logger.Info("   Purpose: Separate passing and failing items")
 	logger.Info("   목적: 통과 및 실패 항목 분리")
@@ -405,7 +453,8 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Filter data into categories")
 	logger.Info("")
 
-	// 10. Compact - Remove zero values / 제로 값 제거
+	// 10. Compact - Remove zero values
+	// 제로 값 제거
 	logger.Info("🔟 Compact() - Remove zero values from map / 맵에서 제로 값 제거")
 	logger.Info("   Purpose: Clean sparse data")
 	logger.Info("   목적: 희소 데이터 정리")
@@ -418,7 +467,8 @@ func transformations(ctx context.Context, logger *logging.Logger) {
 }
 
 // ============================================================================
-// Category 3: Aggregation (9 functions) / 집계 (9개 함수)
+// Category 3: Aggregation (9 functions)
+// 집계 (9개 함수)
 // ============================================================================
 func aggregations(ctx context.Context, logger *logging.Logger) {
 	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
@@ -438,7 +488,8 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("📋 Sample data (monthly sales in $):", "sales", sales)
 	logger.Info("")
 
-	// 1. Reduce - Custom aggregation / 사용자 정의 집계
+	// 1. Reduce - Custom aggregation
+	// 사용자 정의 집계
 	logger.Info("1️⃣  Reduce() - Custom aggregation with accumulator / 누산기를 사용한 사용자 정의 집계")
 	logger.Info("   Purpose: Flexible aggregation pattern")
 	logger.Info("   목적: 유연한 집계 패턴")
@@ -449,7 +500,8 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Complex calculations, custom aggregations")
 	logger.Info("")
 
-	// 2. Sum - Sum all values / 모든 값 합산
+	// 2. Sum - Sum all values
+	// 모든 값 합산
 	logger.Info("2️⃣  Sum() - Sum all numeric values / 모든 숫자 값 합산")
 	logger.Info("   Purpose: Quick sum calculation")
 	logger.Info("   목적: 빠른 합계 계산")
@@ -458,7 +510,8 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Financial totals, inventory counts, statistics")
 	logger.Info("")
 
-	// 3. Min - Find minimum / 최솟값 찾기
+	// 3. Min - Find minimum
+	// 최솟값 찾기
 	logger.Info("3️⃣  Min() - Find entry with minimum value / 최솟값을 가진 항목 찾기")
 	logger.Info("   Purpose: Identify lowest value and its key")
 	logger.Info("   목적: 최저값과 해당 키 식별")
@@ -467,7 +520,8 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Find worst performer, lowest price")
 	logger.Info("")
 
-	// 4. Max - Find maximum / 최댓값 찾기
+	// 4. Max - Find maximum
+	// 최댓값 찾기
 	logger.Info("4️⃣  Max() - Find entry with maximum value / 최댓값을 가진 항목 찾기")
 	logger.Info("   Purpose: Identify highest value and its key")
 	logger.Info("   목적: 최고값과 해당 키 식별")
@@ -476,7 +530,8 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Find best performer, highest price")
 	logger.Info("")
 
-	// 5. MinBy - Find minimum by custom function / 사용자 정의 함수로 최솟값 찾기
+	// 5. MinBy - Find minimum by custom function
+	// 사용자 정의 함수로 최솟값 찾기
 	logger.Info("5️⃣  MinBy() - Find minimum by custom score function / 사용자 정의 점수 함수로 최솟값 찾기")
 	logger.Info("   Purpose: Custom minimum logic based on score")
 	logger.Info("   목적: 점수 기반 사용자 정의 최소값 로직")
@@ -488,7 +543,8 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Custom scoring for minimum selection")
 	logger.Info("")
 
-	// 6. MaxBy - Find maximum by custom function / 사용자 정의 함수로 최댓값 찾기
+	// 6. MaxBy - Find maximum by custom function
+	// 사용자 정의 함수로 최댓값 찾기
 	logger.Info("6️⃣  MaxBy() - Find maximum by custom score function / 사용자 정의 점수 함수로 최댓값 찾기")
 	logger.Info("   Purpose: Custom maximum logic based on score")
 	logger.Info("   목적: 점수 기반 사용자 정의 최대값 로직")
@@ -499,7 +555,8 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Custom scoring for maximum selection")
 	logger.Info("")
 
-	// 7. Average - Calculate average / 평균 계산
+	// 7. Average - Calculate average
+	// 평균 계산
 	logger.Info("7️⃣  Average() - Calculate average of all values / 모든 값의 평균 계산")
 	logger.Info("   Purpose: Mean value calculation")
 	logger.Info("   목적: 평균값 계산")
@@ -508,7 +565,8 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Statistics, performance metrics")
 	logger.Info("")
 
-	// 8. GroupBy - Group by key function / 키 함수로 그룹화
+	// 8. GroupBy - Group by key function
+	// 키 함수로 그룹화
 	logger.Info("8️⃣  GroupBy() - Group slice elements by key function / 키 함수로 슬라이스 요소 그룹화")
 	logger.Info("   Purpose: Create categorical groups")
 	logger.Info("   목적: 범주별 그룹 생성")
@@ -533,7 +591,8 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Data categorization, reporting")
 	logger.Info("")
 
-	// 9. CountBy - Count by key function / 키 함수로 개수 세기
+	// 9. CountBy - Count by key function
+	// 키 함수로 개수 세기
 	logger.Info("9️⃣  CountBy() - Count slice elements by key function / 키 함수로 슬라이스 요소 개수 세기")
 	logger.Info("   Purpose: Get count for each category")
 	logger.Info("   목적: 각 범주별 개수 가져오기")
@@ -546,7 +605,8 @@ func aggregations(ctx context.Context, logger *logging.Logger) {
 }
 
 // ============================================================================
-// Category 4: Merge Operations (8 functions) / 병합 작업 (8개 함수)
+// Category 4: Merge Operations (8 functions)
+// 병합 작업 (8개 함수)
 // ============================================================================
 func mergeOperations(ctx context.Context, logger *logging.Logger) {
 	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
@@ -564,7 +624,8 @@ func mergeOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   User config:", "config", userConfig)
 	logger.Info("")
 
-	// 1. Merge - Combine multiple maps / 여러 맵 결합
+	// 1. Merge - Combine multiple maps
+	// 여러 맵 결합
 	logger.Info("1️⃣  Merge() - Combine multiple maps (last wins) / 여러 맵 결합 (마지막 우선)")
 	logger.Info("   Purpose: Simple map merging")
 	logger.Info("   목적: 간단한 맵 병합")
@@ -573,7 +634,8 @@ func mergeOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Configuration override, settings merge")
 	logger.Info("")
 
-	// 2. MergeWith - Custom merge strategy / 사용자 정의 병합 전략
+	// 2. MergeWith - Custom merge strategy
+	// 사용자 정의 병합 전략
 	logger.Info("2️⃣  MergeWith() - Merge with custom conflict resolver / 사용자 정의 충돌 해결로 병합")
 	logger.Info("   Purpose: Control how conflicts are resolved")
 	logger.Info("   목적: 충돌 해결 방법 제어")
@@ -586,7 +648,8 @@ func mergeOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Inventory management, data consolidation")
 	logger.Info("")
 
-	// 3. DeepMerge - Recursive merge / 재귀적 병합
+	// 3. DeepMerge - Recursive merge
+	// 재귀적 병합
 	logger.Info("3️⃣  DeepMerge() - Recursively merge nested maps / 중첩 맵 재귀적 병합")
 	logger.Info("   Purpose: Merge nested structures")
 	logger.Info("   목적: 중첩 구조 병합")
@@ -605,7 +668,8 @@ func mergeOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Complex configuration merging")
 	logger.Info("")
 
-	// 4. Union - Combine all keys / 모든 키 결합
+	// 4. Union - Combine all keys
+	// 모든 키 결합
 	logger.Info("4️⃣  Union() - Combine all maps (alias for Merge) / 모든 맵 결합 (Merge 별칭)")
 	logger.Info("   Purpose: Set union operation")
 	logger.Info("   목적: 집합 합집합 연산")
@@ -616,7 +680,8 @@ func mergeOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Combine datasets")
 	logger.Info("")
 
-	// 5. Intersection - Common keys only / 공통 키만
+	// 5. Intersection - Common keys only
+	// 공통 키만
 	logger.Info("5️⃣  Intersection() - Keep only common keys / 공통 키만 유지")
 	logger.Info("   Purpose: Set intersection operation")
 	logger.Info("   목적: 집합 교집합 연산")
@@ -629,7 +694,8 @@ func mergeOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Find common elements, shared permissions")
 	logger.Info("")
 
-	// 6. Difference - Keys in first but not in second / 첫 번째에만 있는 키
+	// 6. Difference - Keys in first but not in second
+	// 첫 번째에만 있는 키
 	logger.Info("6️⃣  Difference() - Keys in first map but not in second / 첫 번째 맵에만 있는 키")
 	logger.Info("   Purpose: Set difference operation")
 	logger.Info("   목적: 집합 차집합 연산")
@@ -638,7 +704,8 @@ func mergeOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Find missing items, removed permissions")
 	logger.Info("")
 
-	// 7. SymmetricDifference - Keys in either but not both / 한쪽에만 있는 키
+	// 7. SymmetricDifference - Keys in either but not both
+	// 한쪽에만 있는 키
 	logger.Info("7️⃣  SymmetricDifference() - Keys in either map but not both / 한 맵에만 있는 키")
 	logger.Info("   Purpose: Symmetric difference operation")
 	logger.Info("   목적: 대칭 차집합 연산")
@@ -647,7 +714,8 @@ func mergeOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Find changes, detect discrepancies")
 	logger.Info("")
 
-	// 8. Assign - Mutating merge / 변경하는 병합
+	// 8. Assign - Mutating merge
+	// 변경하는 병합
 	logger.Info("8️⃣  Assign() - Merge into target (MUTATING!) / 대상에 병합 (변경됨!)")
 	logger.Info("   Purpose: In-place merge (modifies first map)")
 	logger.Info("   목적: 제자리 병합 (첫 번째 맵 수정)")
@@ -662,7 +730,8 @@ func mergeOperations(ctx context.Context, logger *logging.Logger) {
 }
 
 // ============================================================================
-// Category 5: Filter Operations (7 functions) / 필터 작업 (7개 함수)
+// Category 5: Filter Operations (7 functions)
+// 필터 작업 (7개 함수)
 // ============================================================================
 func filterOperations(ctx context.Context, logger *logging.Logger) {
 	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
@@ -683,7 +752,8 @@ func filterOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("📋 Sample data (product prices):", "products", products)
 	logger.Info("")
 
-	// 1. Filter - Filter by predicate / 조건으로 필터
+	// 1. Filter - Filter by predicate
+	// 조건으로 필터
 	logger.Info("1️⃣  Filter() - Keep entries matching predicate / 조건에 맞는 항목만 유지")
 	logger.Info("   Purpose: General purpose filtering")
 	logger.Info("   목적: 범용 필터링")
@@ -694,7 +764,8 @@ func filterOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Price ranges, status filtering")
 	logger.Info("")
 
-	// 2. FilterKeys - Filter by key predicate / 키 조건으로 필터
+	// 2. FilterKeys - Filter by key predicate
+	// 키 조건으로 필터
 	logger.Info("2️⃣  FilterKeys() - Filter by key predicate only / 키 조건으로만 필터")
 	logger.Info("   Purpose: Key-based filtering")
 	logger.Info("   목적: 키 기반 필터링")
@@ -705,7 +776,8 @@ func filterOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Name patterns, prefix matching")
 	logger.Info("")
 
-	// 3. FilterValues - Filter by value predicate / 값 조건으로 필터
+	// 3. FilterValues - Filter by value predicate
+	// 값 조건으로 필터
 	logger.Info("3️⃣  FilterValues() - Filter by value predicate only / 값 조건으로만 필터")
 	logger.Info("   Purpose: Value-based filtering")
 	logger.Info("   목적: 값 기반 필터링")
@@ -716,7 +788,8 @@ func filterOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Threshold filtering, range queries")
 	logger.Info("")
 
-	// 4. Pick - Select specific keys / 특정 키 선택
+	// 4. Pick - Select specific keys
+	// 특정 키 선택
 	logger.Info("4️⃣  Pick() - Select specific keys only / 특정 키만 선택")
 	logger.Info("   Purpose: Whitelist approach")
 	logger.Info("   목적: 화이트리스트 방식")
@@ -725,7 +798,8 @@ func filterOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Extract subset, API response shaping")
 	logger.Info("")
 
-	// 5. Omit - Exclude specific keys / 특정 키 제외
+	// 5. Omit - Exclude specific keys
+	// 특정 키 제외
 	logger.Info("5️⃣  Omit() - Exclude specific keys / 특정 키 제외")
 	logger.Info("   Purpose: Blacklist approach")
 	logger.Info("   목적: 블랙리스트 방식")
@@ -734,7 +808,8 @@ func filterOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Remove sensitive fields, hide internals")
 	logger.Info("")
 
-	// 6. PickBy - Pick by predicate / 조건으로 선택
+	// 6. PickBy - Pick by predicate
+	// 조건으로 선택
 	logger.Info("6️⃣  PickBy() - Pick entries matching predicate / 조건에 맞는 항목 선택")
 	logger.Info("   Purpose: Dynamic whitelist")
 	logger.Info("   목적: 동적 화이트리스트")
@@ -745,7 +820,8 @@ func filterOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Complex selection criteria")
 	logger.Info("")
 
-	// 7. OmitBy - Omit by predicate / 조건으로 제외
+	// 7. OmitBy - Omit by predicate
+	// 조건으로 제외
 	logger.Info("7️⃣  OmitBy() - Omit entries matching predicate / 조건에 맞는 항목 제외")
 	logger.Info("   Purpose: Dynamic blacklist")
 	logger.Info("   목적: 동적 블랙리스트")
@@ -758,7 +834,8 @@ func filterOperations(ctx context.Context, logger *logging.Logger) {
 }
 
 // ============================================================================
-// Category 6: Conversion (8 functions) / 변환 (8개 함수)
+// Category 6: Conversion (8 functions)
+// 변환 (8개 함수)
 // ============================================================================
 func conversions(ctx context.Context, logger *logging.Logger) {
 	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
@@ -773,7 +850,8 @@ func conversions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("📋 Sample data (configuration):", "config", config)
 	logger.Info("")
 
-	// 1. Keys - Extract all keys / 모든 키 추출
+	// 1. Keys - Extract all keys
+	// 모든 키 추출
 	logger.Info("1️⃣  Keys() - Extract all keys as slice / 모든 키를 슬라이스로 추출")
 	logger.Info("   Purpose: Get key list")
 	logger.Info("   목적: 키 목록 가져오기")
@@ -782,7 +860,8 @@ func conversions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Validation, iteration, display")
 	logger.Info("")
 
-	// 2. Values - Extract all values / 모든 값 추출
+	// 2. Values - Extract all values
+	// 모든 값 추출
 	logger.Info("2️⃣  Values() - Extract all values as slice / 모든 값을 슬라이스로 추출")
 	logger.Info("   Purpose: Get value list")
 	logger.Info("   목적: 값 목록 가져오기")
@@ -791,7 +870,8 @@ func conversions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Statistics, data processing")
 	logger.Info("")
 
-	// 3. Entries - Convert to key-value pairs / 키-값 쌍으로 변환
+	// 3. Entries - Convert to key-value pairs
+	// 키-값 쌍으로 변환
 	logger.Info("3️⃣  Entries() - Convert to Entry slice / Entry 슬라이스로 변환")
 	logger.Info("   Purpose: Structured key-value pairs")
 	logger.Info("   목적: 구조화된 키-값 쌍")
@@ -800,7 +880,8 @@ func conversions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Serialization, iteration with both key and value")
 	logger.Info("")
 
-	// 4. FromEntries - Build map from entries / 항목에서 맵 생성
+	// 4. FromEntries - Build map from entries
+	// 항목에서 맵 생성
 	logger.Info("4️⃣  FromEntries() - Build map from Entry slice / Entry 슬라이스에서 맵 생성")
 	logger.Info("   Purpose: Reverse of Entries()")
 	logger.Info("   목적: Entries()의 역")
@@ -809,7 +890,8 @@ func conversions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Deserialization, map construction")
 	logger.Info("")
 
-	// 5. ToJSON - Convert to JSON string / JSON 문자열로 변환
+	// 5. ToJSON - Convert to JSON string
+	// JSON 문자열로 변환
 	logger.Info("5️⃣  ToJSON() - Convert map to JSON string / 맵을 JSON 문자열로 변환")
 	logger.Info("   Purpose: Serialize to JSON")
 	logger.Info("   목적: JSON으로 직렬화")
@@ -822,7 +904,8 @@ func conversions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: API responses, configuration export")
 	logger.Info("")
 
-	// 6. FromJSON - Parse JSON string / JSON 문자열 파싱
+	// 6. FromJSON - Parse JSON string
+	// JSON 문자열 파싱
 	logger.Info("6️⃣  FromJSON() - Parse JSON string to map / JSON 문자열을 맵으로 파싱")
 	logger.Info("   Purpose: Deserialize from JSON")
 	logger.Info("   목적: JSON에서 역직렬화")
@@ -836,7 +919,8 @@ func conversions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: API requests, configuration import")
 	logger.Info("")
 
-	// 7. ToSlice - Convert to custom slice / 사용자 정의 슬라이스로 변환
+	// 7. ToSlice - Convert to custom slice
+	// 사용자 정의 슬라이스로 변환
 	logger.Info("7️⃣  ToSlice() - Convert map to custom slice / 맵을 사용자 정의 슬라이스로 변환")
 	logger.Info("   Purpose: Custom transformation to slice")
 	logger.Info("   목적: 슬라이스로 사용자 정의 변환")
@@ -847,7 +931,8 @@ func conversions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Display formatting, CSV export")
 	logger.Info("")
 
-	// 8. FromSlice - Build map from slice / 슬라이스에서 맵 생성
+	// 8. FromSlice - Build map from slice
+	// 슬라이스에서 맵 생성
 	logger.Info("8️⃣  FromSlice() - Build map from slice with key extractor / 키 추출 함수로 슬라이스에서 맵 생성")
 	logger.Info("   Purpose: Index slice by key")
 	logger.Info("   목적: 키로 슬라이스 인덱싱")
@@ -870,7 +955,8 @@ func conversions(ctx context.Context, logger *logging.Logger) {
 }
 
 // ============================================================================
-// Category 7: Predicate Checks (7 functions) / 조건 검사 (7개 함수)
+// Category 7: Predicate Checks (7 functions)
+// 조건 검사 (7개 함수)
 // ============================================================================
 func predicates(ctx context.Context, logger *logging.Logger) {
 	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
@@ -885,7 +971,8 @@ func predicates(ctx context.Context, logger *logging.Logger) {
 	logger.Info("📋 Sample data (test scores):", "scores", scores)
 	logger.Info("")
 
-	// 1. Every - All match predicate / 모두 조건 충족
+	// 1. Every - All match predicate
+	// 모두 조건 충족
 	logger.Info("1️⃣  Every() - Check if all entries match predicate / 모든 항목이 조건 충족 확인")
 	logger.Info("   Purpose: Universal quantification")
 	logger.Info("   목적: 전체 한정")
@@ -896,7 +983,8 @@ func predicates(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Validation, quality checks")
 	logger.Info("")
 
-	// 2. Some - At least one matches / 하나 이상 일치
+	// 2. Some - At least one matches
+	// 하나 이상 일치
 	logger.Info("2️⃣  Some() - Check if any entry matches predicate / 어떤 항목이라도 조건 충족 확인")
 	logger.Info("   Purpose: Existential quantification")
 	logger.Info("   목적: 존재 한정")
@@ -907,7 +995,8 @@ func predicates(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Find if condition exists")
 	logger.Info("")
 
-	// 3. None - No entries match / 일치하는 항목 없음
+	// 3. None - No entries match
+	// 일치하는 항목 없음
 	logger.Info("3️⃣  None() - Check if no entries match predicate / 조건에 맞는 항목이 없는지 확인")
 	logger.Info("   Purpose: Negative existential")
 	logger.Info("   목적: 부정 존재")
@@ -918,7 +1007,8 @@ func predicates(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Ensure absence of bad data")
 	logger.Info("")
 
-	// 4. HasKey - Check if key exists / 키 존재 확인
+	// 4. HasKey - Check if key exists
+	// 키 존재 확인
 	logger.Info("4️⃣  HasKey() - Check if specific key exists / 특정 키 존재 확인")
 	logger.Info("   Purpose: Key membership test")
 	logger.Info("   목적: 키 멤버십 테스트")
@@ -929,7 +1019,8 @@ func predicates(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Required field validation")
 	logger.Info("")
 
-	// 5. HasValue - Check if value exists / 값 존재 확인
+	// 5. HasValue - Check if value exists
+	// 값 존재 확인
 	logger.Info("5️⃣  HasValue() - Check if specific value exists / 특정 값 존재 확인")
 	logger.Info("   Purpose: Value membership test")
 	logger.Info("   목적: 값 멤버십 테스트")
@@ -940,7 +1031,8 @@ func predicates(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Find if specific value is present")
 	logger.Info("")
 
-	// 6. HasEntry - Check if key-value pair exists / 키-값 쌍 존재 확인
+	// 6. HasEntry - Check if key-value pair exists
+	// 키-값 쌍 존재 확인
 	logger.Info("6️⃣  HasEntry() - Check if specific key-value pair exists / 특정 키-값 쌍 존재 확인")
 	logger.Info("   Purpose: Exact entry match")
 	logger.Info("   목적: 정확한 항목 일치")
@@ -951,7 +1043,8 @@ func predicates(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Verify specific state")
 	logger.Info("")
 
-	// 7. IsSubset - Check if subset / 부분집합 확인
+	// 7. IsSubset - Check if subset
+	// 부분집합 확인
 	logger.Info("7️⃣  IsSubset() - Check if first map is subset of second / 첫 맵이 두 번째 맵의 부분집합인지 확인")
 	logger.Info("   Purpose: Subset relationship test")
 	logger.Info("   목적: 부분집합 관계 테스트")
@@ -964,7 +1057,8 @@ func predicates(ctx context.Context, logger *logging.Logger) {
 }
 
 // ============================================================================
-// Category 8: Key Operations (8 functions) / 키 작업 (8개 함수)
+// Category 8: Key Operations (8 functions)
+// 키 작업 (8개 함수)
 // ============================================================================
 func keyOperations(ctx context.Context, logger *logging.Logger) {
 	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
@@ -979,7 +1073,8 @@ func keyOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("📋 Sample data:", "data", data)
 	logger.Info("")
 
-	// 1. KeysSorted - Get sorted keys / 정렬된 키 가져오기
+	// 1. KeysSorted - Get sorted keys
+	// 정렬된 키 가져오기
 	logger.Info("1️⃣  KeysSorted() - Get keys in sorted order / 정렬된 순서로 키 가져오기")
 	logger.Info("   Purpose: Deterministic key ordering")
 	logger.Info("   목적: 결정적 키 순서")
@@ -988,7 +1083,8 @@ func keyOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Consistent output, alphabetical display")
 	logger.Info("")
 
-	// 2. FindKey - Find first matching key / 첫 번째 일치 키 찾기
+	// 2. FindKey - Find first matching key
+	// 첫 번째 일치 키 찾기
 	logger.Info("2️⃣  FindKey() - Find first key matching predicate / 조건에 맞는 첫 키 찾기")
 	logger.Info("   Purpose: Search for key by condition")
 	logger.Info("   목적: 조건으로 키 검색")
@@ -999,7 +1095,8 @@ func keyOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Find first matching item")
 	logger.Info("")
 
-	// 3. FindKeys - Find all matching keys / 일치하는 모든 키 찾기
+	// 3. FindKeys - Find all matching keys
+	// 일치하는 모든 키 찾기
 	logger.Info("3️⃣  FindKeys() - Find all keys matching predicate / 조건에 맞는 모든 키 찾기")
 	logger.Info("   Purpose: Search for multiple keys")
 	logger.Info("   목적: 여러 키 검색")
@@ -1010,7 +1107,8 @@ func keyOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Batch selection")
 	logger.Info("")
 
-	// 4. RenameKey - Rename a key / 키 이름 변경
+	// 4. RenameKey - Rename a key
+	// 키 이름 변경
 	logger.Info("4️⃣  RenameKey() - Rename a specific key / 특정 키 이름 변경")
 	logger.Info("   Purpose: Change key name while preserving value")
 	logger.Info("   목적: 값을 유지하면서 키 이름 변경")
@@ -1019,7 +1117,8 @@ func keyOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: API field mapping, normalization")
 	logger.Info("")
 
-	// 5. SwapKeys - Swap two key values / 두 키의 값 교환
+	// 5. SwapKeys - Swap two key values
+	// 두 키의 값 교환
 	logger.Info("5️⃣  SwapKeys() - Swap values of two keys / 두 키의 값 교환")
 	logger.Info("   Purpose: Exchange values between keys")
 	logger.Info("   목적: 키 간 값 교환")
@@ -1028,7 +1127,8 @@ func keyOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Reorder priorities, swap positions")
 	logger.Info("")
 
-	// 6. PrefixKeys - Add prefix to all keys / 모든 키에 접두사 추가
+	// 6. PrefixKeys - Add prefix to all keys
+	// 모든 키에 접두사 추가
 	logger.Info("6️⃣  PrefixKeys() - Add prefix to all keys / 모든 키에 접두사 추가")
 	logger.Info("   Purpose: Namespace keys")
 	logger.Info("   목적: 키 네임스페이스화")
@@ -1037,7 +1137,8 @@ func keyOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Avoid key collisions, categorization")
 	logger.Info("")
 
-	// 7. SuffixKeys - Add suffix to all keys / 모든 키에 접미사 추가
+	// 7. SuffixKeys - Add suffix to all keys
+	// 모든 키에 접미사 추가
 	logger.Info("7️⃣  SuffixKeys() - Add suffix to all keys / 모든 키에 접미사 추가")
 	logger.Info("   Purpose: Add common suffix")
 	logger.Info("   목적: 공통 접미사 추가")
@@ -1046,7 +1147,8 @@ func keyOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Type indication, unit labeling")
 	logger.Info("")
 
-	// 8. TransformKeys - Transform all keys / 모든 키 변환
+	// 8. TransformKeys - Transform all keys
+	// 모든 키 변환
 	logger.Info("8️⃣  TransformKeys() - Transform all keys with function / 함수로 모든 키 변환")
 	logger.Info("   Purpose: Custom key transformation")
 	logger.Info("   목적: 사용자 정의 키 변환")
@@ -1059,7 +1161,8 @@ func keyOperations(ctx context.Context, logger *logging.Logger) {
 }
 
 // ============================================================================
-// Category 9: Value Operations (7 functions) / 값 작업 (7개 함수)
+// Category 9: Value Operations (7 functions)
+// 값 작업 (7개 함수)
 // ============================================================================
 func valueOperations(ctx context.Context, logger *logging.Logger) {
 	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
@@ -1074,7 +1177,8 @@ func valueOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("📋 Sample data (prices):", "prices", prices)
 	logger.Info("")
 
-	// 1. ValuesSorted - Get sorted values / 정렬된 값 가져오기
+	// 1. ValuesSorted - Get sorted values
+	// 정렬된 값 가져오기
 	logger.Info("1️⃣  ValuesSorted() - Get values in sorted order / 정렬된 순서로 값 가져오기")
 	logger.Info("   Purpose: Ordered value list")
 	logger.Info("   목적: 순서가 정해진 값 목록")
@@ -1083,7 +1187,8 @@ func valueOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Price sorting, ranking")
 	logger.Info("")
 
-	// 2. UniqueValues - Get unique values / 고유 값 가져오기
+	// 2. UniqueValues - Get unique values
+	// 고유 값 가져오기
 	logger.Info("2️⃣  UniqueValues() - Get unique values only / 고유 값만 가져오기")
 	logger.Info("   Purpose: Remove duplicate values")
 	logger.Info("   목적: 중복 값 제거")
@@ -1092,7 +1197,8 @@ func valueOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Find distinct values, deduplicate")
 	logger.Info("")
 
-	// 3. ReplaceValue - Replace all occurrences of a value / 값의 모든 발생 대체
+	// 3. ReplaceValue - Replace all occurrences of a value
+	// 값의 모든 발생 대체
 	logger.Info("3️⃣  ReplaceValue() - Replace all occurrences of a value / 특정 값의 모든 발생 대체")
 	logger.Info("   Purpose: Bulk value replacement")
 	logger.Info("   목적: 대량 값 교체")
@@ -1101,7 +1207,8 @@ func valueOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Price updates, status corrections")
 	logger.Info("")
 
-	// 4. UpdateValues - Transform all values / 모든 값 변환
+	// 4. UpdateValues - Transform all values
+	// 모든 값 변환
 	logger.Info("4️⃣  UpdateValues() - Transform all values with function / 함수로 모든 값 변환")
 	logger.Info("   Purpose: Apply operation to all values")
 	logger.Info("   목적: 모든 값에 작업 적용")
@@ -1112,7 +1219,8 @@ func valueOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Bulk calculations, transformations")
 	logger.Info("")
 
-	// 5. MinValue - Find minimum value / 최솟값 찾기
+	// 5. MinValue - Find minimum value
+	// 최솟값 찾기
 	logger.Info("5️⃣  MinValue() - Find minimum value in map / 맵에서 최솟값 찾기")
 	logger.Info("   Purpose: Get lowest value")
 	logger.Info("   목적: 최저값 가져오기")
@@ -1123,7 +1231,8 @@ func valueOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Find lowest price, minimum threshold")
 	logger.Info("")
 
-	// 6. MaxValue - Find maximum value / 최댓값 찾기
+	// 6. MaxValue - Find maximum value
+	// 최댓값 찾기
 	logger.Info("6️⃣  MaxValue() - Find maximum value in map / 맵에서 최댓값 찾기")
 	logger.Info("   Purpose: Get highest value")
 	logger.Info("   목적: 최고값 가져오기")
@@ -1134,7 +1243,8 @@ func valueOperations(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Find highest price, maximum limit")
 	logger.Info("")
 
-	// 7. SumValues - Sum all values / 모든 값 합산
+	// 7. SumValues - Sum all values
+	// 모든 값 합산
 	logger.Info("7️⃣  SumValues() - Sum all numeric values / 모든 숫자 값 합산")
 	logger.Info("   Purpose: Total calculation")
 	logger.Info("   목적: 총계 계산")
@@ -1145,7 +1255,8 @@ func valueOperations(ctx context.Context, logger *logging.Logger) {
 }
 
 // ============================================================================
-// Category 10: Comparison (6 functions) / 비교 (6개 함수)
+// Category 10: Comparison (6 functions)
+// 비교 (6개 함수)
 // ============================================================================
 func comparisons(ctx context.Context, logger *logging.Logger) {
 	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
@@ -1163,7 +1274,8 @@ func comparisons(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   New config:", "config", newConfig)
 	logger.Info("")
 
-	// 1. Diff - Find all differences / 모든 차이점 찾기
+	// 1. Diff - Find all differences
+	// 모든 차이점 찾기
 	logger.Info("1️⃣  Diff() - Find all differences between two maps / 두 맵 간 모든 차이점 찾기")
 	logger.Info("   Purpose: Detect any changes")
 	logger.Info("   목적: 모든 변경사항 감지")
@@ -1172,7 +1284,8 @@ func comparisons(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Change detection, audit logs")
 	logger.Info("")
 
-	// 2. DiffKeys - Find keys that differ / 다른 키들 찾기
+	// 2. DiffKeys - Find keys that differ
+	// 다른 키들 찾기
 	logger.Info("2️⃣  DiffKeys() - Find keys that differ / 다른 키들 찾기")
 	logger.Info("   Purpose: List of changed keys")
 	logger.Info("   목적: 변경된 키 목록")
@@ -1181,7 +1294,8 @@ func comparisons(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Track changed fields")
 	logger.Info("")
 
-	// 3. Compare - Detailed comparison / 상세 비교
+	// 3. Compare - Detailed comparison
+	// 상세 비교
 	logger.Info("3️⃣  Compare() - Detailed three-way comparison / 상세한 3방향 비교")
 	logger.Info("   Purpose: Categorize changes")
 	logger.Info("   목적: 변경사항 분류")
@@ -1192,7 +1306,8 @@ func comparisons(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Migration planning, version control")
 	logger.Info("")
 
-	// 4. CommonKeys - Find common keys / 공통 키 찾기
+	// 4. CommonKeys - Find common keys
+	// 공통 키 찾기
 	logger.Info("4️⃣  CommonKeys() - Find keys present in all maps / 모든 맵에 존재하는 키 찾기")
 	logger.Info("   Purpose: Find intersection of keys")
 	logger.Info("   목적: 키의 교집합 찾기")
@@ -1202,7 +1317,8 @@ func comparisons(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Find shared fields, required keys")
 	logger.Info("")
 
-	// 5. AllKeys - Get all unique keys / 모든 고유 키 가져오기
+	// 5. AllKeys - Get all unique keys
+	// 모든 고유 키 가져오기
 	logger.Info("5️⃣  AllKeys() - Get all unique keys from all maps / 모든 맵의 고유 키 가져오기")
 	logger.Info("   Purpose: Union of all keys")
 	logger.Info("   목적: 모든 키의 합집합")
@@ -1211,7 +1327,8 @@ func comparisons(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Schema discovery, field collection")
 	logger.Info("")
 
-	// 6. EqualMaps - Check equality / 동등성 확인
+	// 6. EqualMaps - Check equality
+	// 동등성 확인
 	logger.Info("6️⃣  EqualMaps() - Check if two maps are exactly equal / 두 맵이 정확히 같은지 확인")
 	logger.Info("   Purpose: Exact equality test")
 	logger.Info("   목적: 정확한 동등성 테스트")
@@ -1225,7 +1342,8 @@ func comparisons(ctx context.Context, logger *logging.Logger) {
 }
 
 // ============================================================================
-// Advanced: Real-World Use Cases / 고급: 실제 사용 사례
+// Advanced: Real-World Use Cases
+// 고급: 실제 사용 사례
 // ============================================================================
 func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
@@ -1236,7 +1354,8 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("")
 
-	// Use Case 1: Configuration Management / 설정 관리
+	// Use Case 1: Configuration Management
+	// 설정 관리
 	logger.Info("📌 Use Case 1: Configuration Management / 설정 관리")
 	logger.Info("   Scenario: Merge default, environment, and user configs")
 	logger.Info("   시나리오: 기본, 환경 및 사용자 설정 병합")
@@ -1253,7 +1372,8 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   ✅ Final configuration:", "config", finalCfg)
 	logger.Info("")
 
-	// Use Case 2: Data Validation Pipeline / 데이터 검증 파이프라인
+	// Use Case 2: Data Validation Pipeline
+	// 데이터 검증 파이프라인
 	logger.Info("📌 Use Case 2: Data Validation Pipeline / 데이터 검증 파이프라인")
 	logger.Info("   Scenario: Validate and clean user input")
 	logger.Info("   시나리오: 사용자 입력 검증 및 정리")
@@ -1266,17 +1386,20 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	}
 	logger.Info("   Raw user input:", "input", userInput)
 
-	// Step 1: Remove zero values / 제로 값 제거
+	// Step 1: Remove zero values
+	// 제로 값 제거
 	cleaned := maputil.Compact(userInput)
 	logger.Info("   Step 1 - Removed zeros:", "cleaned", cleaned)
 
-	// Step 2: Filter out invalid values / 잘못된 값 필터
+	// Step 2: Filter out invalid values
+	// 잘못된 값 필터
 	validated := maputil.Filter(cleaned, func(k string, v int) bool {
 		return v > 0
 	})
 	logger.Info("   Step 2 - Filtered negatives:", "validated", validated)
 
-	// Step 3: Ensure required fields / 필수 필드 확인
+	// Step 3: Ensure required fields
+	// 필수 필드 확인
 	required := []string{"age", "salary"}
 	hasAllRequired := true
 	for _, field := range required {
@@ -1288,7 +1411,8 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   ✅ Validation complete:", "hasAllRequired", hasAllRequired)
 	logger.Info("")
 
-	// Use Case 3: Shopping Cart with Discounts / 할인이 적용된 장바구니
+	// Use Case 3: Shopping Cart with Discounts
+	// 할인이 적용된 장바구니
 	logger.Info("📌 Use Case 3: Shopping Cart with Discounts / 할인이 적용된 장바구니")
 	logger.Info("   Scenario: Apply tiered discounts based on quantity")
 	logger.Info("   시나리오: 수량 기반 단계별 할인 적용")
@@ -1309,7 +1433,8 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   Cart:", "cart", cart)
 	logger.Info("   Prices:", "prices", prices)
 
-	// Calculate subtotal / 소계 계산
+	// Calculate subtotal
+	// 소계 계산
 	subtotal := 0
 	for item, qty := range cart {
 		if price, ok := prices[item]; ok {
@@ -1318,7 +1443,8 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	}
 	logger.Info("   Subtotal:", "amount", subtotal)
 
-	// Apply discounts: 10% if qty > 1 / 할인 적용: 수량 > 1이면 10%
+	// Apply discounts: 10% if qty > 1
+	// 할인 적용: 수량 > 1이면 10%
 	discountedCart := maputil.MapValues(cart, func(qty int) int {
 		if qty > 1 {
 			return qty * 90 / 100 // 10% off / 10% 할인
@@ -1327,7 +1453,8 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	})
 	logger.Info("   After quantity discount:", "cart", discountedCart)
 
-	// Calculate final total / 최종 합계 계산
+	// Calculate final total
+	// 최종 합계 계산
 	total := 0
 	for item, qty := range discountedCart {
 		if price, ok := prices[item]; ok {
@@ -1338,7 +1465,8 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   ✅ Final total:", "total", total, "saved", savings)
 	logger.Info("")
 
-	// Use Case 4: API Response Filtering / API 응답 필터링
+	// Use Case 4: API Response Filtering
+	// API 응답 필터링
 	logger.Info("📌 Use Case 4: API Response Filtering / API 응답 필터링")
 	logger.Info("   Scenario: Filter sensitive fields from API response")
 	logger.Info("   시나리오: API 응답에서 민감한 필드 필터링")
@@ -1353,12 +1481,14 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	}
 	logger.Info("   Raw profile:", "profile", userProfile)
 
-	// Remove sensitive fields / 민감한 필드 제거
+	// Remove sensitive fields
+	// 민감한 필드 제거
 	publicProfile := maputil.Omit(userProfile, "password", "ssn")
 	logger.Info("   ✅ Public profile:", "profile", publicProfile)
 	logger.Info("")
 
-	// Use Case 5: Performance Monitoring / 성능 모니터링
+	// Use Case 5: Performance Monitoring
+	// 성능 모니터링
 	logger.Info("📌 Use Case 5: Performance Monitoring / 성능 모니터링")
 	logger.Info("   Scenario: Analyze response times across services")
 	logger.Info("   시나리오: 서비스 전체의 응답 시간 분석")
@@ -1372,13 +1502,15 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 	}
 	logger.Info("   Response times (ms):", "times", responseTimes)
 
-	// Find slow services (> 200ms) / 느린 서비스 찾기 (> 200ms)
+	// Find slow services (> 200ms)
+	// 느린 서비스 찾기 (> 200ms)
 	slow := maputil.Filter(responseTimes, func(service string, ms int) bool {
 		return ms > 200
 	})
 	logger.Info("   Slow services (>200ms):", "services", slow)
 
-	// Calculate statistics / 통계 계산
+	// Calculate statistics
+	// 통계 계산
 	avgTime := maputil.Average(responseTimes)
 	slowestService, slowestTime, _ := maputil.Max(responseTimes)
 	fastestService, fastestTime, _ := maputil.Min(responseTimes)
@@ -1391,7 +1523,8 @@ func realWorldExamples(ctx context.Context, logger *logging.Logger) {
 }
 
 // ============================================================================
-// Category 11: Utility Functions (NEW) / 유틸리티 함수 (신규)
+// Category 11: Utility Functions (NEW)
+// 유틸리티 함수 (신규)
 // ============================================================================
 func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	_ = ctx // Context not used in this example / 이 예제에서는 context를 사용하지 않습니다
@@ -1402,7 +1535,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("")
 
-	// 1. ForEach - Iterate over map entries / 맵 항목 순회
+	// 1. ForEach - Iterate over map entries
+	// 맵 항목 순회
 	logger.Info("1️⃣  ForEach() - Execute function for each entry / 각 항목에 대해 함수 실행")
 	logger.Info("   Purpose: Perform side effects for each key-value pair")
 	logger.Info("   목적: 각 키-값 쌍에 대해 부수 효과 수행")
@@ -1424,7 +1558,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Logging, debugging, collecting data without creating new maps")
 	logger.Info("")
 
-	// 2. GetMany - Retrieve multiple values at once / 여러 값을 한 번에 검색
+	// 2. GetMany - Retrieve multiple values at once
+	// 여러 값을 한 번에 검색
 	logger.Info("2️⃣  GetMany() - Get multiple values at once / 여러 값을 한 번에 가져오기")
 	logger.Info("   Purpose: Batch retrieval of multiple values by keys")
 	logger.Info("   목적: 키로 여러 값을 일괄 검색")
@@ -1445,7 +1580,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Batch config lookups, multi-key data extraction")
 	logger.Info("")
 
-	// 3. SetMany - Set multiple key-value pairs at once / 여러 키-값 쌍을 한 번에 설정
+	// 3. SetMany - Set multiple key-value pairs at once
+	// 여러 키-값 쌍을 한 번에 설정
 	logger.Info("3️⃣  SetMany() - Set multiple key-value pairs at once / 여러 키-값 쌍을 한 번에 설정")
 	logger.Info("   Purpose: Batch updates to map entries")
 	logger.Info("   목적: 맵 항목에 대한 일괄 업데이트")
@@ -1467,7 +1603,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Batch config updates, map initialization, merging multiple entries")
 	logger.Info("")
 
-	// 4. Tap - Execute side effect and return map / 부수 효과를 실행하고 맵 반환
+	// 4. Tap - Execute side effect and return map
+	// 부수 효과를 실행하고 맵 반환
 	logger.Info("4️⃣  Tap() - Execute side effect and return map / 부수 효과를 실행하고 맵 반환")
 	logger.Info("   Purpose: Debugging in method chains without breaking the chain")
 	logger.Info("   목적: 체인을 끊지 않고 메서드 체인에서 디버깅")
@@ -1490,7 +1627,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Logging in pipelines, collecting stats, validation in chains")
 	logger.Info("")
 
-	// 5. ContainsAllKeys - Check if all keys exist / 모든 키가 존재하는지 확인
+	// 5. ContainsAllKeys - Check if all keys exist
+	// 모든 키가 존재하는지 확인
 	logger.Info("5️⃣  ContainsAllKeys() - Check if all keys exist / 모든 키가 존재하는지 확인")
 	logger.Info("   Purpose: Validate required keys in a map")
 	logger.Info("   목적: 맵에서 필수 키 검증")
@@ -1517,7 +1655,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: API response validation, required config checks, form validation")
 	logger.Info("")
 
-	// 6. Apply - Transform all values in place / 모든 값을 제자리에서 변환
+	// 6. Apply - Transform all values in place
+	// 모든 값을 제자리에서 변환
 	logger.Info("6️⃣  Apply() - Transform all values / 모든 값 변환")
 	logger.Info("   Purpose: Apply a function to all values in the map")
 	logger.Info("   목적: 맵의 모든 값에 함수 적용")
@@ -1544,7 +1683,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Bulk price adjustments, data normalization, unit conversions")
 	logger.Info("")
 
-	// 7. GetOrSet - Get value or set default / 값 가져오기 또는 기본값 설정
+	// 7. GetOrSet - Get value or set default
+	// 값 가져오기 또는 기본값 설정
 	logger.Info("7️⃣  GetOrSet() - Get value or set default / 값 가져오기 또는 기본값 설정")
 	logger.Info("   Purpose: Ensure a key always has a value")
 	logger.Info("   목적: 키가 항상 값을 가지도록 보장")
@@ -1565,7 +1705,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Cache initialization, default value management, lazy loading")
 	logger.Info("")
 
-	// 8. SetDefault - Set key only if not exists / 키가 존재하지 않을 때만 설정
+	// 8. SetDefault - Set key only if not exists
+	// 키가 존재하지 않을 때만 설정
 	logger.Info("8️⃣  SetDefault() - Set key only if not exists / 키가 존재하지 않을 때만 설정")
 	logger.Info("   Purpose: Initialize keys without overwriting")
 	logger.Info("   목적: 덮어쓰지 않고 키 초기화")
@@ -1585,7 +1726,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Safe config initialization, default value setup")
 	logger.Info("")
 
-	// 9. Defaults - Merge with default values / 기본값과 병합
+	// 9. Defaults - Merge with default values
+	// 기본값과 병합
 	logger.Info("9️⃣  Defaults() - Merge with default values / 기본값과 병합")
 	logger.Info("   Purpose: Apply default values for missing keys")
 	logger.Info("   목적: 누락된 키에 대해 기본값 적용")
@@ -1611,7 +1753,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Config management, user preferences + system defaults, template rendering")
 	logger.Info("")
 
-	// 10. GetNested - Navigate nested maps / 중첩 맵 탐색
+	// 10. GetNested - Navigate nested maps
+	// 중첩 맵 탐색
 	logger.Info("🔟 GetNested() - Navigate nested maps / 중첩 맵 탐색")
 	logger.Info("   Purpose: Safely access deeply nested values")
 	logger.Info("   목적: 깊이 중첩된 값에 안전하게 접근")
@@ -1645,7 +1788,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: JSON/YAML parsing, API response handling, config access")
 	logger.Info("")
 
-	// 11. SetNested - Set nested values / 중첩 값 설정
+	// 11. SetNested - Set nested values
+	// 중첩 값 설정
 	logger.Info("1️⃣1️⃣ SetNested() - Set nested values / 중첩 값 설정")
 	logger.Info("   Purpose: Create nested structures dynamically")
 	logger.Info("   목적: 중첩 구조를 동적으로 생성")
@@ -1668,7 +1812,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Dynamic config building, API request construction, nested initialization")
 	logger.Info("")
 
-	// 12. HasNested - Check nested path / 중첩 경로 확인
+	// 12. HasNested - Check nested path
+	// 중첩 경로 확인
 	logger.Info("1️⃣2️⃣ HasNested() - Check nested path / 중첩 경로 확인")
 	logger.Info("   Purpose: Validate nested key existence")
 	logger.Info("   목적: 중첩 키 존재 검증")
@@ -1701,7 +1846,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: API validation, required field checking, safe navigation guards")
 	logger.Info("")
 
-	// 13. DeleteNested - Remove nested values / 중첩 값 제거
+	// 13. DeleteNested - Remove nested values
+	// 중첩 값 제거
 	logger.Info("1️⃣3️⃣ DeleteNested() - Remove nested values / 중첩 값 제거")
 	logger.Info("   Purpose: Remove deeply nested keys")
 	logger.Info("   목적: 깊이 중첩된 키 제거")
@@ -1731,7 +1877,8 @@ func utilityFunctions(ctx context.Context, logger *logging.Logger) {
 	logger.Info("   💡 Use case: Removing sensitive data, config cleanup, API response filtering")
 	logger.Info("")
 
-	// 14. SafeGet - Safe nested access with errors / 에러가 있는 안전한 중첩 접근
+	// 14. SafeGet - Safe nested access with errors
+	// 에러가 있는 안전한 중첩 접근
 	logger.Info("1️⃣4️⃣ SafeGet() - Safe nested access with errors / 에러가 있는 안전한 중첩 접근")
 	logger.Info("   Purpose: Access nested values with detailed error messages")
 	logger.Info("   목적: 상세한 에러 메시지와 함께 중첩 값 접근")

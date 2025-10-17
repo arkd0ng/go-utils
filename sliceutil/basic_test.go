@@ -30,7 +30,8 @@ func TestContains(t *testing.T) {
 		})
 	}
 
-	// Test with strings / 문자열로 테스트
+	// Test with strings
+	// 문자열로 테스트
 	t.Run("with strings", func(t *testing.T) {
 		fruits := []string{"apple", "banana", "cherry"}
 		if !Contains(fruits, "banana") {
@@ -83,7 +84,8 @@ func TestContainsFunc(t *testing.T) {
 		})
 	}
 
-	// Test with empty slice / 빈 슬라이스로 테스트
+	// Test with empty slice
+	// 빈 슬라이스로 테스트
 	t.Run("empty slice", func(t *testing.T) {
 		empty := []int{}
 		result := ContainsFunc(empty, func(n int) bool { return true })
@@ -120,7 +122,8 @@ func TestIndexOf(t *testing.T) {
 		})
 	}
 
-	// Test with strings / 문자열로 테스트
+	// Test with strings
+	// 문자열로 테스트
 	t.Run("with strings", func(t *testing.T) {
 		fruits := []string{"apple", "banana", "cherry", "banana"}
 		index := IndexOf(fruits, "banana")
@@ -157,7 +160,8 @@ func TestLastIndexOf(t *testing.T) {
 		})
 	}
 
-	// Test with strings / 문자열로 테스트
+	// Test with strings
+	// 문자열로 테스트
 	t.Run("with strings", func(t *testing.T) {
 		fruits := []string{"apple", "banana", "cherry", "banana"}
 		index := LastIndexOf(fruits, "banana")
@@ -216,7 +220,8 @@ func TestFind(t *testing.T) {
 		})
 	}
 
-	// Test with empty slice / 빈 슬라이스로 테스트
+	// Test with empty slice
+	// 빈 슬라이스로 테스트
 	t.Run("empty slice", func(t *testing.T) {
 		empty := []int{}
 		_, found := Find(empty, func(n int) bool { return true })
@@ -225,7 +230,8 @@ func TestFind(t *testing.T) {
 		}
 	})
 
-	// Test with strings / 문자열로 테스트
+	// Test with strings
+	// 문자열로 테스트
 	t.Run("with strings", func(t *testing.T) {
 		fruits := []string{"apple", "banana", "cherry"}
 		fruit, found := Find(fruits, func(s string) bool { return len(s) > 5 })
@@ -235,7 +241,8 @@ func TestFind(t *testing.T) {
 	})
 }
 
-// Benchmark tests / 벤치마크 테스트
+// Benchmark tests
+// 벤치마크 테스트
 
 func BenchmarkContains(b *testing.B) {
 	slice := make([]int, 1000)
@@ -425,7 +432,8 @@ func TestEqual(t *testing.T) {
 		})
 	}
 
-	// Test with strings / 문자열로 테스트
+	// Test with strings
+	// 문자열로 테스트
 	t.Run("with strings", func(t *testing.T) {
 		a := []string{"a", "b", "c"}
 		b := []string{"a", "b", "c"}
@@ -440,7 +448,8 @@ func TestEqual(t *testing.T) {
 	})
 }
 
-// Additional benchmarks / 추가 벤치마크
+// Additional benchmarks
+// 추가 벤치마크
 
 func BenchmarkFindIndex(b *testing.B) {
 	slice := make([]int, 1000)

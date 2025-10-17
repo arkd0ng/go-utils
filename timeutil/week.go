@@ -5,7 +5,8 @@ import "time"
 // WeekOfYear returns the ISO 8601 week number of the year (1-53).
 // WeekOfYear는 ISO 8601 주 번호를 반환합니다 (1-53).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	t := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 //	week := timeutil.WeekOfYear(t)
@@ -21,7 +22,8 @@ func WeekOfYear(t time.Time) int {
 // Week numbering starts from the first Monday. Days before the first Monday are week 0, but returned as week 1.
 // 주 번호는 첫 번째 월요일부터 시작합니다. 첫 번째 월요일 이전의 날들은 주 0이지만 주 1로 반환됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	t := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 //	week := timeutil.WeekOfMonth(t)
@@ -57,7 +59,8 @@ func WeekOfMonth(t time.Time) int {
 // DaysInMonth returns the number of days in the month (28-31).
 // DaysInMonth는 월의 일 수를 반환합니다 (28-31).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	t := time.Date(2025, 2, 1, 0, 0, 0, 0, KST)
 //	days := timeutil.DaysInMonth(t)
@@ -72,7 +75,8 @@ func DaysInMonth(t time.Time) int {
 // DaysInYear returns the number of days in the year (365 or 366).
 // DaysInYear는 년의 일 수를 반환합니다 (365 또는 366).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	t := time.Date(2024, 1, 1, 0, 0, 0, 0, KST)
 //	days := timeutil.DaysInYear(t)

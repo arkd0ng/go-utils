@@ -74,7 +74,8 @@ func (t *queryStatsTracker) recordQuery(query string, args []interface{}, durati
 		t.successQueries++
 	}
 
-	// Check if this is a slow query / 느린 쿼리인지 확인
+	// Check if this is a slow query
+	// 느린 쿼리인지 확인
 	if t.slowQueryThreshold > 0 && duration >= t.slowQueryThreshold {
 		t.slowQueries++
 
@@ -85,16 +86,20 @@ func (t *queryStatsTracker) recordQuery(query string, args []interface{}, durati
 			Timestamp: time.Now(),
 		}
 
-		// Add to log / 로그에 추가
+		// Add to log
+		// 로그에 추가
 		if len(t.slowQueryLog) >= t.maxSlowQueryLog {
-			// Remove oldest entry / 가장 오래된 항목 제거
+			// Remove oldest entry
+			// 가장 오래된 항목 제거
 			t.slowQueryLog = t.slowQueryLog[1:]
 		}
 		t.slowQueryLog = append(t.slowQueryLog, info)
 
-		// Call handler if set / 핸들러가 설정된 경우 호출
+		// Call handler if set
+		// 핸들러가 설정된 경우 호출
 		if t.slowQueryHandler != nil {
-			// Call handler in goroutine to avoid blocking / 차단을 피하기 위해 고루틴에서 핸들러 호출
+			// Call handler in goroutine to avoid blocking
+			// 차단을 피하기 위해 고루틴에서 핸들러 호출
 			go t.slowQueryHandler(info)
 		}
 	}
@@ -145,7 +150,8 @@ func (t *queryStatsTracker) getSlowQueries(limit int) []SlowQueryInfo {
 		limit = len(t.slowQueryLog)
 	}
 
-	// Return the most recent entries / 가장 최근 항목 반환
+	// Return the most recent entries
+	// 가장 최근 항목 반환
 	start := len(t.slowQueryLog) - limit
 	result := make([]SlowQueryInfo, limit)
 	copy(result, t.slowQueryLog[start:])
@@ -166,7 +172,8 @@ func (t *queryStatsTracker) enableSlowQueryLog(threshold time.Duration, handler 
 // GetQueryStats returns query execution statistics
 // GetQueryStats는 쿼리 실행 통계를 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	stats := client.GetQueryStats()
 //	fmt.Printf("Total queries: %d\n", stats.TotalQueries)
@@ -183,9 +190,11 @@ func (c *Client) GetQueryStats() QueryStats {
 // ResetQueryStats resets query execution statistics
 // ResetQueryStats는 쿼리 실행 통계를 재설정합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// Reset stats to start fresh / 새로 시작하기 위해 통계 재설정
+// // Reset stats to start fresh
+// 새로 시작하기 위해 통계 재설정
 //	client.ResetQueryStats()
 func (c *Client) ResetQueryStats() {
 	if c.statsTracker != nil {
@@ -199,20 +208,24 @@ func (c *Client) ResetQueryStats() {
 // The handler function is called asynchronously for each slow query.
 // 핸들러 함수는 각 느린 쿼리에 대해 비동기적으로 호출됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// Log queries that take longer than 1 second / 1초 이상 걸리는 쿼리 로깅
+// // Log queries that take longer than 1 second
+// 1초 이상 걸리는 쿼리 로깅
 //	client.EnableSlowQueryLog(1*time.Second, func(info mysql.SlowQueryInfo) {
 //	    log.Printf("Slow query detected: %s (took %v)", info.Query, info.Duration)
 //	})
 //
-// Example with custom handling / 커스텀 처리 예제:
+// Example with custom handling
+// 커스텀 처리 예제:
 //
-//	client.EnableSlowQueryLog(500*time.Millisecond, func(info mysql.SlowQueryInfo) {
-//	    // Send to monitoring system / 모니터링 시스템으로 전송
+// client.EnableSlowQueryLog(500*time.Millisecond, func(info mysql.SlowQueryInfo) {
+// Send to monitoring system / 모니터링 시스템으로 전송
 //	    metrics.RecordSlowQuery(info.Query, info.Duration)
 //
-//	    // Log with details / 세부 정보와 함께 로깅
+// // Log with details
+// 세부 정보와 함께 로깅
 //	    logger.Warn("Slow query",
 //	        "query", info.Query,
 //	        "args", info.Args,
@@ -231,9 +244,11 @@ func (c *Client) EnableSlowQueryLog(threshold time.Duration, handler SlowQueryHa
 // The limit parameter specifies how many recent slow queries to return.
 // limit 매개변수는 반환할 최근 느린 쿼리의 수를 지정합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// Get last 10 slow queries / 최근 10개의 느린 쿼리 가져오기
+// // Get last 10 slow queries
+// 최근 10개의 느린 쿼리 가져오기
 //	slowQueries := client.GetSlowQueries(10)
 //	for _, sq := range slowQueries {
 //	    fmt.Printf("Query: %s\n", sq.Query)
@@ -242,7 +257,8 @@ func (c *Client) EnableSlowQueryLog(threshold time.Duration, handler SlowQueryHa
 //	    fmt.Println("---")
 //	}
 //
-// Example with analysis / 분석 예제:
+// Example with analysis
+// 분석 예제:
 //
 //	slowQueries := client.GetSlowQueries(50)
 //	if len(slowQueries) > 0 {
@@ -266,14 +282,17 @@ func (c *Client) GetSlowQueries(limit int) []SlowQueryInfo {
 // This must be called before any queries are executed to track statistics.
 // 통계를 추적하려면 쿼리가 실행되기 전에 호출해야 합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	client, _ := mysql.New(mysql.WithDSN("..."))
 //	client.EnableQueryStats()
 //
-//	// Execute queries... / 쿼리 실행...
+// // Execute queries...
+// 쿼리 실행...
 //
-//	// Check statistics / 통계 확인
+// // Check statistics
+// 통계 확인
 //	stats := client.GetQueryStats()
 //	fmt.Printf("Total queries: %d\n", stats.TotalQueries)
 func (c *Client) EnableQueryStats() {
@@ -290,9 +309,11 @@ func (c *Client) EnableQueryStats() {
 // Existing statistics are preserved but no new queries will be tracked.
 // 기존 통계는 보존되지만 새 쿼리는 추적되지 않습니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// Temporarily disable stats tracking / 일시적으로 통계 추적 비활성화
+// // Temporarily disable stats tracking
+// 일시적으로 통계 추적 비활성화
 //	client.DisableQueryStats()
 //	// ... perform operations ...
 //	client.EnableQueryStats()

@@ -15,7 +15,8 @@ var (
 // SetHolidays sets custom holidays.
 // SetHolidays는 커스텀 공휴일을 설정합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	holidays := []time.Time{
 //	    time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC),  // New Year
@@ -72,12 +73,14 @@ func IsHoliday(t time.Time) bool {
 func IsBusinessDay(t time.Time) bool {
 	t = t.In(defaultLocation)
 
-	// Check if weekend / 주말 확인
+	// Check if weekend
+	// 주말 확인
 	if IsWeekend(t) {
 		return false
 	}
 
-	// Check if holiday / 공휴일 확인
+	// Check if holiday
+	// 공휴일 확인
 	if IsHoliday(t) {
 		return false
 	}
@@ -91,7 +94,8 @@ func IsBusinessDay(t time.Time) bool {
 // Business days are Monday-Friday, excluding weekends and custom holidays.
 // 영업일은 월-금이며 주말과 커스텀 공휴일을 제외합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	nextBusinessDay := timeutil.AddBusinessDays(time.Now(), 5)
 func AddBusinessDays(t time.Time, days int) time.Time {
@@ -152,7 +156,8 @@ func PreviousBusinessDay(t time.Time) time.Time {
 // The count is inclusive of start but exclusive of end.
 // 카운트는 start를 포함하지만 end는 제외합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
 //	end := time.Date(2025, 1, 10, 0, 0, 0, 0, time.UTC)
@@ -161,12 +166,14 @@ func CountBusinessDays(start, end time.Time) int {
 	start = start.In(defaultLocation)
 	end = end.In(defaultLocation)
 
-	// Ensure start is before end / start가 end보다 앞에 있도록 확인
+	// Ensure start is before end
+	// start가 end보다 앞에 있도록 확인
 	if start.After(end) {
 		start, end = end, start
 	}
 
-	// Truncate to start of day / 하루의 시작으로 절단
+	// Truncate to start of day
+	// 하루의 시작으로 절단
 	start = StartOfDay(start)
 	end = StartOfDay(end)
 
@@ -193,7 +200,8 @@ func CountBusinessDays(start, end time.Time) int {
 // Note: Lunar calendar holidays (Seollal, Chuseok) are not included.
 // 참고: 음력 공휴일 (설날, 추석)은 포함되지 않습니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	timeutil.AddKoreanHolidays(2025)
 func AddKoreanHolidays(year int) {
@@ -208,7 +216,8 @@ func AddKoreanHolidays(year int) {
 		time.Date(year, 12, 25, 0, 0, 0, 0, KST), // Christmas / 크리스마스
 	}
 
-	// Append to existing holidays / 기존 공휴일에 추가
+	// Append to existing holidays
+	// 기존 공휴일에 추가
 	existing := GetHolidays()
 	all := append(existing, koreanHolidays...)
 	SetHolidays(all)

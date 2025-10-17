@@ -11,7 +11,8 @@ func (c *Client) executeWithRetry(ctx context.Context, fn func() error) error {
 	var lastErr error
 
 	for attempt := 0; attempt <= c.config.maxRetries; attempt++ {
-		// Execute function / 함수 실행
+		// Execute function
+		// 함수 실행
 		err := fn()
 		if err == nil {
 			return nil // Success / 성공
@@ -19,7 +20,8 @@ func (c *Client) executeWithRetry(ctx context.Context, fn func() error) error {
 
 		lastErr = err
 
-		// Check if error is retryable / 에러가 재시도 가능한지 확인
+		// Check if error is retryable
+		// 에러가 재시도 가능한지 확인
 		if !isRetryableError(err) {
 			if c.config.logger != nil {
 				c.config.logger.Debug("Error is not retryable, failing immediately",
@@ -29,19 +31,22 @@ func (c *Client) executeWithRetry(ctx context.Context, fn func() error) error {
 			return err
 		}
 
-		// Don't retry on last attempt / 마지막 시도에서는 재시도 안 함
+		// Don't retry on last attempt
+		// 마지막 시도에서는 재시도 안 함
 		if attempt == c.config.maxRetries {
 			break
 		}
 
-		// Check context / Context 확인
+		// Check context
+		// Context 확인
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
 		}
 
-		// Calculate backoff delay (exponential) / 백오프 지연 계산 (지수)
+		// Calculate backoff delay (exponential)
+		// 백오프 지연 계산 (지수)
 		delay := c.config.retryDelay * time.Duration(1<<uint(attempt))
 		if delay > 5*time.Second {
 			delay = 5 * time.Second // Cap at 5 seconds / 최대 5초로 제한
@@ -55,7 +60,8 @@ func (c *Client) executeWithRetry(ctx context.Context, fn func() error) error {
 				"delay", delay)
 		}
 
-		// Wait before retry / 재시도 전 대기
+		// Wait before retry
+		// 재시도 전 대기
 		select {
 		case <-time.After(delay):
 		case <-ctx.Done():

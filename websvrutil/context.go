@@ -47,11 +47,12 @@ const (
 // NewContext creates a new Context instance.
 // NewContext는 새 Context 인스턴스를 생성합니다.
 //
-// Performance optimization / 성능 최적화:
-//   - values map is lazily allocated (nil by default)
-//   - values 맵은 지연 할당됩니다 (기본적으로 nil)
-//   - Only created when first value is set via Set()
-//   - Set()을 통해 첫 번째 값이 설정될 때만 생성됩니다
+// Performance optimization
+// 성능 최적화:
+// - values map is lazily allocated (nil by default)
+// - values 맵은 지연 할당됩니다 (기본적으로 nil)
+// - Only created when first value is set via Set()
+// - Set()을 통해 첫 번째 값이 설정될 때만 생성됩니다
 func NewContext(w http.ResponseWriter, r *http.Request) *Context {
 	return &Context{
 		Request:        r,
@@ -62,17 +63,18 @@ func NewContext(w http.ResponseWriter, r *http.Request) *Context {
 }
 
 // ============================================================================
-// URL Parameters / URL 매개변수
+// URL Parameters
+// URL 매개변수
 // ============================================================================
 
 // Param returns the value of the URL parameter with the given name.
 // Param은 주어진 이름의 URL 매개변수 값을 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	// Route: /users/:id
-//	// URL: /users/123
-//	id := ctx.Param("id") // Returns "123" / "123" 반환
+// // URL: /users/123 / id := ctx.Param("id") // Returns "123" / "123" 반환
 func (c *Context) Param(name string) string {
 	return c.params[name]
 }
@@ -96,13 +98,15 @@ func (c *Context) setParams(params map[string]string) {
 }
 
 // ============================================================================
-// Context Values / 컨텍스트 값
+// Context Values
+// 컨텍스트 값
 // ============================================================================
 
 // Set stores a value in the context.
 // Set은 컨텍스트에 값을 저장합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.Set("user", user)
 //	ctx.Set("requestID", "12345")
@@ -110,7 +114,8 @@ func (c *Context) Set(key string, value interface{}) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	// Lazy map initialization / 지연 맵 초기화
+	// Lazy map initialization
+	// 지연 맵 초기화
 	// Only create the map when first value is set
 	// 첫 번째 값이 설정될 때만 맵 생성
 	if c.values == nil {
@@ -123,7 +128,8 @@ func (c *Context) Set(key string, value interface{}) {
 // Get retrieves a value from the context.
 // Get은 컨텍스트에서 값을 검색합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	user, exists := ctx.Get("user")
 //	if exists {
@@ -139,7 +145,8 @@ func (c *Context) Get(key string) (interface{}, bool) {
 // MustGet retrieves a value from the context and panics if it doesn't exist.
 // MustGet은 컨텍스트에서 값을 검색하고 존재하지 않으면 패닉합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	user := ctx.MustGet("user").(User)
 func (c *Context) MustGet(key string) interface{} {
@@ -257,7 +264,8 @@ func (c *Context) Keys() []string {
 }
 
 // ============================================================================
-// Go Context / Go 컨텍스트
+// Go Context
+// Go 컨텍스트
 // ============================================================================
 
 // Context returns the request's context.Context.
@@ -275,13 +283,15 @@ func (c *Context) WithContext(ctx context.Context) *Context {
 }
 
 // ============================================================================
-// Context Retrieval / 컨텍스트 검색
+// Context Retrieval
+// 컨텍스트 검색
 // ============================================================================
 
 // GetContext retrieves the Context from the request's context.Context.
 // GetContext는 요청의 context.Context에서 Context를 검색합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	func handler(w http.ResponseWriter, r *http.Request) {
 //	    ctx := websvrutil.GetContext(r)

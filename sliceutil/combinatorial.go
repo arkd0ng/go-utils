@@ -10,7 +10,8 @@ package sliceutil
 // 각 하위 슬라이스가 순열인 슬라이스의 슬라이스를 반환합니다.
 // 경고: 순열의 수는 팩토리얼로 증가합니다 (n!).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3}
 //	perms := sliceutil.Permutations(numbers)
@@ -20,7 +21,8 @@ package sliceutil
 //	perms := sliceutil.Permutations(letters)
 //	// perms: [["a","b"], ["b","a"]]
 //
-// Performance note / 성능 참고:
+// Performance note
+// 성능 참고:
 //   n=5: 120 permutations
 //   n=10: 3,628,800 permutations
 //   Use with caution for large slices!
@@ -59,12 +61,14 @@ func permute[T any](slice []T, k int, result *[][]T) {
 
 // Combinations returns all possible combinations of k elements from the slice.
 // Returns a slice of slices, where each sub-slice is a combination.
-// Warning: The number of combinations is C(n, k) = n! / (k! * (n-k)!).
-// Combinations는 슬라이스에서 k개 요소의 모든 가능한 조합을 반환합니다.
+// Warning: The number of combinations is C(n, k) = n!
+// (k! * (n-k)!). / Combinations는 슬라이스에서 k개 요소의 모든 가능한 조합을 반환합니다.
 // 각 하위 슬라이스가 조합인 슬라이스의 슬라이스를 반환합니다.
-// 경고: 조합의 수는 C(n, k) = n! / (k! * (n-k)!)입니다.
+// 경고: 조합의 수는 C(n, k) = n!
+// (k! * (n-k)!)입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4}
 //	combs := sliceutil.Combinations(numbers, 2)
@@ -74,7 +78,8 @@ func permute[T any](slice []T, k int, result *[][]T) {
 //	combs := sliceutil.Combinations(letters, 2)
 //	// combs: [["a","b"], ["a","c"], ["b","c"]]
 //
-// Performance note / 성능 참고:
+// Performance note
+// 성능 참고:
 //   C(10, 5) = 252 combinations
 //   C(20, 10) = 184,756 combinations
 //   Use with caution for large values!

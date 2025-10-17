@@ -6,6 +6,64 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.010] - 2025-10-17
+
+### Added / 추가
+- errorutil/README.md 작성 (포괄적인 패키지 문서)
+- 빠른 시작 가이드 및 예제 코드 포함
+- API 참조 문서 (18개 함수 전체 설명)
+- 모범 사례 섹션 추가
+
+### Changed / 변경
+- N/A
+
+### Fixed / 수정
+- N/A
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - 버전을 v1.12.009에서 v1.12.010으로 증가
+- `errorutil/README.md` - 새 파일 생성 (450+ 줄, 포괄적인 문서)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.010 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+errorutil 패키지 문서화 작업 계속 진행
+
+**Why / 이유**:
+- 사용자가 패키지를 빠르게 이해하고 사용할 수 있도록 안내
+- API 참조를 통한 모든 함수의 사용법 제공
+- 실제 사용 사례를 보여주는 예제 코드 제공
+- 모범 사례를 통한 올바른 사용 패턴 안내
+
+**Implementation Details / 구현 세부사항**:
+
+1. **README 구조**:
+   - Overview: 패키지 소개 및 주요 기능
+   - Features: 핵심 기능 목록
+   - Quick Start: 즉시 사용 가능한 예제
+   - API Reference: 18개 함수 전체 설명
+   - Examples: 실제 사용 사례 (HTTP API, 에러 분류, 중첩 체인)
+   - Best Practices: 모범 사례 4가지
+
+2. **문서화 내용**:
+   - Error Creation: 6개 함수 (New, Newf, WithCode, WithCodef, WithNumericCode, WithNumericCodef)
+   - Error Wrapping: 6개 함수 (Wrap, Wrapf, WrapWithCode, WrapWithCodef, WrapWithNumericCode, WrapWithNumericCodef)
+   - Error Inspection: 4개 함수 (HasCode, HasNumericCode, GetCode, GetNumericCode)
+
+3. **예제 시나리오**:
+   - HTTP API 에러 처리
+   - 에러 코드를 사용한 에러 분류
+   - 깊게 중첩된 에러 체인 처리
+
+**Impact / 영향**:
+- 사용자가 5분 내에 패키지 사용 시작 가능
+- 모든 API가 명확히 문서화되어 참조 용이
+- 실제 사용 사례를 통한 학습 곡선 단축
+- 다음 단계(USER_MANUAL, DEVELOPER_GUIDE) 작성 준비 완료
+
+---
+
 ## [v1.12.009] - 2025-10-17
 
 ### Added / 추가

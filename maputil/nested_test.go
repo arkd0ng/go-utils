@@ -9,7 +9,8 @@ import (
 // TestGetNested는 다양한 시나리오로 GetNested 함수를 테스트합니다.
 func TestGetNested(t *testing.T) {
 	t.Run("SimpleNested", func(t *testing.T) {
-		// Test simple nested access / 간단한 중첩 접근 테스트
+		// Test simple nested access
+		// 간단한 중첩 접근 테스트
 		data := map[string]interface{}{
 			"user": map[string]interface{}{
 				"name": "Alice",
@@ -22,7 +23,8 @@ func TestGetNested(t *testing.T) {
 	})
 
 	t.Run("DeepNested", func(t *testing.T) {
-		// Test deep nested access / 깊은 중첩 접근 테스트
+		// Test deep nested access
+		// 깊은 중첩 접근 테스트
 		data := map[string]interface{}{
 			"server": map[string]interface{}{
 				"database": map[string]interface{}{
@@ -40,7 +42,8 @@ func TestGetNested(t *testing.T) {
 	})
 
 	t.Run("MissingKey", func(t *testing.T) {
-		// Test with missing key / 누락된 키 테스트
+		// Test with missing key
+		// 누락된 키 테스트
 		data := map[string]interface{}{
 			"user": map[string]interface{}{
 				"name": "Alice",
@@ -53,7 +56,8 @@ func TestGetNested(t *testing.T) {
 	})
 
 	t.Run("MissingIntermediateKey", func(t *testing.T) {
-		// Test with missing intermediate key / 중간 키 누락 테스트
+		// Test with missing intermediate key
+		// 중간 키 누락 테스트
 		data := map[string]interface{}{
 			"user": map[string]interface{}{
 				"name": "Alice",
@@ -66,7 +70,8 @@ func TestGetNested(t *testing.T) {
 	})
 
 	t.Run("EmptyPath", func(t *testing.T) {
-		// Test with empty path / 빈 경로 테스트
+		// Test with empty path
+		// 빈 경로 테스트
 		data := map[string]interface{}{"key": "value"}
 		val, ok := GetNested(data)
 		if ok || val != nil {
@@ -75,7 +80,8 @@ func TestGetNested(t *testing.T) {
 	})
 
 	t.Run("NonMapIntermediate", func(t *testing.T) {
-		// Test when intermediate value is not a map / 중간 값이 맵이 아닌 경우 테스트
+		// Test when intermediate value is not a map
+		// 중간 값이 맵이 아닌 경우 테스트
 		data := map[string]interface{}{
 			"user": "Alice",
 		}
@@ -86,7 +92,8 @@ func TestGetNested(t *testing.T) {
 	})
 
 	t.Run("DifferentTypes", func(t *testing.T) {
-		// Test with different value types / 다양한 값 타입 테스트
+		// Test with different value types
+		// 다양한 값 타입 테스트
 		data := map[string]interface{}{
 			"config": map[string]interface{}{
 				"timeout": 30,
@@ -109,7 +116,8 @@ func TestGetNested(t *testing.T) {
 	})
 
 	t.Run("SingleKey", func(t *testing.T) {
-		// Test with single key path / 단일 키 경로 테스트
+		// Test with single key path
+		// 단일 키 경로 테스트
 		data := map[string]interface{}{
 			"name": "Alice",
 		}
@@ -124,7 +132,8 @@ func TestGetNested(t *testing.T) {
 // TestSetNested는 다양한 시나리오로 SetNested 함수를 테스트합니다.
 func TestSetNested(t *testing.T) {
 	t.Run("CreateNewPath", func(t *testing.T) {
-		// Test creating new nested path / 새 중첩 경로 생성 테스트
+		// Test creating new nested path
+		// 새 중첩 경로 생성 테스트
 		data := map[string]interface{}{}
 		result := SetNested(data, "Seoul", "user", "address", "city")
 
@@ -135,7 +144,8 @@ func TestSetNested(t *testing.T) {
 	})
 
 	t.Run("UpdateExisting", func(t *testing.T) {
-		// Test updating existing value / 기존 값 업데이트 테스트
+		// Test updating existing value
+		// 기존 값 업데이트 테스트
 		data := map[string]interface{}{
 			"user": map[string]interface{}{
 				"name": "Alice",
@@ -150,7 +160,8 @@ func TestSetNested(t *testing.T) {
 	})
 
 	t.Run("Immutability", func(t *testing.T) {
-		// Test that original map is not modified / 원본 맵이 수정되지 않는지 테스트
+		// Test that original map is not modified
+		// 원본 맵이 수정되지 않는지 테스트
 		data := map[string]interface{}{
 			"user": map[string]interface{}{
 				"name": "Alice",
@@ -170,7 +181,8 @@ func TestSetNested(t *testing.T) {
 	})
 
 	t.Run("OverwriteNonMap", func(t *testing.T) {
-		// Test overwriting non-map intermediate value / 맵이 아닌 중간 값 덮어쓰기 테스트
+		// Test overwriting non-map intermediate value
+		// 맵이 아닌 중간 값 덮어쓰기 테스트
 		data := map[string]interface{}{
 			"user": "Alice",
 		}
@@ -183,7 +195,8 @@ func TestSetNested(t *testing.T) {
 	})
 
 	t.Run("EmptyPath", func(t *testing.T) {
-		// Test with empty path / 빈 경로 테스트
+		// Test with empty path
+		// 빈 경로 테스트
 		data := map[string]interface{}{"key": "value"}
 		result := SetNested(data, "new")
 
@@ -193,7 +206,8 @@ func TestSetNested(t *testing.T) {
 	})
 
 	t.Run("SingleKey", func(t *testing.T) {
-		// Test with single key / 단일 키 테스트
+		// Test with single key
+		// 단일 키 테스트
 		data := map[string]interface{}{}
 		result := SetNested(data, "Alice", "name")
 
@@ -203,7 +217,8 @@ func TestSetNested(t *testing.T) {
 	})
 
 	t.Run("DifferentTypes", func(t *testing.T) {
-		// Test setting different value types / 다양한 값 타입 설정 테스트
+		// Test setting different value types
+		// 다양한 값 타입 설정 테스트
 		data := map[string]interface{}{}
 		result := SetNested(data, 42, "config", "timeout")
 		result = SetNested(result, true, "config", "enabled")
@@ -219,7 +234,8 @@ func TestSetNested(t *testing.T) {
 	})
 
 	t.Run("DeepNesting", func(t *testing.T) {
-		// Test deep nesting / 깊은 중첩 테스트
+		// Test deep nesting
+		// 깊은 중첩 테스트
 		data := map[string]interface{}{}
 		result := SetNested(data, "value", "a", "b", "c", "d", "e")
 
@@ -234,7 +250,8 @@ func TestSetNested(t *testing.T) {
 // TestHasNested는 다양한 시나리오로 HasNested 함수를 테스트합니다.
 func TestHasNested(t *testing.T) {
 	t.Run("ExistingPath", func(t *testing.T) {
-		// Test with existing path / 기존 경로 테스트
+		// Test with existing path
+		// 기존 경로 테스트
 		data := map[string]interface{}{
 			"user": map[string]interface{}{
 				"name":  "Alice",
@@ -247,7 +264,8 @@ func TestHasNested(t *testing.T) {
 	})
 
 	t.Run("MissingPath", func(t *testing.T) {
-		// Test with missing path / 누락된 경로 테스트
+		// Test with missing path
+		// 누락된 경로 테스트
 		data := map[string]interface{}{
 			"user": map[string]interface{}{
 				"name": "Alice",
@@ -259,7 +277,8 @@ func TestHasNested(t *testing.T) {
 	})
 
 	t.Run("MissingIntermediate", func(t *testing.T) {
-		// Test with missing intermediate key / 중간 키 누락 테스트
+		// Test with missing intermediate key
+		// 중간 키 누락 테스트
 		data := map[string]interface{}{
 			"user": map[string]interface{}{
 				"name": "Alice",
@@ -271,7 +290,8 @@ func TestHasNested(t *testing.T) {
 	})
 
 	t.Run("EmptyPath", func(t *testing.T) {
-		// Test with empty path / 빈 경로 테스트
+		// Test with empty path
+		// 빈 경로 테스트
 		data := map[string]interface{}{"key": "value"}
 		if HasNested(data) {
 			t.Error("HasNested(empty path) should return false")
@@ -279,7 +299,8 @@ func TestHasNested(t *testing.T) {
 	})
 
 	t.Run("NonMapIntermediate", func(t *testing.T) {
-		// Test when intermediate is not a map / 중간 값이 맵이 아닌 경우 테스트
+		// Test when intermediate is not a map
+		// 중간 값이 맵이 아닌 경우 테스트
 		data := map[string]interface{}{
 			"user": "Alice",
 		}
@@ -289,7 +310,8 @@ func TestHasNested(t *testing.T) {
 	})
 
 	t.Run("SingleKey", func(t *testing.T) {
-		// Test with single key / 단일 키 테스트
+		// Test with single key
+		// 단일 키 테스트
 		data := map[string]interface{}{
 			"name": "Alice",
 		}
@@ -299,7 +321,8 @@ func TestHasNested(t *testing.T) {
 	})
 
 	t.Run("DeepPath", func(t *testing.T) {
-		// Test with deep path / 깊은 경로 테스트
+		// Test with deep path
+		// 깊은 경로 테스트
 		data := map[string]interface{}{
 			"a": map[string]interface{}{
 				"b": map[string]interface{}{
@@ -322,7 +345,8 @@ func TestHasNested(t *testing.T) {
 // TestDeleteNested는 다양한 시나리오로 DeleteNested 함수를 테스트합니다.
 func TestDeleteNested(t *testing.T) {
 	t.Run("DeleteExisting", func(t *testing.T) {
-		// Test deleting existing value / 기존 값 삭제 테스트
+		// Test deleting existing value
+		// 기존 값 삭제 테스트
 		data := map[string]interface{}{
 			"user": map[string]interface{}{
 				"name":     "Alice",
@@ -340,7 +364,8 @@ func TestDeleteNested(t *testing.T) {
 	})
 
 	t.Run("Immutability", func(t *testing.T) {
-		// Test that original map is not modified / 원본 맵이 수정되지 않는지 테스트
+		// Test that original map is not modified
+		// 원본 맵이 수정되지 않는지 테스트
 		data := map[string]interface{}{
 			"user": map[string]interface{}{
 				"name": "Alice",
@@ -357,7 +382,8 @@ func TestDeleteNested(t *testing.T) {
 	})
 
 	t.Run("DeleteMissing", func(t *testing.T) {
-		// Test deleting non-existent key / 존재하지 않는 키 삭제 테스트
+		// Test deleting non-existent key
+		// 존재하지 않는 키 삭제 테스트
 		data := map[string]interface{}{
 			"user": map[string]interface{}{
 				"name": "Alice",
@@ -371,7 +397,8 @@ func TestDeleteNested(t *testing.T) {
 	})
 
 	t.Run("DeleteMissingPath", func(t *testing.T) {
-		// Test deleting with missing intermediate path / 중간 경로 누락으로 삭제 테스트
+		// Test deleting with missing intermediate path
+		// 중간 경로 누락으로 삭제 테스트
 		data := map[string]interface{}{
 			"user": map[string]interface{}{
 				"name": "Alice",
@@ -386,7 +413,8 @@ func TestDeleteNested(t *testing.T) {
 	})
 
 	t.Run("EmptyPath", func(t *testing.T) {
-		// Test with empty path / 빈 경로 테스트
+		// Test with empty path
+		// 빈 경로 테스트
 		data := map[string]interface{}{"key": "value"}
 		result := DeleteNested(data)
 
@@ -396,7 +424,8 @@ func TestDeleteNested(t *testing.T) {
 	})
 
 	t.Run("SingleKey", func(t *testing.T) {
-		// Test with single key / 단일 키 테스트
+		// Test with single key
+		// 단일 키 테스트
 		data := map[string]interface{}{
 			"name": "Alice",
 			"age":  30,
@@ -412,7 +441,8 @@ func TestDeleteNested(t *testing.T) {
 	})
 
 	t.Run("DeepNesting", func(t *testing.T) {
-		// Test deep nesting / 깊은 중첩 테스트
+		// Test deep nesting
+		// 깊은 중첩 테스트
 		data := map[string]interface{}{
 			"a": map[string]interface{}{
 				"b": map[string]interface{}{
@@ -436,7 +466,8 @@ func TestDeleteNested(t *testing.T) {
 // TestSafeGet는 다양한 시나리오로 SafeGet 함수를 테스트합니다.
 func TestSafeGet(t *testing.T) {
 	t.Run("ValidPath", func(t *testing.T) {
-		// Test with valid path / 유효한 경로 테스트
+		// Test with valid path
+		// 유효한 경로 테스트
 		data := map[string]interface{}{
 			"server": map[string]interface{}{
 				"host": "localhost",
@@ -453,7 +484,8 @@ func TestSafeGet(t *testing.T) {
 	})
 
 	t.Run("MissingKey", func(t *testing.T) {
-		// Test with missing key / 누락된 키 테스트
+		// Test with missing key
+		// 누락된 키 테스트
 		data := map[string]interface{}{
 			"server": map[string]interface{}{
 				"host": "localhost",
@@ -472,7 +504,8 @@ func TestSafeGet(t *testing.T) {
 	})
 
 	t.Run("NonMapIntermediate", func(t *testing.T) {
-		// Test when intermediate is not a map / 중간 값이 맵이 아닌 경우 테스트
+		// Test when intermediate is not a map
+		// 중간 값이 맵이 아닌 경우 테스트
 		data := map[string]interface{}{
 			"server": "localhost",
 		}
@@ -489,7 +522,8 @@ func TestSafeGet(t *testing.T) {
 	})
 
 	t.Run("EmptyPath", func(t *testing.T) {
-		// Test with empty path / 빈 경로 테스트
+		// Test with empty path
+		// 빈 경로 테스트
 		data := map[string]interface{}{"key": "value"}
 		val, err := SafeGet(data)
 		if err == nil {
@@ -504,7 +538,8 @@ func TestSafeGet(t *testing.T) {
 	})
 
 	t.Run("DifferentTypes", func(t *testing.T) {
-		// Test with different value types / 다양한 값 타입 테스트
+		// Test with different value types
+		// 다양한 값 타입 테스트
 		data := map[string]interface{}{
 			"config": map[string]interface{}{
 				"timeout": 30,
@@ -522,7 +557,8 @@ func TestSafeGet(t *testing.T) {
 	})
 
 	t.Run("SingleKey", func(t *testing.T) {
-		// Test with single key / 단일 키 테스트
+		// Test with single key
+		// 단일 키 테스트
 		data := map[string]interface{}{
 			"name": "Alice",
 		}
@@ -536,7 +572,8 @@ func TestSafeGet(t *testing.T) {
 	})
 
 	t.Run("DeepPath", func(t *testing.T) {
-		// Test with deep path / 깊은 경로 테스트
+		// Test with deep path
+		// 깊은 경로 테스트
 		data := map[string]interface{}{
 			"a": map[string]interface{}{
 				"b": map[string]interface{}{
@@ -554,7 +591,8 @@ func TestSafeGet(t *testing.T) {
 	})
 
 	t.Run("NilInput", func(t *testing.T) {
-		// Test with nil input / nil 입력 테스트
+		// Test with nil input
+		// nil 입력 테스트
 		var data interface{} = nil
 		val, err := SafeGet(data, "key")
 		if err == nil {

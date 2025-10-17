@@ -66,13 +66,15 @@ func TestCookieJar_SetAndGetCookies(t *testing.T) {
 
 	jar.SetCookies(u, cookies)
 
-	// Get cookies / 쿠키 가져오기
+	// Get cookies
+	// 쿠키 가져오기
 	gotCookies := jar.GetCookies(u)
 	if len(gotCookies) != 2 {
 		t.Errorf("Expected 2 cookies, got %d", len(gotCookies))
 	}
 
-	// Verify cookie values / 쿠키 값 검증
+	// Verify cookie values
+	// 쿠키 값 검증
 	found := make(map[string]string)
 	for _, c := range gotCookies {
 		found[c.Name] = c.Value
@@ -100,7 +102,8 @@ func TestCookieJar_SetCookie(t *testing.T) {
 
 	jar.SetCookie(u, cookie)
 
-	// Get cookies / 쿠키 가져오기
+	// Get cookies
+	// 쿠키 가져오기
 	gotCookies := jar.GetCookies(u)
 	if len(gotCookies) != 1 {
 		t.Errorf("Expected 1 cookie, got %d", len(gotCookies))
@@ -127,18 +130,21 @@ func TestCookieJar_ClearCookies(t *testing.T) {
 
 	jar.SetCookies(u, cookies)
 
-	// Verify cookies are set / 쿠키가 설정되었는지 확인
+	// Verify cookies are set
+	// 쿠키가 설정되었는지 확인
 	gotCookies := jar.GetCookies(u)
 	if len(gotCookies) != 2 {
 		t.Errorf("Expected 2 cookies before clear, got %d", len(gotCookies))
 	}
 
-	// Clear cookies / 쿠키 제거
+	// Clear cookies
+	// 쿠키 제거
 	if err := jar.ClearCookies(); err != nil {
 		t.Fatalf("ClearCookies failed: %v", err)
 	}
 
-	// Verify cookies are cleared / 쿠키가 제거되었는지 확인
+	// Verify cookies are cleared
+	// 쿠키가 제거되었는지 확인
 	gotCookies = jar.GetCookies(u)
 	if len(gotCookies) != 0 {
 		t.Errorf("Expected 0 cookies after clear, got %d", len(gotCookies))
@@ -151,7 +157,8 @@ func TestCookieJar_SaveAndLoadCookies(t *testing.T) {
 	filePath := "test_cookies_persist.json"
 	defer os.Remove(filePath)
 
-	// Create jar and set cookies / 저장소 생성 및 쿠키 설정
+	// Create jar and set cookies
+	// 저장소 생성 및 쿠키 설정
 	jar, err := NewPersistentCookieJar(filePath)
 	if err != nil {
 		t.Fatalf("NewPersistentCookieJar failed: %v", err)
@@ -163,17 +170,20 @@ func TestCookieJar_SaveAndLoadCookies(t *testing.T) {
 	}
 	jar.SetCookies(u, cookies)
 
-	// Save cookies / 쿠키 저장
+	// Save cookies
+	// 쿠키 저장
 	if err := jar.SaveCookies(); err != nil {
 		t.Fatalf("SaveCookies failed: %v", err)
 	}
 
-	// Verify file exists / 파일 존재 확인
+	// Verify file exists
+	// 파일 존재 확인
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		t.Error("Cookie file should exist after SaveCookies")
 	}
 
-	// Create new jar and load cookies / 새 저장소 생성 및 쿠키 로드
+	// Create new jar and load cookies
+	// 새 저장소 생성 및 쿠키 로드
 	jar2, err := NewPersistentCookieJar(filePath)
 	if err != nil {
 		t.Fatalf("NewPersistentCookieJar failed: %v", err)
@@ -202,7 +212,8 @@ func TestCookieJar_GetCookiesByDomain(t *testing.T) {
 	}
 	jar.SetCookies(u, cookies)
 
-	// Get cookies by domain / 도메인별 쿠키 가져오기
+	// Get cookies by domain
+	// 도메인별 쿠키 가져오기
 	gotCookies := jar.GetCookiesByDomain("example.com")
 	if len(gotCookies) == 0 {
 		t.Error("Expected at least 1 cookie for example.com domain")
@@ -224,20 +235,24 @@ func TestCookieJar_RemoveCookie(t *testing.T) {
 	}
 	jar.SetCookies(u, cookies)
 
-	// Verify 2 cookies / 2개 쿠키 확인
+	// Verify 2 cookies
+	// 2개 쿠키 확인
 	if count := jar.CountCookies(u); count != 2 {
 		t.Errorf("Expected 2 cookies, got %d", count)
 	}
 
-	// Remove one cookie / 1개 쿠키 제거
+	// Remove one cookie
+	// 1개 쿠키 제거
 	jar.RemoveCookie(u, "session")
 
-	// Verify cookie was removed / 쿠키가 제거되었는지 확인
+	// Verify cookie was removed
+	// 쿠키가 제거되었는지 확인
 	if jar.HasCookie(u, "session") {
 		t.Error("Cookie 'session' should have been removed")
 	}
 
-	// Verify other cookie still exists / 다른 쿠키는 여전히 존재하는지 확인
+	// Verify other cookie still exists
+	// 다른 쿠키는 여전히 존재하는지 확인
 	if !jar.HasCookie(u, "user") {
 		t.Error("Cookie 'user' should still exist")
 	}
@@ -253,12 +268,14 @@ func TestCookieJar_CountCookies(t *testing.T) {
 
 	u, _ := url.Parse("https://example.com")
 
-	// Initially no cookies / 초기에는 쿠키 없음
+	// Initially no cookies
+	// 초기에는 쿠키 없음
 	if count := jar.CountCookies(u); count != 0 {
 		t.Errorf("Expected 0 cookies initially, got %d", count)
 	}
 
-	// Add cookies / 쿠키 추가
+	// Add cookies
+	// 쿠키 추가
 	cookies := []*http.Cookie{
 		{Name: "cookie1", Value: "value1", Path: "/"},
 		{Name: "cookie2", Value: "value2", Path: "/"},
@@ -266,7 +283,8 @@ func TestCookieJar_CountCookies(t *testing.T) {
 	}
 	jar.SetCookies(u, cookies)
 
-	// Count should be 3 / 개수는 3이어야 함
+	// Count should be 3
+	// 개수는 3이어야 함
 	if count := jar.CountCookies(u); count != 3 {
 		t.Errorf("Expected 3 cookies, got %d", count)
 	}
@@ -284,12 +302,14 @@ func TestCookieJar_HasCookie(t *testing.T) {
 	cookie := &http.Cookie{Name: "exists", Value: "yes", Path: "/"}
 	jar.SetCookie(u, cookie)
 
-	// Should have the cookie / 쿠키가 존재해야 함
+	// Should have the cookie
+	// 쿠키가 존재해야 함
 	if !jar.HasCookie(u, "exists") {
 		t.Error("HasCookie should return true for 'exists'")
 	}
 
-	// Should not have non-existent cookie / 존재하지 않는 쿠키는 없어야 함
+	// Should not have non-existent cookie
+	// 존재하지 않는 쿠키는 없어야 함
 	if jar.HasCookie(u, "nonexistent") {
 		t.Error("HasCookie should return false for 'nonexistent'")
 	}
@@ -307,7 +327,8 @@ func TestCookieJar_GetCookie(t *testing.T) {
 	cookie := &http.Cookie{Name: "target", Value: "found", Path: "/"}
 	jar.SetCookie(u, cookie)
 
-	// Get existing cookie / 존재하는 쿠키 가져오기
+	// Get existing cookie
+	// 존재하는 쿠키 가져오기
 	gotCookie := jar.GetCookie(u, "target")
 	if gotCookie == nil {
 		t.Fatal("GetCookie should return a cookie")
@@ -317,7 +338,8 @@ func TestCookieJar_GetCookie(t *testing.T) {
 		t.Errorf("Expected target=found, got %s=%s", gotCookie.Name, gotCookie.Value)
 	}
 
-	// Get non-existent cookie / 존재하지 않는 쿠키 가져오기
+	// Get non-existent cookie
+	// 존재하지 않는 쿠키 가져오기
 	nonCookie := jar.GetCookie(u, "nonexistent")
 	if nonCookie != nil {
 		t.Error("GetCookie should return nil for non-existent cookie")
@@ -327,16 +349,19 @@ func TestCookieJar_GetCookie(t *testing.T) {
 // TestClient_CookieIntegration tests cookie integration with Client.
 // TestClient_CookieIntegration은 클라이언트와의 쿠키 통합을 테스트합니다.
 func TestClient_CookieIntegration(t *testing.T) {
-	// Create test server / 테스트 서버 생성
+	// Create test server
+	// 테스트 서버 생성
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Set a cookie in response / 응답에 쿠키 설정
+		// Set a cookie in response
+		// 응답에 쿠키 설정
 		http.SetCookie(w, &http.Cookie{
 			Name:  "server_cookie",
 			Value: "from_server",
 			Path:  "/",
 		})
 
-		// Check for cookies in request / 요청의 쿠키 확인
+		// Check for cookies in request
+		// 요청의 쿠키 확인
 		if cookie, err := r.Cookie("client_cookie"); err == nil {
 			w.Header().Set("X-Client-Cookie", cookie.Value)
 		}
@@ -346,32 +371,37 @@ func TestClient_CookieIntegration(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create client with cookies enabled / 쿠키가 활성화된 클라이언트 생성
+	// Create client with cookies enabled
+	// 쿠키가 활성화된 클라이언트 생성
 	client := NewClient(
 		WithBaseURL(server.URL),
 		WithCookies(),
 	)
 
-	// Make request / 요청 수행
+	// Make request
+	// 요청 수행
 	var result map[string]string
 	err := client.Get("/test", &result)
 	if err != nil {
 		t.Fatalf("Request failed: %v", err)
 	}
 
-	// Verify cookie jar is initialized / 쿠키 저장소가 초기화되었는지 확인
+	// Verify cookie jar is initialized
+	// 쿠키 저장소가 초기화되었는지 확인
 	if client.cookieJar == nil {
 		t.Error("Client cookieJar should not be nil with WithCookies()")
 	}
 
-	// Get cookies from server / 서버에서 쿠키 가져오기
+	// Get cookies from server
+	// 서버에서 쿠키 가져오기
 	u, _ := url.Parse(server.URL)
 	cookies := client.GetCookies(u)
 	if len(cookies) == 0 {
 		t.Error("Should have received cookies from server")
 	}
 
-	// Verify server cookie exists / 서버 쿠키가 존재하는지 확인
+	// Verify server cookie exists
+	// 서버 쿠키가 존재하는지 확인
 	found := false
 	for _, c := range cookies {
 		if c.Name == "server_cookie" && c.Value == "from_server" {
@@ -390,13 +420,15 @@ func TestClient_PersistentCookies(t *testing.T) {
 	filePath := "test_client_cookies.json"
 	defer os.Remove(filePath)
 
-	// Create client with persistent cookies / 지속성 쿠키를 가진 클라이언트 생성
+	// Create client with persistent cookies
+	// 지속성 쿠키를 가진 클라이언트 생성
 	client := NewClient(
 		WithBaseURL("https://example.com"),
 		WithPersistentCookies(filePath),
 	)
 
-	// Verify cookie jar is initialized / 쿠키 저장소가 초기화되었는지 확인
+	// Verify cookie jar is initialized
+	// 쿠키 저장소가 초기화되었는지 확인
 	if client.cookieJar == nil {
 		t.Fatal("Client cookieJar should not be nil with WithPersistentCookies()")
 	}
@@ -405,17 +437,20 @@ func TestClient_PersistentCookies(t *testing.T) {
 		t.Errorf("Expected filePath %s, got %s", filePath, client.cookieJar.filePath)
 	}
 
-	// Set a cookie / 쿠키 설정
+	// Set a cookie
+	// 쿠키 설정
 	u, _ := url.Parse("https://example.com")
 	cookie := &http.Cookie{Name: "persistent", Value: "test123", Path: "/"}
 	client.SetCookie(u, cookie)
 
-	// Save cookies / 쿠키 저장
+	// Save cookies
+	// 쿠키 저장
 	if err := client.SaveCookies(); err != nil {
 		t.Fatalf("SaveCookies failed: %v", err)
 	}
 
-	// Verify file exists / 파일 존재 확인
+	// Verify file exists
+	// 파일 존재 확인
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		t.Error("Cookie file should exist after SaveCookies")
 	}
@@ -431,16 +466,19 @@ func TestClient_CookieMethods(t *testing.T) {
 
 	u, _ := url.Parse("https://example.com")
 
-	// Test SetCookie / SetCookie 테스트
+	// Test SetCookie
+	// SetCookie 테스트
 	cookie := &http.Cookie{Name: "test", Value: "value", Path: "/"}
 	client.SetCookie(u, cookie)
 
-	// Test HasCookie / HasCookie 테스트
+	// Test HasCookie
+	// HasCookie 테스트
 	if !client.HasCookie(u, "test") {
 		t.Error("HasCookie should return true")
 	}
 
-	// Test GetCookie / GetCookie 테스트
+	// Test GetCookie
+	// GetCookie 테스트
 	gotCookie := client.GetCookie(u, "test")
 	if gotCookie == nil {
 		t.Fatal("GetCookie should return a cookie")
@@ -449,13 +487,15 @@ func TestClient_CookieMethods(t *testing.T) {
 		t.Errorf("Expected value 'value', got '%s'", gotCookie.Value)
 	}
 
-	// Test GetCookies / GetCookies 테스트
+	// Test GetCookies
+	// GetCookies 테스트
 	cookies := client.GetCookies(u)
 	if len(cookies) != 1 {
 		t.Errorf("Expected 1 cookie, got %d", len(cookies))
 	}
 
-	// Test ClearCookies / ClearCookies 테스트
+	// Test ClearCookies
+	// ClearCookies 테스트
 	if err := client.ClearCookies(); err != nil {
 		t.Fatalf("ClearCookies failed: %v", err)
 	}
@@ -476,14 +516,16 @@ func TestClient_NoCookieJar(t *testing.T) {
 
 	u, _ := url.Parse("https://example.com")
 
-	// All methods should handle nil cookieJar gracefully / 모든 메서드는 nil 쿠키 저장소를 우아하게 처리해야 함
+	// All methods should handle nil cookieJar gracefully
+	// 모든 메서드는 nil 쿠키 저장소를 우아하게 처리해야 함
 	cookies := client.GetCookies(u)
 	if cookies != nil {
 		t.Error("GetCookies should return nil when cookieJar is nil")
 	}
 
 	client.SetCookie(u, &http.Cookie{Name: "test", Value: "value"})
-	// Should not panic / 패닉이 발생하지 않아야 함
+	// Should not panic
+	// 패닉이 발생하지 않아야 함
 
 	if client.HasCookie(u, "test") {
 		t.Error("HasCookie should return false when cookieJar is nil")
@@ -508,10 +550,12 @@ func TestCookieJar_ThreadSafety(t *testing.T) {
 
 	u, _ := url.Parse("https://example.com")
 
-	// Concurrent reads and writes / 동시 읽기 및 쓰기
+	// Concurrent reads and writes
+	// 동시 읽기 및 쓰기
 	done := make(chan bool)
 
-	// Writer goroutines / 쓰기 고루틴
+	// Writer goroutines
+	// 쓰기 고루틴
 	for i := 0; i < 10; i++ {
 		go func(id int) {
 			for j := 0; j < 100; j++ {
@@ -526,7 +570,8 @@ func TestCookieJar_ThreadSafety(t *testing.T) {
 		}(i)
 	}
 
-	// Reader goroutines / 읽기 고루틴
+	// Reader goroutines
+	// 읽기 고루틴
 	for i := 0; i < 10; i++ {
 		go func() {
 			for j := 0; j < 100; j++ {
@@ -538,7 +583,8 @@ func TestCookieJar_ThreadSafety(t *testing.T) {
 		}()
 	}
 
-	// Wait for all goroutines / 모든 고루틴 대기
+	// Wait for all goroutines
+	// 모든 고루틴 대기
 	for i := 0; i < 20; i++ {
 		<-done
 	}
@@ -554,7 +600,8 @@ func TestCookieJar_ExpiredCookies(t *testing.T) {
 
 	u, _ := url.Parse("https://example.com")
 
-	// Set cookie that expires immediately / 즉시 만료되는 쿠키 설정
+	// Set cookie that expires immediately
+	// 즉시 만료되는 쿠키 설정
 	expiredCookie := &http.Cookie{
 		Name:    "expired",
 		Value:   "old",

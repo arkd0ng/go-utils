@@ -8,7 +8,8 @@ import (
 // TestGetOrSet는 다양한 시나리오로 GetOrSet 함수를 테스트합니다.
 func TestGetOrSet(t *testing.T) {
 	t.Run("GetExistingKey", func(t *testing.T) {
-		// Test getting an existing key / 기존 키 가져오기 테스트
+		// Test getting an existing key
+		// 기존 키 가져오기 테스트
 		m := map[string]int{"a": 1, "b": 2}
 		result := GetOrSet(m, "a", 10)
 		if result != 1 {
@@ -20,7 +21,8 @@ func TestGetOrSet(t *testing.T) {
 	})
 
 	t.Run("SetNewKey", func(t *testing.T) {
-		// Test setting a new key / 새 키 설정 테스트
+		// Test setting a new key
+		// 새 키 설정 테스트
 		m := map[string]int{"a": 1, "b": 2}
 		result := GetOrSet(m, "c", 10)
 		if result != 10 {
@@ -32,7 +34,8 @@ func TestGetOrSet(t *testing.T) {
 	})
 
 	t.Run("EmptyMap", func(t *testing.T) {
-		// Test with empty map / 빈 맵 테스트
+		// Test with empty map
+		// 빈 맵 테스트
 		m := map[string]int{}
 		result := GetOrSet(m, "x", 100)
 		if result != 100 {
@@ -44,7 +47,8 @@ func TestGetOrSet(t *testing.T) {
 	})
 
 	t.Run("ZeroValue", func(t *testing.T) {
-		// Test with zero value as default / 0 값을 기본값으로 테스트
+		// Test with zero value as default
+		// 0 값을 기본값으로 테스트
 		m := map[string]int{"a": 5}
 		result := GetOrSet(m, "b", 0)
 		if result != 0 {
@@ -56,7 +60,8 @@ func TestGetOrSet(t *testing.T) {
 	})
 
 	t.Run("StringMap", func(t *testing.T) {
-		// Test with string map / 문자열 맵 테스트
+		// Test with string map
+		// 문자열 맵 테스트
 		m := map[string]string{"name": "Alice"}
 		result := GetOrSet(m, "age", "25")
 		if result != "25" {
@@ -68,7 +73,8 @@ func TestGetOrSet(t *testing.T) {
 	})
 
 	t.Run("StructMap", func(t *testing.T) {
-		// Test with struct values / 구조체 값 테스트
+		// Test with struct values
+		// 구조체 값 테스트
 		type User struct {
 			Name string
 			Age  int
@@ -82,16 +88,19 @@ func TestGetOrSet(t *testing.T) {
 	})
 
 	t.Run("Cache", func(t *testing.T) {
-		// Test cache usage pattern / 캐시 사용 패턴 테스트
+		// Test cache usage pattern
+		// 캐시 사용 패턴 테스트
 		cache := make(map[string]int)
 
-		// First access - should set value / 첫 번째 접근 - 값 설정
+		// First access - should set value
+		// 첫 번째 접근 - 값 설정
 		val1 := GetOrSet(cache, "compute", 42)
 		if val1 != 42 {
 			t.Errorf("First access = %v, want 42", val1)
 		}
 
-		// Second access - should get cached value / 두 번째 접근 - 캐시된 값 가져오기
+		// Second access - should get cached value
+		// 두 번째 접근 - 캐시된 값 가져오기
 		val2 := GetOrSet(cache, "compute", 100)
 		if val2 != 42 {
 			t.Errorf("Cached access = %v, want 42", val2)
@@ -103,7 +112,8 @@ func TestGetOrSet(t *testing.T) {
 // TestSetDefault는 다양한 시나리오로 SetDefault 함수를 테스트합니다.
 func TestSetDefault(t *testing.T) {
 	t.Run("SetNewKey", func(t *testing.T) {
-		// Test setting a new key / 새 키 설정 테스트
+		// Test setting a new key
+		// 새 키 설정 테스트
 		m := map[string]string{"host": "localhost"}
 		wasSet := SetDefault(m, "port", "8080")
 		if !wasSet {
@@ -115,7 +125,8 @@ func TestSetDefault(t *testing.T) {
 	})
 
 	t.Run("ExistingKey", func(t *testing.T) {
-		// Test with existing key (should not overwrite) / 기존 키 테스트 (덮어쓰지 않아야 함)
+		// Test with existing key (should not overwrite)
+		// 기존 키 테스트 (덮어쓰지 않아야 함)
 		m := map[string]string{"host": "localhost"}
 		wasSet := SetDefault(m, "host", "0.0.0.0")
 		if wasSet {
@@ -127,7 +138,8 @@ func TestSetDefault(t *testing.T) {
 	})
 
 	t.Run("EmptyMap", func(t *testing.T) {
-		// Test with empty map / 빈 맵 테스트
+		// Test with empty map
+		// 빈 맵 테스트
 		m := map[int]int{}
 		wasSet := SetDefault(m, 1, 100)
 		if !wasSet {
@@ -139,7 +151,8 @@ func TestSetDefault(t *testing.T) {
 	})
 
 	t.Run("ZeroValue", func(t *testing.T) {
-		// Test with zero value / 0 값 테스트
+		// Test with zero value
+		// 0 값 테스트
 		m := map[string]int{"a": 5}
 		wasSet := SetDefault(m, "b", 0)
 		if !wasSet {
@@ -154,7 +167,8 @@ func TestSetDefault(t *testing.T) {
 	})
 
 	t.Run("MultipleDefaults", func(t *testing.T) {
-		// Test setting multiple defaults / 여러 기본값 설정 테스트
+		// Test setting multiple defaults
+		// 여러 기본값 설정 테스트
 		m := map[string]int{"a": 1}
 		SetDefault(m, "b", 2)
 		SetDefault(m, "c", 3)
@@ -169,7 +183,8 @@ func TestSetDefault(t *testing.T) {
 	})
 
 	t.Run("NilDefault", func(t *testing.T) {
-		// Test with nil as default value / nil을 기본값으로 테스트
+		// Test with nil as default value
+		// nil을 기본값으로 테스트
 		m := map[string]*int{}
 		wasSet := SetDefault(m, "x", nil)
 		if !wasSet {
@@ -181,7 +196,8 @@ func TestSetDefault(t *testing.T) {
 	})
 
 	t.Run("Configuration", func(t *testing.T) {
-		// Test configuration usage pattern / 설정 사용 패턴 테스트
+		// Test configuration usage pattern
+		// 설정 사용 패턴 테스트
 		config := map[string]string{
 			"host": "localhost",
 		}
@@ -203,7 +219,8 @@ func TestSetDefault(t *testing.T) {
 // TestDefaults는 다양한 시나리오로 Defaults 함수를 테스트합니다.
 func TestDefaults(t *testing.T) {
 	t.Run("BasicMerge", func(t *testing.T) {
-		// Test basic merge with defaults / 기본값과 기본 병합 테스트
+		// Test basic merge with defaults
+		// 기본값과 기본 병합 테스트
 		config := map[string]string{"host": "localhost"}
 		defaults := map[string]string{
 			"host":    "0.0.0.0",
@@ -221,7 +238,8 @@ func TestDefaults(t *testing.T) {
 	})
 
 	t.Run("EmptyOriginal", func(t *testing.T) {
-		// Test with empty original map / 빈 원본 맵 테스트
+		// Test with empty original map
+		// 빈 원본 맵 테스트
 		config := map[string]int{}
 		defaults := map[string]int{"a": 1, "b": 2, "c": 3}
 		result := Defaults(config, defaults)
@@ -235,7 +253,8 @@ func TestDefaults(t *testing.T) {
 	})
 
 	t.Run("EmptyDefaults", func(t *testing.T) {
-		// Test with empty defaults map / 빈 기본값 맵 테스트
+		// Test with empty defaults map
+		// 빈 기본값 맵 테스트
 		config := map[string]int{"a": 1, "b": 2}
 		defaults := map[string]int{}
 		result := Defaults(config, defaults)
@@ -249,7 +268,8 @@ func TestDefaults(t *testing.T) {
 	})
 
 	t.Run("BothEmpty", func(t *testing.T) {
-		// Test with both maps empty / 두 맵 모두 빈 경우 테스트
+		// Test with both maps empty
+		// 두 맵 모두 빈 경우 테스트
 		config := map[string]int{}
 		defaults := map[string]int{}
 		result := Defaults(config, defaults)
@@ -260,7 +280,8 @@ func TestDefaults(t *testing.T) {
 	})
 
 	t.Run("OriginalNotModified", func(t *testing.T) {
-		// Test that original maps are not modified / 원본 맵이 수정되지 않는지 테스트
+		// Test that original maps are not modified
+		// 원본 맵이 수정되지 않는지 테스트
 		config := map[string]int{"a": 1}
 		defaults := map[string]int{"b": 2}
 		result := Defaults(config, defaults)
@@ -276,7 +297,8 @@ func TestDefaults(t *testing.T) {
 	})
 
 	t.Run("ComplexTypes", func(t *testing.T) {
-		// Test with complex value types / 복잡한 값 타입 테스트
+		// Test with complex value types
+		// 복잡한 값 타입 테스트
 		type Config struct {
 			Value   string
 			Enabled bool
@@ -299,7 +321,8 @@ func TestDefaults(t *testing.T) {
 	})
 
 	t.Run("Precedence", func(t *testing.T) {
-		// Test that original values take precedence / 원본 값이 우선하는지 테스트
+		// Test that original values take precedence
+		// 원본 값이 우선하는지 테스트
 		config := map[string]int{"a": 100, "b": 200}
 		defaults := map[string]int{"a": 1, "b": 2, "c": 3}
 		result := Defaults(config, defaults)
@@ -313,7 +336,8 @@ func TestDefaults(t *testing.T) {
 	})
 
 	t.Run("UserPreferences", func(t *testing.T) {
-		// Test user preferences pattern / 사용자 기본 설정 패턴 테스트
+		// Test user preferences pattern
+		// 사용자 기본 설정 패턴 테스트
 		userPrefs := map[string]string{
 			"theme": "dark",
 		}

@@ -12,23 +12,27 @@ import (
 // HasCode는 에러 또는 에러 체인의 어떤 에러가 지정된 문자열 코드를 가지고 있는지 확인합니다.
 // 이 함수는 errors.As를 사용하여 에러 체인을 탐색하여 Coder를 찾습니다.
 //
-// Parameters / 매개변수:
-//   - err: The error to check / 확인할 에러
-//   - code: The code to look for / 찾을 코드
+// Parameters
+// 매개변수:
+// - err: The error to check
+// 확인할 에러
+// - code: The code to look for
+// 찾을 코드
 //
-// Returns / 반환:
-//   - bool: true if the code is found, false otherwise / 코드를 찾으면 true, 아니면 false
+// Returns
+// 반환:
+// - bool: true if the code is found, false otherwise
+// 코드를 찾으면 true, 아니면 false
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := errorutil.WithCode("ERR001", "validation failed")
-//	if errorutil.HasCode(err, "ERR001") {
-//	    // handle validation error / 검증 에러 처리
+// if errorutil.HasCode(err, "ERR001") { / handle validation error / 검증 에러 처리
 //	}
 //
 //	wrapped := errorutil.Wrap(err, "failed to process")
-//	if errorutil.HasCode(wrapped, "ERR001") {
-//	    // still found through the chain / 체인을 통해 여전히 찾을 수 있음
+// if errorutil.HasCode(wrapped, "ERR001") { / still found through the chain / 체인을 통해 여전히 찾을 수 있음
 //	}
 func HasCode(err error, code string) bool {
 	if err == nil {
@@ -59,23 +63,29 @@ func HasCode(err error, code string) bool {
 // HasNumericCode는 에러 또는 에러 체인의 어떤 에러가 지정된 숫자 코드를 가지고 있는지 확인합니다.
 // 이 함수는 errors.As를 사용하여 에러 체인을 탐색하여 NumericCoder를 찾습니다.
 //
-// Parameters / 매개변수:
-//   - err: The error to check / 확인할 에러
-//   - code: The code to look for / 찾을 코드
+// Parameters
+// 매개변수:
+// - err: The error to check
+// 확인할 에러
+// - code: The code to look for
+// 찾을 코드
 //
-// Returns / 반환:
-//   - bool: true if the code is found, false otherwise / 코드를 찾으면 true, 아니면 false
+// Returns
+// 반환:
+// - bool: true if the code is found, false otherwise
+// 코드를 찾으면 true, 아니면 false
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := errorutil.WithNumericCode(404, "not found")
-//	if errorutil.HasNumericCode(err, 404) {
-//	    // handle 404 error / 404 에러 처리
+// if errorutil.HasNumericCode(err, 404) {
+// handle 404 error / 404 에러 처리
 //	}
 //
 //	wrapped := errorutil.Wrap(err, "failed to fetch user")
-//	if errorutil.HasNumericCode(wrapped, 404) {
-//	    // still found through the chain / 체인을 통해 여전히 찾을 수 있음
+// if errorutil.HasNumericCode(wrapped, 404) {
+// still found through the chain / 체인을 통해 여전히 찾을 수 있음
 //	}
 func HasNumericCode(err error, code int) bool {
 	if err == nil {
@@ -106,14 +116,20 @@ func HasNumericCode(err error, code int) bool {
 // GetCode는 에러 또는 에러 체인의 어떤 에러에서 문자열 코드를 추출합니다.
 // 코드를 찾지 못하면 빈 문자열과 false를 반환합니다.
 //
-// Parameters / 매개변수:
-//   - err: The error to extract code from / 코드를 추출할 에러
+// Parameters
+// 매개변수:
+// - err: The error to extract code from
+// 코드를 추출할 에러
 //
-// Returns / 반환:
-//   - string: The error code, or empty string if not found / 에러 코드, 또는 찾지 못하면 빈 문자열
-//   - bool: true if code was found, false otherwise / 코드를 찾으면 true, 아니면 false
+// Returns
+// 반환:
+// - string: The error code, or empty string if not found
+// 에러 코드, 또는 찾지 못하면 빈 문자열
+// - bool: true if code was found, false otherwise
+// 코드를 찾으면 true, 아니면 false
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := errorutil.WithCode("ERR001", "validation failed")
 //	if code, ok := errorutil.GetCode(err); ok {
@@ -151,14 +167,20 @@ func GetCode(err error) (string, bool) {
 // GetNumericCode는 에러 또는 에러 체인의 어떤 에러에서 숫자 코드를 추출합니다.
 // 코드를 찾지 못하면 0과 false를 반환합니다.
 //
-// Parameters / 매개변수:
-//   - err: The error to extract code from / 코드를 추출할 에러
+// Parameters
+// 매개변수:
+// - err: The error to extract code from
+// 코드를 추출할 에러
 //
-// Returns / 반환:
-//   - int: The error code, or 0 if not found / 에러 코드, 또는 찾지 못하면 0
-//   - bool: true if code was found, false otherwise / 코드를 찾으면 true, 아니면 false
+// Returns
+// 반환:
+// - int: The error code, or 0 if not found
+// 에러 코드, 또는 찾지 못하면 0
+// - bool: true if code was found, false otherwise
+// 코드를 찾으면 true, 아니면 false
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := errorutil.WithNumericCode(404, "not found")
 //	if code, ok := errorutil.GetNumericCode(err); ok {
@@ -196,14 +218,20 @@ func GetNumericCode(err error) (int, bool) {
 // GetStackTrace는 에러 또는 에러 체인의 어떤 에러에서 스택 트레이스를 추출합니다.
 // 스택 트레이스를 찾지 못하면 nil과 false를 반환합니다.
 //
-// Parameters / 매개변수:
-//   - err: The error to extract stack trace from / 스택 트레이스를 추출할 에러
+// Parameters
+// 매개변수:
+// - err: The error to extract stack trace from
+// 스택 트레이스를 추출할 에러
 //
-// Returns / 반환:
-//   - []Frame: The stack trace, or nil if not found / 스택 트레이스, 또는 찾지 못하면 nil
-//   - bool: true if stack trace was found, false otherwise / 스택 트레이스를 찾으면 true, 아니면 false
+// Returns
+// 반환:
+// - []Frame: The stack trace, or nil if not found
+// 스택 트레이스, 또는 찾지 못하면 nil
+// - bool: true if stack trace was found, false otherwise
+// 스택 트레이스를 찾으면 true, 아니면 false
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := errorutil.NewWithStack("something went wrong")
 //	if stack, ok := errorutil.GetStackTrace(err); ok {
@@ -238,14 +266,20 @@ func GetStackTrace(err error) ([]Frame, bool) {
 // GetContext는 에러 또는 에러 체인의 어떤 에러에서 컨텍스트 데이터를 추출합니다.
 // 컨텍스트를 찾지 못하면 nil과 false를 반환합니다.
 //
-// Parameters / 매개변수:
-//   - err: The error to extract context from / 컨텍스트를 추출할 에러
+// Parameters
+// 매개변수:
+// - err: The error to extract context from
+// 컨텍스트를 추출할 에러
 //
-// Returns / 반환:
-//   - map[string]interface{}: The context data, or nil if not found / 컨텍스트 데이터, 또는 찾지 못하면 nil
-//   - bool: true if context was found, false otherwise / 컨텍스트를 찾으면 true, 아니면 false
+// Returns
+// 반환:
+// - map[string]interface{}: The context data, or nil if not found
+// 컨텍스트 데이터, 또는 찾지 못하면 nil
+// - bool: true if context was found, false otherwise
+// 컨텍스트를 찾으면 true, 아니면 false
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := errorutil.WithContext("failed to process", map[string]interface{}{
 //	    "user_id": 123,

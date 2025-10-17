@@ -2,7 +2,8 @@ package stringutil
 
 import "testing"
 
-// Test basic chaining / 기본 체이닝 테스트
+// Test basic chaining
+// 기본 체이닝 테스트
 func TestBuilderBasicChaining(t *testing.T) {
 	result := NewBuilder().
 		Append("hello").
@@ -16,7 +17,8 @@ func TestBuilderBasicChaining(t *testing.T) {
 	}
 }
 
-// Test case conversion chaining / 케이스 변환 체이닝 테스트
+// Test case conversion chaining
+// 케이스 변환 체이닝 테스트
 func TestBuilderCaseConversion(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -92,7 +94,8 @@ func TestBuilderCaseConversion(t *testing.T) {
 	}
 }
 
-// Test complex chaining / 복잡한 체이닝 테스트
+// Test complex chaining
+// 복잡한 체이닝 테스트
 func TestBuilderComplexChaining(t *testing.T) {
 	result := NewBuilder().
 		Append("  user profile data  ").
@@ -107,7 +110,8 @@ func TestBuilderComplexChaining(t *testing.T) {
 	}
 }
 
-// Test manipulation chaining / 조작 체이닝 테스트
+// Test manipulation chaining
+// 조작 체이닝 테스트
 func TestBuilderManipulation(t *testing.T) {
 	result := NewBuilder().
 		Append("hello").
@@ -121,7 +125,8 @@ func TestBuilderManipulation(t *testing.T) {
 	}
 }
 
-// Test truncation chaining / 잘라내기 체이닝 테스트
+// Test truncation chaining
+// 잘라내기 체이닝 테스트
 func TestBuilderTruncation(t *testing.T) {
 	result := NewBuilder().
 		Append("Hello World").
@@ -134,7 +139,8 @@ func TestBuilderTruncation(t *testing.T) {
 	}
 }
 
-// Test custom suffix truncation / 사용자 정의 suffix 잘라내기 테스트
+// Test custom suffix truncation
+// 사용자 정의 suffix 잘라내기 테스트
 func TestBuilderTruncationWithSuffix(t *testing.T) {
 	result := NewBuilder().
 		Append("Hello World").
@@ -147,7 +153,8 @@ func TestBuilderTruncationWithSuffix(t *testing.T) {
 	}
 }
 
-// Test cleaning chaining / 정리 체이닝 테스트
+// Test cleaning chaining
+// 정리 체이닝 테스트
 func TestBuilderCleaning(t *testing.T) {
 	result := NewBuilder().
 		Append("  hello   world  ").
@@ -160,7 +167,8 @@ func TestBuilderCleaning(t *testing.T) {
 	}
 }
 
-// Test remove spaces chaining / 공백 제거 체이닝 테스트
+// Test remove spaces chaining
+// 공백 제거 체이닝 테스트
 func TestBuilderRemoveSpaces(t *testing.T) {
 	result := NewBuilder().
 		Append("hello world").
@@ -173,7 +181,8 @@ func TestBuilderRemoveSpaces(t *testing.T) {
 	}
 }
 
-// Test remove special chars chaining / 특수 문자 제거 체이닝 테스트
+// Test remove special chars chaining
+// 특수 문자 제거 체이닝 테스트
 func TestBuilderRemoveSpecialChars(t *testing.T) {
 	result := NewBuilder().
 		Append("hello@world!").
@@ -186,7 +195,8 @@ func TestBuilderRemoveSpecialChars(t *testing.T) {
 	}
 }
 
-// Test repeat chaining / 반복 체이닝 테스트
+// Test repeat chaining
+// 반복 체이닝 테스트
 func TestBuilderRepeat(t *testing.T) {
 	result := NewBuilder().
 		Append("ab").
@@ -199,7 +209,8 @@ func TestBuilderRepeat(t *testing.T) {
 	}
 }
 
-// Test slugify chaining / Slugify 체이닝 테스트
+// Test slugify chaining
+// Slugify 체이닝 테스트
 func TestBuilderSlugify(t *testing.T) {
 	result := NewBuilder().
 		Append("Hello World!").
@@ -212,7 +223,8 @@ func TestBuilderSlugify(t *testing.T) {
 	}
 }
 
-// Test quote/unquote chaining / 따옴표 체이닝 테스트
+// Test quote/unquote chaining
+// 따옴표 체이닝 테스트
 func TestBuilderQuote(t *testing.T) {
 	result := NewBuilder().
 		Append("hello").
@@ -237,7 +249,8 @@ func TestBuilderUnquote(t *testing.T) {
 	}
 }
 
-// Test padding chaining / 패딩 체이닝 테스트
+// Test padding chaining
+// 패딩 체이닝 테스트
 func TestBuilderPadLeft(t *testing.T) {
 	result := NewBuilder().
 		Append("5").
@@ -262,7 +275,8 @@ func TestBuilderPadRight(t *testing.T) {
 	}
 }
 
-// Test trim chaining / 공백 제거 체이닝 테스트
+// Test trim chaining
+// 공백 제거 체이닝 테스트
 func TestBuilderTrim(t *testing.T) {
 	result := NewBuilder().
 		Append("  hello  ").
@@ -275,7 +289,8 @@ func TestBuilderTrim(t *testing.T) {
 	}
 }
 
-// Test replace chaining / 치환 체이닝 테스트
+// Test replace chaining
+// 치환 체이닝 테스트
 func TestBuilderReplace(t *testing.T) {
 	result := NewBuilder().
 		Append("hello world").
@@ -288,7 +303,8 @@ func TestBuilderReplace(t *testing.T) {
 	}
 }
 
-// Test NewBuilderWithString / NewBuilderWithString 테스트
+// Test NewBuilderWithString
+// NewBuilderWithString 테스트
 func TestNewBuilderWithString(t *testing.T) {
 	result := NewBuilderWithString("hello").
 		ToUpper().
@@ -300,7 +316,8 @@ func TestNewBuilderWithString(t *testing.T) {
 	}
 }
 
-// Test AppendLine / AppendLine 테스트
+// Test AppendLine
+// AppendLine 테스트
 func TestBuilderAppendLine(t *testing.T) {
 	result := NewBuilder().
 		AppendLine("line1").
@@ -313,21 +330,24 @@ func TestBuilderAppendLine(t *testing.T) {
 	}
 }
 
-// Test Len / Len 테스트
+// Test Len
+// Len 테스트
 func TestBuilderLen(t *testing.T) {
 	sb := NewBuilder().Append("hello")
 	if sb.Len() != 5 {
 		t.Errorf("Expected length 5, got %d", sb.Len())
 	}
 
-	// Unicode test / 유니코드 테스트
+	// Unicode test
+	// 유니코드 테스트
 	sb = NewBuilder().Append("안녕하세요")
 	if sb.Len() != 5 {
 		t.Errorf("Expected length 5, got %d", sb.Len())
 	}
 }
 
-// Test Reset / Reset 테스트
+// Test Reset
+// Reset 테스트
 func TestBuilderReset(t *testing.T) {
 	sb := NewBuilder().Append("hello")
 	if sb.Build() != "hello" {
@@ -345,7 +365,8 @@ func TestBuilderReset(t *testing.T) {
 	}
 }
 
-// Test String method / String 메서드 테스트
+// Test String method
+// String 메서드 테스트
 func TestBuilderString(t *testing.T) {
 	sb := NewBuilder().Append("hello")
 	if sb.String() != "hello" {
@@ -353,7 +374,8 @@ func TestBuilderString(t *testing.T) {
 	}
 }
 
-// Test real-world scenario / 실제 시나리오 테스트
+// Test real-world scenario
+// 실제 시나리오 테스트
 func TestBuilderRealWorld(t *testing.T) {
 	// Scenario: User inputs a messy string, we want to clean it up and create a slug
 	// 시나리오: 사용자가 지저분한 문자열을 입력하면, 정리하고 slug를 생성합니다
@@ -371,7 +393,8 @@ func TestBuilderRealWorld(t *testing.T) {
 	}
 }
 
-// Benchmark builder vs manual / Builder와 수동 비교 벤치마크
+// Benchmark builder vs manual
+// Builder와 수동 비교 벤치마크
 func BenchmarkBuilder(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = NewBuilder().

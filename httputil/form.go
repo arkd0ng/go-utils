@@ -24,13 +24,15 @@ func (c *Client) PostFormContext(ctx context.Context, path string, data map[stri
 	cfg := *c.config
 	cfg.apply(opts)
 
-	// Build full URL / 전체 URL 구축
+	// Build full URL
+	// 전체 URL 구축
 	fullURL := path
 	if cfg.baseURL != "" && !strings.HasPrefix(path, "http://") && !strings.HasPrefix(path, "https://") {
 		fullURL = strings.TrimRight(cfg.baseURL, "/") + "/" + strings.TrimLeft(path, "/")
 	}
 
-	// Add query parameters / 쿼리 매개변수 추가
+	// Add query parameters
+	// 쿼리 매개변수 추가
 	if len(cfg.queryParams) > 0 {
 		u, err := url.Parse(fullURL)
 		if err != nil {
@@ -44,27 +46,31 @@ func (c *Client) PostFormContext(ctx context.Context, path string, data map[stri
 		fullURL = u.String()
 	}
 
-	// Encode form data / 폼 데이터 인코딩
+	// Encode form data
+	// 폼 데이터 인코딩
 	formData := url.Values{}
 	for k, v := range data {
 		formData.Set(k, v)
 	}
 	body := strings.NewReader(formData.Encode())
 
-	// Create request / 요청 생성
+	// Create request
+	// 요청 생성
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fullURL, body)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
 
-	// Set headers / 헤더 설정
+	// Set headers
+	// 헤더 설정
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("User-Agent", cfg.userAgent)
 	for k, v := range cfg.headers {
 		req.Header.Set(k, v)
 	}
 
-	// Set authentication / 인증 설정
+	// Set authentication
+	// 인증 설정
 	if cfg.bearerToken != "" {
 		req.Header.Set("Authorization", "Bearer "+cfg.bearerToken)
 	}
@@ -72,14 +78,16 @@ func (c *Client) PostFormContext(ctx context.Context, path string, data map[stri
 		req.SetBasicAuth(cfg.basicAuthUser, cfg.basicAuthPass)
 	}
 
-	// Execute request / 요청 실행
+	// Execute request
+	// 요청 실행
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to post form: %w", err)
 	}
 	defer resp.Body.Close()
 
-	// Check status code / 상태 코드 확인
+	// Check status code
+	// 상태 코드 확인
 	if resp.StatusCode >= 400 {
 		bodyBytes, _ := io.ReadAll(resp.Body)
 		return &HTTPError{
@@ -91,7 +99,8 @@ func (c *Client) PostFormContext(ctx context.Context, path string, data map[stri
 		}
 	}
 
-	// Decode response / 응답 디코딩
+	// Decode response
+	// 응답 디코딩
 	if result != nil {
 		if err := json.NewDecoder(resp.Body).Decode(result); err != nil {
 			return fmt.Errorf("failed to decode response: %w", err)

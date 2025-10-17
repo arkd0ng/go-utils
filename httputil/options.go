@@ -13,23 +13,27 @@ type Option func(*config)
 // config holds the configuration for HTTP requests.
 // config는 HTTP 요청의 설정을 보유합니다.
 type config struct {
-	// Request configuration / 요청 설정
+	// Request configuration
+	// 요청 설정
 	headers     map[string]string
 	queryParams map[string]string
 	timeout     time.Duration
 	userAgent   string
 
-	// Authentication / 인증
+	// Authentication
+	// 인증
 	bearerToken string
 	basicAuthUser string
 	basicAuthPass string
 
-	// Retry configuration / 재시도 설정
+	// Retry configuration
+	// 재시도 설정
 	maxRetries int
 	retryMin   time.Duration
 	retryMax   time.Duration
 
-	// Client configuration / 클라이언트 설정
+	// Client configuration
+	// 클라이언트 설정
 	baseURL         string
 	followRedirects bool
 	maxRedirects    int
@@ -37,11 +41,13 @@ type config struct {
 	proxyURL        string
 	cookieJar       http.CookieJar
 
-	// Cookie jar configuration / 쿠키 저장소 설정
+	// Cookie jar configuration
+	// 쿠키 저장소 설정
 	enableCookieJar bool
 	cookieJarPath   string
 
-	// Logging / 로깅
+	// Logging
+	// 로깅
 	logger Logger
 }
 
@@ -151,8 +157,7 @@ func WithRetryBackoff(min, max time.Duration) Option {
 // WithUserAgent sets a custom User-Agent header.
 // WithUserAgent는 사용자 정의 User-Agent 헤더를 설정합니다.
 //
-// Default: "go-utils/httputil v{version}"
-// 기본값: "go-utils/httputil v{version}"
+// Default: "go-utils/httputil v{version}" / 기본값: "go-utils/httputil v{version}"
 func WithUserAgent(userAgent string) Option {
 	return func(c *config) {
 		c.userAgent = userAgent

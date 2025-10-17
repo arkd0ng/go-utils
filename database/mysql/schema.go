@@ -39,7 +39,8 @@ type TableInfo struct {
 // GetTables returns a list of all tables in the current database
 // GetTables는 현재 데이터베이스의 모든 테이블 목록을 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	tables, err := client.GetTables(ctx)
@@ -96,7 +97,8 @@ func (c *Client) GetTables(ctx context.Context) ([]TableInfo, error) {
 // GetColumns returns information about all columns in a table
 // GetColumns는 테이블의 모든 컬럼에 대한 정보를 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	columns, err := client.GetColumns(ctx, "users")
@@ -146,7 +148,8 @@ func (c *Client) GetColumns(ctx context.Context, table string) ([]ColumnInfo, er
 // GetIndexes returns information about all indexes on a table
 // GetIndexes는 테이블의 모든 인덱스에 대한 정보를 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	indexes, err := client.GetIndexes(ctx, "users")
@@ -171,7 +174,8 @@ func (c *Client) GetIndexes(ctx context.Context, table string) ([]IndexInfo, err
 	}
 	defer rows.Close()
 
-	// Map to group columns by index name / 인덱스 이름별로 컬럼을 그룹화하는 맵
+	// Map to group columns by index name
+	// 인덱스 이름별로 컬럼을 그룹화하는 맵
 	indexMap := make(map[string]*IndexInfo)
 
 	for rows.Next() {
@@ -214,7 +218,8 @@ func (c *Client) GetIndexes(ctx context.Context, table string) ([]IndexInfo, err
 			return nil, fmt.Errorf("failed to scan index info: %w", err)
 		}
 
-		// Get or create index info / 인덱스 정보 가져오기 또는 생성
+		// Get or create index info
+		// 인덱스 정보 가져오기 또는 생성
 		idx, exists := indexMap[keyName]
 		if !exists {
 			idx = &IndexInfo{
@@ -233,7 +238,8 @@ func (c *Client) GetIndexes(ctx context.Context, table string) ([]IndexInfo, err
 		return nil, fmt.Errorf("error iterating index rows: %w", err)
 	}
 
-	// Convert map to slice / 맵을 슬라이스로 변환
+	// Convert map to slice
+	// 맵을 슬라이스로 변환
 	indexes := make([]IndexInfo, 0, len(indexMap))
 	for _, idx := range indexMap {
 		indexes = append(indexes, *idx)
@@ -245,7 +251,8 @@ func (c *Client) GetIndexes(ctx context.Context, table string) ([]IndexInfo, err
 // TableExists checks if a table exists in the database
 // TableExists는 데이터베이스에 테이블이 존재하는지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	exists, err := client.TableExists(ctx, "users")
@@ -278,7 +285,8 @@ func (c *Client) TableExists(ctx context.Context, table string) (bool, error) {
 // GetTableSchema returns the CREATE TABLE statement for a table
 // GetTableSchema는 테이블의 CREATE TABLE 문을 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	schema, err := client.GetTableSchema(ctx, "users")
@@ -301,7 +309,8 @@ func (c *Client) GetTableSchema(ctx context.Context, table string) (string, erro
 // GetPrimaryKey returns the primary key columns for a table
 // GetPrimaryKey는 테이블의 기본 키 컬럼을 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	pkCols, err := client.GetPrimaryKey(ctx, "users")
@@ -333,7 +342,8 @@ func (c *Client) GetPrimaryKey(ctx context.Context, table string) ([]string, err
 // GetForeignKeys returns information about foreign keys for a table
 // GetForeignKeys는 테이블의 외래 키에 대한 정보를 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	fks, err := client.GetForeignKeys(ctx, "orders")
@@ -398,7 +408,8 @@ type ForeignKeyInfo struct {
 // GetTableSize returns the size of a table in bytes
 // GetTableSize는 테이블의 크기를 바이트 단위로 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	size, err := client.GetTableSize(ctx, "users")
@@ -427,7 +438,8 @@ func (c *Client) GetTableSize(ctx context.Context, table string) (int64, error) 
 // GetDatabaseSize returns the total size of the current database in bytes
 // GetDatabaseSize는 현재 데이터베이스의 총 크기를 바이트 단위로 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	size, err := client.GetDatabaseSize(ctx)
@@ -455,7 +467,8 @@ func (c *Client) GetDatabaseSize(ctx context.Context) (int64, error) {
 // InspectTable returns comprehensive information about a table
 // InspectTable은 테이블에 대한 종합적인 정보를 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	inspection, err := client.InspectTable(ctx, "users")
@@ -470,7 +483,8 @@ func (c *Client) GetDatabaseSize(ctx context.Context) (int64, error) {
 func (c *Client) InspectTable(ctx context.Context, table string) (*TableInspection, error) {
 	inspection := &TableInspection{}
 
-	// Get basic table info / 기본 테이블 정보 가져오기
+	// Get basic table info
+	// 기본 테이블 정보 가져오기
 	tables, err := c.GetTables(ctx)
 	if err != nil {
 		return nil, err
@@ -483,35 +497,40 @@ func (c *Client) InspectTable(ctx context.Context, table string) (*TableInspecti
 		}
 	}
 
-	// Get columns / 컬럼 가져오기
+	// Get columns
+	// 컬럼 가져오기
 	columns, err := c.GetColumns(ctx, table)
 	if err != nil {
 		return nil, err
 	}
 	inspection.Columns = columns
 
-	// Get indexes / 인덱스 가져오기
+	// Get indexes
+	// 인덱스 가져오기
 	indexes, err := c.GetIndexes(ctx, table)
 	if err != nil {
 		return nil, err
 	}
 	inspection.Indexes = indexes
 
-	// Get primary key / 기본 키 가져오기
+	// Get primary key
+	// 기본 키 가져오기
 	pk, err := c.GetPrimaryKey(ctx, table)
 	if err != nil {
 		return nil, err
 	}
 	inspection.PrimaryKey = pk
 
-	// Get foreign keys / 외래 키 가져오기
+	// Get foreign keys
+	// 외래 키 가져오기
 	fks, err := c.GetForeignKeys(ctx, table)
 	if err != nil {
 		return nil, err
 	}
 	inspection.ForeignKeys = fks
 
-	// Get table size / 테이블 크기 가져오기
+	// Get table size
+	// 테이블 크기 가져오기
 	size, err := c.GetTableSize(ctx, table)
 	if err != nil {
 		return nil, err

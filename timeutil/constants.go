@@ -2,7 +2,8 @@ package timeutil
 
 import "time"
 
-// Default timezone / 기본 타임존
+// Default timezone
+// 기본 타임존
 // All functions use KST (Asia/Seoul, GMT+9) as default timezone unless specified.
 // 모든 함수는 별도 지정이 없으면 KST (Asia/Seoul, GMT+9)를 기본 타임존으로 사용합니다.
 const (
@@ -33,7 +34,8 @@ func init() {
 	defaultLocation = KST
 }
 
-// Time constants / 시간 상수
+// Time constants
+// 시간 상수
 const (
 	SecondsPerMinute  = 60
 	SecondsPerHour    = 3600
@@ -49,29 +51,37 @@ const (
 	WeeksPerYear      = 52
 )
 
-// Common format layouts / 일반 포맷 레이아웃
+// Common format layouts
+// 일반 포맷 레이아웃
 const (
-	// ISO8601 format / ISO8601 포맷
+	// ISO8601 format
+	// ISO8601 포맷
 	ISO8601Layout = "2006-01-02T15:04:05Z07:00"
 
-	// RFC3339 format / RFC3339 포맷
+	// RFC3339 format
+	// RFC3339 포맷
 	RFC3339Layout = "2006-01-02T15:04:05Z07:00"
 
-	// Date only format / 날짜만 포맷
+	// Date only format
+	// 날짜만 포맷
 	DateLayout = "2006-01-02"
 
-	// DateTime format / 날짜시간 포맷
+	// DateTime format
+	// 날짜시간 포맷
 	DateTimeLayout = "2006-01-02 15:04:05"
 
-	// Time only format / 시간만 포맷
+	// Time only format
+	// 시간만 포맷
 	TimeLayout = "15:04:05"
 )
 
-// Custom format tokens for user-friendly formatting / 사용자 친화적 포맷팅을 위한 커스텀 포맷 토큰
+// Custom format tokens for user-friendly formatting
+// 사용자 친화적 포맷팅을 위한 커스텀 포맷 토큰
 // These tokens are translated to Go's standard layout format.
 // 이 토큰들은 Go의 표준 레이아웃 포맷으로 변환됩니다.
 //
-// Supported tokens / 지원되는 토큰:
+// Supported tokens
+// 지원되는 토큰:
 //   YYYY - 4-digit year (2006)
 //   YY   - 2-digit year (06)
 //   MM   - 2-digit month (01-12)

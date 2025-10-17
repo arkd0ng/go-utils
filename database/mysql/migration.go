@@ -9,7 +9,8 @@ import (
 // CreateTable creates a new table with the given schema
 // CreateTable은 주어진 스키마로 새 테이블을 생성합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	schema := `
@@ -23,7 +24,8 @@ import (
 //	    log.Fatal(err)
 //	}
 //
-// Example with table options / 테이블 옵션 예제:
+// Example with table options
+// 테이블 옵션 예제:
 //
 //	schema := `
 //	    id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -33,10 +35,12 @@ import (
 //	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`
 //	err := client.CreateTable(ctx, "events", schema)
 func (c *Client) CreateTable(ctx context.Context, table string, schema string) error {
-	// Check if schema ends with closing parenthesis / 스키마가 닫는 괄호로 끝나는지 확인
+	// Check if schema ends with closing parenthesis
+	// 스키마가 닫는 괄호로 끝나는지 확인
 	schema = strings.TrimSpace(schema)
 	if !strings.HasSuffix(schema, ")") && !strings.Contains(schema, "ENGINE=") {
-		// Schema doesn't include table options, add default closing / 테이블 옵션이 포함되지 않은 경우 기본 닫기 추가
+		// Schema doesn't include table options, add default closing
+		// 테이블 옵션이 포함되지 않은 경우 기본 닫기 추가
 		schema = schema + "\n)"
 	}
 
@@ -58,7 +62,8 @@ func (c *Client) CreateTable(ctx context.Context, table string, schema string) e
 // CreateTableIfNotExists creates a table only if it doesn't already exist
 // CreateTableIfNotExists는 테이블이 존재하지 않는 경우에만 생성합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	schema := `
@@ -89,7 +94,8 @@ func (c *Client) CreateTableIfNotExists(ctx context.Context, table string, schem
 // DropTable drops a table from the database
 // DropTable은 데이터베이스에서 테이블을 삭제합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	err := client.DropTable(ctx, "old_users", false)
@@ -121,7 +127,8 @@ func (c *Client) DropTable(ctx context.Context, table string, ifExists bool) err
 // Warning: This operation cannot be rolled back.
 // 경고: 이 작업은 롤백할 수 없습니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	err := client.TruncateTable(ctx, "temp_data")
@@ -147,7 +154,8 @@ func (c *Client) TruncateTable(ctx context.Context, table string) error {
 // AddColumn adds a new column to a table
 // AddColumn은 테이블에 새 컬럼을 추가합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	err := client.AddColumn(ctx, "users", "phone", "VARCHAR(20)")
@@ -155,12 +163,15 @@ func (c *Client) TruncateTable(ctx context.Context, table string) error {
 //	    log.Fatal(err)
 //	}
 //
-// Example with position / 위치 지정 예제:
+// Example with position
+// 위치 지정 예제:
 //
-//	// Add column after 'email' / 'email' 뒤에 컬럼 추가
+// // Add column after 'email'
+// 'email' 뒤에 컬럼 추가
 //	err := client.AddColumn(ctx, "users", "phone", "VARCHAR(20) AFTER email")
 //
-//	// Add column at the beginning / 처음에 컬럼 추가
+// // Add column at the beginning
+// 처음에 컬럼 추가
 //	err := client.AddColumn(ctx, "users", "status", "ENUM('active','inactive') FIRST")
 func (c *Client) AddColumn(ctx context.Context, table string, column string, definition string) error {
 	query := fmt.Sprintf("ALTER TABLE %s ADD COLUMN %s %s", table, column, definition)
@@ -182,7 +193,8 @@ func (c *Client) AddColumn(ctx context.Context, table string, column string, def
 // DropColumn removes a column from a table
 // DropColumn은 테이블에서 컬럼을 제거합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	err := client.DropColumn(ctx, "users", "old_field")
@@ -209,10 +221,11 @@ func (c *Client) DropColumn(ctx context.Context, table string, column string) er
 // ModifyColumn modifies the definition of an existing column
 // ModifyColumn은 기존 컬럼의 정의를 수정합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	ctx := context.Background()
-//	// Change column type / 컬럼 타입 변경
+// ctx := context.Background()
+// Change column type / 컬럼 타입 변경
 //	err := client.ModifyColumn(ctx, "users", "age", "SMALLINT UNSIGNED")
 //	if err != nil {
 //	    log.Fatal(err)
@@ -237,7 +250,8 @@ func (c *Client) ModifyColumn(ctx context.Context, table string, column string, 
 // RenameColumn renames a column
 // RenameColumn은 컬럼의 이름을 변경합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	err := client.RenameColumn(ctx, "users", "old_name", "new_name", "VARCHAR(255)")
@@ -265,16 +279,19 @@ func (c *Client) RenameColumn(ctx context.Context, table string, oldName string,
 // AddIndex adds an index to a table
 // AddIndex는 테이블에 인덱스를 추가합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	ctx := context.Background()
-//	// Add simple index / 단순 인덱스 추가
+// ctx := context.Background()
+// Add simple index / 단순 인덱스 추가
 //	err := client.AddIndex(ctx, "users", "idx_email", []string{"email"}, false)
 //
-//	// Add unique index / 유니크 인덱스 추가
+// // Add unique index
+// 유니크 인덱스 추가
 //	err := client.AddIndex(ctx, "users", "idx_username", []string{"username"}, true)
 //
-//	// Add composite index / 복합 인덱스 추가
+// // Add composite index
+// 복합 인덱스 추가
 //	err := client.AddIndex(ctx, "orders", "idx_user_date",
 //	    []string{"user_id", "created_at"}, false)
 func (c *Client) AddIndex(ctx context.Context, table string, indexName string, columns []string, unique bool) error {
@@ -304,7 +321,8 @@ func (c *Client) AddIndex(ctx context.Context, table string, indexName string, c
 // DropIndex removes an index from a table
 // DropIndex는 테이블에서 인덱스를 제거합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	err := client.DropIndex(ctx, "users", "idx_email")
@@ -331,7 +349,8 @@ func (c *Client) DropIndex(ctx context.Context, table string, indexName string) 
 // RenameTable renames a table
 // RenameTable은 테이블의 이름을 변경합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	err := client.RenameTable(ctx, "old_users", "users")
@@ -358,7 +377,8 @@ func (c *Client) RenameTable(ctx context.Context, oldName string, newName string
 // AddForeignKey adds a foreign key constraint to a table
 // AddForeignKey는 테이블에 외래 키 제약 조건을 추가합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	err := client.AddForeignKey(ctx,
@@ -399,7 +419,8 @@ func (c *Client) AddForeignKey(ctx context.Context, table string, constraintName
 // DropForeignKey removes a foreign key constraint from a table
 // DropForeignKey는 테이블에서 외래 키 제약 조건을 제거합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	err := client.DropForeignKey(ctx, "orders", "fk_user")
@@ -426,16 +447,19 @@ func (c *Client) DropForeignKey(ctx context.Context, table string, constraintNam
 // CopyTable creates a copy of a table with a new name
 // CopyTable은 새 이름으로 테이블의 복사본을 생성합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	ctx := context.Background()
-//	// Copy structure and data / 구조와 데이터 복사
+// ctx := context.Background()
+// Copy structure and data / 구조와 데이터 복사
 //	err := client.CopyTable(ctx, "users", "users_backup", true)
 //
-//	// Copy only structure / 구조만 복사
+// // Copy only structure
+// 구조만 복사
 //	err := client.CopyTable(ctx, "users", "users_template", false)
 func (c *Client) CopyTable(ctx context.Context, sourceTable string, destTable string, withData bool) error {
-	// First, create table structure / 먼저 테이블 구조 생성
+	// First, create table structure
+	// 먼저 테이블 구조 생성
 	query := fmt.Sprintf("CREATE TABLE %s LIKE %s", destTable, sourceTable)
 
 	_, err := c.Exec(ctx, query)
@@ -443,12 +467,14 @@ func (c *Client) CopyTable(ctx context.Context, sourceTable string, destTable st
 		return c.wrapError("CopyTable", query, []interface{}{sourceTable, destTable}, err, 0)
 	}
 
-	// If withData, copy data / withData가 true면 데이터 복사
+	// If withData, copy data
+	// withData가 true면 데이터 복사
 	if withData {
 		insertQuery := fmt.Sprintf("INSERT INTO %s SELECT * FROM %s", destTable, sourceTable)
 		_, err := c.Exec(ctx, insertQuery)
 		if err != nil {
-			// Try to drop the newly created table / 새로 생성된 테이블 삭제 시도
+			// Try to drop the newly created table
+			// 새로 생성된 테이블 삭제 시도
 			c.DropTable(ctx, destTable, true)
 			return c.wrapError("CopyTable", insertQuery, []interface{}{sourceTable, destTable}, err, 0)
 		}
@@ -467,7 +493,8 @@ func (c *Client) CopyTable(ctx context.Context, sourceTable string, destTable st
 // AlterTableEngine changes the storage engine of a table
 // AlterTableEngine은 테이블의 스토리지 엔진을 변경합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	err := client.AlterTableEngine(ctx, "users", "InnoDB")
@@ -494,7 +521,8 @@ func (c *Client) AlterTableEngine(ctx context.Context, table string, engine stri
 // AlterTableCharset changes the character set and collation of a table
 // AlterTableCharset는 테이블의 문자 집합과 collation을 변경합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	err := client.AlterTableCharset(ctx, "users", "utf8mb4", "utf8mb4_unicode_ci")

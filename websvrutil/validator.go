@@ -9,7 +9,8 @@ import (
 )
 
 // ============================================================================
-// Validation / 검증
+// Validation
+// 검증
 // ============================================================================
 
 // Validator defines the interface for custom validators.
@@ -56,24 +57,41 @@ type DefaultValidator struct{}
 // Validate validates a struct using validation tags.
 // Validate는 검증 태그를 사용하여 구조체를 검증합니다.
 //
-// Supported tags / 지원되는 태그:
-//   - required: field must not be empty / 필드가 비어 있지 않아야 함
-//   - email: field must be a valid email address / 유효한 이메일 주소여야 함
-//   - min=<value>: minimum length/value / 최소 길이/값
-//   - max=<value>: maximum length/value / 최대 길이/값
-//   - len=<value>: exact length / 정확한 길이
-//   - eq=<value>: equal to value / 값과 같아야 함
-//   - ne=<value>: not equal to value / 값과 같지 않아야 함
-//   - gt=<value>: greater than value / 값보다 커야 함
-//   - gte=<value>: greater than or equal to value / 값보다 크거나 같아야 함
-//   - lt=<value>: less than value / 값보다 작아야 함
-//   - lte=<value>: less than or equal to value / 값보다 작거나 같아야 함
-//   - oneof=<values>: one of the values (comma-separated) / 값 중 하나 (쉼표로 구분)
-//   - alpha: alphabetic characters only / 알파벳 문자만
-//   - alphanum: alphanumeric characters only / 영숫자 문자만
-//   - numeric: numeric characters only / 숫자 문자만
+// Supported tags
+// 지원되는 태그:
+// - required: field must not be empty
+// 필드가 비어 있지 않아야 함
+// - email: field must be a valid email address
+// 유효한 이메일 주소여야 함
+// - min=<value>: minimum length/value
+// 최소 길이/값
+// - max=<value>: maximum length/value
+// 최대 길이/값
+// - len=<value>: exact length
+// 정확한 길이
+// - eq=<value>: equal to value
+// 값과 같아야 함
+// - ne=<value>: not equal to value
+// 값과 같지 않아야 함
+// - gt=<value>: greater than value
+// 값보다 커야 함
+// - gte=<value>: greater than or equal to value
+// 값보다 크거나 같아야 함
+// - lt=<value>: less than value
+// 값보다 작아야 함
+// - lte=<value>: less than or equal to value
+// 값보다 작거나 같아야 함
+// - oneof=<values>: one of the values (comma-separated)
+// 값 중 하나 (쉼표로 구분)
+// - alpha: alphabetic characters only
+// 알파벳 문자만
+// - alphanum: alphanumeric characters only
+// 영숫자 문자만
+// - numeric: numeric characters only
+// 숫자 문자만
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type User struct {
 //	    Name  string `validate:"required,min=3,max=50"`
@@ -98,13 +116,15 @@ func (v *DefaultValidator) Validate(obj interface{}) error {
 		field := val.Field(i)
 		fieldType := typ.Field(i)
 
-		// Get validation tag / 검증 태그 가져오기
+		// Get validation tag
+		// 검증 태그 가져오기
 		tag := fieldType.Tag.Get("validate")
 		if tag == "" {
 			continue
 		}
 
-		// Parse and validate tags / 태그 파싱 및 검증
+		// Parse and validate tags
+		// 태그 파싱 및 검증
 		if err := validateField(fieldType.Name, field, tag); err != nil {
 			if ve, ok := err.(*ValidationError); ok {
 				errors = append(errors, ve)
@@ -124,7 +144,8 @@ func (v *DefaultValidator) Validate(obj interface{}) error {
 // validateField validates a single field.
 // validateField는 단일 필드를 검증합니다.
 func validateField(fieldName string, field reflect.Value, tag string) error {
-	// Split tag by comma / 쉼표로 태그 분할
+	// Split tag by comma
+	// 쉼표로 태그 분할
 	rules := strings.Split(tag, ",")
 
 	for _, rule := range rules {
@@ -133,8 +154,7 @@ func validateField(fieldName string, field reflect.Value, tag string) error {
 			continue
 		}
 
-		// Parse rule (e.g., "min=3" -> "min", "3")
-		// 규칙 파싱 (예: "min=3" -> "min", "3")
+		// Parse rule (e.g., "min=3" -> "min", "3") / 규칙 파싱 (예: "min=3" -> "min", "3")
 		parts := strings.SplitN(rule, "=", 2)
 		ruleName := parts[0]
 		var ruleValue string
@@ -142,7 +162,8 @@ func validateField(fieldName string, field reflect.Value, tag string) error {
 			ruleValue = parts[1]
 		}
 
-		// Validate based on rule / 규칙에 따라 검증
+		// Validate based on rule
+		// 규칙에 따라 검증
 		if err := applyRule(fieldName, field, ruleName, ruleValue); err != nil {
 			return err
 		}
@@ -211,7 +232,8 @@ func validateEmail(fieldName string, field reflect.Value) error {
 		return nil // Empty is handled by required / 빈 값은 required에서 처리
 	}
 
-	// Simple email regex / 간단한 이메일 정규식
+	// Simple email regex
+	// 간단한 이메일 정규식
 	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	if !emailRegex.MatchString(email) {
 		return &ValidationError{Field: fieldName, Tag: "email", Value: email}
@@ -458,7 +480,8 @@ func validateOneOf(fieldName string, field reflect.Value, values string) error {
 	}
 
 	fieldValue := field.String()
-	// Split by comma / 쉼표로 분할
+	// Split by comma
+	// 쉼표로 분할
 	validValues := strings.Split(values, " ")
 
 	for _, valid := range validValues {
@@ -556,7 +579,8 @@ func isZero(v reflect.Value) bool {
 // BindWithValidation binds and validates the request data.
 // BindWithValidation은 요청 데이터를 바인딩하고 검증합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type User struct {
 //	    Name  string `json:"name" validate:"required,min=3"`
@@ -567,12 +591,14 @@ func isZero(v reflect.Value) bool {
 //	    return ctx.Error(400, err.Error())
 //	}
 func (c *Context) BindWithValidation(obj interface{}) error {
-	// First bind the data / 먼저 데이터 바인딩
+	// First bind the data
+	// 먼저 데이터 바인딩
 	if err := c.Bind(obj); err != nil {
 		return err
 	}
 
-	// Then validate / 그 다음 검증
+	// Then validate
+	// 그 다음 검증
 	validator := &DefaultValidator{}
 	return validator.Validate(obj)
 }

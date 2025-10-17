@@ -53,7 +53,8 @@ type PoolHealth struct {
 // GetPoolMetrics returns connection pool metrics
 // GetPoolMetrics는 연결 풀 메트릭을 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	metrics := client.GetPoolMetrics()
 //	fmt.Printf("Total pools: %d\n", metrics.PoolCount)
@@ -103,7 +104,8 @@ func (c *Client) GetPoolMetrics() PoolMetrics {
 // GetPoolHealthInfo performs a health check on all connection pools
 // GetPoolHealthInfo는 모든 연결 풀에 대한 헬스 체크를 수행합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx := context.Background()
 //	health := client.GetPoolHealthInfo(ctx)
@@ -160,7 +162,8 @@ func (c *Client) GetPoolHealthInfo(ctx context.Context) PoolHealthInfo {
 // This is an alias for the Stats() method for backward compatibility.
 // 이것은 하위 호환성을 위한 Stats() 메서드의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	stats := client.GetPoolStats()
 //	for i, stat := range stats {
@@ -178,7 +181,8 @@ func (c *Client) GetPoolStats() []sql.DBStats {
 // Returns a slice of utilization percentages (0-100) for each pool.
 // 각 풀의 사용률 백분율(0-100)을 포함하는 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	utilization := client.GetConnectionUtilization()
 //	for i, util := range utilization {
@@ -209,7 +213,8 @@ func (c *Client) GetConnectionUtilization() []float64 {
 // Returns wait count and average wait duration for each pool.
 // 각 풀의 대기 횟수와 평균 대기 시간을 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type WaitStat struct {
 //	    PoolIndex   int
@@ -258,7 +263,8 @@ type WaitStatistic struct {
 // GetCurrentConnectionIndex returns the current connection index (for round-robin)
 // GetCurrentConnectionIndex는 현재 연결 인덱스를 반환합니다(round-robin용)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	idx := client.GetCurrentConnectionIndex()
 //	fmt.Printf("Next query will use pool %d\n", idx)
@@ -275,7 +281,8 @@ func (c *Client) GetCurrentConnectionIndex() int {
 // This is only relevant when credential rotation is enabled.
 // 이것은 자격 증명 순환이 활성화된 경우에만 관련이 있습니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	rotIdx := client.GetRotationIndex()
 //	fmt.Printf("Next rotation will replace pool %d\n", rotIdx)

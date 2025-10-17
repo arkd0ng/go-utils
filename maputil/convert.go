@@ -15,7 +15,8 @@ import (
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	keys := maputil.Keys(m) // []string{"a", "b", "c"} (order may vary)
@@ -36,7 +37,8 @@ func Keys[K comparable, V any](m map[K]V) []K {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	values := maputil.Values(m) // []int{1, 2, 3} (order may vary)
@@ -57,7 +59,8 @@ func Values[K comparable, V any](m map[K]V) []V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2}
 //	entries := maputil.Entries(m)
@@ -82,7 +85,8 @@ func Entries[K comparable, V any](m map[K]V) []Entry[K, V] {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	entries := []Entry[string, int]{
 //	    {Key: "a", Value: 1},
@@ -106,7 +110,8 @@ func FromEntries[K comparable, V any](entries []Entry[K, V]) map[K]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type User struct { ID int; Name string }
 //	users := []User{{ID: 1, Name: "Alice"}, {ID: 2, Name: "Bob"}}
@@ -131,7 +136,8 @@ func FromSlice[K comparable, V any](slice []V, fn func(V) K) map[K]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type User struct { ID int; Name string; Age int }
 //	users := []User{{ID: 1, Name: "Alice", Age: 25}, {ID: 2, Name: "Bob", Age: 30}}
@@ -158,7 +164,8 @@ func FromSliceBy[K comparable, V any, R any](slice []V, keyFn func(V) K, valueFn
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	slice := maputil.ToSlice(m, func(k string, v int) string {
@@ -181,7 +188,8 @@ func ToSlice[K comparable, V any, R any](m map[K]V, fn func(K, V) R) []R {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	json, err := maputil.ToJSON(m) // `{"a":1,"b":2,"c":3}`
@@ -202,7 +210,8 @@ func ToJSON[K comparable, V any](m map[K]V) (string, error) {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	var m map[string]int
 //	err := maputil.FromJSON(`{"a":1,"b":2,"c":3}`, &m)
@@ -220,17 +229,25 @@ func FromJSON[K comparable, V any](jsonStr string, m *map[K]V) error {
 // 이 함수는 gopkg.in/yaml.v3 패키지를 사용하여 맵을 YAML 형식으로 직렬화합니다.
 // 맵을 YAML로 마샬링할 수 없으면 에러를 반환합니다.
 //
-// Time Complexity / 시간 복잡도: O(n)
-// Space Complexity / 공간 복잡도: O(n)
+// Time Complexity
+// 시간 복잡도: O(n)
+// Space Complexity
+// 공간 복잡도: O(n)
 //
-// Parameters / 매개변수:
-//   - m: The map to convert / 변환할 맵
+// Parameters
+// 매개변수:
+// - m: The map to convert
+// 변환할 맵
 //
-// Returns / 반환값:
-//   - string: YAML string representation / YAML 문자열 표현
-//   - error: Error if marshaling fails / 마샬링 실패 시 에러
+// Returns
+// 반환값:
+// - string: YAML string representation
+// YAML 문자열 표현
+// - error: Error if marshaling fails
+// 마샬링 실패 시 에러
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	config := map[string]interface{}{
 //		"server": map[string]interface{}{
@@ -251,11 +268,16 @@ func FromJSON[K comparable, V any](jsonStr string, m *map[K]V) error {
 //	//   host: localhost
 //	//   port: 5432
 //
-// Use Case / 사용 사례:
-//   - Configuration file generation / 설정 파일 생성
-//   - API response formatting / API 응답 포맷팅
-//   - Data serialization / 데이터 직렬화
-//   - Config export / 설정 내보내기
+// Use Case
+// 사용 사례:
+// - Configuration file generation
+// 설정 파일 생성
+// - API response formatting
+// API 응답 포맷팅
+// - Data serialization
+// 데이터 직렬화
+// - Config export
+// 설정 내보내기
 func ToYAML[K comparable, V any](m map[K]V) (string, error) {
 	bytes, err := yaml.Marshal(m)
 	if err != nil {
@@ -273,17 +295,25 @@ func ToYAML[K comparable, V any](m map[K]V) (string, error) {
 // 이 함수는 YAML 문자열을 map[string]interface{}로 역직렬화합니다.
 // YAML 문자열을 언마샬링할 수 없으면 에러를 반환합니다.
 //
-// Time Complexity / 시간 복잡도: O(n)
-// Space Complexity / 공간 복잡도: O(n)
+// Time Complexity
+// 시간 복잡도: O(n)
+// Space Complexity
+// 공간 복잡도: O(n)
 //
-// Parameters / 매개변수:
-//   - yamlStr: YAML string to parse / 파싱할 YAML 문자열
+// Parameters
+// 매개변수:
+// - yamlStr: YAML string to parse
+// 파싱할 YAML 문자열
 //
-// Returns / 반환값:
-//   - map[string]interface{}: Parsed map / 파싱된 맵
-//   - error: Error if unmarshaling fails / 언마샬링 실패 시 에러
+// Returns
+// 반환값:
+// - map[string]interface{}: Parsed map
+// 파싱된 맵
+// - error: Error if unmarshaling fails
+// 언마샬링 실패 시 에러
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	yamlStr := `
 //	server:
@@ -305,11 +335,16 @@ func ToYAML[K comparable, V any](m map[K]V) (string, error) {
 //	//   },
 //	// }
 //
-// Use Case / 사용 사례:
-//   - Configuration file loading / 설정 파일 로딩
-//   - API request parsing / API 요청 파싱
-//   - Data deserialization / 데이터 역직렬화
-//   - Config import / 설정 가져오기
+// Use Case
+// 사용 사례:
+// - Configuration file loading
+// 설정 파일 로딩
+// - API request parsing
+// API 요청 파싱
+// - Data deserialization
+// 데이터 역직렬화
+// - Config import
+// 설정 가져오기
 func FromYAML(yamlStr string) (map[string]interface{}, error) {
 	var result map[string]interface{}
 	err := yaml.Unmarshal([]byte(yamlStr), &result)

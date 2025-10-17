@@ -5,7 +5,8 @@ import (
 	"testing"
 )
 
-// Test Levenshtein distance / Levenshtein 거리 테스트
+// Test Levenshtein distance
+// Levenshtein 거리 테스트
 func TestLevenshteinDistance(t *testing.T) {
 	tests := []struct {
 		a        string
@@ -31,7 +32,8 @@ func TestLevenshteinDistance(t *testing.T) {
 	}
 }
 
-// Test Similarity / 유사도 테스트
+// Test Similarity
+// 유사도 테스트
 func TestSimilarity(t *testing.T) {
 	tests := []struct {
 		a        string
@@ -56,7 +58,8 @@ func TestSimilarity(t *testing.T) {
 	}
 }
 
-// Test Hamming distance / Hamming 거리 테스트
+// Test Hamming distance
+// Hamming 거리 테스트
 func TestHammingDistance(t *testing.T) {
 	tests := []struct {
 		a        string
@@ -81,7 +84,8 @@ func TestHammingDistance(t *testing.T) {
 	}
 }
 
-// Test Jaro-Winkler similarity / Jaro-Winkler 유사도 테스트
+// Test Jaro-Winkler similarity
+// Jaro-Winkler 유사도 테스트
 func TestJaroWinklerSimilarity(t *testing.T) {
 	tests := []struct {
 		a        string
@@ -105,7 +109,8 @@ func TestJaroWinklerSimilarity(t *testing.T) {
 	}
 }
 
-// Test symmetry / 대칭성 테스트
+// Test symmetry
+// 대칭성 테스트
 func TestDistanceSymmetry(t *testing.T) {
 	pairs := [][]string{
 		{"hello", "world"},
@@ -148,7 +153,8 @@ func TestDistanceSymmetry(t *testing.T) {
 	}
 }
 
-// Test triangle inequality for Levenshtein / Levenshtein의 삼각 부등식 테스트
+// Test triangle inequality for Levenshtein
+// Levenshtein의 삼각 부등식 테스트
 func TestLevenshteinTriangleInequality(t *testing.T) {
 	triplets := [][]string{
 		{"hello", "hallo", "hillo"},
@@ -170,7 +176,8 @@ func TestLevenshteinTriangleInequality(t *testing.T) {
 	}
 }
 
-// Test Unicode support / 유니코드 지원 테스트
+// Test Unicode support
+// 유니코드 지원 테스트
 func TestDistanceUnicode(t *testing.T) {
 	tests := []struct {
 		name string
@@ -194,9 +201,11 @@ func TestDistanceUnicode(t *testing.T) {
 	}
 }
 
-// Test edge cases / 엣지 케이스 테스트
+// Test edge cases
+// 엣지 케이스 테스트
 func TestDistanceEdgeCases(t *testing.T) {
-	// Empty strings / 빈 문자열
+	// Empty strings
+	// 빈 문자열
 	if LevenshteinDistance("", "") != 0 {
 		t.Error("Levenshtein distance of empty strings should be 0")
 	}
@@ -210,7 +219,8 @@ func TestDistanceEdgeCases(t *testing.T) {
 		t.Error("Jaro-Winkler similarity of empty strings should be 1.0")
 	}
 
-	// One empty string / 한 쪽이 빈 문자열
+	// One empty string
+	// 한 쪽이 빈 문자열
 	if LevenshteinDistance("hello", "") != 5 {
 		t.Error("Levenshtein distance to empty string should be length of non-empty string")
 	}
@@ -218,7 +228,8 @@ func TestDistanceEdgeCases(t *testing.T) {
 		t.Error("Similarity to empty string should be 0.0")
 	}
 
-	// Identical strings / 동일한 문자열
+	// Identical strings
+	// 동일한 문자열
 	if LevenshteinDistance("hello", "hello") != 0 {
 		t.Error("Levenshtein distance of identical strings should be 0")
 	}
@@ -233,7 +244,8 @@ func TestDistanceEdgeCases(t *testing.T) {
 	}
 }
 
-// Benchmark distance functions / 거리 함수 벤치마크
+// Benchmark distance functions
+// 거리 함수 벤치마크
 func BenchmarkLevenshteinDistance(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = LevenshteinDistance("kitten", "sitting")

@@ -12,7 +12,8 @@ import (
 	"github.com/arkd0ng/go-utils/logging"
 )
 
-// User struct for JSON/YAML examples / JSON/YAML 예제를 위한 User 구조체
+// User struct for JSON/YAML examples
+// JSON/YAML 예제를 위한 User 구조체
 type User struct {
 	ID   int    `json:"id" yaml:"id"`
 	Name string `json:"name" yaml:"name"`
@@ -20,30 +21,38 @@ type User struct {
 }
 
 func main() {
-	// Setup log file with backup management / 백업 관리와 함께 로그 파일 설정
+	// Setup log file with backup management
+	// 백업 관리와 함께 로그 파일 설정
 	logFilePath := "logs/fileutil-example.log"
 
-	// Check if previous log file exists / 이전 로그 파일 존재 여부 확인
+	// Check if previous log file exists
+	// 이전 로그 파일 존재 여부 확인
 	if fileutil.Exists(logFilePath) {
-		// Get modification time of existing log file / 기존 로그 파일의 수정 시간 가져오기
+		// Get modification time of existing log file
+		// 기존 로그 파일의 수정 시간 가져오기
 		modTime, err := fileutil.ModTime(logFilePath)
 		if err == nil {
-			// Create backup filename with timestamp / 타임스탬프와 함께 백업 파일명 생성
+			// Create backup filename with timestamp
+			// 타임스탬프와 함께 백업 파일명 생성
 			backupName := fmt.Sprintf("logs/fileutil-example-%s.log", modTime.Format("20060102-150405"))
 
-			// Backup existing log file / 기존 로그 파일 백업
+			// Backup existing log file
+			// 기존 로그 파일 백업
 			if err := fileutil.CopyFile(logFilePath, backupName); err == nil {
 				fmt.Printf("✅ Backed up previous log to: %s\n", backupName)
-				// Delete original log file to prevent content duplication / 내용 중복 방지를 위해 원본 로그 파일 삭제
+				// Delete original log file to prevent content duplication
+				// 내용 중복 방지를 위해 원본 로그 파일 삭제
 				fileutil.DeleteFile(logFilePath)
 			}
 		}
 
-		// Cleanup old backup files - keep only 5 most recent / 오래된 백업 파일 정리 - 최근 5개만 유지
+		// Cleanup old backup files - keep only 5 most recent
+		// 오래된 백업 파일 정리 - 최근 5개만 유지
 		backupPattern := "logs/fileutil-example-*.log"
 		backupFiles, err := filepath.Glob(backupPattern)
 		if err == nil && len(backupFiles) > 5 {
-			// Sort by modification time / 수정 시간으로 정렬
+			// Sort by modification time
+			// 수정 시간으로 정렬
 			type fileInfo struct {
 				path    string
 				modTime time.Time
@@ -55,7 +64,8 @@ func main() {
 				}
 			}
 
-			// Sort oldest first / 가장 오래된 것부터 정렬
+			// Sort oldest first
+			// 가장 오래된 것부터 정렬
 			for i := 0; i < len(files)-1; i++ {
 				for j := i + 1; j < len(files); j++ {
 					if files[i].modTime.After(files[j].modTime) {
@@ -64,7 +74,8 @@ func main() {
 				}
 			}
 
-			// Delete oldest files to keep only 5 / 5개만 유지하도록 가장 오래된 파일 삭제
+			// Delete oldest files to keep only 5
+			// 5개만 유지하도록 가장 오래된 파일 삭제
 			for i := 0; i < len(files)-5; i++ {
 				fileutil.DeleteFile(files[i].path)
 				fmt.Printf("🗑️  Deleted old backup: %s\n", files[i].path)
@@ -72,7 +83,8 @@ func main() {
 		}
 	}
 
-	// Initialize logger with fixed filename / 고정 파일명으로 로거 초기화
+	// Initialize logger with fixed filename
+	// 고정 파일명으로 로거 초기화
 	logger, err := logging.New(
 		logging.WithFilePath(logFilePath),
 		logging.WithLevel(logging.DEBUG),
@@ -97,7 +109,8 @@ func main() {
 	logger.Info("   총 함수 개수: 12개 카테고리에 걸쳐 약 91개 함수")
 	logger.Info("")
 
-	// Create main temp directory for all examples / 모든 예제를 위한 메인 임시 디렉토리 생성
+	// Create main temp directory for all examples
+	// 모든 예제를 위한 메인 임시 디렉토리 생성
 	logger.Info("🚀 Starting Examples / 예제 시작")
 	logger.Info("   Creating temporary workspace for isolated testing...")
 	logger.Info("   격리된 테스트를 위한 임시 작업공간 생성 중...")
@@ -118,7 +131,8 @@ func main() {
 	logger.Info("   ℹ️  종료 시 디렉토리가 자동으로 정리됩니다")
 	logger.Info("")
 
-	// Run all examples / 모든 예제 실행
+	// Run all examples
+	// 모든 예제 실행
 	example01_FileWriting(logger, tempDir)
 	example02_FileReading(logger, tempDir)
 	example03_PathOperations(logger, tempDir)
@@ -143,7 +157,8 @@ func main() {
 	logger.Info("╚════════════════════════════════════════════════════════════════════════════╝")
 }
 
-// Example 1: File Writing Operations / 예제 1: 파일 쓰기 작업
+// Example 1: File Writing Operations
+// 예제 1: 파일 쓰기 작업
 func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("📝 Example 1: File Writing Operations")
@@ -161,7 +176,8 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	logger.Info(fmt.Sprintf("📁 Creating example directory: %s", filepath.Base(exampleDir)))
 	logger.Info("")
 
-	// 1. WriteString - Write a string to file / 문자열을 파일에 쓰기
+	// 1. WriteString - Write a string to file
+	// 문자열을 파일에 쓰기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("1️⃣  WriteString() - Writing text content to file")
 	logger.Info("   문자열을 파일에 쓰기")
@@ -239,7 +255,8 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	}
 	logger.Info("")
 
-	// 2. WriteFile - Write bytes to file / 바이트를 파일에 쓰기
+	// 2. WriteFile - Write bytes to file
+	// 바이트를 파일에 쓰기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("2️⃣  WriteFile() - Writing binary data to file")
 	logger.Info("   바이너리 데이터를 파일에 쓰기")
@@ -298,7 +315,8 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	}
 	logger.Info("")
 
-	// 3. WriteLines - Write multiple lines / 여러 줄 쓰기
+	// 3. WriteLines - Write multiple lines
+	// 여러 줄 쓰기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("3️⃣  WriteLines() - Writing array of strings as lines")
 	logger.Info("   문자열 배열을 여러 줄로 쓰기")
@@ -371,7 +389,8 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	}
 	logger.Info("")
 
-	// 4. WriteJSON - Write struct as JSON / 구조체를 JSON으로 쓰기
+	// 4. WriteJSON - Write struct as JSON
+	// 구조체를 JSON으로 쓰기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("4️⃣  WriteJSON() - Writing Go struct as JSON file")
 	logger.Info("   Go 구조체를 JSON 파일로 쓰기")
@@ -445,7 +464,8 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	}
 	logger.Info("")
 
-	// 5. WriteYAML - Write struct as YAML / 구조체를 YAML로 쓰기
+	// 5. WriteYAML - Write struct as YAML
+	// 구조체를 YAML로 쓰기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("5️⃣  WriteYAML() - Writing Go struct as YAML file")
 	logger.Info("   Go 구조체를 YAML 파일로 쓰기")
@@ -505,7 +525,8 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	}
 	logger.Info("")
 
-	// 6. WriteCSV - Write CSV data / CSV 데이터 쓰기
+	// 6. WriteCSV - Write CSV data
+	// CSV 데이터 쓰기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("6️⃣  WriteCSV() - Writing 2D array as CSV file")
 	logger.Info("   2차원 배열을 CSV 파일로 쓰기")
@@ -579,7 +600,8 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	}
 	logger.Info("")
 
-	// 7. AppendString - Append to existing file / 기존 파일에 추가
+	// 7. AppendString - Append to existing file
+	// 기존 파일에 추가
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("7️⃣  AppendString() - Appending text to existing file")
 	logger.Info("   기존 파일에 텍스트 추가하기")
@@ -635,7 +657,8 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	logger.Info("   " + strings.Repeat("─", 70))
 	logger.Info("")
 
-	// 8. AppendLines - Append multiple lines / 여러 줄 추가
+	// 8. AppendLines - Append multiple lines
+	// 여러 줄 추가
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("8️⃣  AppendLines() - Appending multiple lines to file")
 	logger.Info("   파일에 여러 줄 추가하기")
@@ -708,7 +731,8 @@ func example01_FileWriting(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 2: File Reading Operations / 예제 2: 파일 읽기 작업
+// Example 2: File Reading Operations
+// 예제 2: 파일 읽기 작업
 func example02_FileReading(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("📖 Example 2: File Reading Operations")
@@ -726,7 +750,8 @@ func example02_FileReading(logger *logging.Logger, tempDir string) {
 	logger.Info(fmt.Sprintf("📁 Reading from example directory: %s", filepath.Base(exampleDir)))
 	logger.Info("")
 
-	// 1. ReadString - Read file as string / 파일을 문자열로 읽기
+	// 1. ReadString - Read file as string
+	// 파일을 문자열로 읽기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("1️⃣  ReadString() - Reading entire file as string")
 	logger.Info("   파일 전체를 문자열로 읽기")
@@ -774,7 +799,8 @@ func example02_FileReading(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 	logger.Info("")
 
-	// 2. ReadFile - Read file as bytes / 파일을 바이트로 읽기
+	// 2. ReadFile - Read file as bytes
+	// 파일을 바이트로 읽기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("2️⃣  ReadFile() - Reading file as byte array")
 	logger.Info("   파일을 바이트 배열로 읽기")
@@ -812,7 +838,8 @@ func example02_FileReading(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 	logger.Info("")
 
-	// 3. ReadLines - Read file as array of lines / 파일을 줄 배열로 읽기
+	// 3. ReadLines - Read file as array of lines
+	// 파일을 줄 배열로 읽기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("3️⃣  ReadLines() - Reading file as array of strings")
 	logger.Info("   파일을 문자열 배열로 읽기")
@@ -855,7 +882,8 @@ func example02_FileReading(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 	logger.Info("")
 
-	// 4. ReadJSON - Read JSON file into struct / JSON 파일을 구조체로 읽기
+	// 4. ReadJSON - Read JSON file into struct
+	// JSON 파일을 구조체로 읽기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("4️⃣  ReadJSON() - Deserializing JSON file to Go struct")
 	logger.Info("   JSON 파일을 Go 구조체로 역직렬화")
@@ -899,7 +927,8 @@ func example02_FileReading(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 	logger.Info("")
 
-	// 5. ReadYAML - Read YAML file into struct / YAML 파일을 구조체로 읽기
+	// 5. ReadYAML - Read YAML file into struct
+	// YAML 파일을 구조체로 읽기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("5️⃣  ReadYAML() - Deserializing YAML file to Go struct")
 	logger.Info("   YAML 파일을 Go 구조체로 역직렬화")
@@ -943,7 +972,8 @@ func example02_FileReading(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 	logger.Info("")
 
-	// 6. ReadCSV - Read CSV file / CSV 파일 읽기
+	// 6. ReadCSV - Read CSV file
+	// CSV 파일 읽기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("6️⃣  ReadCSV() - Reading CSV file as 2D array")
 	logger.Info("   CSV 파일을 2차원 배열로 읽기")
@@ -1010,7 +1040,8 @@ func example02_FileReading(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 3: Path Operations / 예제 3: 경로 작업
+// Example 3: Path Operations
+// 예제 3: 경로 작업
 func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	_ = tempDir // Path operations don't require tempDir / 경로 작업은 tempDir이 필요하지 않습니다
 
@@ -1029,7 +1060,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 
 	testPath := "/home/user/documents/report.pdf"
 
-	// 1. Join - Join path elements / 경로 요소 결합
+	// 1. Join - Join path elements
+	// 경로 요소 결합
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("1️⃣  Join() - Joining path elements")
 	logger.Info("   경로 요소 결합")
@@ -1075,7 +1107,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("   • Cross-platform safe: true")
 	logger.Info("")
 
-	// 2. Split - Split path into directory and file / 경로를 디렉토리와 파일로 분리
+	// 2. Split - Split path into directory and file
+	// 경로를 디렉토리와 파일로 분리
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("2️⃣  Split() - Splitting path into directory and file")
 	logger.Info("   경로를 디렉토리와 파일로 분리")
@@ -1117,7 +1150,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("   • Rejoining equals original: true")
 	logger.Info("")
 
-	// 3. Base - Get base name / 기본 이름 가져오기
+	// 3. Base - Get base name
+	// 기본 이름 가져오기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("3️⃣  Base() - Getting base filename")
 	logger.Info("   기본 파일명 가져오기")
@@ -1158,7 +1192,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("   • Matches last path element: true")
 	logger.Info("")
 
-	// 4. Dir - Get directory / 디렉토리 가져오기
+	// 4. Dir - Get directory
+	// 디렉토리 가져오기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("4️⃣  Dir() - Getting directory path")
 	logger.Info("   디렉토리 경로 가져오기")
@@ -1199,7 +1234,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("   • Can be used for operations: true")
 	logger.Info("")
 
-	// 5. Ext - Get extension / 확장자 가져오기
+	// 5. Ext - Get extension
+	// 확장자 가져오기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("5️⃣  Ext() - Getting file extension")
 	logger.Info("   파일 확장자 가져오기")
@@ -1240,7 +1276,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("   • Matches expected format: true")
 	logger.Info("")
 
-	// 6. WithoutExt - Remove extension / 확장자 제거
+	// 6. WithoutExt - Remove extension
+	// 확장자 제거
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("6️⃣  WithoutExt() - Removing file extension")
 	logger.Info("   파일 확장자 제거")
@@ -1282,7 +1319,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("   • No trailing dot: true")
 	logger.Info("")
 
-	// 7. ChangeExt - Change extension / 확장자 변경
+	// 7. ChangeExt - Change extension
+	// 확장자 변경
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("7️⃣  ChangeExt() - Changing file extension")
 	logger.Info("   파일 확장자 변경")
@@ -1325,7 +1363,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("   • Path structure intact: true")
 	logger.Info("")
 
-	// 8. HasExt - Check if has extension / 확장자 확인
+	// 8. HasExt - Check if has extension
+	// 확장자 확인
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("8️⃣  HasExt() - Checking if file has specific extension")
 	logger.Info("   특정 확장자 확인")
@@ -1373,7 +1412,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("   • Multiple extension support: true")
 	logger.Info("")
 
-	// 9. Abs - Get absolute path / 절대 경로 가져오기
+	// 9. Abs - Get absolute path
+	// 절대 경로 가져오기
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("9️⃣  Abs() - Converting to absolute path")
 	logger.Info("   절대 경로로 변환")
@@ -1414,7 +1454,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("   • Path exists: true")
 	logger.Info("")
 
-	// 10. IsAbs - Check if absolute / 절대 경로 확인
+	// 10. IsAbs - Check if absolute
+	// 절대 경로 확인
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔟 IsAbs() - Checking if path is absolute")
 	logger.Info("   경로가 절대 경로인지 확인")
@@ -1460,7 +1501,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("   • Platform-aware: true")
 	logger.Info("")
 
-	// 11. CleanPath - Clean path / 경로 정리
+	// 11. CleanPath - Clean path
+	// 경로 정리
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("1️⃣1️⃣ CleanPath() - Cleaning and normalizing path")
 	logger.Info("   경로 정리 및 정규화")
@@ -1507,7 +1549,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("   • Canonical form: true")
 	logger.Info("")
 
-	// 12. ToSlash & FromSlash - Path separators / 경로 구분자
+	// 12. ToSlash & FromSlash - Path separators
+	// 경로 구분자
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("1️⃣2️⃣ ToSlash() / FromSlash() - Converting path separators")
 	logger.Info("   경로 구분자 변환")
@@ -1588,7 +1631,8 @@ func example03_PathOperations(logger *logging.Logger, tempDir string) {
 }
 
 
-// Example 4: File Information / 예제 4: 파일 정보
+// Example 4: File Information
+// 예제 4: 파일 정보
 func example04_FileInformation(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("ℹ️  Example 4: File Information & Metadata")
@@ -1648,7 +1692,8 @@ func example04_FileInformation(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 5: File Copying / 예제 5: 파일 복사
+// Example 5: File Copying
+// 예제 5: 파일 복사
 func example05_FileCopying(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("📋 Example 5: File & Directory Copying")
@@ -1712,7 +1757,8 @@ func example05_FileCopying(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 6: File Moving / 예제 6: 파일 이동
+// Example 6: File Moving
+// 예제 6: 파일 이동
 func example06_FileMoving(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🚚 Example 6: File & Directory Moving")
@@ -1765,7 +1811,8 @@ func example06_FileMoving(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 7: File Deletion / 예제 7: 파일 삭제
+// Example 7: File Deletion
+// 예제 7: 파일 삭제
 func example07_FileDeletion(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🗑️  Example 7: File & Directory Deletion")
@@ -1841,7 +1888,8 @@ func example07_FileDeletion(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 8: Directory Operations / 예제 8: 디렉토리 작업
+// Example 8: Directory Operations
+// 예제 8: 디렉토리 작업
 func example08_DirectoryOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("📁 Example 8: Directory Operations")
@@ -1978,7 +2026,8 @@ func example08_DirectoryOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 9: File Hashing / 예제 9: 파일 해싱
+// Example 9: File Hashing
+// 예제 9: 파일 해싱
 func example09_FileHashing(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔐 Example 9: File Hashing & Checksums")
@@ -2074,7 +2123,8 @@ func example09_FileHashing(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 10: Advanced Reading / 예제 10: 고급 읽기
+// Example 10: Advanced Reading
+// 예제 10: 고급 읽기
 func example10_AdvancedReading(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("📚 Example 10: Advanced Reading Operations")
@@ -2111,7 +2161,8 @@ func example10_AdvancedReading(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 11: Atomic Operations / 예제 11: 원자 연산
+// Example 11: Atomic Operations
+// 예제 11: 원자 연산
 func example11_AtomicOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("⚛️  Example 11: Atomic Operations")
@@ -2145,7 +2196,8 @@ func example11_AtomicOperations(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 12: Permissions & Ownership / 예제 12: 권한 및 소유권
+// Example 12: Permissions & Ownership
+// 예제 12: 권한 및 소유권
 func example12_PermissionsAndOwnership(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔒 Example 12: Permissions & Ownership")
@@ -2170,7 +2222,8 @@ func example12_PermissionsAndOwnership(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 13: Symlinks & Special Files / 예제 13: 심볼릭 링크 및 특수 파일
+// Example 13: Symlinks & Special Files
+// 예제 13: 심볼릭 링크 및 특수 파일
 func example13_SymlinksAndSpecialFiles(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🔗 Example 13: Symlinks & Special Files")
@@ -2225,7 +2278,8 @@ func example14_WalkAndFilter(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 15: Error Handling / 예제 15: 에러 처리
+// Example 15: Error Handling
+// 예제 15: 에러 처리
 func example15_ErrorHandling(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("❌ Example 15: Error Handling")
@@ -2257,7 +2311,8 @@ func example15_ErrorHandling(logger *logging.Logger, tempDir string) {
 	logger.Info("")
 }
 
-// Example 16: Real-World Scenarios / 예제 16: 실제 사용 시나리오
+// Example 16: Real-World Scenarios
+// 예제 16: 실제 사용 시나리오
 func example16_RealWorldScenarios(logger *logging.Logger, tempDir string) {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("🌍 Example 16: Real-World Scenarios")

@@ -6,7 +6,8 @@ package sliceutil
 // Map applies a function to each element and returns a new slice with the results.
 // Map은 각 요소에 함수를 적용하고 결과로 새 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	doubled := sliceutil.Map(numbers, func(n int) int {
@@ -31,7 +32,8 @@ func Map[T any, R any](slice []T, fn func(T) R) []R {
 // Filter returns a new slice containing only elements that satisfy the predicate.
 // Filter는 조건을 만족하는 요소만 포함하는 새 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5, 6}
 //	evens := sliceutil.Filter(numbers, func(n int) bool {
@@ -58,7 +60,8 @@ func Filter[T any](slice []T, predicate func(T) bool) []T {
 // FlatMap applies a function to each element and flattens the results into a single slice.
 // FlatMap은 각 요소에 함수를 적용하고 결과를 하나의 슬라이스로 평탄화합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	words := []string{"hello", "world"}
 //	chars := sliceutil.FlatMap(words, func(s string) []rune {
@@ -83,7 +86,8 @@ func FlatMap[T any, R any](slice []T, fn func(T) []R) []R {
 // Flatten flattens a slice of slices into a single slice.
 // Flatten은 슬라이스의 슬라이스를 하나의 슬라이스로 평탄화합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	nested := [][]int{{1, 2}, {3, 4}, {5}}
 //	flat := sliceutil.Flatten(nested) // [1, 2, 3, 4, 5]
@@ -109,7 +113,8 @@ func Flatten[T any](slice [][]T) []T {
 // Unique returns a new slice with duplicate elements removed.
 // Unique는 중복 요소가 제거된 새 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 2, 3, 3, 3, 4}
 //	unique := sliceutil.Unique(numbers) // [1, 2, 3, 4]
@@ -134,7 +139,8 @@ func Unique[T comparable](slice []T) []T {
 // UniqueBy returns a new slice with duplicate elements removed based on a key function.
 // UniqueBy는 키 함수를 기반으로 중복 요소가 제거된 새 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type Person struct {
 //	    Name string
@@ -167,7 +173,8 @@ func UniqueBy[T any, K comparable](slice []T, keyFunc func(T) K) []T {
 // Compact removes consecutive duplicate elements from the slice.
 // Compact는 슬라이스에서 연속된 중복 요소를 제거합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 2, 3, 3, 3, 4, 4, 5}
 //	compact := sliceutil.Compact(numbers) // [1, 2, 3, 4, 5]
@@ -194,7 +201,8 @@ func Compact[T comparable](slice []T) []T {
 // Reverse returns a new slice with elements in reverse order.
 // Reverse는 요소가 역순으로 된 새 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	reversed := sliceutil.Reverse(numbers) // [5, 4, 3, 2, 1]

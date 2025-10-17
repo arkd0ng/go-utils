@@ -10,7 +10,8 @@ import (
 // Exists checks if a file or directory exists
 // Exists는 파일 또는 디렉토리가 존재하는지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	if fileutil.Exists("path/to/file.txt") {
 //	    fmt.Println("File exists")
@@ -23,7 +24,8 @@ func Exists(path string) bool {
 // IsFile checks if the path is a regular file
 // IsFile은 경로가 일반 파일인지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	if fileutil.IsFile("path/to/file.txt") {
 //	    fmt.Println("Is a file")
@@ -39,7 +41,8 @@ func IsFile(path string) bool {
 // IsDir checks if the path is a directory
 // IsDir는 경로가 디렉토리인지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	if fileutil.IsDir("path/to/directory") {
 //	    fmt.Println("Is a directory")
@@ -55,7 +58,8 @@ func IsDir(path string) bool {
 // IsSymlink checks if the path is a symbolic link
 // IsSymlink은 경로가 심볼릭 링크인지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	if fileutil.IsSymlink("path/to/link") {
 //	    fmt.Println("Is a symbolic link")
@@ -71,7 +75,8 @@ func IsSymlink(path string) bool {
 // Size returns the size of a file in bytes
 // Size는 파일의 크기를 바이트로 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	size, err := fileutil.Size("path/to/file.txt")
 //	if err != nil {
@@ -86,10 +91,10 @@ func Size(path string) (int64, error) {
 	return info.Size(), nil
 }
 
-// SizeHuman returns the file size in a human-readable format (e.g., "1.5 MB")
-// SizeHuman은 사람이 읽기 쉬운 형식으로 파일 크기를 반환합니다 (예: "1.5 MB")
+// SizeHuman returns the file size in a human-readable format (e.g., "1.5 MB") / SizeHuman은 사람이 읽기 쉬운 형식으로 파일 크기를 반환합니다 (예: "1.5 MB")
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	size, err := fileutil.SizeHuman("path/to/file.txt")
 //	if err != nil {
@@ -123,7 +128,8 @@ func formatSize(size int64) string {
 // Chmod changes the mode of a file or directory
 // Chmod는 파일 또는 디렉토리의 모드를 변경합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.Chmod("path/to/file.txt", 0644)
 //	if err != nil {
@@ -139,7 +145,8 @@ func Chmod(path string, mode os.FileMode) error {
 // Chown changes the owner and group of a file or directory
 // Chown은 파일 또는 디렉토리의 소유자와 그룹을 변경합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.Chown("path/to/file.txt", 1000, 1000)
 //	if err != nil {
@@ -155,7 +162,8 @@ func Chown(path string, uid, gid int) error {
 // IsReadable checks if a file or directory is readable
 // IsReadable은 파일 또는 디렉토리가 읽기 가능한지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	if fileutil.IsReadable("path/to/file.txt") {
 //	    fmt.Println("File is readable")
@@ -171,7 +179,8 @@ func IsReadable(path string) bool {
 // IsWritable checks if a file or directory is writable
 // IsWritable은 파일 또는 디렉토리가 쓰기 가능한지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	if fileutil.IsWritable("path/to/file.txt") {
 //	    fmt.Println("File is writable")
@@ -187,7 +196,8 @@ func IsWritable(path string) bool {
 // IsExecutable checks if a file is executable
 // IsExecutable은 파일이 실행 가능한지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	if fileutil.IsExecutable("path/to/script.sh") {
 //	    fmt.Println("File is executable")
@@ -203,7 +213,8 @@ func IsExecutable(path string) bool {
 // ModTime returns the modification time of a file or directory
 // ModTime은 파일 또는 디렉토리의 수정 시간을 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	modTime, err := fileutil.ModTime("path/to/file.txt")
 //	if err != nil {
@@ -224,7 +235,8 @@ func ModTime(path string) (time.Time, error) {
 // Note: This function is platform-specific and may not work on all systems.
 // 참고: 이 함수는 플랫폼별로 다르며 모든 시스템에서 작동하지 않을 수 있습니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	accessTime, err := fileutil.AccessTime("path/to/file.txt")
 //	if err != nil {
@@ -254,7 +266,8 @@ func AccessTime(path string) (time.Time, error) {
 // Note: This function is platform-specific and may not work on all systems.
 // 참고: 이 함수는 플랫폼별로 다르며 모든 시스템에서 작동하지 않을 수 있습니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	changeTime, err := fileutil.ChangeTime("path/to/file.txt")
 //	if err != nil {
@@ -281,20 +294,24 @@ func ChangeTime(path string) (time.Time, error) {
 // Touch creates a file if it doesn't exist, or updates its modification time if it does
 // Touch는 파일이 존재하지 않으면 생성하고, 존재하면 수정 시간을 업데이트합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.Touch("path/to/file.txt")
 //	if err != nil {
 //	    log.Fatal(err)
 //	}
 func Touch(path string) error {
-	// Check if file exists / 파일 존재 확인
+	// Check if file exists
+	// 파일 존재 확인
 	if !Exists(path) {
-		// Create file / 파일 생성
+		// Create file
+		// 파일 생성
 		return WriteFile(path, []byte{})
 	}
 
-	// Update modification time / 수정 시간 업데이트
+	// Update modification time
+	// 수정 시간 업데이트
 	now := time.Now()
 	if err := os.Chtimes(path, now, now); err != nil {
 		return fmt.Errorf("fileutil.Touch: %w", err)
@@ -309,7 +326,8 @@ func Touch(path string) error {
 // This is an alias for os.Stat.
 // 이는 os.Stat의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	info, err := fileutil.FileInfo("path/to/file.txt")
 //	if err != nil {
@@ -323,7 +341,8 @@ func FileInfo(path string) (os.FileInfo, error) {
 // Stat returns the FileInfo for a file or directory
 // Stat은 파일 또는 디렉토리의 FileInfo를 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	info, err := fileutil.Stat("path/to/file.txt")
 //	if err != nil {
@@ -341,7 +360,8 @@ func Stat(path string) (os.FileInfo, error) {
 // Lstat returns the FileInfo for a file or directory (does not follow symbolic links)
 // Lstat은 파일 또는 디렉토리의 FileInfo를 반환합니다 (심볼릭 링크를 따라가지 않음)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	info, err := fileutil.Lstat("path/to/link")
 //	if err != nil {

@@ -157,12 +157,14 @@ func TestWithCode(t *testing.T) {
 				t.Fatal("WithCode() returned nil, want error")
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Code() method / Code() 메서드 테스트
+			// Test Code() method
+			// Code() 메서드 테스트
 			if coder, ok := err.(Coder); ok {
 				if got := coder.Code(); got != tt.wantCode {
 					t.Errorf("Code() = %q, want %q", got, tt.wantCode)
@@ -224,12 +226,14 @@ func TestWithCodef(t *testing.T) {
 				t.Fatal("WithCodef() returned nil, want error")
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Code() method / Code() 메서드 테스트
+			// Test Code() method
+			// Code() 메서드 테스트
 			if coder, ok := err.(Coder); ok {
 				if got := coder.Code(); got != tt.wantCode {
 					t.Errorf("Code() = %q, want %q", got, tt.wantCode)
@@ -288,12 +292,14 @@ func TestWithNumericCode(t *testing.T) {
 				t.Fatal("WithNumericCode() returned nil, want error")
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Code() method / Code() 메서드 테스트
+			// Test Code() method
+			// Code() 메서드 테스트
 			if coder, ok := err.(NumericCoder); ok {
 				if got := coder.Code(); got != tt.wantCode {
 					t.Errorf("Code() = %d, want %d", got, tt.wantCode)
@@ -355,12 +361,14 @@ func TestWithNumericCodef(t *testing.T) {
 				t.Fatal("WithNumericCodef() returned nil, want error")
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Code() method / Code() 메서드 테스트
+			// Test Code() method
+			// Code() 메서드 테스트
 			if coder, ok := err.(NumericCoder); ok {
 				if got := coder.Code(); got != tt.wantCode {
 					t.Errorf("Code() = %d, want %d", got, tt.wantCode)
@@ -415,7 +423,8 @@ func TestWrap(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := Wrap(tt.cause, tt.message)
 
-			// Check if nil is expected / nil이 예상되는지 확인
+			// Check if nil is expected
+			// nil이 예상되는지 확인
 			if tt.wantNil {
 				if err != nil {
 					t.Errorf("Wrap() = %v, want nil", err)
@@ -423,12 +432,14 @@ func TestWrap(t *testing.T) {
 				return
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.want {
 				t.Errorf("Error() = %q, want %q", got, tt.want)
 			}
 
-			// Test Unwrap() method / Unwrap() 메서드 테스트
+			// Test Unwrap() method
+			// Unwrap() 메서드 테스트
 			if unwrapper, ok := err.(Unwrapper); ok {
 				if cause := unwrapper.Unwrap(); cause != tt.wantCause {
 					t.Errorf("Unwrap() = %v, want %v", cause, tt.wantCause)
@@ -487,7 +498,8 @@ func TestWrapf(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := Wrapf(tt.cause, tt.format, tt.args...)
 
-			// Check if nil is expected / nil이 예상되는지 확인
+			// Check if nil is expected
+			// nil이 예상되는지 확인
 			if tt.wantNil {
 				if err != nil {
 					t.Errorf("Wrapf() = %v, want nil", err)
@@ -495,12 +507,14 @@ func TestWrapf(t *testing.T) {
 				return
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.want {
 				t.Errorf("Error() = %q, want %q", got, tt.want)
 			}
 
-			// Test Unwrap() method / Unwrap() 메서드 테스트
+			// Test Unwrap() method
+			// Unwrap() 메서드 테스트
 			if unwrapper, ok := err.(Unwrapper); ok {
 				if cause := unwrapper.Unwrap(); cause != tt.wantCause {
 					t.Errorf("Unwrap() = %v, want %v", cause, tt.wantCause)
@@ -561,7 +575,8 @@ func TestWrapWithCode(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := WrapWithCode(tt.cause, tt.code, tt.message)
 
-			// Check if nil is expected / nil이 예상되는지 확인
+			// Check if nil is expected
+			// nil이 예상되는지 확인
 			if tt.wantNil {
 				if err != nil {
 					t.Errorf("WrapWithCode() = %v, want nil", err)
@@ -569,12 +584,14 @@ func TestWrapWithCode(t *testing.T) {
 				return
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Code() method / Code() 메서드 테스트
+			// Test Code() method
+			// Code() 메서드 테스트
 			if coder, ok := err.(Coder); ok {
 				if got := coder.Code(); got != tt.wantCode {
 					t.Errorf("Code() = %q, want %q", got, tt.wantCode)
@@ -583,7 +600,8 @@ func TestWrapWithCode(t *testing.T) {
 				t.Error("WrapWithCode() did not return a Coder")
 			}
 
-			// Test Unwrap() method / Unwrap() 메서드 테스트
+			// Test Unwrap() method
+			// Unwrap() 메서드 테스트
 			if unwrapper, ok := err.(Unwrapper); ok {
 				if cause := unwrapper.Unwrap(); cause != tt.wantCause {
 					t.Errorf("Unwrap() = %v, want %v", cause, tt.wantCause)
@@ -648,7 +666,8 @@ func TestWrapWithCodef(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := WrapWithCodef(tt.cause, tt.code, tt.format, tt.args...)
 
-			// Check if nil is expected / nil이 예상되는지 확인
+			// Check if nil is expected
+			// nil이 예상되는지 확인
 			if tt.wantNil {
 				if err != nil {
 					t.Errorf("WrapWithCodef() = %v, want nil", err)
@@ -656,12 +675,14 @@ func TestWrapWithCodef(t *testing.T) {
 				return
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Code() method / Code() 메서드 테스트
+			// Test Code() method
+			// Code() 메서드 테스트
 			if coder, ok := err.(Coder); ok {
 				if got := coder.Code(); got != tt.wantCode {
 					t.Errorf("Code() = %q, want %q", got, tt.wantCode)
@@ -722,7 +743,8 @@ func TestWrapWithNumericCode(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := WrapWithNumericCode(tt.cause, tt.code, tt.message)
 
-			// Check if nil is expected / nil이 예상되는지 확인
+			// Check if nil is expected
+			// nil이 예상되는지 확인
 			if tt.wantNil {
 				if err != nil {
 					t.Errorf("WrapWithNumericCode() = %v, want nil", err)
@@ -730,12 +752,14 @@ func TestWrapWithNumericCode(t *testing.T) {
 				return
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Code() method / Code() 메서드 테스트
+			// Test Code() method
+			// Code() 메서드 테스트
 			if coder, ok := err.(NumericCoder); ok {
 				if got := coder.Code(); got != tt.wantCode {
 					t.Errorf("Code() = %d, want %d", got, tt.wantCode)
@@ -744,7 +768,8 @@ func TestWrapWithNumericCode(t *testing.T) {
 				t.Error("WrapWithNumericCode() did not return a NumericCoder")
 			}
 
-			// Test Unwrap() method / Unwrap() 메서드 테스트
+			// Test Unwrap() method
+			// Unwrap() 메서드 테스트
 			if unwrapper, ok := err.(Unwrapper); ok {
 				if cause := unwrapper.Unwrap(); cause != tt.wantCause {
 					t.Errorf("Unwrap() = %v, want %v", cause, tt.wantCause)
@@ -809,7 +834,8 @@ func TestWrapWithNumericCodef(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := WrapWithNumericCodef(tt.cause, tt.code, tt.format, tt.args...)
 
-			// Check if nil is expected / nil이 예상되는지 확인
+			// Check if nil is expected
+			// nil이 예상되는지 확인
 			if tt.wantNil {
 				if err != nil {
 					t.Errorf("WrapWithNumericCodef() = %v, want nil", err)
@@ -817,12 +843,14 @@ func TestWrapWithNumericCodef(t *testing.T) {
 				return
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Code() method / Code() 메서드 테스트
+			// Test Code() method
+			// Code() 메서드 테스트
 			if coder, ok := err.(NumericCoder); ok {
 				if got := coder.Code(); got != tt.wantCode {
 					t.Errorf("Code() = %d, want %d", got, tt.wantCode)

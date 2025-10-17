@@ -6,14 +6,16 @@ import (
 	"testing"
 )
 
-// TestDiff tests the Diff function / Diff 함수 테스트
+// TestDiff tests the Diff function
+// Diff 함수 테스트
 func TestDiff(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 	m2 := map[string]int{"a": 1, "b": 20, "c": 3, "d": 4}
 
 	result := Diff(m1, m2)
 
-	// Should contain keys that differ / 다른 키들을 포함해야 함
+	// Should contain keys that differ
+	// 다른 키들을 포함해야 함
 	if _, ok := result["b"]; !ok {
 		t.Error("Diff() missing key 'b'")
 	}
@@ -21,7 +23,8 @@ func TestDiff(t *testing.T) {
 		t.Error("Diff() missing key 'd'")
 	}
 
-	// Should not contain keys with same values / 같은 값을 가진 키는 포함하지 않아야 함
+	// Should not contain keys with same values
+	// 같은 값을 가진 키는 포함하지 않아야 함
 	if _, ok := result["a"]; ok {
 		t.Error("Diff() should not contain key 'a'")
 	}
@@ -30,7 +33,8 @@ func TestDiff(t *testing.T) {
 	}
 }
 
-// TestDiffKeys tests the DiffKeys function / DiffKeys 함수 테스트
+// TestDiffKeys tests the DiffKeys function
+// DiffKeys 함수 테스트
 func TestDiffKeys(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 	m2 := map[string]int{"a": 10, "b": 20, "c": 3, "d": 4}
@@ -41,37 +45,43 @@ func TestDiffKeys(t *testing.T) {
 	// m2에는 있지만 m1에는 없거나 값이 다른 키들을 반환해야 함
 	sort.Strings(result)
 
-	// 'a', 'b' have different values, 'd' is new / 'a', 'b'는 값이 다르고, 'd'는 새 키
+	// 'a', 'b' have different values, 'd' is new
+	// 'a', 'b'는 값이 다르고, 'd'는 새 키
 	expectedLen := 3
 	if len(result) != expectedLen {
 		t.Errorf("DiffKeys() returned %d keys, want %d", len(result), expectedLen)
 	}
 }
 
-// TestCompare tests the Compare function / Compare 함수 테스트
+// TestCompare tests the Compare function
+// Compare 함수 테스트
 func TestCompare(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 	m2 := map[string]int{"a": 1, "b": 20, "d": 4}
 
 	added, removed, modified := Compare(m1, m2)
 
-	// Added: keys in m2 but not in m1 / 추가됨: m2에는 있지만 m1에는 없는 키
+	// Added: keys in m2 but not in m1
+	// 추가됨: m2에는 있지만 m1에는 없는 키
 	if !reflect.DeepEqual(added, map[string]int{"d": 4}) {
 		t.Errorf("Compare() added = %v, want map[d:4]", added)
 	}
 
-	// Removed: keys in m1 but not in m2 / 제거됨: m1에는 있지만 m2에는 없는 키
+	// Removed: keys in m1 but not in m2
+	// 제거됨: m1에는 있지만 m2에는 없는 키
 	if !reflect.DeepEqual(removed, map[string]int{"c": 3}) {
 		t.Errorf("Compare() removed = %v, want map[c:3]", removed)
 	}
 
-	// Modified: keys in both but with different values / 수정됨: 둘 다 있지만 값이 다른 키
+	// Modified: keys in both but with different values
+	// 수정됨: 둘 다 있지만 값이 다른 키
 	if !reflect.DeepEqual(modified, map[string]int{"b": 20}) {
 		t.Errorf("Compare() modified = %v, want map[b:20]", modified)
 	}
 }
 
-// TestCompareEmpty tests Compare with empty maps / 빈 맵으로 Compare 테스트
+// TestCompareEmpty tests Compare with empty maps
+// 빈 맵으로 Compare 테스트
 func TestCompareEmpty(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2}
 	m2 := map[string]int{}
@@ -88,7 +98,8 @@ func TestCompareEmpty(t *testing.T) {
 		t.Errorf("Compare(m1, empty) modified = %v, want empty", modified)
 	}
 
-	// Reverse / 반대
+	// Reverse
+	// 반대
 	added, removed, modified = Compare(m2, m1)
 
 	if !reflect.DeepEqual(added, m1) {
@@ -102,7 +113,8 @@ func TestCompareEmpty(t *testing.T) {
 	}
 }
 
-// TestCommonKeys tests the CommonKeys function / CommonKeys 함수 테스트
+// TestCommonKeys tests the CommonKeys function
+// CommonKeys 함수 테스트
 func TestCommonKeys(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 	m2 := map[string]int{"b": 2, "c": 4, "d": 5}
@@ -110,7 +122,8 @@ func TestCommonKeys(t *testing.T) {
 
 	result := CommonKeys(m1, m2, m3)
 
-	// Only 'b' and 'c' appear in all three / 'b'와 'c'만 세 맵 모두에 존재
+	// Only 'b' and 'c' appear in all three
+	// 'b'와 'c'만 세 맵 모두에 존재
 	if len(result) != 2 {
 		t.Errorf("CommonKeys() returned %d keys, want 2", len(result))
 	}
@@ -122,7 +135,8 @@ func TestCommonKeys(t *testing.T) {
 	}
 }
 
-// TestCommonKeysNoCommon tests CommonKeys with no common keys / 공통 키가 없는 CommonKeys 테스트
+// TestCommonKeysNoCommon tests CommonKeys with no common keys
+// 공통 키가 없는 CommonKeys 테스트
 func TestCommonKeysNoCommon(t *testing.T) {
 	m1 := map[string]int{"a": 1}
 	m2 := map[string]int{"b": 2}
@@ -135,7 +149,8 @@ func TestCommonKeysNoCommon(t *testing.T) {
 	}
 }
 
-// TestAllKeys tests the AllKeys function / AllKeys 함수 테스트
+// TestAllKeys tests the AllKeys function
+// AllKeys 함수 테스트
 func TestAllKeys(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2}
 	m2 := map[string]int{"b": 3, "c": 4}
@@ -143,7 +158,8 @@ func TestAllKeys(t *testing.T) {
 
 	result := AllKeys(m1, m2, m3)
 
-	// Should contain all unique keys / 모든 고유 키를 포함해야 함
+	// Should contain all unique keys
+	// 모든 고유 키를 포함해야 함
 	if len(result) != 4 {
 		t.Errorf("AllKeys() returned %d keys, want 4", len(result))
 	}
@@ -155,7 +171,8 @@ func TestAllKeys(t *testing.T) {
 	}
 }
 
-// TestAllKeysEmpty tests AllKeys with empty map / 빈 맵으로 AllKeys 테스트
+// TestAllKeysEmpty tests AllKeys with empty map
+// 빈 맵으로 AllKeys 테스트
 func TestAllKeysEmpty(t *testing.T) {
 	m1 := map[string]int{"a": 1}
 	m2 := map[string]int{}
@@ -167,7 +184,8 @@ func TestAllKeysEmpty(t *testing.T) {
 	}
 }
 
-// TestEqualMaps tests the EqualMaps function / EqualMaps 함수 테스트
+// TestEqualMaps tests the EqualMaps function
+// EqualMaps 함수 테스트
 func TestEqualMaps(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 	m2 := map[string]int{"a": 1, "b": 2, "c": 3}
@@ -181,13 +199,15 @@ func TestEqualMaps(t *testing.T) {
 		t.Error("EqualMaps(different) = true, want false")
 	}
 
-	// Different lengths / 다른 길이
+	// Different lengths
+	// 다른 길이
 	m4 := map[string]int{"a": 1, "b": 2}
 	if EqualMaps(m1, m4) {
 		t.Error("EqualMaps(different length) = true, want false")
 	}
 
-	// Empty maps / 빈 맵
+	// Empty maps
+	// 빈 맵
 	empty1 := map[string]int{}
 	empty2 := map[string]int{}
 	if !EqualMaps(empty1, empty2) {
@@ -195,7 +215,8 @@ func TestEqualMaps(t *testing.T) {
 	}
 }
 
-// Benchmarks / 벤치마크
+// Benchmarks
+// 벤치마크
 
 func BenchmarkDiff(b *testing.B) {
 	m1 := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}

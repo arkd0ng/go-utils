@@ -12,12 +12,13 @@ import (
 // The original slice is not modified. Uses Go's standard sort algorithm.
 // 원본 슬라이스는 수정되지 않습니다. Go의 표준 정렬 알고리즘을 사용합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{3, 1, 4, 1, 5, 9, 2, 6}
 //	sorted := sliceutil.Sort(numbers)
-//	// sorted: [1, 1, 2, 3, 4, 5, 6, 9]
-//	// numbers: [3, 1, 4, 1, 5, 9, 2, 6] (unchanged / 변경되지 않음)
+// // sorted: [1, 1, 2, 3, 4, 5, 6, 9]
+// numbers: [3, 1, 4, 1, 5, 9, 2, 6] (unchanged / 변경되지 않음)
 func Sort[T constraints.Ordered](slice []T) []T {
 	if len(slice) == 0 {
 		return []T{}
@@ -28,7 +29,8 @@ func Sort[T constraints.Ordered](slice []T) []T {
 	result := make([]T, len(slice))
 	copy(result, slice)
 
-	// Sort in ascending order / 오름차순으로 정렬
+	// Sort in ascending order
+	// 오름차순으로 정렬
 	sort.Slice(result, func(i, j int) bool {
 		return result[i] < result[j]
 	})
@@ -42,12 +44,13 @@ func Sort[T constraints.Ordered](slice []T) []T {
 // The original slice is not modified. Uses Go's standard sort algorithm.
 // 원본 슬라이스는 수정되지 않습니다. Go의 표준 정렬 알고리즘을 사용합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{3, 1, 4, 1, 5, 9, 2, 6}
 //	sorted := sliceutil.SortDesc(numbers)
-//	// sorted: [9, 6, 5, 4, 3, 2, 1, 1]
-//	// numbers: [3, 1, 4, 1, 5, 9, 2, 6] (unchanged / 변경되지 않음)
+// // sorted: [9, 6, 5, 4, 3, 2, 1, 1]
+// numbers: [3, 1, 4, 1, 5, 9, 2, 6] (unchanged / 변경되지 않음)
 func SortDesc[T constraints.Ordered](slice []T) []T {
 	if len(slice) == 0 {
 		return []T{}
@@ -58,7 +61,8 @@ func SortDesc[T constraints.Ordered](slice []T) []T {
 	result := make([]T, len(slice))
 	copy(result, slice)
 
-	// Sort in descending order / 내림차순으로 정렬
+	// Sort in descending order
+	// 내림차순으로 정렬
 	sort.Slice(result, func(i, j int) bool {
 		return result[i] > result[j]
 	})
@@ -72,7 +76,8 @@ func SortDesc[T constraints.Ordered](slice []T) []T {
 // The original slice is not modified. The keyFunc extracts a comparable key from each element.
 // 원본 슬라이스는 수정되지 않습니다. keyFunc은 각 요소에서 비교 가능한 키를 추출합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type Person struct {
 //	    Name string
@@ -95,7 +100,8 @@ func SortBy[T any, K constraints.Ordered](slice []T, keyFunc func(T) K) []T {
 	result := make([]T, len(slice))
 	copy(result, slice)
 
-	// Sort by key extracted by keyFunc / keyFunc으로 추출한 키를 기준으로 정렬
+	// Sort by key extracted by keyFunc
+	// keyFunc으로 추출한 키를 기준으로 정렬
 	sort.Slice(result, func(i, j int) bool {
 		return keyFunc(result[i]) < keyFunc(result[j])
 	})
@@ -112,7 +118,8 @@ func SortBy[T any, K constraints.Ordered](slice []T, keyFunc func(T) K) []T {
 // An empty slice or a slice with one element is considered sorted.
 // 비어있는 슬라이스나 요소가 하나인 슬라이스는 정렬된 것으로 간주됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	isSorted := sliceutil.IsSorted(numbers)  // true
@@ -142,7 +149,8 @@ func IsSorted[T constraints.Ordered](slice []T) bool {
 // An empty slice or a slice with one element is considered sorted.
 // 비어있는 슬라이스나 요소가 하나인 슬라이스는 정렬된 것으로 간주됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{5, 4, 3, 2, 1}
 //	isSortedDesc := sliceutil.IsSortedDesc(numbers)  // true
@@ -171,7 +179,8 @@ func IsSortedDesc[T constraints.Ordered](slice []T) bool {
 // 원본 슬라이스는 수정되지 않습니다. less 함수는 요소 i가 요소 j보다 앞에 정렬되어야 하면 true를 반환해야 합니다.
 // 이를 통해 여러 필드를 비교하여 다중 키 정렬이 가능합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type Person struct {
 //	    Name string
@@ -185,8 +194,8 @@ func IsSortedDesc[T constraints.Ordered](slice []T) bool {
 //	    {"Bob", 25, 90.0},
 //	}
 //
-//	// Sort by Name (ascending), then Age (ascending), then Score (descending)
-//	// Name(오름차순), Age(오름차순), Score(내림차순) 순으로 정렬
+// // Sort by Name (ascending), then Age (ascending), then Score (descending)
+// Name(오름차순), Age(오름차순), Score(내림차순) 순으로 정렬
 //	sorted := sliceutil.SortByMulti(people, func(i, j Person) bool {
 //	    if i.Name != j.Name {
 //	        return i.Name < j.Name

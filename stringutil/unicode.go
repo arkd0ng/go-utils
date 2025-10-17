@@ -15,8 +15,7 @@ import (
 //
 // Example:
 //
-//	RuneCount("hello")    // 5
-//	RuneCount("안녕하세요")  // 5 (not 15 bytes)
+// RuneCount("hello")    // 5 / RuneCount("안녕하세요")  // 5 (not 15 bytes)
 //	RuneCount("🔥🔥")      // 2 (not 8 bytes)
 func RuneCount(s string) int {
 	return utf8.RuneCountInString(s)
@@ -27,14 +26,13 @@ func RuneCount(s string) int {
 //
 // This considers East Asian Width (EAW) properties:
 // 동아시아 너비(EAW) 속성을 고려합니다:
-//   - ASCII characters (a-z, 0-9): width 1
-//   - CJK characters (한글, 漢字, etc): width 2
+// - ASCII characters (a-z, 0-9): width 1
+// - CJK characters (한글, 漢字, etc): width 2
 //   - Emoji: typically width 2
 //
 // Example:
 //
-//	Width("hello")      // 5
-//	Width("안녕")        // 4 (2 characters × 2 width each)
+// Width("hello")      // 5 / Width("안녕")        // 4 (2 characters × 2 width each)
 //	Width("hello세계")   // 9 (5 + 4)
 func Width(s string) int {
 	totalWidth := 0
@@ -81,7 +79,8 @@ func Normalize(s string, form string) string {
 	case "NFKD":
 		normalizer = norm.NFKD
 	default:
-		// Default to NFC / 기본값은 NFC
+		// Default to NFC
+		// 기본값은 NFC
 		normalizer = norm.NFC
 	}
 

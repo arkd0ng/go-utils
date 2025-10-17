@@ -33,7 +33,8 @@ func defaultCopyOptions() *copyOptions {
 // WithOverwrite sets whether to overwrite existing files
 // WithOverwrite는 기존 파일을 덮어쓸지 여부를 설정합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.CopyFile(src, dst, fileutil.WithOverwrite(true))
 func WithOverwrite(overwrite bool) CopyOption {
@@ -45,7 +46,8 @@ func WithOverwrite(overwrite bool) CopyOption {
 // WithPreservePermissions sets whether to preserve file permissions
 // WithPreservePermissions는 파일 권한을 보존할지 여부를 설정합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.CopyFile(src, dst, fileutil.WithPreservePermissions(true))
 func WithPreservePermissions(preserve bool) CopyOption {
@@ -57,7 +59,8 @@ func WithPreservePermissions(preserve bool) CopyOption {
 // WithPreserveTimestamps sets whether to preserve file timestamps
 // WithPreserveTimestamps는 파일 타임스탬프를 보존할지 여부를 설정합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.CopyFile(src, dst, fileutil.WithPreserveTimestamps(true))
 func WithPreserveTimestamps(preserve bool) CopyOption {
@@ -69,7 +72,8 @@ func WithPreserveTimestamps(preserve bool) CopyOption {
 // WithProgress sets a progress callback function
 // WithProgress는 진행 상황 콜백 함수를 설정합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.CopyFile(src, dst, fileutil.WithProgress(func(written, total int64) {
 //	    fmt.Printf("Progress: %d/%d bytes\n", written, total)
@@ -83,7 +87,8 @@ func WithProgress(fn func(written, total int64)) CopyOption {
 // WithFilter sets a filter function to include/exclude files during copy
 // WithFilter는 복사 중 파일을 포함/제외하는 필터 함수를 설정합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.CopyDir(src, dst, fileutil.WithFilter(func(path string, info os.FileInfo) bool {
 //	    return !strings.HasPrefix(info.Name(), ".")

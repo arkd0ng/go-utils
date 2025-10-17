@@ -28,12 +28,14 @@ func NewClient(opts ...Option) *Client {
 	cfg := defaultConfig()
 	cfg.apply(opts)
 
-	// Create HTTP client / HTTP 클라이언트 생성
+	// Create HTTP client
+	// HTTP 클라이언트 생성
 	client := &http.Client{
 		Timeout: cfg.timeout,
 	}
 
-	// Configure redirect policy / 리디렉션 정책 설정
+	// Configure redirect policy
+	// 리디렉션 정책 설정
 	if !cfg.followRedirects {
 		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
@@ -47,7 +49,8 @@ func NewClient(opts ...Option) *Client {
 		}
 	}
 
-	// Configure TLS / TLS 설정
+	// Configure TLS
+	// TLS 설정
 	if cfg.tlsConfig != nil {
 		transport := &http.Transport{
 			TLSClientConfig: cfg.tlsConfig,
@@ -55,7 +58,8 @@ func NewClient(opts ...Option) *Client {
 		client.Transport = transport
 	}
 
-	// Configure proxy / 프록시 설정
+	// Configure proxy
+	// 프록시 설정
 	if cfg.proxyURL != "" {
 		if proxyURL, err := url.Parse(cfg.proxyURL); err == nil {
 			transport := client.Transport
@@ -69,22 +73,26 @@ func NewClient(opts ...Option) *Client {
 		}
 	}
 
-	// Configure cookie jar / 쿠키 저장소 설정
+	// Configure cookie jar
+	// 쿠키 저장소 설정
 	if cfg.cookieJar != nil {
 		client.Jar = cfg.cookieJar
 	}
 
-	// Initialize custom cookie jar / 사용자 정의 쿠키 저장소 초기화
+	// Initialize custom cookie jar
+	// 사용자 정의 쿠키 저장소 초기화
 	var customCookieJar *CookieJar
 	if cfg.cookieJarPath != "" {
-		// Create persistent cookie jar / 지속성 쿠키 저장소 생성
+		// Create persistent cookie jar
+		// 지속성 쿠키 저장소 생성
 		jar, err := NewPersistentCookieJar(cfg.cookieJarPath)
 		if err == nil {
 			customCookieJar = jar
 			client.Jar = jar.jar
 		}
 	} else if cfg.enableCookieJar {
-		// Create in-memory cookie jar / 메모리 내 쿠키 저장소 생성
+		// Create in-memory cookie jar
+		// 메모리 내 쿠키 저장소 생성
 		jar, err := NewCookieJar()
 		if err == nil {
 			customCookieJar = jar
@@ -167,13 +175,15 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body, resul
 	cfg := *c.config
 	cfg.apply(opts)
 
-	// Build full URL / 전체 URL 구축
+	// Build full URL
+	// 전체 URL 구축
 	fullURL := path
 	if cfg.baseURL != "" && !strings.HasPrefix(path, "http://") && !strings.HasPrefix(path, "https://") {
 		fullURL = strings.TrimRight(cfg.baseURL, "/") + "/" + strings.TrimLeft(path, "/")
 	}
 
-	// Add query parameters / 쿼리 매개변수 추가
+	// Add query parameters
+	// 쿼리 매개변수 추가
 	if len(cfg.queryParams) > 0 {
 		u, err := url.Parse(fullURL)
 		if err != nil {
@@ -187,7 +197,8 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body, resul
 		fullURL = u.String()
 	}
 
-	// Prepare request body / 요청 본문 준비
+	// Prepare request body
+	// 요청 본문 준비
 	var bodyReader io.Reader
 	if body != nil {
 		jsonData, err := json.Marshal(body)
@@ -197,23 +208,27 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body, resul
 		bodyReader = bytes.NewReader(jsonData)
 	}
 
-	// Retry logic / 재시도 로직
+	// Retry logic
+	// 재시도 로직
 	var lastErr error
 	for attempt := 0; attempt <= cfg.maxRetries; attempt++ {
-		// Create request / 요청 생성
+		// Create request
+		// 요청 생성
 		req, err := http.NewRequestWithContext(ctx, method, fullURL, bodyReader)
 		if err != nil {
 			return fmt.Errorf("failed to create request: %w", err)
 		}
 
-		// Set headers / 헤더 설정
+		// Set headers
+		// 헤더 설정
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("User-Agent", cfg.userAgent)
 		for k, v := range cfg.headers {
 			req.Header.Set(k, v)
 		}
 
-		// Set authentication / 인증 설정
+		// Set authentication
+		// 인증 설정
 		if cfg.bearerToken != "" {
 			req.Header.Set("Authorization", "Bearer "+cfg.bearerToken)
 		}
@@ -221,19 +236,23 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body, resul
 			req.SetBasicAuth(cfg.basicAuthUser, cfg.basicAuthPass)
 		}
 
-		// Execute request / 요청 실행
+		// Execute request
+		// 요청 실행
 		resp, err := c.client.Do(req)
 		if err != nil {
-			// Check if it's a timeout error / 타임아웃 에러인지 확인
+			// Check if it's a timeout error
+			// 타임아웃 에러인지 확인
 			if ctx.Err() == context.DeadlineExceeded {
 				return &TimeoutError{URL: fullURL, Method: method}
 			}
 
 			lastErr = err
 
-			// Retry on network errors / 네트워크 에러 시 재시도
+			// Retry on network errors
+			// 네트워크 에러 시 재시도
 			if attempt < cfg.maxRetries {
-				// Calculate backoff / 백오프 계산
+				// Calculate backoff
+				// 백오프 계산
 				backoff := calculateBackoff(attempt, cfg.retryMin, cfg.retryMax)
 				time.Sleep(backoff)
 				continue
@@ -242,9 +261,11 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body, resul
 		}
 		defer resp.Body.Close()
 
-		// Check status code / 상태 코드 확인
+		// Check status code
+		// 상태 코드 확인
 		if resp.StatusCode >= 400 {
-			// Read error body / 에러 본문 읽기
+			// Read error body
+			// 에러 본문 읽기
 			bodyBytes, _ := io.ReadAll(resp.Body)
 			httpErr := &HTTPError{
 				StatusCode: resp.StatusCode,
@@ -254,7 +275,8 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body, resul
 				Method:     method,
 			}
 
-			// Retry on 5xx errors / 5xx 에러 시 재시도
+			// Retry on 5xx errors
+			// 5xx 에러 시 재시도
 			if resp.StatusCode >= 500 && attempt < cfg.maxRetries {
 				lastErr = httpErr
 				backoff := calculateBackoff(attempt, cfg.retryMin, cfg.retryMax)
@@ -265,7 +287,8 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body, resul
 			return httpErr
 		}
 
-		// Decode response / 응답 디코딩
+		// Decode response
+		// 응답 디코딩
 		if result != nil {
 			if err := json.NewDecoder(resp.Body).Decode(result); err != nil {
 				return fmt.Errorf("failed to decode response: %w", err)
@@ -275,7 +298,8 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body, resul
 		return nil
 	}
 
-	// All retries failed / 모든 재시도 실패
+	// All retries failed
+	// 모든 재시도 실패
 	if lastErr != nil {
 		return &RetryError{
 			Attempts: cfg.maxRetries + 1,
@@ -291,13 +315,15 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body, resul
 // calculateBackoff calculates the backoff duration for the given attempt.
 // calculateBackoff는 주어진 시도에 대한 백오프 기간을 계산합니다.
 func calculateBackoff(attempt int, min, max time.Duration) time.Duration {
-	// Exponential backoff with jitter / 지터가 있는 지수 백오프
+	// Exponential backoff with jitter
+	// 지터가 있는 지수 백오프
 	backoff := min * time.Duration(math.Pow(2, float64(attempt)))
 	if backoff > max {
 		backoff = max
 	}
 
-	// Add jitter (±25%) / 지터 추가 (±25%)
+	// Add jitter (±25%)
+	// 지터 추가 (±25%)
 	jitter := time.Duration(rand.Int63n(int64(backoff / 4)))
 	if rand.Intn(2) == 0 {
 		backoff += jitter

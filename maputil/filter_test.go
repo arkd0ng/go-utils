@@ -5,11 +5,13 @@ import (
 	"testing"
 )
 
-// TestFilter tests the Filter function / Filter 함수 테스트
+// TestFilter tests the Filter function
+// Filter 함수 테스트
 func TestFilter(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 
-	// Filter values > 2 / 2보다 큰 값 필터링
+	// Filter values > 2
+	// 2보다 큰 값 필터링
 	result := Filter(data, func(k string, v int) bool {
 		return v > 2
 	})
@@ -19,7 +21,8 @@ func TestFilter(t *testing.T) {
 		t.Errorf("Filter(v > 2) = %v, want %v", result, expected)
 	}
 
-	// Filter keys >= 'b' / 'b' 이상 키 필터링
+	// Filter keys >= 'b'
+	// 'b' 이상 키 필터링
 	result = Filter(data, func(k string, v int) bool {
 		return k >= "b"
 	})
@@ -29,13 +32,15 @@ func TestFilter(t *testing.T) {
 		t.Errorf("Filter(k >= 'b') = %v, want %v", result, expected)
 	}
 
-	// Test immutability / 불변성 테스트
+	// Test immutability
+	// 불변성 테스트
 	if len(data) != 4 {
 		t.Error("Filter() modified original map")
 	}
 }
 
-// TestFilterEmpty tests Filter with empty result / 빈 결과로 Filter 테스트
+// TestFilterEmpty tests Filter with empty result
+// 빈 결과로 Filter 테스트
 func TestFilterEmpty(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2}
 
@@ -48,7 +53,8 @@ func TestFilterEmpty(t *testing.T) {
 	}
 }
 
-// TestFilterKeys tests the FilterKeys function / FilterKeys 함수 테스트
+// TestFilterKeys tests the FilterKeys function
+// FilterKeys 함수 테스트
 func TestFilterKeys(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 
@@ -62,11 +68,13 @@ func TestFilterKeys(t *testing.T) {
 	}
 }
 
-// TestFilterValues tests the FilterValues function / FilterValues 함수 테스트
+// TestFilterValues tests the FilterValues function
+// FilterValues 함수 테스트
 func TestFilterValues(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 
-	// Filter even values / 짝수 값만 필터링
+	// Filter even values
+	// 짝수 값만 필터링
 	result := FilterValues(data, func(v int) bool {
 		return v%2 == 0
 	})
@@ -77,7 +85,8 @@ func TestFilterValues(t *testing.T) {
 	}
 }
 
-// TestPick tests the Pick function / Pick 함수 테스트
+// TestPick tests the Pick function
+// Pick 함수 테스트
 func TestPick(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 
@@ -88,13 +97,15 @@ func TestPick(t *testing.T) {
 		t.Errorf("Pick('a', 'c') = %v, want %v", result, expected)
 	}
 
-	// Test with non-existent keys / 존재하지 않는 키로 테스트
+	// Test with non-existent keys
+	// 존재하지 않는 키로 테스트
 	result = Pick(data, "x", "y")
 	if len(result) != 0 {
 		t.Errorf("Pick(non-existent) = %v, want empty map", result)
 	}
 
-	// Test with mixed keys / 혼합 키로 테스트
+	// Test with mixed keys
+	// 혼합 키로 테스트
 	result = Pick(data, "a", "x", "c")
 	expected = map[string]int{"a": 1, "c": 3}
 	if !reflect.DeepEqual(result, expected) {
@@ -102,7 +113,8 @@ func TestPick(t *testing.T) {
 	}
 }
 
-// TestOmit tests the Omit function / Omit 함수 테스트
+// TestOmit tests the Omit function
+// Omit 함수 테스트
 func TestOmit(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 
@@ -113,18 +125,21 @@ func TestOmit(t *testing.T) {
 		t.Errorf("Omit('b', 'd') = %v, want %v", result, expected)
 	}
 
-	// Test with non-existent keys / 존재하지 않는 키로 테스트
+	// Test with non-existent keys
+	// 존재하지 않는 키로 테스트
 	result = Omit(data, "x", "y")
 	if !reflect.DeepEqual(result, data) {
 		t.Errorf("Omit(non-existent) = %v, want %v", result, data)
 	}
 }
 
-// TestPickBy tests the PickBy function / PickBy 함수 테스트
+// TestPickBy tests the PickBy function
+// PickBy 함수 테스트
 func TestPickBy(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 
-	// Pick entries where value is even / 값이 짝수인 항목만 선택
+	// Pick entries where value is even
+	// 값이 짝수인 항목만 선택
 	result := PickBy(data, func(k string, v int) bool {
 		return v%2 == 0
 	})
@@ -134,7 +149,8 @@ func TestPickBy(t *testing.T) {
 		t.Errorf("PickBy(even) = %v, want %v", result, expected)
 	}
 
-	// Pick entries where key < 'c' / 키가 'c'보다 작은 항목만 선택
+	// Pick entries where key < 'c'
+	// 키가 'c'보다 작은 항목만 선택
 	result = PickBy(data, func(k string, v int) bool {
 		return k < "c"
 	})
@@ -145,11 +161,13 @@ func TestPickBy(t *testing.T) {
 	}
 }
 
-// TestOmitBy tests the OmitBy function / OmitBy 함수 테스트
+// TestOmitBy tests the OmitBy function
+// OmitBy 함수 테스트
 func TestOmitBy(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 
-	// Omit entries where value is even / 값이 짝수인 항목 제외
+	// Omit entries where value is even
+	// 값이 짝수인 항목 제외
 	result := OmitBy(data, func(k string, v int) bool {
 		return v%2 == 0
 	})
@@ -160,7 +178,8 @@ func TestOmitBy(t *testing.T) {
 	}
 }
 
-// Benchmarks / 벤치마크
+// Benchmarks
+// 벤치마크
 
 func BenchmarkFilter(b *testing.B) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}

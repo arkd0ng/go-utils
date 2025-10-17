@@ -6,7 +6,8 @@ package sliceutil
 // Contains checks if slice contains the specified item.
 // Contains는 슬라이스에 지정된 항목이 있는지 확인합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	hasThree := sliceutil.Contains(numbers, 3) // true
@@ -23,7 +24,8 @@ func Contains[T comparable](slice []T, item T) bool {
 // ContainsFunc checks if slice contains an item that satisfies the predicate.
 // ContainsFunc는 조건을 만족하는 항목이 슬라이스에 있는지 확인합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	hasEven := sliceutil.ContainsFunc(numbers, func(n int) bool {
@@ -44,7 +46,8 @@ func ContainsFunc[T any](slice []T, predicate func(T) bool) bool {
 // IndexOf는 슬라이스에서 항목의 첫 번째 발생 인덱스를 반환합니다.
 // 항목을 찾을 수 없으면 -1을 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	fruits := []string{"apple", "banana", "cherry", "banana"}
 //	index := sliceutil.IndexOf(fruits, "banana") // 1
@@ -64,7 +67,8 @@ func IndexOf[T comparable](slice []T, item T) int {
 // LastIndexOf는 슬라이스에서 항목의 마지막 발생 인덱스를 반환합니다.
 // 항목을 찾을 수 없으면 -1을 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	fruits := []string{"apple", "banana", "cherry", "banana"}
 //	index := sliceutil.LastIndexOf(fruits, "banana") // 3
@@ -84,7 +88,8 @@ func LastIndexOf[T comparable](slice []T, item T) int {
 // Find는 조건을 만족하는 슬라이스의 첫 번째 항목을 반환합니다.
 // 찾은 경우 항목과 true를 반환하고, 그렇지 않으면 제로 값과 false를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	even, found := sliceutil.Find(numbers, func(n int) bool {
@@ -113,7 +118,8 @@ func Find[T any](slice []T, predicate func(T) bool) (T, bool) {
 // Similar to Find, but searches from right to left.
 // Find와 유사하지만 오른쪽에서 왼쪽으로 검색합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5, 6}
 //	even, found := sliceutil.FindLast(numbers, func(n int) bool {
@@ -140,7 +146,8 @@ func FindLast[T any](slice []T, predicate func(T) bool) (T, bool) {
 // FindIndex는 조건을 만족하는 첫 번째 항목의 인덱스를 반환합니다.
 // 항목을 찾을 수 없으면 -1을 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	index := sliceutil.FindIndex(numbers, func(n int) bool {
@@ -158,7 +165,8 @@ func FindIndex[T any](slice []T, predicate func(T) bool) int {
 // Count returns the number of items that satisfy the predicate.
 // Count는 조건을 만족하는 항목의 개수를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5, 6}
 //	evenCount := sliceutil.Count(numbers, func(n int) bool {
@@ -177,7 +185,8 @@ func Count[T any](slice []T, predicate func(T) bool) int {
 // IsEmpty checks if the slice is empty or nil.
 // IsEmpty는 슬라이스가 비어있거나 nil인지 확인합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	empty := []int{}
 //	sliceutil.IsEmpty(empty) // true
@@ -192,7 +201,8 @@ func IsEmpty[T any](slice []T) bool {
 // IsNotEmpty checks if the slice has at least one item.
 // IsNotEmpty는 슬라이스에 최소한 하나의 항목이 있는지 확인합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	empty := []int{}
 //	sliceutil.IsNotEmpty(empty) // false
@@ -206,7 +216,8 @@ func IsNotEmpty[T any](slice []T) bool {
 // Equal checks if two slices are equal (same length and same elements in same order).
 // Equal은 두 슬라이스가 같은지 확인합니다 (같은 길이와 같은 순서의 같은 요소).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	a := []int{1, 2, 3}
 //	b := []int{1, 2, 3}

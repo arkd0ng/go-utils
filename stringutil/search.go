@@ -88,7 +88,8 @@ func ReplaceAll(s string, replacements map[string]string) string {
 //	ReplaceIgnoreCase("Hello World", "hello", "hi")  // "hi World"
 //	ReplaceIgnoreCase("HELLO World", "hello", "hi")  // "hi World"
 func ReplaceIgnoreCase(s, old, new string) string {
-	// Handle empty old string / 빈 old 문자열 처리
+	// Handle empty old string
+	// 빈 old 문자열 처리
 	if old == "" {
 		return s
 	}

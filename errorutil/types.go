@@ -7,28 +7,38 @@
 // 이 패키지는 표준 라이브러리를 넘어서는 향상된 에러 생성, 래핑, 검사 및 포매팅 기능을
 // 제공하며, 완전한 호환성을 유지합니다.
 //
-// # Key Features / 주요 기능
+// # Key Features
+// 주요 기능
 //
-//   - Error wrapping with context preservation / 컨텍스트 보존과 함께 에러 래핑
-//   - Error codes (string and numeric) / 에러 코드 (문자열 및 숫자)
-//   - Stack trace capture and display / 스택 트레이스 캡처 및 표시
-//   - Contextual errors with key-value data / 키-값 데이터를 가진 컨텍스트 에러
-//   - Error classification and inspection / 에러 분류 및 검사
-//   - Advanced error formatting / 고급 에러 포매팅
+// - Error wrapping with context preservation
+// 컨텍스트 보존과 함께 에러 래핑
+// - Error codes (string and numeric)
+// 에러 코드 (문자열 및 숫자)
+// - Stack trace capture and display
+// 스택 트레이스 캡처 및 표시
+// - Contextual errors with key-value data
+// 키-값 데이터를 가진 컨텍스트 에러
+// - Error classification and inspection
+// 에러 분류 및 검사
+// - Advanced error formatting
+// 고급 에러 포매팅
 //
-// # Example Usage / 사용 예제
+// # Example Usage
+// 사용 예제
 //
 //	import "github.com/arkd0ng/go-utils/errorutil"
 //
-//	// Create error with code / 코드와 함께 에러 생성
+// // Create error with code
+// 코드와 함께 에러 생성
 //	err := errorutil.WithCode("ERR001", "invalid input")
 //
-//	// Wrap error with context / 컨텍스트와 함께 에러 래핑
+// // Wrap error with context
+// 컨텍스트와 함께 에러 래핑
 //	err = errorutil.Wrap(err, "failed to process user data")
 //
-//	// Check error code / 에러 코드 확인
-//	if errorutil.HasCode(err, "ERR001") {
-//	    // handle specific error / 특정 에러 처리
+// // Check error code
+// 에러 코드 확인
+// if errorutil.HasCode(err, "ERR001") { / handle specific error / 특정 에러 처리
 //	}
 package errorutil
 
@@ -88,11 +98,14 @@ type Contexter interface {
 // Frame represents a single stack frame with file, line, and function information.
 // Frame은 파일, 라인 및 함수 정보를 가진 단일 스택 프레임을 나타냅니다.
 type Frame struct {
-	// File is the full path to the source file / File은 소스 파일의 전체 경로입니다
+	// File is the full path to the source file
+	// File은 소스 파일의 전체 경로입니다
 	File string
-	// Line is the line number in the source file / Line은 소스 파일의 라인 번호입니다
+	// Line is the line number in the source file
+	// Line은 소스 파일의 라인 번호입니다
 	Line int
-	// Function is the fully qualified function name / Function은 완전한 함수명입니다
+	// Function is the fully qualified function name
+	// Function은 완전한 함수명입니다
 	Function string
 }
 
@@ -107,9 +120,11 @@ func (f Frame) String() string {
 // wrappedError는 다른 에러를 래핑하는 기본 에러입니다.
 // 이것은 모든 에러 래핑 기능의 기초입니다.
 type wrappedError struct {
-	// msg is the error message / msg는 에러 메시지입니다
+	// msg is the error message
+	// msg는 에러 메시지입니다
 	msg string
-	// cause is the wrapped error / cause는 래핑된 에러입니다
+	// cause is the wrapped error
+	// cause는 래핑된 에러입니다
 	cause error
 }
 
@@ -137,11 +152,14 @@ func (e *wrappedError) Unwrap() error {
 // codedError는 연결된 문자열 코드를 가진 에러입니다.
 // 이것은 API 에러 응답 및 에러 분류에 유용합니다.
 type codedError struct {
-	// msg is the error message / msg는 에러 메시지입니다
+	// msg is the error message
+	// msg는 에러 메시지입니다
 	msg string
-	// code is the error code / code는 에러 코드입니다
+	// code is the error code
+	// code는 에러 코드입니다
 	code string
-	// cause is the wrapped error / cause는 래핑된 에러입니다
+	// cause is the wrapped error
+	// cause는 래핑된 에러입니다
 	cause error
 }
 
@@ -171,11 +189,14 @@ func (e *codedError) Unwrap() error {
 // numericCodedError는 연결된 숫자 코드를 가진 에러입니다.
 // 이것은 HTTP 상태 코드 및 숫자 에러 코드에 유용합니다.
 type numericCodedError struct {
-	// msg is the error message / msg는 에러 메시지입니다
+	// msg is the error message
+	// msg는 에러 메시지입니다
 	msg string
-	// code is the numeric error code / code는 숫자 에러 코드입니다
+	// code is the numeric error code
+	// code는 숫자 에러 코드입니다
 	code int
-	// cause is the wrapped error / cause는 래핑된 에러입니다
+	// cause is the wrapped error
+	// cause는 래핑된 에러입니다
 	cause error
 }
 
@@ -205,11 +226,14 @@ func (e *numericCodedError) Unwrap() error {
 // stackError는 생성 시점의 스택 트레이스를 캡처하는 에러입니다.
 // 이것은 에러가 어디서 발생했는지 보여줌으로써 디버깅에 도움을 줍니다.
 type stackError struct {
-	// msg is the error message / msg는 에러 메시지입니다
+	// msg is the error message
+	// msg는 에러 메시지입니다
 	msg string
-	// stack is the captured stack trace / stack은 캡처된 스택 트레이스입니다
+	// stack is the captured stack trace
+	// stack은 캡처된 스택 트레이스입니다
 	stack []Frame
-	// cause is the wrapped error / cause는 래핑된 에러입니다
+	// cause is the wrapped error
+	// cause는 래핑된 에러입니다
 	cause error
 }
 
@@ -239,11 +263,14 @@ func (e *stackError) Unwrap() error {
 // contextError는 구조화된 키-값 컨텍스트 데이터를 전달하는 에러입니다.
 // 이것은 에러 조건에 대한 추가 정보를 제공합니다.
 type contextError struct {
-	// msg is the error message / msg는 에러 메시지입니다
+	// msg is the error message
+	// msg는 에러 메시지입니다
 	msg string
-	// ctx is the contextual data / ctx는 컨텍스트 데이터입니다
+	// ctx is the contextual data
+	// ctx는 컨텍스트 데이터입니다
 	ctx map[string]interface{}
-	// cause is the wrapped error / cause는 래핑된 에러입니다
+	// cause is the wrapped error
+	// cause는 래핑된 에러입니다
 	cause error
 }
 
@@ -279,17 +306,23 @@ func (e *contextError) Unwrap() error {
 // compositeError는 여러 에러 기능(코드, 스택, 컨텍스트)을 결합합니다.
 // 이것은 패키지에서 가장 기능이 풍부한 에러 타입입니다.
 type compositeError struct {
-	// msg is the error message / msg는 에러 메시지입니다
+	// msg is the error message
+	// msg는 에러 메시지입니다
 	msg string
-	// code is the optional error code / code는 선택적 에러 코드입니다
+	// code is the optional error code
+	// code는 선택적 에러 코드입니다
 	code string
-	// numCode is the optional numeric error code / numCode는 선택적 숫자 에러 코드입니다
+	// numCode is the optional numeric error code
+	// numCode는 선택적 숫자 에러 코드입니다
 	numCode int
-	// stack is the optional stack trace / stack은 선택적 스택 트레이스입니다
+	// stack is the optional stack trace
+	// stack은 선택적 스택 트레이스입니다
 	stack []Frame
-	// ctx is the optional contextual data / ctx는 선택적 컨텍스트 데이터입니다
+	// ctx is the optional contextual data
+	// ctx는 선택적 컨텍스트 데이터입니다
 	ctx map[string]interface{}
-	// cause is the wrapped error / cause는 래핑된 에러입니다
+	// cause is the wrapped error
+	// cause는 래핑된 에러입니다
 	cause error
 }
 

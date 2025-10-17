@@ -38,7 +38,8 @@ func FormatTime(t time.Time) string {
 // Format formats a time using custom format tokens.
 // Format은 커스텀 포맷 토큰을 사용하여 시간을 포맷합니다.
 //
-// Supported tokens / 지원되는 토큰:
+// Supported tokens
+// 지원되는 토큰:
 //   YYYY - 4-digit year
 //   YY   - 2-digit year
 //   MM   - 2-digit month
@@ -50,10 +51,10 @@ func FormatTime(t time.Time) string {
 //   mm   - 2-digit minute
 //   ss   - 2-digit second
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	timeutil.Format(time.Now(), "YYYY-MM-DD HH:mm:ss")
-//	timeutil.Format(time.Now(), "YYYY년 MM월 DD일")
+// timeutil.Format(time.Now(), "YYYY-MM-DD HH:mm:ss") / timeutil.Format(time.Now(), "YYYY년 MM월 DD일")
 func Format(t time.Time, layout string) string {
 	t = t.In(defaultLocation)
 	goLayout := layout
@@ -94,7 +95,8 @@ func FormatKoreanDate(t time.Time) string {
 // WeekdayKorean returns the Korean name of the weekday.
 // WeekdayKorean은 요일의 한글 이름을 반환합니다.
 //
-// Returns / 반환값:
+// Returns
+// 반환값:
 //   - "일요일" for Sunday
 //   - "월요일" for Monday
 //   - "화요일" for Tuesday
@@ -103,10 +105,11 @@ func FormatKoreanDate(t time.Time) string {
 //   - "금요일" for Friday
 //   - "토요일" for Saturday
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	t := time.Now()
-//	fmt.Println(timeutil.WeekdayKorean(t))  // Output: 월요일
+// t := time.Now()
+// fmt.Println(timeutil.WeekdayKorean(t))  // Output: 월요일
 func WeekdayKorean(t time.Time) string {
 	weekdays := []string{
 		"일요일", // Sunday
@@ -123,7 +126,8 @@ func WeekdayKorean(t time.Time) string {
 // WeekdayKoreanShort returns the short Korean name of the weekday.
 // WeekdayKoreanShort는 요일의 짧은 한글 이름을 반환합니다.
 //
-// Returns / 반환값:
+// Returns
+// 반환값:
 //   - "일" for Sunday
 //   - "월" for Monday
 //   - "화" for Tuesday
@@ -132,10 +136,11 @@ func WeekdayKorean(t time.Time) string {
 //   - "금" for Friday
 //   - "토" for Saturday
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	t := time.Now()
-//	fmt.Println(timeutil.WeekdayKoreanShort(t))  // Output: 월
+// t := time.Now()
+// fmt.Println(timeutil.WeekdayKoreanShort(t))  // Output: 월
 func WeekdayKoreanShort(t time.Time) string {
 	weekdays := []string{
 		"일", // Sunday
@@ -152,13 +157,15 @@ func WeekdayKoreanShort(t time.Time) string {
 // FormatKoreanDateTime formats a time in Korean format with weekday.
 // FormatKoreanDateTime은 요일을 포함한 한국어 포맷으로 시간을 포맷합니다.
 //
-// Format / 포맷: YYYY년 MM월 DD일 (요일) HH시 mm분 ss초
+// Format
+// 포맷: YYYY년 MM월 DD일 (요일) HH시 mm분 ss초
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	t := time.Date(2025, 10, 14, 15, 30, 0, 0, time.UTC)
-//	fmt.Println(timeutil.FormatKoreanDateTime(t))
-//	// Output: 2025년 10월 14일 (화요일) 15시 30분 00초
+// fmt.Println(timeutil.FormatKoreanDateTime(t))
+// Output: 2025년 10월 14일 (화요일) 15시 30분 00초
 func FormatKoreanDateTime(t time.Time) string {
 	t = t.In(defaultLocation)
 	return t.Format("2006년 01월 02일") + " (" + WeekdayKorean(t) + ") " + t.Format("15시 04분 05초")
@@ -167,13 +174,15 @@ func FormatKoreanDateTime(t time.Time) string {
 // FormatKoreanDateWithWeekday formats a date in Korean format with weekday.
 // FormatKoreanDateWithWeekday는 요일을 포함한 한국어 날짜 포맷으로 포맷합니다.
 //
-// Format / 포맷: YYYY년 MM월 DD일 (요일)
+// Format
+// 포맷: YYYY년 MM월 DD일 (요일)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	t := time.Date(2025, 10, 14, 0, 0, 0, 0, time.UTC)
-//	fmt.Println(timeutil.FormatKoreanDateWithWeekday(t))
-//	// Output: 2025년 10월 14일 (화요일)
+// fmt.Println(timeutil.FormatKoreanDateWithWeekday(t))
+// Output: 2025년 10월 14일 (화요일)
 func FormatKoreanDateWithWeekday(t time.Time) string {
 	t = t.In(defaultLocation)
 	return t.Format("2006년 01월 02일") + " (" + WeekdayKorean(t) + ")"
@@ -182,13 +191,15 @@ func FormatKoreanDateWithWeekday(t time.Time) string {
 // FormatKoreanDateShort formats a date in Korean format with short weekday.
 // FormatKoreanDateShort는 짧은 요일을 포함한 한국어 날짜 포맷으로 포맷합니다.
 //
-// Format / 포맷: YYYY년 MM월 DD일 (요일)
+// Format
+// 포맷: YYYY년 MM월 DD일 (요일)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	t := time.Date(2025, 10, 14, 0, 0, 0, 0, time.UTC)
-//	fmt.Println(timeutil.FormatKoreanDateShort(t))
-//	// Output: 2025년 10월 14일 (화)
+// fmt.Println(timeutil.FormatKoreanDateShort(t))
+// Output: 2025년 10월 14일 (화)
 func FormatKoreanDateShort(t time.Time) string {
 	t = t.In(defaultLocation)
 	return t.Format("2006년 01월 02일") + " (" + WeekdayKoreanShort(t) + ")"

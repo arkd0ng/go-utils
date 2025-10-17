@@ -27,7 +27,8 @@ type selectConfig struct {
 // WithColumns specifies which columns to select
 // WithColumns는 선택할 컬럼을 지정합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //   db.SelectWhere(ctx, "users", "age > ?", 18, WithColumns("name", "email"))
 func WithColumns(cols ...string) SelectOption {
 	return func(c *selectConfig) {
@@ -38,7 +39,8 @@ func WithColumns(cols ...string) SelectOption {
 // WithOrderBy adds ORDER BY clause
 // WithOrderBy는 ORDER BY 절을 추가합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //   db.SelectWhere(ctx, "users", "age > ?", 18, WithOrderBy("age DESC"))
 func WithOrderBy(order string) SelectOption {
 	return func(c *selectConfig) {
@@ -49,7 +51,8 @@ func WithOrderBy(order string) SelectOption {
 // WithLimit adds LIMIT clause
 // WithLimit은 LIMIT 절을 추가합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //   db.SelectWhere(ctx, "users", "age > ?", 18, WithLimit(10))
 func WithLimit(n int) SelectOption {
 	return func(c *selectConfig) {
@@ -60,7 +63,8 @@ func WithLimit(n int) SelectOption {
 // WithOffset adds OFFSET clause
 // WithOffset은 OFFSET 절을 추가합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //   db.SelectWhere(ctx, "users", "age > ?", 18, WithLimit(10), WithOffset(20))
 func WithOffset(n int) SelectOption {
 	return func(c *selectConfig) {
@@ -71,7 +75,8 @@ func WithOffset(n int) SelectOption {
 // WithGroupBy adds GROUP BY clause
 // WithGroupBy는 GROUP BY 절을 추가합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //   db.SelectWhere(ctx, "users", "", WithGroupBy("city"), WithColumns("city", "COUNT(*) as count"))
 func WithGroupBy(cols ...string) SelectOption {
 	return func(c *selectConfig) {
@@ -82,7 +87,8 @@ func WithGroupBy(cols ...string) SelectOption {
 // WithHaving adds HAVING clause (used with GROUP BY)
 // WithHaving은 HAVING 절을 추가합니다 (GROUP BY와 함께 사용)
 //
-// Example / 예제:
+// Example
+// 예제:
 //   db.SelectWhere(ctx, "users", "",
 //     WithColumns("city", "COUNT(*) as count"),
 //     WithGroupBy("city"),
@@ -99,7 +105,8 @@ func WithHaving(condition string, args ...interface{}) SelectOption {
 // WithJoin adds INNER JOIN clause
 // WithJoin은 INNER JOIN 절을 추가합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //   db.SelectWhere(ctx, "users u", "u.age > ?", 18,
 //     WithJoin("orders o", "u.id = o.user_id"),
 //     WithColumns("u.name", "o.total"))
@@ -116,7 +123,8 @@ func WithJoin(table, condition string) SelectOption {
 // WithLeftJoin adds LEFT JOIN clause
 // WithLeftJoin은 LEFT JOIN 절을 추가합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //   db.SelectWhere(ctx, "users u", "",
 //     WithLeftJoin("orders o", "u.id = o.user_id"),
 //     WithColumns("u.name", "COUNT(o.id) as order_count"),
@@ -146,7 +154,8 @@ func WithRightJoin(table, condition string) SelectOption {
 // WithDistinct adds DISTINCT keyword
 // WithDistinct는 DISTINCT 키워드를 추가합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //   db.SelectWhere(ctx, "users", "", WithColumns("city"), WithDistinct())
 func WithDistinct() SelectOption {
 	return func(c *selectConfig) {
@@ -157,22 +166,26 @@ func WithDistinct() SelectOption {
 // SelectWhere selects rows with optional WHERE condition and options
 // SelectWhere는 선택적 WHERE 조건과 옵션으로 행을 선택합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//   // Simple query with columns / 컬럼 지정 간단 쿼리
+// // Simple query with columns
+// 컬럼 지정 간단 쿼리
 //   users, _ := db.SelectWhere(ctx, "users", "age > ?", 18,
 //     WithColumns("name", "email"),
 //     WithOrderBy("age DESC"),
 //     WithLimit(10))
 //
-//   // GROUP BY query / GROUP BY 쿼리
+// // GROUP BY query
+// GROUP BY 쿼리
 //   results, _ := db.SelectWhere(ctx, "users", "",
 //     WithColumns("city", "COUNT(*) as count"),
 //     WithGroupBy("city"),
 //     WithHaving("COUNT(*) > ?", 2),
 //     WithOrderBy("count DESC"))
 //
-//   // JOIN query / JOIN 쿼리
+// // JOIN query
+// JOIN 쿼리
 //   results, _ := db.SelectWhere(ctx, "users u", "u.age > ?", 25,
 //     WithJoin("orders o", "u.id = o.user_id"),
 //     WithColumns("u.name", "o.total"),
@@ -185,16 +198,19 @@ func (c *Client) SelectWhere(ctx context.Context, table string, conditionAndArgs
 	}
 	c.mu.RUnlock()
 
-	// Parse condition and options / 조건과 옵션 파싱
+	// Parse condition and options
+	// 조건과 옵션 파싱
 	var condition string
 	var args []interface{}
 	var opts []SelectOption
 
 	if len(conditionAndArgs) > 0 {
-		// First argument is condition string / 첫 번째 인자는 조건 문자열
+		// First argument is condition string
+		// 첫 번째 인자는 조건 문자열
 		condition = fmt.Sprintf("%v", conditionAndArgs[0])
 
-		// Extract args and options / 인자와 옵션 추출
+		// Extract args and options
+		// 인자와 옵션 추출
 		for i := 1; i < len(conditionAndArgs); i++ {
 			if opt, ok := conditionAndArgs[i].(SelectOption); ok {
 				opts = append(opts, opt)
@@ -204,7 +220,8 @@ func (c *Client) SelectWhere(ctx context.Context, table string, conditionAndArgs
 		}
 	}
 
-	// Apply options / 옵션 적용
+	// Apply options
+	// 옵션 적용
 	cfg := &selectConfig{
 		columns: []string{"*"},
 	}
@@ -212,15 +229,18 @@ func (c *Client) SelectWhere(ctx context.Context, table string, conditionAndArgs
 		opt(cfg)
 	}
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := buildSelectQuery(table, condition, cfg)
 
-	// Add args from HAVING clause / HAVING 절의 인자 추가
+	// Add args from HAVING clause
+	// HAVING 절의 인자 추가
 	if cfg.having != nil {
 		args = append(args, cfg.having.args...)
 	}
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var rows *sql.Rows
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -240,11 +260,13 @@ func (c *Client) SelectWhere(ctx context.Context, table string, conditionAndArgs
 // SelectOneWhere selects a single row with optional WHERE condition and options
 // SelectOneWhere는 선택적 WHERE 조건과 옵션으로 단일 행을 선택합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //   user, _ := db.SelectOneWhere(ctx, "users", "email = ?", "john@example.com",
 //     WithColumns("name", "age", "city"))
 func (c *Client) SelectOneWhere(ctx context.Context, table string, conditionAndArgs ...interface{}) (map[string]interface{}, error) {
-	// Add LIMIT 1 / LIMIT 1 추가
+	// Add LIMIT 1
+	// LIMIT 1 추가
 	conditionAndArgs = append(conditionAndArgs, WithLimit(1))
 
 	results, err := c.SelectWhere(ctx, table, conditionAndArgs...)
@@ -313,9 +335,11 @@ func buildSelectQuery(table string, condition string, cfg *selectConfig) string 
 	return strings.Join(parts, " ")
 }
 
-// SelectWhere for transactions / 트랜잭션용 SelectWhere
+// SelectWhere for transactions
+// 트랜잭션용 SelectWhere
 func (tx *Tx) SelectWhere(ctx context.Context, table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
-	// Parse condition and options / 조건과 옵션 파싱
+	// Parse condition and options
+	// 조건과 옵션 파싱
 	var condition string
 	var args []interface{}
 	var opts []SelectOption
@@ -332,7 +356,8 @@ func (tx *Tx) SelectWhere(ctx context.Context, table string, conditionAndArgs ..
 		}
 	}
 
-	// Apply options / 옵션 적용
+	// Apply options
+	// 옵션 적용
 	cfg := &selectConfig{
 		columns: []string{"*"},
 	}
@@ -340,15 +365,18 @@ func (tx *Tx) SelectWhere(ctx context.Context, table string, conditionAndArgs ..
 		opt(cfg)
 	}
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := buildSelectQuery(table, condition, cfg)
 
-	// Add args from HAVING clause / HAVING 절의 인자 추가
+	// Add args from HAVING clause
+	// HAVING 절의 인자 추가
 	if cfg.having != nil {
 		args = append(args, cfg.having.args...)
 	}
 
-	// Execute / 실행
+	// Execute
+	// 실행
 	rows, err := tx.tx.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, err
@@ -358,7 +386,8 @@ func (tx *Tx) SelectWhere(ctx context.Context, table string, conditionAndArgs ..
 	return scanRows(rows)
 }
 
-// SelectOneWhere for transactions / 트랜잭션용 SelectOneWhere
+// SelectOneWhere for transactions
+// 트랜잭션용 SelectOneWhere
 func (tx *Tx) SelectOneWhere(ctx context.Context, table string, conditionAndArgs ...interface{}) (map[string]interface{}, error) {
 	conditionAndArgs = append(conditionAndArgs, WithLimit(1))
 

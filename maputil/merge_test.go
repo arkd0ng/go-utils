@@ -5,7 +5,8 @@ import (
 	"testing"
 )
 
-// TestMerge tests the Merge function / Merge 함수 테스트
+// TestMerge tests the Merge function
+// Merge 함수 테스트
 func TestMerge(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2}
 	m2 := map[string]int{"b": 3, "c": 4}
@@ -18,13 +19,15 @@ func TestMerge(t *testing.T) {
 		t.Errorf("Merge() = %v, want %v", result, expected)
 	}
 
-	// Test immutability / 불변성 테스트
+	// Test immutability
+	// 불변성 테스트
 	if len(m1) != 2 {
 		t.Error("Merge() modified original map m1")
 	}
 }
 
-// TestMergeEmpty tests Merge with empty maps / 빈 맵으로 Merge 테스트
+// TestMergeEmpty tests Merge with empty maps
+// 빈 맵으로 Merge 테스트
 func TestMergeEmpty(t *testing.T) {
 	result := Merge[string, int]()
 	if len(result) != 0 {
@@ -38,12 +41,14 @@ func TestMergeEmpty(t *testing.T) {
 	}
 }
 
-// TestMergeWith tests the MergeWith function / MergeWith 함수 테스트
+// TestMergeWith tests the MergeWith function
+// MergeWith 함수 테스트
 func TestMergeWith(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 	m2 := map[string]int{"b": 3, "c": 1}
 
-	// Sum values on conflict / 충돌 시 값 합산
+	// Sum values on conflict
+	// 충돌 시 값 합산
 	result := MergeWith(func(v1, v2 int) int { return v1 + v2 }, m1, m2)
 	expected := map[string]int{"a": 1, "b": 5, "c": 4}
 
@@ -51,7 +56,8 @@ func TestMergeWith(t *testing.T) {
 		t.Errorf("MergeWith() = %v, want %v", result, expected)
 	}
 
-	// Max value on conflict / 충돌 시 최댓값
+	// Max value on conflict
+	// 충돌 시 최댓값
 	result = MergeWith(func(v1, v2 int) int {
 		if v1 > v2 {
 			return v1
@@ -65,7 +71,8 @@ func TestMergeWith(t *testing.T) {
 	}
 }
 
-// TestDeepMerge tests the DeepMerge function / DeepMerge 함수 테스트
+// TestDeepMerge tests the DeepMerge function
+// DeepMerge 함수 테스트
 func TestDeepMerge(t *testing.T) {
 	m1 := map[string]interface{}{
 		"a": map[string]interface{}{"x": 1, "y": 2},
@@ -78,7 +85,8 @@ func TestDeepMerge(t *testing.T) {
 
 	result := DeepMerge(m1, m2)
 
-	// Check top-level keys / 최상위 레벨 키 확인
+	// Check top-level keys
+	// 최상위 레벨 키 확인
 	if _, ok := result["a"]; !ok {
 		t.Error("DeepMerge() missing key 'a'")
 	}
@@ -90,7 +98,8 @@ func TestDeepMerge(t *testing.T) {
 	}
 }
 
-// TestUnion tests the Union function / Union 함수 테스트
+// TestUnion tests the Union function
+// Union 함수 테스트
 func TestUnion(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2}
 	m2 := map[string]int{"b": 3, "c": 4}
@@ -98,7 +107,8 @@ func TestUnion(t *testing.T) {
 
 	result := Union(m1, m2, m3)
 
-	// Union should contain all keys / Union은 모든 키를 포함해야 함
+	// Union should contain all keys
+	// Union은 모든 키를 포함해야 함
 	if len(result) != 4 {
 		t.Errorf("Union() has %d keys, want 4", len(result))
 	}
@@ -111,7 +121,8 @@ func TestUnion(t *testing.T) {
 	}
 }
 
-// TestIntersection tests the Intersection function / Intersection 함수 테스트
+// TestIntersection tests the Intersection function
+// Intersection 함수 테스트
 func TestIntersection(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 	m2 := map[string]int{"b": 20, "c": 30, "d": 40}
@@ -119,17 +130,20 @@ func TestIntersection(t *testing.T) {
 
 	result := Intersection(m1, m2, m3)
 
-	// Only 'c' appears in all three maps / 'c'만 모든 맵에 존재
+	// Only 'c' appears in all three maps
+	// 'c'만 모든 맵에 존재
 	if len(result) != 1 {
 		t.Errorf("Intersection() = %v, want map with 1 key", result)
 	}
-	// Value should be from first map / 값은 첫 번째 맵에서
+	// Value should be from first map
+	// 값은 첫 번째 맵에서
 	if result["c"] != 3 {
 		t.Errorf("Intersection()['c'] = %d, want 3", result["c"])
 	}
 }
 
-// TestIntersectionEmpty tests Intersection with no common keys / 공통 키가 없는 Intersection 테스트
+// TestIntersectionEmpty tests Intersection with no common keys
+// 공통 키가 없는 Intersection 테스트
 func TestIntersectionEmpty(t *testing.T) {
 	m1 := map[string]int{"a": 1}
 	m2 := map[string]int{"b": 2}
@@ -140,7 +154,8 @@ func TestIntersectionEmpty(t *testing.T) {
 	}
 }
 
-// TestDifference tests the Difference function / Difference 함수 테스트
+// TestDifference tests the Difference function
+// Difference 함수 테스트
 func TestDifference(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 	m2 := map[string]int{"b": 2, "c": 4, "d": 5}
@@ -152,7 +167,8 @@ func TestDifference(t *testing.T) {
 		t.Errorf("Difference() = %v, want %v", result, expected)
 	}
 
-	// Test empty result / 빈 결과 테스트
+	// Test empty result
+	// 빈 결과 테스트
 	m3 := map[string]int{"a": 1, "b": 2, "c": 3}
 	m4 := map[string]int{"a": 1, "b": 2, "c": 3}
 	result = Difference(m3, m4)
@@ -161,7 +177,8 @@ func TestDifference(t *testing.T) {
 	}
 }
 
-// TestSymmetricDifference tests the SymmetricDifference function / SymmetricDifference 함수 테스트
+// TestSymmetricDifference tests the SymmetricDifference function
+// SymmetricDifference 함수 테스트
 func TestSymmetricDifference(t *testing.T) {
 	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 	m2 := map[string]int{"b": 2, "c": 4, "d": 5}
@@ -186,7 +203,8 @@ func TestSymmetricDifference(t *testing.T) {
 	}
 }
 
-// Benchmarks / 벤치마크
+// Benchmarks
+// 벤치마크
 
 func BenchmarkMerge(b *testing.B) {
 	m1 := map[string]int{"a": 1, "b": 2, "c": 3}

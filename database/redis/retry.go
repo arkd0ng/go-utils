@@ -12,24 +12,28 @@ func (c *Client) executeWithRetry(ctx context.Context, fn func() error) error {
 	var lastErr error
 
 	for i := 0; i < c.config.MaxRetries; i++ {
-		// Check context cancellation / Context 취소 확인
+		// Check context cancellation
+		// Context 취소 확인
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
 		}
 
-		// Execute the function / 함수 실행
+		// Execute the function
+		// 함수 실행
 		startTime := time.Now()
 		err := fn()
 		duration := time.Since(startTime)
 
-		// Success / 성공
+		// Success
+		// 성공
 		if err == nil {
 			return nil
 		}
 
-		// Check if error is retriable / 에러가 재시도 가능한지 확인
+		// Check if error is retriable
+		// 에러가 재시도 가능한지 확인
 		if !isRetriableError(err) {
 			return &RedisError{
 				Op:       "execute",
@@ -41,9 +45,11 @@ func (c *Client) executeWithRetry(ctx context.Context, fn func() error) error {
 
 		lastErr = err
 
-		// Don't sleep on last retry / 마지막 재시도에서는 sleep하지 않음
+		// Don't sleep on last retry
+		// 마지막 재시도에서는 sleep하지 않음
 		if i < c.config.MaxRetries-1 {
-			// Exponential backoff / 지수 백오프
+			// Exponential backoff
+			// 지수 백오프
 			backoff := time.Duration(i+1) * c.config.RetryInterval
 			select {
 			case <-ctx.Done():

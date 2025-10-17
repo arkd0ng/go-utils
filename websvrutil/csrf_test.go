@@ -174,7 +174,7 @@ func TestCSRFSkipper(t *testing.T) {
 	config := CSRFConfig{
 		Skipper: func(r *http.Request) bool {
 			// Skip CSRF for /api/* routes
-			// /api/* 라우트는 CSRF 건너뛰기
+			// api/* 라우트는 CSRF 건너뛰기
 			return strings.HasPrefix(r.URL.Path, "/api/")
 		},
 	}
@@ -191,7 +191,7 @@ func TestCSRFSkipper(t *testing.T) {
 	})
 
 	// POST to /api/test should work without CSRF token (skipped)
-	// /api/test로의 POST는 CSRF 토큰 없이 작동해야 함 (건너뛰기)
+	// api/test로의 POST는 CSRF 토큰 없이 작동해야 함 (건너뛰기)
 	req := httptest.NewRequest("POST", "/api/test", nil)
 	rec := httptest.NewRecorder()
 	app.ServeHTTP(rec, req)
@@ -201,7 +201,7 @@ func TestCSRFSkipper(t *testing.T) {
 	}
 
 	// POST to /test should fail without CSRF token
-	// /test로의 POST는 CSRF 토큰 없이 실패해야 함
+	// test로의 POST는 CSRF 토큰 없이 실패해야 함
 	req = httptest.NewRequest("POST", "/test", nil)
 	rec = httptest.NewRecorder()
 	app.ServeHTTP(rec, req)

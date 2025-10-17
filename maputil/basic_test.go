@@ -7,13 +7,15 @@ import (
 func TestGet(t *testing.T) {
 	m := map[string]int{"a": 1, "b": 2, "c": 3}
 
-	// Test existing key / 존재하는 키 테스트
+	// Test existing key
+	// 존재하는 키 테스트
 	value, ok := Get(m, "a")
 	if !ok || value != 1 {
 		t.Errorf("Expected (1, true), got (%d, %v)", value, ok)
 	}
 
-	// Test non-existing key / 존재하지 않는 키 테스트
+	// Test non-existing key
+	// 존재하지 않는 키 테스트
 	value, ok = Get(m, "d")
 	if ok || value != 0 {
 		t.Errorf("Expected (0, false), got (%d, %v)", value, ok)
@@ -23,13 +25,15 @@ func TestGet(t *testing.T) {
 func TestGetOr(t *testing.T) {
 	m := map[string]int{"a": 1, "b": 2}
 
-	// Test existing key / 존재하는 키 테스트
+	// Test existing key
+	// 존재하는 키 테스트
 	value := GetOr(m, "a", 10)
 	if value != 1 {
 		t.Errorf("Expected 1, got %d", value)
 	}
 
-	// Test non-existing key / 존재하지 않는 키 테스트
+	// Test non-existing key
+	// 존재하지 않는 키 테스트
 	value = GetOr(m, "c", 10)
 	if value != 10 {
 		t.Errorf("Expected 10, got %d", value)
@@ -39,7 +43,8 @@ func TestGetOr(t *testing.T) {
 func TestSet(t *testing.T) {
 	m := map[string]int{"a": 1, "b": 2}
 
-	// Add new key / 새 키 추가
+	// Add new key
+	// 새 키 추가
 	result := Set(m, "c", 3)
 	if len(result) != 3 {
 		t.Errorf("Expected length 3, got %d", len(result))
@@ -48,12 +53,14 @@ func TestSet(t *testing.T) {
 		t.Errorf("Expected c=3, got %d", result["c"])
 	}
 
-	// Original map should be unchanged / 원본 맵은 변경되지 않아야 함
+	// Original map should be unchanged
+	// 원본 맵은 변경되지 않아야 함
 	if len(m) != 2 {
 		t.Errorf("Original map should have length 2, got %d", len(m))
 	}
 
-	// Update existing key / 기존 키 업데이트
+	// Update existing key
+	// 기존 키 업데이트
 	result = Set(m, "a", 10)
 	if result["a"] != 10 {
 		t.Errorf("Expected a=10, got %d", result["a"])
@@ -63,7 +70,8 @@ func TestSet(t *testing.T) {
 func TestDelete(t *testing.T) {
 	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 
-	// Delete existing keys / 존재하는 키 삭제
+	// Delete existing keys
+	// 존재하는 키 삭제
 	result := Delete(m, "b", "d")
 	if len(result) != 2 {
 		t.Errorf("Expected length 2, got %d", len(result))
@@ -75,18 +83,21 @@ func TestDelete(t *testing.T) {
 		t.Error("Key 'd' should be deleted")
 	}
 
-	// Original map should be unchanged / 원본 맵은 변경되지 않아야 함
+	// Original map should be unchanged
+	// 원본 맵은 변경되지 않아야 함
 	if len(m) != 4 {
 		t.Errorf("Original map should have length 4, got %d", len(m))
 	}
 
-	// Delete non-existing keys / 존재하지 않는 키 삭제
+	// Delete non-existing keys
+	// 존재하지 않는 키 삭제
 	result = Delete(m, "x", "y")
 	if len(result) != 4 {
 		t.Errorf("Expected length 4, got %d", len(result))
 	}
 
-	// Delete with no keys / 키 없이 삭제
+	// Delete with no keys
+	// 키 없이 삭제
 	result = Delete(m)
 	if len(result) != 4 {
 		t.Errorf("Expected length 4, got %d", len(result))
@@ -152,21 +163,24 @@ func TestClear(t *testing.T) {
 		t.Errorf("Expected empty map, got length %d", len(result))
 	}
 
-	// Original map should be unchanged / 원본 맵은 변경되지 않아야 함
+	// Original map should be unchanged
+	// 원본 맵은 변경되지 않아야 함
 	if len(m) != 3 {
 		t.Errorf("Original map should have length 3, got %d", len(m))
 	}
 }
 
 func TestClone(t *testing.T) {
-	// Test nil map / nil 맵 테스트
+	// Test nil map
+	// nil 맵 테스트
 	var nilMap map[string]int
 	clonedNil := Clone(nilMap)
 	if clonedNil != nil {
 		t.Error("Clone of nil map should be nil")
 	}
 
-	// Test non-nil map / 비nil 맵 테스트
+	// Test non-nil map
+	// 비nil 맵 테스트
 	m := map[string]int{"a": 1, "b": 2, "c": 3}
 	cloned := Clone(m)
 
@@ -174,14 +188,16 @@ func TestClone(t *testing.T) {
 		t.Errorf("Expected length %d, got %d", len(m), len(cloned))
 	}
 
-	// Verify all entries / 모든 항목 확인
+	// Verify all entries
+	// 모든 항목 확인
 	for k, v := range m {
 		if cloned[k] != v {
 			t.Errorf("Expected %s=%d, got %d", k, v, cloned[k])
 		}
 	}
 
-	// Modify clone / 복제본 수정
+	// Modify clone
+	// 복제본 수정
 	cloned["d"] = 4
 	if len(m) != 3 {
 		t.Error("Original map should not be modified")
@@ -194,22 +210,26 @@ func TestEqual(t *testing.T) {
 	m3 := map[string]int{"a": 1, "b": 2}
 	m4 := map[string]int{"a": 1, "b": 3, "c": 3}
 
-	// Equal maps / 동일한 맵
+	// Equal maps
+	// 동일한 맵
 	if !Equal(m1, m2) {
 		t.Error("Expected maps to be equal")
 	}
 
-	// Different lengths / 다른 길이
+	// Different lengths
+	// 다른 길이
 	if Equal(m1, m3) {
 		t.Error("Expected maps to be different (different lengths)")
 	}
 
-	// Different values / 다른 값
+	// Different values
+	// 다른 값
 	if Equal(m1, m4) {
 		t.Error("Expected maps to be different (different values)")
 	}
 
-	// Empty maps / 빈 맵
+	// Empty maps
+	// 빈 맵
 	empty1 := map[string]int{}
 	empty2 := map[string]int{}
 	if !Equal(empty1, empty2) {
@@ -217,7 +237,8 @@ func TestEqual(t *testing.T) {
 	}
 }
 
-// Benchmark tests / 벤치마크 테스트
+// Benchmark tests
+// 벤치마크 테스트
 
 func BenchmarkGet(b *testing.B) {
 	m := map[string]int{"a": 1, "b": 2, "c": 3}

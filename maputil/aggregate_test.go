@@ -25,7 +25,8 @@ func TestSum(t *testing.T) {
 		t.Errorf("Expected 6, got %d", total)
 	}
 
-	// Empty map / 빈 맵
+	// Empty map
+	// 빈 맵
 	empty := map[string]int{}
 	if Sum(empty) != 0 {
 		t.Error("Sum of empty map should be 0")
@@ -49,7 +50,8 @@ func TestMin(t *testing.T) {
 		t.Errorf("Expected key 'b', got '%s'", key)
 	}
 
-	// Empty map / 빈 맵
+	// Empty map
+	// 빈 맵
 	empty := map[string]int{}
 	_, _, ok = Min(empty)
 	if ok {
@@ -74,7 +76,8 @@ func TestMax(t *testing.T) {
 		t.Errorf("Expected key 'a', got '%s'", key)
 	}
 
-	// Empty map / 빈 맵
+	// Empty map
+	// 빈 맵
 	empty := map[string]int{}
 	_, _, ok = Max(empty)
 	if ok {
@@ -149,7 +152,8 @@ func TestAverage(t *testing.T) {
 		t.Errorf("Expected average 2.5, got %f", avg)
 	}
 
-	// Empty map / 빈 맵
+	// Empty map
+	// 빈 맵
 	empty := map[string]int{}
 	if Average(empty) != 0 {
 		t.Error("Average of empty map should be 0")
@@ -210,7 +214,8 @@ func TestCountBy(t *testing.T) {
 	}
 }
 
-// Benchmark tests / 벤치마크 테스트
+// Benchmark tests
+// 벤치마크 테스트
 
 func BenchmarkSum(b *testing.B) {
 	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
@@ -248,7 +253,8 @@ func BenchmarkGroupBy(b *testing.B) {
 // TestMedian는 다양한 시나리오로 Median 함수를 테스트합니다.
 func TestMedian(t *testing.T) {
 	t.Run("OddLength", func(t *testing.T) {
-		// Test with odd number of values / 홀수 개의 값 테스트
+		// Test with odd number of values
+		// 홀수 개의 값 테스트
 		scores := map[string]int{
 			"Alice":   85,
 			"Bob":     90,
@@ -266,7 +272,8 @@ func TestMedian(t *testing.T) {
 	})
 
 	t.Run("EvenLength", func(t *testing.T) {
-		// Test with even number of values / 짝수 개의 값 테스트
+		// Test with even number of values
+		// 짝수 개의 값 테스트
 		scores := map[string]int{
 			"Alice":   80,
 			"Bob":     90,
@@ -283,7 +290,8 @@ func TestMedian(t *testing.T) {
 	})
 
 	t.Run("EmptyMap", func(t *testing.T) {
-		// Test with empty map / 빈 맵 테스트
+		// Test with empty map
+		// 빈 맵 테스트
 		scores := map[string]int{}
 		median, ok := Median(scores)
 		if ok {
@@ -295,7 +303,8 @@ func TestMedian(t *testing.T) {
 	})
 
 	t.Run("SingleValue", func(t *testing.T) {
-		// Test with single value / 단일 값 테스트
+		// Test with single value
+		// 단일 값 테스트
 		scores := map[string]int{"Alice": 85}
 		median, ok := Median(scores)
 		if !ok {
@@ -307,7 +316,8 @@ func TestMedian(t *testing.T) {
 	})
 
 	t.Run("TwoValues", func(t *testing.T) {
-		// Test with two values / 두 값 테스트
+		// Test with two values
+		// 두 값 테스트
 		scores := map[string]int{
 			"Alice": 80,
 			"Bob":   90,
@@ -322,7 +332,8 @@ func TestMedian(t *testing.T) {
 	})
 
 	t.Run("AllSameValues", func(t *testing.T) {
-		// Test with all same values / 모두 같은 값 테스트
+		// Test with all same values
+		// 모두 같은 값 테스트
 		scores := map[string]int{
 			"Alice": 85,
 			"Bob":   85,
@@ -338,7 +349,8 @@ func TestMedian(t *testing.T) {
 	})
 
 	t.Run("FloatValues", func(t *testing.T) {
-		// Test with float values / 소수점 값 테스트
+		// Test with float values
+		// 소수점 값 테스트
 		prices := map[string]float64{
 			"item1": 10.5,
 			"item2": 20.5,
@@ -354,7 +366,8 @@ func TestMedian(t *testing.T) {
 	})
 
 	t.Run("NegativeValues", func(t *testing.T) {
-		// Test with negative values / 음수 값 테스트
+		// Test with negative values
+		// 음수 값 테스트
 		temps := map[string]int{
 			"day1": -5,
 			"day2": -10,
@@ -376,7 +389,8 @@ func TestMedian(t *testing.T) {
 // TestFrequencies는 다양한 시나리오로 Frequencies 함수를 테스트합니다.
 func TestFrequencies(t *testing.T) {
 	t.Run("StringValues", func(t *testing.T) {
-		// Test with string values / 문자열 값 테스트
+		// Test with string values
+		// 문자열 값 테스트
 		grades := map[string]string{
 			"Alice":   "A",
 			"Bob":     "B",
@@ -395,7 +409,8 @@ func TestFrequencies(t *testing.T) {
 	})
 
 	t.Run("IntValues", func(t *testing.T) {
-		// Test with int values / 정수 값 테스트
+		// Test with int values
+		// 정수 값 테스트
 		scores := map[string]int{
 			"test1": 85,
 			"test2": 90,
@@ -413,7 +428,8 @@ func TestFrequencies(t *testing.T) {
 	})
 
 	t.Run("EmptyMap", func(t *testing.T) {
-		// Test with empty map / 빈 맵 테스트
+		// Test with empty map
+		// 빈 맵 테스트
 		data := map[string]int{}
 		freq := Frequencies(data)
 		if len(freq) != 0 {
@@ -422,7 +438,8 @@ func TestFrequencies(t *testing.T) {
 	})
 
 	t.Run("AllUnique", func(t *testing.T) {
-		// Test with all unique values / 모두 고유한 값 테스트
+		// Test with all unique values
+		// 모두 고유한 값 테스트
 		data := map[string]int{
 			"a": 1,
 			"b": 2,
@@ -441,7 +458,8 @@ func TestFrequencies(t *testing.T) {
 	})
 
 	t.Run("AllSame", func(t *testing.T) {
-		// Test with all same values / 모두 같은 값 테스트
+		// Test with all same values
+		// 모두 같은 값 테스트
 		data := map[string]int{
 			"a": 5,
 			"b": 5,
@@ -458,7 +476,8 @@ func TestFrequencies(t *testing.T) {
 	})
 
 	t.Run("SingleEntry", func(t *testing.T) {
-		// Test with single entry / 단일 항목 테스트
+		// Test with single entry
+		// 단일 항목 테스트
 		data := map[string]int{"a": 1}
 		freq := Frequencies(data)
 		if len(freq) != 1 {
@@ -470,7 +489,8 @@ func TestFrequencies(t *testing.T) {
 	})
 
 	t.Run("BooleanValues", func(t *testing.T) {
-		// Test with boolean values / 부울 값 테스트
+		// Test with boolean values
+		// 부울 값 테스트
 		flags := map[string]bool{
 			"feature1": true,
 			"feature2": false,
@@ -488,7 +508,8 @@ func TestFrequencies(t *testing.T) {
 	})
 
 	t.Run("DuplicateDetection", func(t *testing.T) {
-		// Test for duplicate value detection / 중복 값 감지 테스트
+		// Test for duplicate value detection
+		// 중복 값 감지 테스트
 		emails := map[string]string{
 			"user1": "alice@example.com",
 			"user2": "bob@example.com",

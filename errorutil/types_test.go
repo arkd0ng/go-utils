@@ -38,12 +38,14 @@ func TestWrappedError(t *testing.T) {
 				cause: tt.cause,
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Unwrap() method / Unwrap() 메서드 테스트
+			// Test Unwrap() method
+			// Unwrap() 메서드 테스트
 			if got := err.Unwrap(); got != tt.wantCause {
 				if got == nil || tt.wantCause == nil {
 					t.Errorf("Unwrap() = %v, want %v", got, tt.wantCause)
@@ -95,17 +97,20 @@ func TestCodedError(t *testing.T) {
 				cause: tt.cause,
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Code() method / Code() 메서드 테스트
+			// Test Code() method
+			// Code() 메서드 테스트
 			if got := err.Code(); got != tt.wantCode {
 				t.Errorf("Code() = %q, want %q", got, tt.wantCode)
 			}
 
-			// Test Unwrap() method / Unwrap() 메서드 테스트
+			// Test Unwrap() method
+			// Unwrap() 메서드 테스트
 			if got := err.Unwrap(); got != tt.wantCause {
 				if got == nil || tt.wantCause == nil {
 					t.Errorf("Unwrap() = %v, want %v", got, tt.wantCause)
@@ -157,17 +162,20 @@ func TestNumericCodedError(t *testing.T) {
 				cause: tt.cause,
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Code() method / Code() 메서드 테스트
+			// Test Code() method
+			// Code() 메서드 테스트
 			if got := err.Code(); got != tt.wantCode {
 				t.Errorf("Code() = %d, want %d", got, tt.wantCode)
 			}
 
-			// Test Unwrap() method / Unwrap() 메서드 테스트
+			// Test Unwrap() method
+			// Unwrap() 메서드 테스트
 			if got := err.Unwrap(); got != tt.wantCause {
 				if got == nil || tt.wantCause == nil {
 					t.Errorf("Unwrap() = %v, want %v", got, tt.wantCause)
@@ -224,12 +232,14 @@ func TestStackError(t *testing.T) {
 				cause: tt.cause,
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test StackTrace() method / StackTrace() 메서드 테스트
+			// Test StackTrace() method
+			// StackTrace() 메서드 테스트
 			got := err.StackTrace()
 			if len(got) != len(tt.wantStack) {
 				t.Errorf("StackTrace() length = %d, want %d", len(got), len(tt.wantStack))
@@ -240,7 +250,8 @@ func TestStackError(t *testing.T) {
 				}
 			}
 
-			// Test Unwrap() method / Unwrap() 메서드 테스트
+			// Test Unwrap() method
+			// Unwrap() 메서드 테스트
 			if gotErr := err.Unwrap(); gotErr != tt.wantCause {
 				if gotErr == nil || tt.wantCause == nil {
 					t.Errorf("Unwrap() = %v, want %v", gotErr, tt.wantCause)
@@ -297,12 +308,14 @@ func TestContextError(t *testing.T) {
 				cause: tt.cause,
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Context() method / Context() 메서드 테스트
+			// Test Context() method
+			// Context() 메서드 테스트
 			got := err.Context()
 			if len(got) != len(tt.wantCtx) {
 				t.Errorf("Context() length = %d, want %d", len(got), len(tt.wantCtx))
@@ -321,7 +334,8 @@ func TestContextError(t *testing.T) {
 				t.Error("Context() should return a copy, not the original map")
 			}
 
-			// Test Unwrap() method / Unwrap() 메서드 테스트
+			// Test Unwrap() method
+			// Unwrap() 메서드 테스트
 			if gotErr := err.Unwrap(); gotErr != tt.wantCause {
 				if gotErr == nil || tt.wantCause == nil {
 					t.Errorf("Unwrap() = %v, want %v", gotErr, tt.wantCause)
@@ -416,28 +430,33 @@ func TestCompositeError(t *testing.T) {
 				cause:   tt.cause,
 			}
 
-			// Test Error() method / Error() 메서드 테스트
+			// Test Error() method
+			// Error() 메서드 테스트
 			if got := err.Error(); got != tt.wantMsg {
 				t.Errorf("Error() = %q, want %q", got, tt.wantMsg)
 			}
 
-			// Test Code() method / Code() 메서드 테스트
+			// Test Code() method
+			// Code() 메서드 테스트
 			if got := err.Code(); got != tt.wantCode {
 				t.Errorf("Code() = %q, want %q", got, tt.wantCode)
 			}
 
-			// Test NumericCode() method / NumericCode() 메서드 테스트
+			// Test NumericCode() method
+			// NumericCode() 메서드 테스트
 			if got := err.NumericCode(); got != tt.wantNumCode {
 				t.Errorf("NumericCode() = %d, want %d", got, tt.wantNumCode)
 			}
 
-			// Test StackTrace() method / StackTrace() 메서드 테스트
+			// Test StackTrace() method
+			// StackTrace() 메서드 테스트
 			gotStack := err.StackTrace()
 			if len(gotStack) != len(tt.wantStack) {
 				t.Errorf("StackTrace() length = %d, want %d", len(gotStack), len(tt.wantStack))
 			}
 
-			// Test Context() method / Context() 메서드 테스트
+			// Test Context() method
+			// Context() 메서드 테스트
 			gotCtx := err.Context()
 			if len(gotCtx) != len(tt.wantCtx) {
 				t.Errorf("Context() length = %d, want %d", len(gotCtx), len(tt.wantCtx))
@@ -448,7 +467,8 @@ func TestCompositeError(t *testing.T) {
 				}
 			}
 
-			// Test Unwrap() method / Unwrap() 메서드 테스트
+			// Test Unwrap() method
+			// Unwrap() 메서드 테스트
 			if gotErr := err.Unwrap(); gotErr != tt.wantCause {
 				if gotErr == nil || tt.wantCause == nil {
 					t.Errorf("Unwrap() = %v, want %v", gotErr, tt.wantCause)

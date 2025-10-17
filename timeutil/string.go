@@ -13,7 +13,8 @@ import (
 // SubTimeString calculates the time difference between two time strings.
 // SubTimeString은 두 시간 문자열 사이의 시간 차이를 계산합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	diff, err := timeutil.SubTimeString("2024-10-04 08:34:42", "2024-10-14 14:56:23")
 //	if err != nil {
@@ -85,7 +86,8 @@ func DiffInMinutesString(s1, s2 string) (float64, error) {
 // AgeString calculates the age from a birth date string.
 // AgeString은 생년월일 문자열로부터 나이를 계산합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	age, err := timeutil.AgeString("1990-01-15")
 //	if err != nil {
@@ -115,7 +117,8 @@ func AgeInYearsString(birthDate string) (int, error) {
 // RelativeTimeString returns a human-readable relative time string.
 // RelativeTimeString은 사람이 읽기 쉬운 상대 시간 문자열을 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	rel, err := timeutil.RelativeTimeString("2024-10-13 15:30:00")
 //	if err != nil {
@@ -156,7 +159,8 @@ func IsWeekendString(s string) (bool, error) {
 // AddDaysString adds a number of days to a date string.
 // AddDaysString은 날짜 문자열에 일수를 더합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	result, err := timeutil.AddDaysString("2024-10-14", 7)
 //	if err != nil {
@@ -230,7 +234,8 @@ func SubMinutesString(s string, minutes int) (time.Time, error) {
 // FormatString parses a time string and formats it with the given layout.
 // FormatString은 시간 문자열을 파싱하여 주어진 레이아웃으로 포맷합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	result, err := timeutil.FormatString("2024-10-14 15:30:00", "2006-01-02")
 //	if err != nil {
@@ -282,7 +287,8 @@ func FormatISO8601String(s string) (string, error) {
 // ConvertTimezoneString parses a time string and converts it to a different timezone.
 // ConvertTimezoneString은 시간 문자열을 파싱하여 다른 타임존으로 변환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	result, err := timeutil.ConvertTimezoneString("2024-10-14 15:30:00", "America/New_York")
 //	if err != nil {

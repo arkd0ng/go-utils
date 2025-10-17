@@ -587,7 +587,8 @@ func TestEnableAutoReload(t *testing.T) {
 		t.Fatalf("Failed to enable auto-reload again: %v", err)
 	}
 
-	// Cleanup / 정리
+	// Cleanup
+	// 정리
 	engine.DisableAutoReload()
 }
 
@@ -618,18 +619,21 @@ func TestIsAutoReloadEnabled(t *testing.T) {
 	tmpDir := t.TempDir()
 	engine := NewTemplateEngine(tmpDir)
 
-	// Initially disabled / 초기에는 비활성화
+	// Initially disabled
+	// 초기에는 비활성화
 	if engine.IsAutoReloadEnabled() {
 		t.Error("Expected auto-reload to be disabled initially")
 	}
 
-	// Enable / 활성화
+	// Enable
+	// 활성화
 	engine.EnableAutoReload()
 	if !engine.IsAutoReloadEnabled() {
 		t.Error("Expected auto-reload to be enabled after calling EnableAutoReload")
 	}
 
-	// Disable / 비활성화
+	// Disable
+	// 비활성화
 	engine.DisableAutoReload()
 	if engine.IsAutoReloadEnabled() {
 		t.Error("Expected auto-reload to be disabled after calling DisableAutoReload")

@@ -85,7 +85,8 @@ func (c *Client) MSet(ctx context.Context, pairs map[string]interface{}) error {
 		return nil
 	}
 
-	// Convert map to slice / map을 slice로 변환
+	// Convert map to slice
+	// map을 slice로 변환
 	args := make([]interface{}, 0, len(pairs)*2)
 	for k, v := range pairs {
 		args = append(args, k, v)

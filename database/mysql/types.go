@@ -22,7 +22,8 @@ import (
 // - 설정 파일
 // - 기타 자격 증명 저장소
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	func getDSN() (string, error) {
 //	    user := os.Getenv("DB_USER")

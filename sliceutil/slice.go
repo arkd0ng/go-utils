@@ -8,7 +8,8 @@ package sliceutil
 // Chunk는 슬라이스를 지정된 크기의 청크로 분할합니다.
 // 마지막 청크는 지정된 크기보다 작을 수 있습니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5, 6, 7}
 //	chunks := sliceutil.Chunk(numbers, 3) // [[1, 2, 3], [4, 5, 6], [7]]
@@ -42,7 +43,8 @@ func Chunk[T any](slice []T, size int) [][]T {
 // Take는 슬라이스에서 첫 n개 요소를 반환합니다.
 // n이 슬라이스 길이보다 크면 전체 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	first3 := sliceutil.Take(numbers, 3) // [1, 2, 3]
@@ -64,7 +66,8 @@ func Take[T any](slice []T, n int) []T {
 // TakeLast는 슬라이스에서 마지막 n개 요소를 반환합니다.
 // n이 슬라이스 길이보다 크면 전체 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	last3 := sliceutil.TakeLast(numbers, 3) // [3, 4, 5]
@@ -86,7 +89,8 @@ func TakeLast[T any](slice []T, n int) []T {
 // Drop은 첫 n개 요소를 제외한 슬라이스를 반환합니다.
 // n이 슬라이스 길이보다 크면 빈 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	rest := sliceutil.Drop(numbers, 2) // [3, 4, 5]
@@ -108,7 +112,8 @@ func Drop[T any](slice []T, n int) []T {
 // DropLast는 마지막 n개 요소를 제외한 슬라이스를 반환합니다.
 // n이 슬라이스 길이보다 크면 빈 슬라이스를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	rest := sliceutil.DropLast(numbers, 2) // [1, 2, 3]
@@ -130,7 +135,8 @@ func DropLast[T any](slice []T, n int) []T {
 // Slice는 start 인덱스에서 end 인덱스까지의 요소 슬라이스를 반환합니다.
 // 음수 인덱스는 슬라이스 끝에서부터 계산합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	sub := sliceutil.Slice(numbers, 1, 4) // [2, 3, 4]
@@ -176,7 +182,8 @@ func Slice[T any](slice []T, start, end int) []T {
 // 요소는 중복 없이 선택됩니다 (복원 추출 없음).
 // n이 슬라이스 길이보다 크면 모든 요소를 랜덤 순서로 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 //	sample := sliceutil.Sample(numbers, 3) // e.g., [7, 2, 9]
@@ -216,7 +223,8 @@ func Sample[T any](slice []T, n int) []T {
 // TakeWhile은 조건이 참인 동안 처음부터 요소를 반환합니다.
 // 조건을 만족하지 않는 첫 번째 요소에서 중지합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 1, 2}
 //	result := sliceutil.TakeWhile(numbers, func(n int) bool {
@@ -243,7 +251,8 @@ func TakeWhile[T any](slice []T, predicate func(T) bool) []T {
 // DropWhile은 조건이 참인 동안 처음 요소를 제거한 후 요소를 반환합니다.
 // 조건을 만족하지 않는 첫 번째 요소부터 포함하기 시작합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 1, 2}
 //	result := sliceutil.DropWhile(numbers, func(n int) bool {
@@ -268,7 +277,8 @@ func DropWhile[T any](slice []T, predicate func(T) bool) []T {
 // Interleave은 각 슬라이스에서 차례로 하나씩 요소를 가져와 여러 슬라이스를 병합합니다.
 // 모든 슬라이스가 소진될 때까지 계속합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	a := []int{1, 2, 3}
 //	b := []int{10, 20, 30}

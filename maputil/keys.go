@@ -17,7 +17,8 @@ func KeysSlice[K comparable, V any](m map[K]V) []K {
 // Time complexity: O(n log n)
 // 시간 복잡도: O(n log n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"c": 3, "a": 1, "b": 2}
 //	keys := maputil.KeysSorted(m) // []string{"a", "b", "c"}
@@ -35,7 +36,8 @@ func KeysSorted[K Ordered, V any](m map[K]V) []K {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 //	keys := maputil.KeysBy(m, func(k string, v int) bool {
@@ -63,7 +65,8 @@ func KeysBy[K comparable, V any](m map[K]V, fn func(K, V) bool) []K {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	result := maputil.RenameKey(m, "b", "B") // map[string]int{"a": 1, "B": 2, "c": 3}
@@ -84,7 +87,8 @@ func RenameKey[K comparable, V any](m map[K]V, oldKey, newKey K) map[K]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	mapping := map[string]string{"a": "A", "b": "B"}
@@ -112,7 +116,8 @@ func RenameKeys[K comparable, V any](m map[K]V, mapping map[K]K) map[K]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	result := maputil.SwapKeys(m, "a", "b") // map[string]int{"a": 2, "b": 1, "c": 3}
@@ -139,7 +144,8 @@ func SwapKeys[K comparable, V any](m map[K]V, key1, key2 K) map[K]V {
 // Time complexity: O(n) worst case, early termination when found
 // 시간 복잡도: 최악의 경우 O(n), 찾으면 조기 종료
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	key, found := maputil.FindKey(m, func(k string, v int) bool {
@@ -161,7 +167,8 @@ func FindKey[K comparable, V any](m map[K]V, fn func(K, V) bool) (K, bool) {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 //	keys := maputil.FindKeys(m, func(k string, v int) bool {
@@ -177,7 +184,8 @@ func FindKeys[K comparable, V any](m map[K]V, fn func(K, V) bool) []K {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2}
 //	result := maputil.PrefixKeys(m, "key_")
@@ -196,7 +204,8 @@ func PrefixKeys[V any](m map[string]V, prefix string) map[string]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2}
 //	result := maputil.SuffixKeys(m, "_key")
@@ -218,7 +227,8 @@ func SuffixKeys[V any](m map[string]V, suffix string) map[string]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	result := maputil.TransformKeys(m, func(k string) string {

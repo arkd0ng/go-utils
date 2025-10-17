@@ -10,34 +10,39 @@ import (
 )
 
 // ============================================================================
-// Data Binding / 데이터 바인딩
+// Data Binding
+// 데이터 바인딩
 // ============================================================================
 
 // BindJSON binds the request body as JSON to the provided struct.
 // BindJSON은 요청 본문을 JSON으로 제공된 구조체에 바인딩합니다.
 //
-// Body size limit / 본문 크기 제한:
-//   - Enforces maximum body size from App.options.MaxBodySize
-//   - App.options.MaxBodySize에서 최대 본문 크기 강제 적용
-//   - Default: 10 MB (configurable with WithMaxBodySize option)
-//   - 기본값: 10 MB (WithMaxBodySize 옵션으로 설정 가능)
-//   - Returns error if request body exceeds limit
-//   - 요청 본문이 제한을 초과하면 에러 반환
+// Body size limit
+// 본문 크기 제한:
+// - Enforces maximum body size from App.options.MaxBodySize
+// - App.options.MaxBodySize에서 최대 본문 크기 강제 적용
+// - Default: 10 MB (configurable with WithMaxBodySize option)
+// - 기본값: 10 MB (WithMaxBodySize 옵션으로 설정 가능)
+// - Returns error if request body exceeds limit
+// - 요청 본문이 제한을 초과하면 에러 반환
 //
-// Security considerations / 보안 고려사항:
-//   - Prevents denial-of-service attacks with large payloads
-//   - 대용량 페이로드를 사용한 서비스 거부 공격 방지
-//   - Uses io.LimitReader to enforce limit at read level
-//   - io.LimitReader를 사용하여 읽기 수준에서 제한 강제 적용
+// Security considerations
+// 보안 고려사항:
+// - Prevents denial-of-service attacks with large payloads
+// - 대용량 페이로드를 사용한 서비스 거부 공격 방지
+// - Uses io.LimitReader to enforce limit at read level
+// - io.LimitReader를 사용하여 읽기 수준에서 제한 강제 적용
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	var user User
 //	if err := ctx.BindJSON(&user); err != nil {
 //	    return ctx.Error(400, "Invalid JSON")
 //	}
 //
-// Custom limit / 커스텀 제한:
+// Custom limit
+// 커스텀 제한:
 //
 //	app := websvrutil.New(
 //	    websvrutil.WithMaxBodySize(5 * 1024 * 1024), // 5 MB
@@ -89,7 +94,8 @@ func (c *Context) BindJSON(obj interface{}) error {
 // The struct should use `form` tags to specify form field names.
 // 구조체는 `form` 태그를 사용하여 폼 필드 이름을 지정해야 합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type LoginForm struct {
 //	    Username string `form:"username"`
@@ -113,7 +119,8 @@ func (c *Context) BindForm(obj interface{}) error {
 // The struct should use `form` tags to specify query parameter names.
 // 구조체는 `form` 태그를 사용하여 쿼리 매개변수 이름을 지정해야 합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type SearchQuery struct {
 //	    Q    string `form:"q"`
@@ -133,7 +140,8 @@ func (c *Context) BindQuery(obj interface{}) error {
 // It supports JSON (application/json) and form data (application/x-www-form-urlencoded, multipart/form-data).
 // JSON (application/json) 및 폼 데이터 (application/x-www-form-urlencoded, multipart/form-data)를 지원합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	var data RequestData
 //	if err := ctx.Bind(&data); err != nil {
@@ -160,13 +168,15 @@ func (c *Context) Bind(obj interface{}) error {
 }
 
 // ============================================================================
-// Cookie Operations / 쿠키 작업
+// Cookie Operations
+// 쿠키 작업
 // ============================================================================
 
 // Cookie returns the named cookie provided in the request.
 // Cookie는 요청에서 제공된 이름이 지정된 쿠키를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	cookie, err := ctx.Cookie("session_id")
 //	if err != nil {
@@ -179,7 +189,8 @@ func (c *Context) Cookie(name string) (*http.Cookie, error) {
 // SetCookie adds a Set-Cookie header to the response.
 // SetCookie는 응답에 Set-Cookie 헤더를 추가합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	cookie := &http.Cookie{
 //	    Name:     "session_id",
@@ -197,7 +208,8 @@ func (c *Context) SetCookie(cookie *http.Cookie) {
 // DeleteCookie deletes a cookie by setting its MaxAge to -1.
 // DeleteCookie는 MaxAge를 -1로 설정하여 쿠키를 삭제합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.DeleteCookie("session_id", "/")
 func (c *Context) DeleteCookie(name, path string) {
@@ -213,7 +225,8 @@ func (c *Context) DeleteCookie(name, path string) {
 // GetCookie is a convenience method to get a cookie value.
 // GetCookie는 쿠키 값을 가져오는 편의 메서드입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	value := ctx.GetCookie("session_id")
 func (c *Context) GetCookie(name string) string {
@@ -225,7 +238,8 @@ func (c *Context) GetCookie(name string) string {
 }
 
 // ============================================================================
-// File Upload / 파일 업로드
+// File Upload
+// 파일 업로드
 // ============================================================================
 
 // FormFile retrieves the first file for the provided form key.
@@ -272,7 +286,8 @@ func (c *Context) SaveUploadedFile(file *multipart.FileHeader, dst string) error
 }
 
 // ============================================================================
-// Static File Serving / 정적 파일 서빙
+// Static File Serving
+// 정적 파일 서빙
 // ============================================================================
 
 // File sends a file response to the client.
@@ -281,7 +296,8 @@ func (c *Context) SaveUploadedFile(file *multipart.FileHeader, dst string) error
 // The filepath should be the absolute or relative path to the file.
 // filepath는 파일의 절대 경로 또는 상대 경로여야 합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.File("./public/index.html")
 func (c *Context) File(filepath string) error {
@@ -295,7 +311,8 @@ func (c *Context) File(filepath string) error {
 // The filename parameter sets the name shown in the download dialog.
 // filename 매개변수는 다운로드 대화상자에 표시되는 이름을 설정합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.FileAttachment("./reports/report.pdf", "monthly-report.pdf")
 func (c *Context) FileAttachment(filepath, filename string) error {

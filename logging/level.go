@@ -38,11 +38,15 @@ func (l Level) String() string {
 // ParseLevel parses a string into a Level
 // ParseLevel은 문자열을 Level로 파싱합니다
 //
-// Parameters / 매개변수:
-//   - s: level string (case-insensitive) / 레벨 문자열 (대소문자 구분 안함)
+// Parameters
+// 매개변수:
+// - s: level string (case-insensitive)
+// 레벨 문자열 (대소문자 구분 안함)
 //
-// Returns / 반환값:
-//   - Level: parsed level, defaults to INFO if invalid / 파싱된 레벨, 유효하지 않으면 INFO 기본값
+// Returns
+// 반환값:
+// - Level: parsed level, defaults to INFO if invalid
+// 파싱된 레벨, 유효하지 않으면 INFO 기본값
 func ParseLevel(s string) Level {
 	switch strings.ToUpper(s) {
 	case "DEBUG":

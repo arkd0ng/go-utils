@@ -11,7 +11,8 @@ import "golang.org/x/exp/constraints"
 // An empty slice returns true (vacuous truth).
 // 비어있는 슬라이스는 true를 반환합니다 (공허한 진리).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{2, 4, 6, 8}
 //	allEven := sliceutil.All(numbers, func(n int) bool { return n%2 == 0 })
@@ -38,7 +39,8 @@ func All[T any](slice []T, predicate func(T) bool) bool {
 // An empty slice returns false.
 // 비어있는 슬라이스는 false를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 3, 5, 6}
 //	hasEven := sliceutil.Any(numbers, func(n int) bool { return n%2 == 0 })
@@ -65,7 +67,8 @@ func Any[T any](slice []T, predicate func(T) bool) bool {
 // An empty slice returns true.
 // 비어있는 슬라이스는 true를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 3, 5, 7}
 //	noEven := sliceutil.None(numbers, func(n int) bool { return n%2 == 0 })
@@ -95,7 +98,8 @@ func None[T any](slice []T, predicate func(T) bool) bool {
 // A slice with one element returns true.
 // 요소가 하나인 슬라이스는 true를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{5, 5, 5, 5}
 //	allSame := sliceutil.AllEqual(numbers)
@@ -128,7 +132,8 @@ func AllEqual[T comparable](slice []T) bool {
 // An empty slice or a slice with one element is considered sorted.
 // 비어있는 슬라이스나 요소가 하나인 슬라이스는 정렬된 것으로 간주됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type Person struct {
 //	    Name string
@@ -164,7 +169,8 @@ func IsSortedBy[T any, K constraints.Ordered](slice []T, keyFunc func(T) K) bool
 // If no items are specified, returns true.
 // 항목이 지정되지 않은 경우 true를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	hasAll := sliceutil.ContainsAll(numbers, 2, 4)
@@ -177,13 +183,15 @@ func ContainsAll[T comparable](slice []T, items ...T) bool {
 		return true
 	}
 
-	// Create a map for O(1) lookup / O(1) 조회를 위한 맵 생성
+	// Create a map for O(1) lookup
+	// O(1) 조회를 위한 맵 생성
 	sliceMap := make(map[T]bool, len(slice))
 	for _, item := range slice {
 		sliceMap[item] = true
 	}
 
-	// Check if all items are in the map / 모든 항목이 맵에 있는지 확인
+	// Check if all items are in the map
+	// 모든 항목이 맵에 있는지 확인
 	for _, item := range items {
 		if !sliceMap[item] {
 			return false

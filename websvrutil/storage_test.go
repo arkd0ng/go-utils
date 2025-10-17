@@ -8,13 +8,15 @@ import (
 	"testing"
 )
 
-// TestContextStorageSetGet tests Set and Get methods / Set과 Get 메서드 테스트
+// TestContextStorageSetGet tests Set and Get methods
+// Set과 Get 메서드 테스트
 func TestContextStorageSetGet(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	ctx := NewContext(w, req)
 
-	// Set and get string / 문자열 설정 및 가져오기
+	// Set and get string
+	// 문자열 설정 및 가져오기
 	ctx.Set("name", "John Doe")
 	value, exists := ctx.Get("name")
 	if !exists {
@@ -24,14 +26,16 @@ func TestContextStorageSetGet(t *testing.T) {
 		t.Errorf("Expected 'John Doe', got %v", value)
 	}
 
-	// Get non-existent key / 존재하지 않는 키 가져오기
+	// Get non-existent key
+	// 존재하지 않는 키 가져오기
 	_, exists = ctx.Get("nonexistent")
 	if exists {
 		t.Error("Expected key 'nonexistent' to not exist")
 	}
 }
 
-// TestContextStorageMustGet tests MustGet method / MustGet 메서드 테스트
+// TestContextStorageMustGet tests MustGet method
+// MustGet 메서드 테스트
 func TestContextStorageMustGet(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -44,7 +48,8 @@ func TestContextStorageMustGet(t *testing.T) {
 	}
 }
 
-// TestContextStorageMustGetPanic tests MustGet panic / MustGet 패닉 테스트
+// TestContextStorageMustGetPanic tests MustGet panic
+// MustGet 패닉 테스트
 func TestContextStorageMustGetPanic(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -59,7 +64,8 @@ func TestContextStorageMustGetPanic(t *testing.T) {
 	ctx.MustGet("nonexistent")
 }
 
-// TestContextGetString tests GetString method / GetString 메서드 테스트
+// TestContextGetString tests GetString method
+// GetString 메서드 테스트
 func TestContextGetString(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -71,13 +77,15 @@ func TestContextGetString(t *testing.T) {
 		t.Errorf("Expected 'Alice', got %q", name)
 	}
 
-	// Get non-existent key / 존재하지 않는 키
+	// Get non-existent key
+	// 존재하지 않는 키
 	empty := ctx.GetString("nonexistent")
 	if empty != "" {
 		t.Errorf("Expected empty string, got %q", empty)
 	}
 
-	// Get wrong type / 잘못된 타입
+	// Get wrong type
+	// 잘못된 타입
 	ctx.Set("number", 123)
 	str := ctx.GetString("number")
 	if str != "" {
@@ -85,7 +93,8 @@ func TestContextGetString(t *testing.T) {
 	}
 }
 
-// TestContextGetInt tests GetInt method / GetInt 메서드 테스트
+// TestContextGetInt tests GetInt method
+// GetInt 메서드 테스트
 func TestContextGetInt(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -97,13 +106,15 @@ func TestContextGetInt(t *testing.T) {
 		t.Errorf("Expected 25, got %d", age)
 	}
 
-	// Get non-existent key / 존재하지 않는 키
+	// Get non-existent key
+	// 존재하지 않는 키
 	zero := ctx.GetInt("nonexistent")
 	if zero != 0 {
 		t.Errorf("Expected 0, got %d", zero)
 	}
 
-	// Get wrong type / 잘못된 타입
+	// Get wrong type
+	// 잘못된 타입
 	ctx.Set("str", "text")
 	num := ctx.GetInt("str")
 	if num != 0 {
@@ -111,7 +122,8 @@ func TestContextGetInt(t *testing.T) {
 	}
 }
 
-// TestContextGetBool tests GetBool method / GetBool 메서드 테스트
+// TestContextGetBool tests GetBool method
+// GetBool 메서드 테스트
 func TestContextGetBool(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -129,14 +141,16 @@ func TestContextGetBool(t *testing.T) {
 		t.Error("Expected false, got true")
 	}
 
-	// Get non-existent key / 존재하지 않는 키
+	// Get non-existent key
+	// 존재하지 않는 키
 	def := ctx.GetBool("nonexistent")
 	if def {
 		t.Error("Expected false for non-existent key")
 	}
 }
 
-// TestContextGetInt64 tests GetInt64 method / GetInt64 메서드 테스트
+// TestContextGetInt64 tests GetInt64 method
+// GetInt64 메서드 테스트
 func TestContextGetInt64(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -149,14 +163,16 @@ func TestContextGetInt64(t *testing.T) {
 		t.Errorf("Expected %d, got %d", largeNum, result)
 	}
 
-	// Get non-existent key / 존재하지 않는 키
+	// Get non-existent key
+	// 존재하지 않는 키
 	zero := ctx.GetInt64("nonexistent")
 	if zero != 0 {
 		t.Errorf("Expected 0, got %d", zero)
 	}
 }
 
-// TestContextGetFloat64 tests GetFloat64 method / GetFloat64 메서드 테스트
+// TestContextGetFloat64 tests GetFloat64 method
+// GetFloat64 메서드 테스트
 func TestContextGetFloat64(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -168,14 +184,16 @@ func TestContextGetFloat64(t *testing.T) {
 		t.Errorf("Expected 19.99, got %f", price)
 	}
 
-	// Get non-existent key / 존재하지 않는 키
+	// Get non-existent key
+	// 존재하지 않는 키
 	zero := ctx.GetFloat64("nonexistent")
 	if zero != 0.0 {
 		t.Errorf("Expected 0.0, got %f", zero)
 	}
 }
 
-// TestContextGetStringSlice tests GetStringSlice method / GetStringSlice 메서드 테스트
+// TestContextGetStringSlice tests GetStringSlice method
+// GetStringSlice 메서드 테스트
 func TestContextGetStringSlice(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -188,14 +206,16 @@ func TestContextGetStringSlice(t *testing.T) {
 		t.Errorf("Expected %v, got %v", tags, result)
 	}
 
-	// Get non-existent key / 존재하지 않는 키
+	// Get non-existent key
+	// 존재하지 않는 키
 	nilSlice := ctx.GetStringSlice("nonexistent")
 	if nilSlice != nil {
 		t.Errorf("Expected nil, got %v", nilSlice)
 	}
 }
 
-// TestContextGetStringMap tests GetStringMap method / GetStringMap 메서드 테스트
+// TestContextGetStringMap tests GetStringMap method
+// GetStringMap 메서드 테스트
 func TestContextGetStringMap(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -212,44 +232,51 @@ func TestContextGetStringMap(t *testing.T) {
 		t.Errorf("Expected %v, got %v", user, result)
 	}
 
-	// Get non-existent key / 존재하지 않는 키
+	// Get non-existent key
+	// 존재하지 않는 키
 	nilMap := ctx.GetStringMap("nonexistent")
 	if nilMap != nil {
 		t.Errorf("Expected nil, got %v", nilMap)
 	}
 }
 
-// TestContextExists tests Exists method / Exists 메서드 테스트
+// TestContextExists tests Exists method
+// Exists 메서드 테스트
 func TestContextExists(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	ctx := NewContext(w, req)
 
-	// Check non-existent key / 존재하지 않는 키 확인
+	// Check non-existent key
+	// 존재하지 않는 키 확인
 	if ctx.Exists("key") {
 		t.Error("Expected key to not exist")
 	}
 
-	// Set and check / 설정 및 확인
+	// Set and check
+	// 설정 및 확인
 	ctx.Set("key", "value")
 	if !ctx.Exists("key") {
 		t.Error("Expected key to exist")
 	}
 
-	// Check with nil value / nil 값 확인
+	// Check with nil value
+	// nil 값 확인
 	ctx.Set("nil", nil)
 	if !ctx.Exists("nil") {
 		t.Error("Expected nil key to exist")
 	}
 }
 
-// TestContextDelete tests Delete method / Delete 메서드 테스트
+// TestContextDelete tests Delete method
+// Delete 메서드 테스트
 func TestContextDelete(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	ctx := NewContext(w, req)
 
-	// Set and delete / 설정 및 삭제
+	// Set and delete
+	// 설정 및 삭제
 	ctx.Set("temp", "value")
 	if !ctx.Exists("temp") {
 		t.Error("Expected temp to exist")
@@ -260,23 +287,27 @@ func TestContextDelete(t *testing.T) {
 		t.Error("Expected temp to not exist after delete")
 	}
 
-	// Delete non-existent key (should not panic) / 존재하지 않는 키 삭제 (패닉하지 않아야 함)
+	// Delete non-existent key (should not panic)
+	// 존재하지 않는 키 삭제 (패닉하지 않아야 함)
 	ctx.Delete("nonexistent")
 }
 
-// TestContextKeys tests Keys method / Keys 메서드 테스트
+// TestContextKeys tests Keys method
+// Keys 메서드 테스트
 func TestContextKeys(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	ctx := NewContext(w, req)
 
-	// Empty context / 빈 컨텍스트
+	// Empty context
+	// 빈 컨텍스트
 	keys := ctx.Keys()
 	if len(keys) != 0 {
 		t.Errorf("Expected 0 keys, got %d", len(keys))
 	}
 
-	// Set multiple values / 여러 값 설정
+	// Set multiple values
+	// 여러 값 설정
 	ctx.Set("key1", "value1")
 	ctx.Set("key2", "value2")
 	ctx.Set("key3", "value3")
@@ -286,7 +317,8 @@ func TestContextKeys(t *testing.T) {
 		t.Errorf("Expected 3 keys, got %d", len(keys))
 	}
 
-	// Check all keys are present / 모든 키가 있는지 확인
+	// Check all keys are present
+	// 모든 키가 있는지 확인
 	sort.Strings(keys)
 	expected := []string{"key1", "key2", "key3"}
 	if !reflect.DeepEqual(keys, expected) {
@@ -294,7 +326,8 @@ func TestContextKeys(t *testing.T) {
 	}
 }
 
-// TestContextStorageConcurrency tests thread-safety / 스레드 안전성 테스트
+// TestContextStorageConcurrency tests thread-safety
+// 스레드 안전성 테스트
 func TestContextStorageConcurrency(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -303,7 +336,8 @@ func TestContextStorageConcurrency(t *testing.T) {
 	done := make(chan bool)
 	iterations := 100
 
-	// Concurrent writes / 동시 쓰기
+	// Concurrent writes
+	// 동시 쓰기
 	for i := 0; i < iterations; i++ {
 		go func(n int) {
 			ctx.Set("key", n)
@@ -311,12 +345,14 @@ func TestContextStorageConcurrency(t *testing.T) {
 		}(i)
 	}
 
-	// Wait for all goroutines / 모든 고루틴 대기
+	// Wait for all goroutines
+	// 모든 고루틴 대기
 	for i := 0; i < iterations; i++ {
 		<-done
 	}
 
-	// Concurrent reads / 동시 읽기
+	// Concurrent reads
+	// 동시 읽기
 	for i := 0; i < iterations; i++ {
 		go func() {
 			ctx.Get("key")
@@ -329,7 +365,8 @@ func TestContextStorageConcurrency(t *testing.T) {
 	}
 }
 
-// TestContextStorageTypes tests various data types / 다양한 데이터 타입 테스트
+// TestContextStorageTypes tests various data types
+// 다양한 데이터 타입 테스트
 func TestContextStorageTypes(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -363,7 +400,8 @@ func TestContextStorageTypes(t *testing.T) {
 	}
 }
 
-// BenchmarkContextSet benchmarks Set method / Set 메서드 벤치마크
+// BenchmarkContextSet benchmarks Set method
+// Set 메서드 벤치마크
 func BenchmarkContextSet(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -375,7 +413,8 @@ func BenchmarkContextSet(b *testing.B) {
 	}
 }
 
-// BenchmarkContextGet benchmarks Get method / Get 메서드 벤치마크
+// BenchmarkContextGet benchmarks Get method
+// Get 메서드 벤치마크
 func BenchmarkContextGet(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -388,7 +427,8 @@ func BenchmarkContextGet(b *testing.B) {
 	}
 }
 
-// BenchmarkContextGetString benchmarks GetString method / GetString 메서드 벤치마크
+// BenchmarkContextGetString benchmarks GetString method
+// GetString 메서드 벤치마크
 func BenchmarkContextGetString(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()

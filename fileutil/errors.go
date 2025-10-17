@@ -5,7 +5,8 @@ import (
 	"os"
 )
 
-// Common errors / 일반적인 에러
+// Common errors
+// 일반적인 에러
 var (
 	// ErrNotFound indicates that the file or directory was not found
 	// ErrNotFound는 파일 또는 디렉토리를 찾을 수 없음을 나타냅니다
@@ -48,49 +49,49 @@ var (
 	ErrInvalidChecksum = errors.New("fileutil: invalid checksum")
 )
 
-// IsNotFound checks if the error is a "file not found" error
-// IsNotFound는 에러가 "파일을 찾을 수 없음" 에러인지 확인합니다
+// IsNotFound checks if the error is a "file not found" error / IsNotFound는 에러가 "파일을 찾을 수 없음" 에러인지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	if fileutil.IsNotFound(err) {
-//	    // Handle file not found / 파일을 찾을 수 없음 처리
+// if fileutil.IsNotFound(err) {
+// Handle file not found / 파일을 찾을 수 없음 처리
 //	}
 func IsNotFound(err error) bool {
 	return errors.Is(err, os.ErrNotExist) || errors.Is(err, ErrNotFound)
 }
 
-// IsPermission checks if the error is a "permission denied" error
-// IsPermission은 에러가 "권한 거부됨" 에러인지 확인합니다
+// IsPermission checks if the error is a "permission denied" error / IsPermission은 에러가 "권한 거부됨" 에러인지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	if fileutil.IsPermission(err) {
-//	    // Handle permission denied / 권한 거부됨 처리
+// if fileutil.IsPermission(err) {
+// Handle permission denied / 권한 거부됨 처리
 //	}
 func IsPermission(err error) bool {
 	return errors.Is(err, os.ErrPermission) || errors.Is(err, ErrPermission)
 }
 
-// IsExist checks if the error is an "already exists" error
-// IsExist는 에러가 "이미 존재함" 에러인지 확인합니다
+// IsExist checks if the error is an "already exists" error / IsExist는 에러가 "이미 존재함" 에러인지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	if fileutil.IsExist(err) {
-//	    // Handle already exists / 이미 존재함 처리
+// if fileutil.IsExist(err) {
+// Handle already exists / 이미 존재함 처리
 //	}
 func IsExist(err error) bool {
 	return errors.Is(err, os.ErrExist) || errors.Is(err, ErrAlreadyExists)
 }
 
-// IsInvalid checks if the error is an "invalid path" error
-// IsInvalid는 에러가 "유효하지 않은 경로" 에러인지 확인합니다
+// IsInvalid checks if the error is an "invalid path" error / IsInvalid는 에러가 "유효하지 않은 경로" 에러인지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	if fileutil.IsInvalid(err) {
-//	    // Handle invalid path / 유효하지 않은 경로 처리
+// if fileutil.IsInvalid(err) {
+// Handle invalid path / 유효하지 않은 경로 처리
 //	}
 func IsInvalid(err error) bool {
 	return errors.Is(err, ErrInvalidPath)

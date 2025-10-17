@@ -51,7 +51,8 @@ type MiddlewareFunc func(http.Handler) http.Handler
 // New creates a new App instance with the given options.
 // New는 주어진 옵션으로 새 App 인스턴스를 생성합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app := websvrutil.New()
 //	app := websvrutil.New(
@@ -59,15 +60,18 @@ type MiddlewareFunc func(http.Handler) http.Handler
 //	    websvrutil.WithLogger(true),
 //	)
 func New(opts ...Option) *App {
-	// Apply default options / 기본 옵션 적용
+	// Apply default options
+	// 기본 옵션 적용
 	options := defaultOptions()
 
-	// Apply user-provided options / 사용자 제공 옵션 적용
+	// Apply user-provided options
+	// 사용자 제공 옵션 적용
 	for _, opt := range opts {
 		opt(options)
 	}
 
-	// Create the router / 라우터 생성
+	// Create the router
+	// 라우터 생성
 	router := newRouter()
 
 	// Create template engine if template directory is set
@@ -103,7 +107,8 @@ func New(opts ...Option) *App {
 		}
 	}
 
-	// Create the app instance / 앱 인스턴스 생성
+	// Create the app instance
+	// 앱 인스턴스 생성
 	app := &App{
 		router:     router,
 		middleware: make([]MiddlewareFunc, 0),
@@ -122,7 +127,8 @@ func New(opts ...Option) *App {
 // Middleware functions are executed in the order they are added.
 // 미들웨어 함수는 추가된 순서대로 실행됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Use(loggingMiddleware)
 //	app.Use(authMiddleware)
@@ -146,20 +152,23 @@ func (a *App) Use(middleware ...MiddlewareFunc) *App {
 // This helper reduces code duplication across GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD methods.
 // 이 헬퍼는 GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD 메서드 전반에 걸친 코드 중복을 줄입니다.
 //
-// Parameters / 매개변수:
+// Parameters
+// 매개변수:
 //   - method: HTTP method name (e.g., "GET", "POST", "PUT")
 //   - pattern: URL pattern with parameters (e.g., "/users/:id")
 //   - handler: HTTP handler function
 //
-// Thread safety / 스레드 안전성:
-//   - Acquires mutex lock to prevent concurrent route registration
-//   - Mutex 락을 획득하여 동시 라우트 등록 방지
-//   - Panics if routes are added while server is running
-//   - 서버 실행 중 라우트가 추가되면 패닉 발생
+// Thread safety
+// 스레드 안전성:
+// - Acquires mutex lock to prevent concurrent route registration
+// - Mutex 락을 획득하여 동시 라우트 등록 방지
+// - Panics if routes are added while server is running
+// - 서버 실행 중 라우트가 추가되면 패닉 발생
 //
-// Returns / 반환:
-//   - *App for method chaining
-//   - 메서드 체이닝을 위한 *App
+// Returns
+// 반환:
+// - *App for method chaining
+// - 메서드 체이닝을 위한 *App
 func (a *App) registerRoute(method, pattern string, handler http.HandlerFunc) *App {
 	a.mu.Lock()
 	defer a.mu.Unlock()
@@ -194,7 +203,8 @@ func (a *App) registerRoute(method, pattern string, handler http.HandlerFunc) *A
 // GET registers a GET route.
 // GET은 GET 라우트를 등록합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.GET("/users/:id", func(w http.ResponseWriter, r *http.Request) {
 //	    // Handler implementation
@@ -242,7 +252,8 @@ func (a *App) HEAD(pattern string, handler http.HandlerFunc) *App {
 // NotFound sets the handler for 404 Not Found responses.
 // NotFound는 404 Not Found 응답에 대한 핸들러를 설정합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.NotFound(func(w http.ResponseWriter, r *http.Request) {
 //	    w.WriteHeader(http.StatusNotFound)
@@ -261,14 +272,14 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 // Static registers a route to serve static files from a directory.
 // Static은 디렉토리에서 정적 파일을 제공하는 라우트를 등록합니다.
 //
-// The prefix is the URL path prefix (e.g., "/static"), and dir is the directory path.
-// prefix는 URL 경로 접두사(예: "/static")이고, dir은 디렉토리 경로입니다.
+// The prefix is the URL path prefix (e.g., "/static"), and dir is the directory path. / prefix는 URL 경로 접두사(예: "/static")이고, dir은 디렉토리 경로입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Static("/static", "./public")
-//	// Serves files from ./public directory at /static/* URLs
-//	// ./public 디렉토리의 파일을 /static/* URL에서 제공
+// // Serves files from ./public directory at /static/* URLs
+// ./public 디렉토리의 파일을 /static/* URL에서 제공
 func (a *App) Static(prefix, dir string) *App {
 	a.mu.Lock()
 	defer a.mu.Unlock()
@@ -297,13 +308,13 @@ func (a *App) Static(prefix, dir string) *App {
 // Run starts the HTTP server on the specified address.
 // Run은 지정된 주소에서 HTTP 서버를 시작합니다.
 //
-// The address should be in the format "host:port" (e.g., "localhost:8080" or ":8080").
-// 주소는 "host:port" 형식이어야 합니다 (예: "localhost:8080" 또는 ":8080").
+// The address should be in the format "host:port" (e.g., "localhost:8080" or ":8080"). / 주소는 "host:port" 형식이어야 합니다 (예: "localhost:8080" 또는 ":8080").
 //
 // This method blocks until the server is shut down.
 // 이 메서드는 서버가 종료될 때까지 차단됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app := websvrutil.New()
 //	if err := app.Run(":8080"); err != nil {
@@ -361,7 +372,8 @@ func (a *App) Run(addr string) error {
 // It waits for active connections to close until the context is cancelled.
 // 컨텍스트가 취소될 때까지 활성 연결이 닫힐 때까지 기다립니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 //	defer cancel()
@@ -395,7 +407,8 @@ func (a *App) Shutdown(ctx context.Context) error {
 // The timeout parameter specifies how long to wait for active connections to close.
 // timeout 매개변수는 활성 연결이 닫힐 때까지 기다릴 시간을 지정합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app := websvrutil.New()
 //	// ... configure routes ...
@@ -403,29 +416,35 @@ func (a *App) Shutdown(ctx context.Context) error {
 //	    log.Fatal(err)
 //	}
 func (a *App) RunWithGracefulShutdown(addr string, timeout time.Duration) error {
-	// Start server in a goroutine / 고루틴에서 서버 시작
+	// Start server in a goroutine
+	// 고루틴에서 서버 시작
 	serverErr := make(chan error, 1)
 	go func() {
 		serverErr <- a.Run(addr)
 	}()
 
-	// Wait for interrupt signal / 인터럽트 신호 대기
+	// Wait for interrupt signal
+	// 인터럽트 신호 대기
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 	select {
 	case err := <-serverErr:
-		// Server failed to start / 서버 시작 실패
+		// Server failed to start
+		// 서버 시작 실패
 		return err
 	case sig := <-quit:
-		// Received shutdown signal / 종료 신호 수신
+		// Received shutdown signal
+		// 종료 신호 수신
 		fmt.Printf("\nReceived signal: %v\n", sig)
 
-		// Create shutdown context with timeout / 타임아웃이 있는 종료 컨텍스트 생성
+		// Create shutdown context with timeout
+		// 타임아웃이 있는 종료 컨텍스트 생성
 		ctx, cancel := context.WithTimeout(context.Background(), timeout)
 		defer cancel()
 
-		// Attempt graceful shutdown / 우아한 종료 시도
+		// Attempt graceful shutdown
+		// 우아한 종료 시도
 		if err := a.Shutdown(ctx); err != nil {
 			return fmt.Errorf("server shutdown failed: %w", err)
 		}
@@ -489,7 +508,8 @@ func (a *App) TemplateEngine() *TemplateEngine {
 // LoadTemplate loads a single template file.
 // LoadTemplate은 단일 템플릿 파일을 로드합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := app.LoadTemplate("index.html")
 func (a *App) LoadTemplate(name string) error {
@@ -506,7 +526,8 @@ func (a *App) LoadTemplate(name string) error {
 // LoadTemplates loads all templates matching the pattern.
 // LoadTemplates는 패턴과 일치하는 모든 템플릿을 로드합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := app.LoadTemplates("*.html")
 func (a *App) LoadTemplates(pattern string) error {
@@ -523,7 +544,8 @@ func (a *App) LoadTemplates(pattern string) error {
 // ReloadTemplates reloads all templates from the template directory.
 // ReloadTemplates는 템플릿 디렉토리에서 모든 템플릿을 다시 로드합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := app.ReloadTemplates()
 func (a *App) ReloadTemplates() error {
@@ -541,7 +563,8 @@ func (a *App) ReloadTemplates() error {
 // AddTemplateFunc adds a custom template function.
 // AddTemplateFunc는 커스텀 템플릿 함수를 추가합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.AddTemplateFunc("upper", strings.ToUpper)
 func (a *App) AddTemplateFunc(name string, fn interface{}) {
@@ -556,7 +579,8 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 // AddTemplateFuncs adds multiple custom template functions.
 // AddTemplateFuncs는 여러 커스텀 템플릿 함수를 추가합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.AddTemplateFuncs(template.FuncMap{
 //	    "upper": strings.ToUpper,

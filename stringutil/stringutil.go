@@ -8,8 +8,7 @@
 // 이 패키지는 10-20줄의 반복적인 문자열 조작 코드를 단일 함수 호출로 줄입니다.
 // 모든 함수는 유니코드 안전하며 외부 의존성이 없습니다 (표준 라이브러리만).
 //
-// Design Philosophy: "20 lines → 1 line"
-// 설계 철학: "20줄 → 1줄"
+// Design Philosophy: "20 lines → 1 line" / 설계 철학: "20줄 → 1줄"
 //
 // Categories:
 // - Case Conversion: ToSnakeCase, ToCamelCase, ToKebabCase, ToPascalCase
@@ -22,15 +21,18 @@
 //
 //	import "github.com/arkd0ng/go-utils/stringutil"
 //
-//	// Case conversion / 케이스 변환
+// // Case conversion
+// 케이스 변환
 //	stringutil.ToSnakeCase("UserProfileData")  // "user_profile_data"
 //	stringutil.ToCamelCase("user-profile-data") // "userProfileData"
 //
-//	// String manipulation / 문자열 조작
+// // String manipulation
+// 문자열 조작
 //	stringutil.Truncate("Hello World", 8)      // "Hello..."
 //	stringutil.Clean("  hello   world  ")      // "hello world"
 //
-//	// Validation / 유효성 검사
+// // Validation
+// 유효성 검사
 //	stringutil.IsEmail("user@example.com")     // true
 //	stringutil.IsURL("https://example.com")    // true
 package stringutil

@@ -6,7 +6,8 @@ import (
 	"testing"
 )
 
-// TestContextCookie tests Cookie method / Cookie 메서드 테스트
+// TestContextCookie tests Cookie method
+// Cookie 메서드 테스트
 func TestContextCookie(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	req.AddCookie(&http.Cookie{
@@ -20,7 +21,8 @@ func TestContextCookie(t *testing.T) {
 		ResponseWriter: w,
 	}
 
-	// Get existing cookie / 기존 쿠키 가져오기
+	// Get existing cookie
+	// 기존 쿠키 가져오기
 	cookie, err := ctx.Cookie("test_cookie")
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
@@ -34,14 +36,16 @@ func TestContextCookie(t *testing.T) {
 		t.Errorf("Expected cookie value 'test_value', got '%s'", cookie.Value)
 	}
 
-	// Get non-existent cookie / 존재하지 않는 쿠키 가져오기
+	// Get non-existent cookie
+	// 존재하지 않는 쿠키 가져오기
 	_, err = ctx.Cookie("nonexistent")
 	if err == nil {
 		t.Error("Expected error for nonexistent cookie")
 	}
 }
 
-// TestContextCookieValue tests CookieValue method / CookieValue 메서드 테스트
+// TestContextCookieValue tests CookieValue method
+// CookieValue 메서드 테스트
 func TestContextCookieValue(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	req.AddCookie(&http.Cookie{
@@ -55,20 +59,23 @@ func TestContextCookieValue(t *testing.T) {
 		ResponseWriter: w,
 	}
 
-	// Get existing cookie value / 기존 쿠키 값 가져오기
+	// Get existing cookie value
+	// 기존 쿠키 값 가져오기
 	value := ctx.CookieValue("user")
 	if value != "john" {
 		t.Errorf("Expected 'john', got '%s'", value)
 	}
 
-	// Get non-existent cookie value / 존재하지 않는 쿠키 값 가져오기
+	// Get non-existent cookie value
+	// 존재하지 않는 쿠키 값 가져오기
 	value = ctx.CookieValue("nonexistent")
 	if value != "" {
 		t.Errorf("Expected empty string, got '%s'", value)
 	}
 }
 
-// TestContextSetCookieExisting tests existing SetCookie method / 기존 SetCookie 메서드 테스트
+// TestContextSetCookieExisting tests existing SetCookie method
+// 기존 SetCookie 메서드 테스트
 func TestContextSetCookieExisting(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -84,7 +91,8 @@ func TestContextSetCookieExisting(t *testing.T) {
 	}
 	ctx.SetCookie(cookie)
 
-	// Check cookie is set / 쿠키 설정 확인
+	// Check cookie is set
+	// 쿠키 설정 확인
 	cookies := w.Result().Cookies()
 	if len(cookies) == 0 {
 		t.Fatal("Expected cookie to be set")
@@ -104,7 +112,8 @@ func TestContextSetCookieExisting(t *testing.T) {
 	}
 }
 
-// TestContextSetCookieAdvanced tests SetCookieAdvanced method / SetCookieAdvanced 메서드 테스트
+// TestContextSetCookieAdvanced tests SetCookieAdvanced method
+// SetCookieAdvanced 메서드 테스트
 func TestContextSetCookieAdvanced(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -124,7 +133,8 @@ func TestContextSetCookieAdvanced(t *testing.T) {
 		SameSite: http.SameSiteStrictMode,
 	})
 
-	// Check cookie is set with advanced options / 고급 옵션으로 쿠키 설정 확인
+	// Check cookie is set with advanced options
+	// 고급 옵션으로 쿠키 설정 확인
 	cookies := w.Result().Cookies()
 	if len(cookies) == 0 {
 		t.Fatal("Expected cookie to be set")
@@ -164,7 +174,8 @@ func TestContextSetCookieAdvanced(t *testing.T) {
 	}
 }
 
-// TestContextSetCookieAdvancedDefaultPath tests default path / 기본 경로 테스트
+// TestContextSetCookieAdvancedDefaultPath tests default path
+// 기본 경로 테스트
 func TestContextSetCookieAdvancedDefaultPath(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -173,7 +184,8 @@ func TestContextSetCookieAdvancedDefaultPath(t *testing.T) {
 		ResponseWriter: w,
 	}
 
-	// Set cookie without path / 경로 없이 쿠키 설정
+	// Set cookie without path
+	// 경로 없이 쿠키 설정
 	ctx.SetCookieAdvanced(CookieOptions{
 		Name:  "test",
 		Value: "value",
@@ -191,7 +203,8 @@ func TestContextSetCookieAdvancedDefaultPath(t *testing.T) {
 	}
 }
 
-// TestContextDeleteCookieExisting tests existing DeleteCookie method / 기존 DeleteCookie 메서드 테스트
+// TestContextDeleteCookieExisting tests existing DeleteCookie method
+// 기존 DeleteCookie 메서드 테스트
 func TestContextDeleteCookieExisting(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -202,7 +215,8 @@ func TestContextDeleteCookieExisting(t *testing.T) {
 
 	ctx.DeleteCookie("session", "/")
 
-	// Check cookie is deleted (MaxAge = -1) / 쿠키 삭제 확인 (MaxAge = -1)
+	// Check cookie is deleted (MaxAge = -1)
+	// 쿠키 삭제 확인 (MaxAge = -1)
 	cookies := w.Result().Cookies()
 	if len(cookies) == 0 {
 		t.Fatal("Expected cookie to be set for deletion")
@@ -222,7 +236,8 @@ func TestContextDeleteCookieExisting(t *testing.T) {
 	}
 }
 
-// TestContextMultipleCookies tests setting multiple cookies / 여러 쿠키 설정 테스트
+// TestContextMultipleCookies tests setting multiple cookies
+// 여러 쿠키 설정 테스트
 func TestContextMultipleCookies(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -240,7 +255,8 @@ func TestContextMultipleCookies(t *testing.T) {
 		t.Fatalf("Expected 3 cookies, got %d", len(cookies))
 	}
 
-	// Check all cookies are set / 모든 쿠키 설정 확인
+	// Check all cookies are set
+	// 모든 쿠키 설정 확인
 	cookieMap := make(map[string]string)
 	for _, cookie := range cookies {
 		cookieMap[cookie.Name] = cookie.Value
@@ -259,7 +275,8 @@ func TestContextMultipleCookies(t *testing.T) {
 	}
 }
 
-// TestCookieOptions tests CookieOptions struct / CookieOptions 구조체 테스트
+// TestCookieOptions tests CookieOptions struct
+// CookieOptions 구조체 테스트
 func TestCookieOptions(t *testing.T) {
 	opts := CookieOptions{
 		Name:     "test",
@@ -305,7 +322,8 @@ func TestCookieOptions(t *testing.T) {
 	}
 }
 
-// BenchmarkContextSetCookieExisting benchmarks existing SetCookie method / 기존 SetCookie 메서드 벤치마크
+// BenchmarkContextSetCookieExisting benchmarks existing SetCookie method
+// 기존 SetCookie 메서드 벤치마크
 func BenchmarkContextSetCookieExisting(b *testing.B) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
@@ -326,7 +344,8 @@ func BenchmarkContextSetCookieExisting(b *testing.B) {
 	}
 }
 
-// BenchmarkContextCookieValue benchmarks CookieValue method / CookieValue 메서드 벤치마크
+// BenchmarkContextCookieValue benchmarks CookieValue method
+// CookieValue 메서드 벤치마크
 func BenchmarkContextCookieValue(b *testing.B) {
 	req := httptest.NewRequest("GET", "/", nil)
 	req.AddCookie(&http.Cookie{
@@ -346,7 +365,8 @@ func BenchmarkContextCookieValue(b *testing.B) {
 	}
 }
 
-// BenchmarkContextSetCookieAdvanced benchmarks SetCookieAdvanced method / SetCookieAdvanced 메서드 벤치마크
+// BenchmarkContextSetCookieAdvanced benchmarks SetCookieAdvanced method
+// SetCookieAdvanced 메서드 벤치마크
 func BenchmarkContextSetCookieAdvanced(b *testing.B) {
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()

@@ -229,7 +229,8 @@ func runRoutingExamples() {
 		results = append(results, routeResult{Method: tc.method, Path: tc.path, Status: rec.Code})
 	}
 
-	// Route group with middleware / 미들웨어가 적용된 라우트 그룹 구성
+	// Route group with middleware
+	// 미들웨어가 적용된 라우트 그룹 구성
 	apiGroup := routingApp.Group("/api")
 	apiGroup.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -301,12 +302,14 @@ func runContextExamples() {
 		}
 	})
 
-	// Simulate path parameter request / 경로 파라미터 요청을 시뮬레이션합니다
+	// Simulate path parameter request
+	// 경로 파라미터 요청을 시뮬레이션합니다
 	reqPath := httptest.NewRequest("GET", "/users/42/posts/99", nil)
 	recPath := httptest.NewRecorder()
 	app.ServeHTTP(recPath, reqPath)
 
-	// Simulate query parameter request with headers / 헤더를 포함한 쿼리 파라미터 요청을 시뮬레이션합니다
+	// Simulate query parameter request with headers
+	// 헤더를 포함한 쿼리 파라미터 요청을 시뮬레이션합니다
 	reqQuery := httptest.NewRequest("GET", "/search?q=golang&page=2", nil)
 	reqQuery.Header.Set("User-Agent", "ExampleClient/1.0")
 	reqQuery.Header.Set("Content-Type", "application/json")
@@ -479,13 +482,15 @@ func runMiddlewareExamples() {
 		ctx.Text(http.StatusOK, "authorized")
 	})
 
-	// Recovery test / Recovery 미들웨어 동작 확인
+	// Recovery test
+	// Recovery 미들웨어 동작 확인
 	reqPanic := httptest.NewRequest("GET", "/panic", nil)
 	recPanic := httptest.NewRecorder()
 	app.ServeHTTP(recPanic, reqPanic)
 	logDual(fmt.Sprintf("Recovery middleware response: status=%d", recPanic.Code), fmt.Sprintf("Recovery 미들웨어 응답: 상태=%d", recPanic.Code))
 
-	// RequestID + CORS test / RequestID와 CORS 미들웨어 동시 테스트
+	// RequestID + CORS test
+	// RequestID와 CORS 미들웨어 동시 테스트
 	reqProtected := httptest.NewRequest("GET", "/protected", nil)
 	recProtected := httptest.NewRecorder()
 	app.ServeHTTP(recProtected, reqProtected)
@@ -493,13 +498,15 @@ func runMiddlewareExamples() {
 	logDual(fmt.Sprintf("  X-Request-ID: %s", recProtected.Header().Get("X-Request-ID")), fmt.Sprintf("  X-Request-ID: %s", recProtected.Header().Get("X-Request-ID")))
 	logDual(fmt.Sprintf("  Access-Control-Allow-Origin: %s", recProtected.Header().Get("Access-Control-Allow-Origin")), fmt.Sprintf("  Access-Control-Allow-Origin: %s", recProtected.Header().Get("Access-Control-Allow-Origin")))
 
-	// BasicAuth test - missing credentials / BasicAuth 테스트 - 자격 증명 없음
+	// BasicAuth test - missing credentials
+	// BasicAuth 테스트 - 자격 증명 없음
 	reqNoAuth := httptest.NewRequest("GET", "/credentials", nil)
 	recNoAuth := httptest.NewRecorder()
 	authApp.ServeHTTP(recNoAuth, reqNoAuth)
 	logDual(fmt.Sprintf("BasicAuth without credentials -> status %d", recNoAuth.Code), fmt.Sprintf("인증 없이 BasicAuth 호출 -> 상태 %d", recNoAuth.Code))
 
-	// BasicAuth test - correct credentials / BasicAuth 테스트 - 올바른 자격 증명 사용
+	// BasicAuth test - correct credentials
+	// BasicAuth 테스트 - 올바른 자격 증명 사용
 	reqAuth := httptest.NewRequest("GET", "/credentials", nil)
 	reqAuth.SetBasicAuth("admin", "secret")
 	recAuth := httptest.NewRecorder()

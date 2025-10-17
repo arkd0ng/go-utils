@@ -12,7 +12,8 @@ import (
 // This is an alias for filepath.Join.
 // 이는 filepath.Join의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	path := fileutil.Join("home", "user", "documents", "file.txt")
 //	// Result: "home/user/documents/file.txt" (on Unix)
@@ -27,7 +28,8 @@ func Join(elem ...string) string {
 // This is an alias for filepath.Split.
 // 이는 filepath.Split의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	dir, file := fileutil.Split("path/to/file.txt")
 //	// dir = "path/to/", file = "file.txt"
@@ -41,7 +43,8 @@ func Split(path string) (dir, file string) {
 // This is an alias for filepath.Base.
 // 이는 filepath.Base의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	base := fileutil.Base("path/to/file.txt")
 //	// Result: "file.txt"
@@ -55,7 +58,8 @@ func Base(path string) string {
 // This is an alias for filepath.Dir.
 // 이는 filepath.Dir의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	dir := fileutil.Dir("path/to/file.txt")
 //	// Result: "path/to"
@@ -69,7 +73,8 @@ func Dir(path string) string {
 // This is an alias for filepath.Ext.
 // 이는 filepath.Ext의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ext := fileutil.Ext("file.txt")
 //	// Result: ".txt"
@@ -80,7 +85,8 @@ func Ext(path string) string {
 // Abs returns the absolute path of a file or directory
 // Abs는 파일 또는 디렉토리의 절대 경로를 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	abs, err := fileutil.Abs("relative/path/file.txt")
 //	if err != nil {
@@ -101,7 +107,8 @@ func Abs(path string) (string, error) {
 // This is an alias for filepath.Clean.
 // 이는 filepath.Clean의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	clean := fileutil.CleanPath("path/to/../file.txt")
 //	// Result: "path/file.txt"
@@ -112,7 +119,8 @@ func CleanPath(path string) string {
 // Normalize normalizes a path by cleaning it and making it absolute if possible
 // Normalize는 경로를 정리하고 가능하면 절대 경로로 만들어 정규화합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	normalized, err := fileutil.Normalize("./path/../file.txt")
 //	if err != nil {
@@ -120,10 +128,12 @@ func CleanPath(path string) string {
 //	}
 //	fmt.Println(normalized) // "/current/dir/file.txt"
 func Normalize(path string) (string, error) {
-	// Clean the path first / 먼저 경로 정리
+	// Clean the path first
+	// 먼저 경로 정리
 	cleanPath := CleanPath(path)
 
-	// Make it absolute / 절대 경로로 만들기
+	// Make it absolute
+	// 절대 경로로 만들기
 	absPath, err := filepath.Abs(cleanPath)
 	if err != nil {
 		return cleanPath, fmt.Errorf("fileutil.Normalize: %w", err)
@@ -138,7 +148,8 @@ func Normalize(path string) (string, error) {
 // This is an alias for filepath.ToSlash.
 // 이는 filepath.ToSlash의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	slashPath := fileutil.ToSlash("path\\to\\file.txt")
 //	// Result: "path/to/file.txt"
@@ -152,7 +163,8 @@ func ToSlash(path string) string {
 // This is an alias for filepath.FromSlash.
 // 이는 filepath.FromSlash의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	osPath := fileutil.FromSlash("path/to/file.txt")
 //	// Result: "path/to/file.txt" (on Unix)
@@ -167,7 +179,8 @@ func FromSlash(path string) string {
 // This is an alias for filepath.IsAbs.
 // 이는 filepath.IsAbs의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	if fileutil.IsAbs("/absolute/path") {
 //	    fmt.Println("Path is absolute")
@@ -179,7 +192,8 @@ func IsAbs(path string) bool {
 // IsValid checks if a path is valid (not empty and contains no invalid characters)
 // IsValid는 경로가 유효한지 확인합니다 (비어 있지 않고 유효하지 않은 문자를 포함하지 않음)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	if fileutil.IsValid("path/to/file.txt") {
 //	    fmt.Println("Path is valid")
@@ -189,7 +203,8 @@ func IsValid(path string) bool {
 		return false
 	}
 
-	// Check for invalid characters / 유효하지 않은 문자 확인
+	// Check for invalid characters
+	// 유효하지 않은 문자 확인
 	invalidChars := []string{"\x00"} // Null character
 	for _, char := range invalidChars {
 		if strings.Contains(path, char) {
@@ -203,26 +218,30 @@ func IsValid(path string) bool {
 // IsSafe checks if a path is safe (no path traversal attempts)
 // IsSafe는 경로가 안전한지 확인합니다 (경로 순회 시도 없음)
 //
-// This function checks if the path contains ".." or absolute paths outside the root.
-// 이 함수는 경로에 ".."가 포함되어 있거나 루트 외부의 절대 경로가 있는지 확인합니다.
+// This function checks if the path contains ".." or absolute paths outside the root. / 이 함수는 경로에 ".."가 포함되어 있거나 루트 외부의 절대 경로가 있는지 확인합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	if fileutil.IsSafe("path/to/file.txt", "/root/dir") {
 //	    fmt.Println("Path is safe")
 //	}
 func IsSafe(path, root string) bool {
-	// Clean the path / 경로 정리
+	// Clean the path
+	// 경로 정리
 	cleanPath := CleanPath(path)
 
-	// Check for path traversal attempts / 경로 순회 시도 확인
+	// Check for path traversal attempts
+	// 경로 순회 시도 확인
 	if strings.Contains(cleanPath, "..") {
 		return false
 	}
 
-	// If root is provided, check if path is within root / 루트가 제공되면 경로가 루트 내에 있는지 확인
+	// If root is provided, check if path is within root
+	// 루트가 제공되면 경로가 루트 내에 있는지 확인
 	if root != "" {
-		// Make both paths absolute / 두 경로 모두 절대 경로로 만들기
+		// Make both paths absolute
+		// 두 경로 모두 절대 경로로 만들기
 		absPath, err := filepath.Abs(cleanPath)
 		if err != nil {
 			return false
@@ -233,7 +252,8 @@ func IsSafe(path, root string) bool {
 			return false
 		}
 
-		// Check if path is within root / 경로가 루트 내에 있는지 확인
+		// Check if path is within root
+		// 경로가 루트 내에 있는지 확인
 		relPath, err := filepath.Rel(absRoot, absPath)
 		if err != nil {
 			return false
@@ -254,7 +274,8 @@ func IsSafe(path, root string) bool {
 // This is an alias for filepath.Match.
 // 이는 filepath.Match의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	matched, err := fileutil.Match("*.txt", "file.txt")
 //	if err != nil {
@@ -277,7 +298,8 @@ func Match(pattern, name string) (bool, error) {
 // This is an alias for filepath.Glob.
 // 이는 filepath.Glob의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	files, err := fileutil.Glob("*.txt")
 //	if err != nil {
@@ -297,7 +319,8 @@ func Glob(pattern string) ([]string, error) {
 // Rel returns the relative path from basepath to targpath
 // Rel은 basepath에서 targpath로의 상대 경로를 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	relPath, err := fileutil.Rel("/base/path", "/base/path/to/file.txt")
 //	if err != nil {
@@ -315,7 +338,8 @@ func Rel(basepath, targpath string) (string, error) {
 // WithoutExt returns the path without the file extension
 // WithoutExt는 파일 확장자를 제외한 경로를 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	path := fileutil.WithoutExt("file.txt")
 //	// Result: "file"
@@ -330,7 +354,8 @@ func WithoutExt(path string) string {
 // ChangeExt changes the file extension
 // ChangeExt는 파일 확장자를 변경합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	path := fileutil.ChangeExt("file.txt", ".md")
 //	// Result: "file.md"
@@ -345,7 +370,8 @@ func ChangeExt(path, newExt string) string {
 // HasExt checks if a path has one of the specified extensions
 // HasExt는 경로가 지정된 확장자 중 하나를 가지고 있는지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	if fileutil.HasExt("file.txt", ".txt", ".md") {
 //	    fmt.Println("File has a valid extension")

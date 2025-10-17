@@ -17,7 +17,8 @@ func ValuesSlice[K comparable, V any](m map[K]V) []V {
 // Time complexity: O(n log n)
 // 시간 복잡도: O(n log n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 3, "b": 1, "c": 2}
 //	values := maputil.ValuesSorted(m) // []int{1, 2, 3}
@@ -35,7 +36,8 @@ func ValuesSorted[K comparable, V Ordered](m map[K]V) []V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 //	values := maputil.ValuesBy(m, func(k string, v int) bool {
@@ -57,7 +59,8 @@ func ValuesBy[K comparable, V any](m map[K]V, fn func(K, V) bool) []V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 1, "d": 3, "e": 2}
 //	unique := maputil.UniqueValues(m) // []int{1, 2, 3} (order may vary)
@@ -84,7 +87,8 @@ func UniqueValues[K comparable, V comparable](m map[K]V) []V {
 // Time complexity: O(n) worst case, early termination when found
 // 시간 복잡도: 최악의 경우 O(n), 찾으면 조기 종료
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	value, found := maputil.FindValue(m, func(k string, v int) bool {
@@ -106,7 +110,8 @@ func FindValue[K comparable, V any](m map[K]V, fn func(K, V) bool) (V, bool) {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 1, "d": 3}
 //	result := maputil.ReplaceValue(m, 1, 10) // map[string]int{"a": 10, "b": 2, "c": 10, "d": 3}
@@ -131,7 +136,8 @@ func ReplaceValue[K comparable, V comparable](m map[K]V, oldValue, newValue V) m
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	result := maputil.UpdateValues(m, func(k string, v int) int {
@@ -154,7 +160,8 @@ func UpdateValues[K comparable, V any](m map[K]V, fn func(K, V) V) map[K]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 3, "b": 1, "c": 2}
 //	min, found := maputil.MinValue(m) // min = 1, found = true
@@ -184,7 +191,8 @@ func MinValue[K comparable, V Ordered](m map[K]V) (V, bool) {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 3, "b": 1, "c": 2}
 //	max, found := maputil.MaxValue(m) // max = 3, found = true
@@ -214,7 +222,8 @@ func MaxValue[K comparable, V Ordered](m map[K]V) (V, bool) {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	sum := maputil.SumValues(m) // sum = 6

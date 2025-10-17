@@ -32,30 +32,38 @@ type DatabaseConfig struct {
 }
 
 func main() {
-	// Setup log file with backup management / 백업 관리와 함께 로그 파일 설정
+	// Setup log file with backup management
+	// 백업 관리와 함께 로그 파일 설정
 	logFilePath := "logs/redis-example.log"
 
-	// Check if previous log file exists / 이전 로그 파일 존재 여부 확인
+	// Check if previous log file exists
+	// 이전 로그 파일 존재 여부 확인
 	if fileutil.Exists(logFilePath) {
-		// Get modification time of existing log file / 기존 로그 파일의 수정 시간 가져오기
+		// Get modification time of existing log file
+		// 기존 로그 파일의 수정 시간 가져오기
 		modTime, err := fileutil.ModTime(logFilePath)
 		if err == nil {
-			// Create backup filename with timestamp / 타임스탬프와 함께 백업 파일명 생성
+			// Create backup filename with timestamp
+			// 타임스탬프와 함께 백업 파일명 생성
 			backupName := fmt.Sprintf("logs/redis-example-%s.log", modTime.Format("20060102-150405"))
 
-			// Backup existing log file / 기존 로그 파일 백업
+			// Backup existing log file
+			// 기존 로그 파일 백업
 			if err := fileutil.CopyFile(logFilePath, backupName); err == nil {
 				fmt.Printf("✅ Backed up previous log to: %s\n", backupName)
-				// Delete original log file to prevent content duplication / 내용 중복 방지를 위해 원본 로그 파일 삭제
+				// Delete original log file to prevent content duplication
+				// 내용 중복 방지를 위해 원본 로그 파일 삭제
 				fileutil.DeleteFile(logFilePath)
 			}
 		}
 
-		// Cleanup old backup files - keep only 5 most recent / 오래된 백업 파일 정리 - 최근 5개만 유지
+		// Cleanup old backup files - keep only 5 most recent
+		// 오래된 백업 파일 정리 - 최근 5개만 유지
 		backupPattern := "logs/redis-example-*.log"
 		backupFiles, err := filepath.Glob(backupPattern)
 		if err == nil && len(backupFiles) > 5 {
-			// Sort by modification time / 수정 시간으로 정렬
+			// Sort by modification time
+			// 수정 시간으로 정렬
 			type fileInfo struct {
 				path    string
 				modTime time.Time
@@ -67,7 +75,8 @@ func main() {
 				}
 			}
 
-			// Sort oldest first / 가장 오래된 것부터 정렬
+			// Sort oldest first
+			// 가장 오래된 것부터 정렬
 			for i := 0; i < len(files)-1; i++ {
 				for j := i + 1; j < len(files); j++ {
 					if files[i].modTime.After(files[j].modTime) {
@@ -76,7 +85,8 @@ func main() {
 				}
 			}
 
-			// Delete oldest files to keep only 5 / 5개만 유지하도록 가장 오래된 파일 삭제
+			// Delete oldest files to keep only 5
+			// 5개만 유지하도록 가장 오래된 파일 삭제
 			for i := 0; i < len(files)-5; i++ {
 				fileutil.DeleteFile(files[i].path)
 				fmt.Printf("🗑️  Deleted old backup: %s\n", files[i].path)
@@ -84,7 +94,8 @@ func main() {
 		}
 	}
 
-	// Initialize logger with fixed filename / 고정 파일명으로 로거 초기화
+	// Initialize logger with fixed filename
+	// 고정 파일명으로 로거 초기화
 	logger, err := logging.New(
 		logging.WithFilePath(logFilePath),
 		logging.WithLevel(logging.DEBUG),
@@ -96,7 +107,8 @@ func main() {
 	}
 	defer logger.Close()
 
-	// Print banner / 배너 출력
+	// Print banner
+	// 배너 출력
 	logger.Banner("Redis Package - Comprehensive Examples", "go-utils/database/redis")
 	logger.Info("")
 	logger.Info("╔════════════════════════════════════════════════════════════════════════════╗")
@@ -137,7 +149,8 @@ func main() {
 	logger.Info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	logger.Info("")
 
-	// Load database configuration / 데이터베이스 설정 로드
+	// Load database configuration
+	// 데이터베이스 설정 로드
 	logger.Info("Loading database configuration from cfg/database-redis.yaml")
 	logger.Info("cfg/database-redis.yaml에서 데이터베이스 설정 로드 중")
 	config, err := loadRedisConfig()
@@ -150,7 +163,8 @@ func main() {
 		"addr", config.Redis.Addr,
 		"db", config.Redis.DB)
 
-	// Check if Docker Redis is running / Docker Redis 실행 여부 확인
+	// Check if Docker Redis is running
+	// Docker Redis 실행 여부 확인
 	wasRunning := isDockerRedisRunning()
 
 	if !wasRunning {
@@ -167,12 +181,14 @@ func main() {
 			os.Exit(1)
 		}
 
-		// Wait for Redis to be ready / Redis 준비 대기
+		// Wait for Redis to be ready
+		// Redis 준비 대기
 		logger.Info("Waiting for Docker Redis to be ready...")
 		logger.Info("Docker Redis 준비 중...")
 		if err := waitForDockerRedis(30 * time.Second); err != nil {
 			logger.Error("Docker Redis failed to become ready", "error", err)
-			// Clean up - stop Redis if we started it / 정리 - 시작한 경우 Redis 중지
+			// Clean up - stop Redis if we started it
+			// 정리 - 시작한 경우 Redis 중지
 			stopDockerRedis()
 			os.Exit(1)
 		}
@@ -183,7 +199,8 @@ func main() {
 		logger.Info("Docker Redis가 이미 실행 중입니다")
 	}
 
-	// Create Redis client / Redis 클라이언트 생성
+	// Create Redis client
+	// Redis 클라이언트 생성
 	logger.Info("Connecting to Redis...")
 	logger.Info("Redis에 연결 중...")
 
@@ -196,7 +213,8 @@ func main() {
 	)
 	if err != nil {
 		logger.Error("Failed to connect to Redis", "error", err)
-		// Stop Redis if we started it / 시작한 경우 Redis 중지
+		// Stop Redis if we started it
+		// 시작한 경우 Redis 중지
 		if !wasRunning {
 			stopDockerRedis()
 		}
@@ -210,64 +228,75 @@ func main() {
 
 	ctx := context.Background()
 
-	// Run examples / 예제 실행
+	// Run examples
+	// 예제 실행
 	logger.Info("=== Running Redis Examples ===")
 	logger.Info("=== Redis 예제 실행 중 ===")
 	logger.Info("")
 
-	// 1. String Operations / 문자열 작업
+	// 1. String Operations
+	// 문자열 작업
 	logger.Info("--- Example 1: String Operations ---")
 	logger.Info("--- 예제 1: 문자열 작업 ---")
 	stringOperations(ctx, rdb, logger)
 
-	// 2. Hash Operations / 해시 작업
+	// 2. Hash Operations
+	// 해시 작업
 	logger.Info("")
 	logger.Info("--- Example 2: Hash Operations ---")
 	logger.Info("--- 예제 2: 해시 작업 ---")
 	hashOperations(ctx, rdb, logger)
 
-	// 3. List Operations / 리스트 작업
+	// 3. List Operations
+	// 리스트 작업
 	logger.Info("")
 	logger.Info("--- Example 3: List Operations ---")
 	logger.Info("--- 예제 3: 리스트 작업 ---")
 	listOperations(ctx, rdb, logger)
 
-	// 4. Set Operations / 집합 작업
+	// 4. Set Operations
+	// 집합 작업
 	logger.Info("")
 	logger.Info("--- Example 4: Set Operations ---")
 	logger.Info("--- 예제 4: 집합 작업 ---")
 	setOperations(ctx, rdb, logger)
 
-	// 5. Sorted Set Operations / 정렬 집합 작업
+	// 5. Sorted Set Operations
+	// 정렬 집합 작업
 	logger.Info("")
 	logger.Info("--- Example 5: Sorted Set Operations ---")
 	logger.Info("--- 예제 5: 정렬 집합 작업 ---")
 	sortedSetOperations(ctx, rdb, logger)
 
-	// 6. Key Operations / 키 작업
+	// 6. Key Operations
+	// 키 작업
 	logger.Info("")
 	logger.Info("--- Example 6: Key Operations ---")
 	logger.Info("--- 예제 6: 키 작업 ---")
 	keyOperations(ctx, rdb, logger)
 
-	// 7. Pipeline Operations / 파이프라인 작업
+	// 7. Pipeline Operations
+	// 파이프라인 작업
 	logger.Info("")
 	logger.Info("--- Example 7: Pipeline Operations ---")
 	logger.Info("--- 예제 7: 파이프라인 작업 ---")
 	pipelineOperations(ctx, rdb, logger)
 
-	// 8. Transaction Operations / 트랜잭션 작업
+	// 8. Transaction Operations
+	// 트랜잭션 작업
 	logger.Info("")
 	logger.Info("--- Example 8: Transaction Operations ---")
 	logger.Info("--- 예제 8: 트랜잭션 작업 ---")
 	transactionOperations(ctx, rdb, logger)
 
-	// Summary / 요약
+	// Summary
+	// 요약
 	logger.Info("")
 	logger.Info("=== All examples completed successfully! ===")
 	logger.Info("=== 모든 예제가 성공적으로 완료되었습니다! ===")
 
-	// Cleanup / 정리
+	// Cleanup
+	// 정리
 	if !wasRunning {
 		logger.Info("")
 		logger.Info("Stopping Docker Redis (was started by examples)...")
@@ -285,7 +314,8 @@ func main() {
 // stringOperations demonstrates string operations
 // stringOperations는 문자열 작업을 시연합니다
 func stringOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logger) {
-	// Set / 설정
+	// Set
+	// 설정
 	err := rdb.Set(ctx, "name", "John Doe")
 	if err != nil {
 		logger.Error("SET failed", "error", err)
@@ -293,7 +323,8 @@ func stringOperations(ctx context.Context, rdb *redis.Client, logger *logging.Lo
 	}
 	logger.Info("SET name = 'John Doe'")
 
-	// Get / 가져오기
+	// Get
+	// 가져오기
 	name, err := rdb.Get(ctx, "name")
 	if err != nil {
 		logger.Error("GET failed", "error", err)
@@ -301,7 +332,8 @@ func stringOperations(ctx context.Context, rdb *redis.Client, logger *logging.Lo
 	}
 	logger.Info("GET name", "value", name)
 
-	// Set with expiration / 만료와 함께 설정
+	// Set with expiration
+	// 만료와 함께 설정
 	err = rdb.Set(ctx, "session", "abc123", 10*time.Second)
 	if err != nil {
 		logger.Error("SET with expiration failed", "error", err)
@@ -309,7 +341,8 @@ func stringOperations(ctx context.Context, rdb *redis.Client, logger *logging.Lo
 	}
 	logger.Info("SET session = 'abc123' with 10s expiration")
 
-	// Increment / 증가
+	// Increment
+	// 증가
 	err = rdb.Set(ctx, "counter", "0")
 	if err != nil {
 		logger.Error("SET counter failed", "error", err)
@@ -322,7 +355,8 @@ func stringOperations(ctx context.Context, rdb *redis.Client, logger *logging.Lo
 	}
 	logger.Info("INCR counter", "value", count)
 
-	// Multiple set / 다중 설정
+	// Multiple set
+	// 다중 설정
 	err = rdb.MSet(ctx, map[string]interface{}{
 		"key1": "value1",
 		"key2": "value2",
@@ -334,7 +368,8 @@ func stringOperations(ctx context.Context, rdb *redis.Client, logger *logging.Lo
 	}
 	logger.Info("MSET key1, key2, key3")
 
-	// Multiple get / 다중 가져오기
+	// Multiple get
+	// 다중 가져오기
 	values, err := rdb.MGet(ctx, "key1", "key2", "key3")
 	if err != nil {
 		logger.Error("MGET failed", "error", err)
@@ -342,7 +377,8 @@ func stringOperations(ctx context.Context, rdb *redis.Client, logger *logging.Lo
 	}
 	logger.Info("MGET", "values", values)
 
-	// Cleanup / 정리
+	// Cleanup
+	// 정리
 	rdb.Del(ctx, "name", "session", "counter", "key1", "key2", "key3")
 	logger.Debug("Cleaned up string operation keys")
 }
@@ -350,7 +386,8 @@ func stringOperations(ctx context.Context, rdb *redis.Client, logger *logging.Lo
 // hashOperations demonstrates hash operations
 // hashOperations는 해시 작업을 시연합니다
 func hashOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logger) {
-	// Set hash field / 해시 필드 설정
+	// Set hash field
+	// 해시 필드 설정
 	err := rdb.HSet(ctx, "user:1001", "name", "Alice")
 	if err != nil {
 		logger.Error("HSET failed", "error", err)
@@ -358,7 +395,8 @@ func hashOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logg
 	}
 	logger.Info("HSET user:1001 name = 'Alice'")
 
-	// Set multiple fields / 여러 필드 설정
+	// Set multiple fields
+	// 여러 필드 설정
 	err = rdb.HSetMap(ctx, "user:1001", map[string]interface{}{
 		"email": "alice@example.com",
 		"age":   "25",
@@ -370,7 +408,8 @@ func hashOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logg
 	}
 	logger.Info("HMSET user:1001 email, age, city")
 
-	// Get hash field / 해시 필드 가져오기
+	// Get hash field
+	// 해시 필드 가져오기
 	name, err := rdb.HGet(ctx, "user:1001", "name")
 	if err != nil {
 		logger.Error("HGET failed", "error", err)
@@ -378,7 +417,8 @@ func hashOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logg
 	}
 	logger.Info("HGET user:1001 name", "value", name)
 
-	// Get all fields / 모든 필드 가져오기
+	// Get all fields
+	// 모든 필드 가져오기
 	fields, err := rdb.HGetAll(ctx, "user:1001")
 	if err != nil {
 		logger.Error("HGETALL failed", "error", err)
@@ -386,7 +426,8 @@ func hashOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logg
 	}
 	logger.Info("HGETALL user:1001", "fields", fields)
 
-	// Increment hash field / 해시 필드 증가
+	// Increment hash field
+	// 해시 필드 증가
 	newAge, err := rdb.HIncrBy(ctx, "user:1001", "age", 1)
 	if err != nil {
 		logger.Error("HINCRBY failed", "error", err)
@@ -394,7 +435,8 @@ func hashOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logg
 	}
 	logger.Info("HINCRBY user:1001 age 1", "new_value", newAge)
 
-	// Cleanup / 정리
+	// Cleanup
+	// 정리
 	rdb.Del(ctx, "user:1001")
 	logger.Debug("Cleaned up hash operation keys")
 }
@@ -402,7 +444,8 @@ func hashOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logg
 // listOperations demonstrates list operations
 // listOperations는 리스트 작업을 시연합니다
 func listOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logger) {
-	// Push to list / 리스트에 추가
+	// Push to list
+	// 리스트에 추가
 	err := rdb.RPush(ctx, "queue", "task1", "task2", "task3")
 	if err != nil {
 		logger.Error("RPUSH failed", "error", err)
@@ -410,7 +453,8 @@ func listOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logg
 	}
 	logger.Info("RPUSH queue = ['task1', 'task2', 'task3']")
 
-	// Get list length / 리스트 길이 가져오기
+	// Get list length
+	// 리스트 길이 가져오기
 	length, err := rdb.LLen(ctx, "queue")
 	if err != nil {
 		logger.Error("LLEN failed", "error", err)
@@ -418,7 +462,8 @@ func listOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logg
 	}
 	logger.Info("LLEN queue", "length", length)
 
-	// Get range / 범위 가져오기
+	// Get range
+	// 범위 가져오기
 	items, err := rdb.LRange(ctx, "queue", 0, -1)
 	if err != nil {
 		logger.Error("LRANGE failed", "error", err)
@@ -426,7 +471,8 @@ func listOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logg
 	}
 	logger.Info("LRANGE queue 0 -1", "items", items)
 
-	// Pop from list / 리스트에서 제거
+	// Pop from list
+	// 리스트에서 제거
 	item, err := rdb.LPop(ctx, "queue")
 	if err != nil {
 		logger.Error("LPOP failed", "error", err)
@@ -434,7 +480,8 @@ func listOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logg
 	}
 	logger.Info("LPOP queue", "item", item)
 
-	// Cleanup / 정리
+	// Cleanup
+	// 정리
 	rdb.Del(ctx, "queue")
 	logger.Debug("Cleaned up list operation keys")
 }
@@ -442,7 +489,8 @@ func listOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logg
 // setOperations demonstrates set operations
 // setOperations는 집합 작업을 시연합니다
 func setOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logger) {
-	// Add to set / 집합에 추가
+	// Add to set
+	// 집합에 추가
 	err := rdb.SAdd(ctx, "languages", "Go", "Python", "JavaScript", "Rust")
 	if err != nil {
 		logger.Error("SADD failed", "error", err)
@@ -450,7 +498,8 @@ func setOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logge
 	}
 	logger.Info("SADD languages = ['Go', 'Python', 'JavaScript', 'Rust']")
 
-	// Check membership / 멤버 확인
+	// Check membership
+	// 멤버 확인
 	exists, err := rdb.SIsMember(ctx, "languages", "Go")
 	if err != nil {
 		logger.Error("SISMEMBER failed", "error", err)
@@ -458,7 +507,8 @@ func setOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logge
 	}
 	logger.Info("SISMEMBER languages 'Go'", "exists", exists)
 
-	// Get all members / 모든 멤버 가져오기
+	// Get all members
+	// 모든 멤버 가져오기
 	members, err := rdb.SMembers(ctx, "languages")
 	if err != nil {
 		logger.Error("SMEMBERS failed", "error", err)
@@ -466,7 +516,8 @@ func setOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logge
 	}
 	logger.Info("SMEMBERS languages", "members", members)
 
-	// Get cardinality / 크기 가져오기
+	// Get cardinality
+	// 크기 가져오기
 	size, err := rdb.SCard(ctx, "languages")
 	if err != nil {
 		logger.Error("SCARD failed", "error", err)
@@ -474,7 +525,8 @@ func setOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logge
 	}
 	logger.Info("SCARD languages", "size", size)
 
-	// Set operations / 집합 작업
+	// Set operations
+	// 집합 작업
 	err = rdb.SAdd(ctx, "backend", "Go", "Python", "Java")
 	if err != nil {
 		logger.Error("SADD backend failed", "error", err)
@@ -487,7 +539,8 @@ func setOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logge
 	}
 	logger.Info("SUNION languages backend", "union", union)
 
-	// Cleanup / 정리
+	// Cleanup
+	// 정리
 	rdb.Del(ctx, "languages", "backend")
 	logger.Debug("Cleaned up set operation keys")
 }
@@ -495,7 +548,8 @@ func setOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logge
 // sortedSetOperations demonstrates sorted set operations
 // sortedSetOperations는 정렬 집합 작업을 시연합니다
 func sortedSetOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logger) {
-	// Add members with scores / 점수와 함께 멤버 추가
+	// Add members with scores
+	// 점수와 함께 멤버 추가
 	err := rdb.ZAddMultiple(ctx, "leaderboard", map[string]float64{
 		"Alice":   100,
 		"Bob":     85,
@@ -508,7 +562,8 @@ func sortedSetOperations(ctx context.Context, rdb *redis.Client, logger *logging
 	}
 	logger.Info("ZADD leaderboard with scores")
 
-	// Get range (ascending) / 범위 가져오기 (오름차순)
+	// Get range (ascending)
+	// 범위 가져오기 (오름차순)
 	players, err := rdb.ZRange(ctx, "leaderboard", 0, -1)
 	if err != nil {
 		logger.Error("ZRANGE failed", "error", err)
@@ -516,7 +571,8 @@ func sortedSetOperations(ctx context.Context, rdb *redis.Client, logger *logging
 	}
 	logger.Info("ZRANGE leaderboard 0 -1", "players", players)
 
-	// Get range (descending) / 범위 가져오기 (내림차순)
+	// Get range (descending)
+	// 범위 가져오기 (내림차순)
 	topPlayers, err := rdb.ZRevRange(ctx, "leaderboard", 0, 2)
 	if err != nil {
 		logger.Error("ZREVRANGE failed", "error", err)
@@ -524,7 +580,8 @@ func sortedSetOperations(ctx context.Context, rdb *redis.Client, logger *logging
 	}
 	logger.Info("Top 3 players", "players", topPlayers)
 
-	// Get score / 점수 가져오기
+	// Get score
+	// 점수 가져오기
 	score, err := rdb.ZScore(ctx, "leaderboard", "Alice")
 	if err != nil {
 		logger.Error("ZSCORE failed", "error", err)
@@ -532,7 +589,8 @@ func sortedSetOperations(ctx context.Context, rdb *redis.Client, logger *logging
 	}
 	logger.Info("ZSCORE leaderboard 'Alice'", "score", score)
 
-	// Increment score / 점수 증가
+	// Increment score
+	// 점수 증가
 	newScore, err := rdb.ZIncrBy(ctx, "leaderboard", 5, "Bob")
 	if err != nil {
 		logger.Error("ZINCRBY failed", "error", err)
@@ -540,7 +598,8 @@ func sortedSetOperations(ctx context.Context, rdb *redis.Client, logger *logging
 	}
 	logger.Info("ZINCRBY leaderboard 'Bob' 5", "new_score", newScore)
 
-	// Cleanup / 정리
+	// Cleanup
+	// 정리
 	rdb.Del(ctx, "leaderboard")
 	logger.Debug("Cleaned up sorted set operation keys")
 }
@@ -548,7 +607,8 @@ func sortedSetOperations(ctx context.Context, rdb *redis.Client, logger *logging
 // keyOperations demonstrates key operations
 // keyOperations는 키 작업을 시연합니다
 func keyOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logger) {
-	// Set keys / 키 설정
+	// Set keys
+	// 키 설정
 	err := rdb.Set(ctx, "app:config:debug", "true")
 	if err != nil {
 		logger.Error("SET failed", "error", err)
@@ -566,7 +626,8 @@ func keyOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logge
 	}
 	logger.Info("SET multiple app:* keys")
 
-	// Find keys by pattern / 패턴으로 키 찾기
+	// Find keys by pattern
+	// 패턴으로 키 찾기
 	keys, err := rdb.Keys(ctx, "app:config:*")
 	if err != nil {
 		logger.Error("KEYS failed", "error", err)
@@ -574,7 +635,8 @@ func keyOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logge
 	}
 	logger.Info("KEYS app:config:*", "keys", keys)
 
-	// Check existence / 존재 확인
+	// Check existence
+	// 존재 확인
 	count, err := rdb.Exists(ctx, "app:config:debug", "app:config:timeout")
 	if err != nil {
 		logger.Error("EXISTS failed", "error", err)
@@ -582,7 +644,8 @@ func keyOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logge
 	}
 	logger.Info("EXISTS app:config:*", "count", count)
 
-	// Set expiration / 만료 설정
+	// Set expiration
+	// 만료 설정
 	err = rdb.Expire(ctx, "app:user:1001", 60*time.Second)
 	if err != nil {
 		logger.Error("EXPIRE failed", "error", err)
@@ -595,7 +658,8 @@ func keyOperations(ctx context.Context, rdb *redis.Client, logger *logging.Logge
 	}
 	logger.Info("TTL app:user:1001", "ttl", ttl)
 
-	// Delete keys / 키 삭제
+	// Delete keys
+	// 키 삭제
 	rdb.Del(ctx, "app:config:debug", "app:config:timeout", "app:user:1001")
 	logger.Debug("Cleaned up key operation keys")
 }
@@ -606,7 +670,8 @@ func pipelineOperations(ctx context.Context, rdb *redis.Client, logger *logging.
 	logger.Info("Executing multiple commands in pipeline...")
 	logger.Info("파이프라인에서 여러 명령 실행 중...")
 
-	// Execute pipeline / 파이프라인 실행
+	// Execute pipeline
+	// 파이프라인 실행
 	err := rdb.Pipeline(ctx, func(pipe redis.Pipeliner) error {
 		pipe.Set(ctx, "batch:1", "value1", 0)
 		pipe.Set(ctx, "batch:2", "value2", 0)
@@ -624,12 +689,14 @@ func pipelineOperations(ctx context.Context, rdb *redis.Client, logger *logging.
 	logger.Info("Pipeline executed successfully")
 	logger.Info("파이프라인 성공적으로 실행됨")
 
-	// Verify results / 결과 확인
+	// Verify results
+	// 결과 확인
 	val1, _ := rdb.Get(ctx, "batch:1")
 	counter, _ := rdb.Get(ctx, "batch:counter")
 	logger.Info("Pipeline results", "batch:1", val1, "batch:counter", counter)
 
-	// Cleanup / 정리
+	// Cleanup
+	// 정리
 	rdb.Del(ctx, "batch:1", "batch:2", "batch:3", "batch:counter", "batch:set")
 	logger.Debug("Cleaned up pipeline operation keys")
 }
@@ -640,16 +707,19 @@ func transactionOperations(ctx context.Context, rdb *redis.Client, logger *loggi
 	logger.Info("Executing transaction with optimistic locking...")
 	logger.Info("낙관적 잠금을 사용한 트랜잭션 실행 중...")
 
-	// Initialize counter / 카운터 초기화
+	// Initialize counter
+	// 카운터 초기화
 	err := rdb.Set(ctx, "tx:counter", "10")
 	if err != nil {
 		logger.Error("SET tx:counter failed", "error", err)
 		return
 	}
 
-	// Execute transaction / 트랜잭션 실행
+	// Execute transaction
+	// 트랜잭션 실행
 	err = rdb.Transaction(ctx, func(tx *redis.Tx) error {
-		// Get current value / 현재 값 가져오기
+		// Get current value
+		// 현재 값 가져오기
 		val, err := tx.Get(ctx, "tx:counter")
 		if err != nil {
 			return err
@@ -657,7 +727,8 @@ func transactionOperations(ctx context.Context, rdb *redis.Client, logger *loggi
 
 		logger.Info("Current counter value", "value", val)
 
-		// Execute commands atomically / 명령을 원자적으로 실행
+		// Execute commands atomically
+		// 명령을 원자적으로 실행
 		return tx.Exec(ctx, func(pipe redis.Pipeliner) error {
 			pipe.Incr(ctx, "tx:counter")
 			pipe.Set(ctx, "tx:last_update", time.Now().Unix(), 0)
@@ -670,13 +741,15 @@ func transactionOperations(ctx context.Context, rdb *redis.Client, logger *loggi
 		return
 	}
 
-	// Verify result / 결과 확인
+	// Verify result
+	// 결과 확인
 	newVal, _ := rdb.Get(ctx, "tx:counter")
 	logger.Info("New counter value", "value", newVal)
 	logger.Info("Transaction completed successfully")
 	logger.Info("트랜잭션 성공적으로 완료됨")
 
-	// Cleanup / 정리
+	// Cleanup
+	// 정리
 	rdb.Del(ctx, "tx:counter", "tx:last_update")
 	logger.Debug("Cleaned up transaction operation keys")
 }
@@ -684,7 +757,8 @@ func transactionOperations(ctx context.Context, rdb *redis.Client, logger *loggi
 // loadRedisConfig loads Redis configuration from YAML file
 // loadRedisConfig는 YAML 파일에서 Redis 설정을 로드합니다
 func loadRedisConfig() (*DatabaseConfig, error) {
-	// Get project root directory / 프로젝트 루트 디렉토리 가져오기
+	// Get project root directory
+	// 프로젝트 루트 디렉토리 가져오기
 	wd, err := os.Getwd()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get working directory: %w", err)
@@ -695,13 +769,15 @@ func loadRedisConfig() (*DatabaseConfig, error) {
 	projectRoot := filepath.Join(wd, "..", "..")
 	configPath := filepath.Join(projectRoot, "cfg", "database-redis.yaml")
 
-	// Read YAML file / YAML 파일 읽기
+	// Read YAML file
+	// YAML 파일 읽기
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
 
-	// Parse YAML / YAML 파싱
+	// Parse YAML
+	// YAML 파싱
 	var config DatabaseConfig
 	if err := yaml.Unmarshal(data, &config); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
@@ -724,13 +800,15 @@ func isDockerRedisRunning() bool {
 // startDockerRedis starts Docker Redis container
 // startDockerRedis는 Docker Redis 컨테이너를 시작합니다
 func startDockerRedis() error {
-	// Try using the start script first / 먼저 시작 스크립트 사용 시도
+	// Try using the start script first
+	// 먼저 시작 스크립트 사용 시도
 	cmd := exec.Command("../../.docker/scripts/docker-redis-start.sh")
 	if err := cmd.Run(); err == nil {
 		return nil
 	}
 
-	// Fallback to docker compose / docker compose로 폴백
+	// Fallback to docker compose
+	// docker compose로 폴백
 	cmd = exec.Command("docker", "compose", "up", "-d", "redis")
 	cmd.Dir = "../.."
 	return cmd.Run()
@@ -739,13 +817,15 @@ func startDockerRedis() error {
 // stopDockerRedis stops Docker Redis container
 // stopDockerRedis는 Docker Redis 컨테이너를 중지합니다
 func stopDockerRedis() {
-	// Try using the stop script first / 먼저 중지 스크립트 사용 시도
+	// Try using the stop script first
+	// 먼저 중지 스크립트 사용 시도
 	cmd := exec.Command("../../.docker/scripts/docker-redis-stop.sh")
 	if err := cmd.Run(); err == nil {
 		return
 	}
 
-	// Fallback to docker compose / docker compose로 폴백
+	// Fallback to docker compose
+	// docker compose로 폴백
 	cmd = exec.Command("docker", "compose", "down", "redis")
 	cmd.Dir = "../.."
 	cmd.Run()
@@ -757,7 +837,8 @@ func waitForDockerRedis(timeout time.Duration) error {
 	deadline := time.Now().Add(timeout)
 
 	for time.Now().Before(deadline) {
-		// Try to connect / 연결 시도
+		// Try to connect
+		// 연결 시도
 		cmd := exec.Command("docker", "exec", "go-utils-redis", "redis-cli", "ping")
 		if output, err := cmd.Output(); err == nil {
 			if strings.TrimSpace(string(output)) == "PONG" {

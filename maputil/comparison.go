@@ -9,7 +9,8 @@ package maputil
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 //	m2 := map[string]int{"a": 1, "b": 2, "c": 3}
@@ -35,7 +36,8 @@ func EqualMaps[K comparable, V comparable](m1, m2 map[K]V) bool {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string][]int{"a": {1, 2}, "b": {3, 4}}
 //	m2 := map[string][]int{"a": {1, 2}, "b": {3, 4}}
@@ -81,7 +83,8 @@ func EqualFunc[K comparable, V any](m1, m2 map[K]V, eq func(V, V) bool) bool {
 // Time complexity: O(n+m)
 // 시간 복잡도: O(n+m)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 //	m2 := map[string]int{"a": 1, "b": 20, "d": 4}
@@ -126,7 +129,8 @@ func Diff[K comparable, V comparable](m1, m2 map[K]V) map[K]V {
 // Time complexity: O(n+m)
 // 시간 복잡도: O(n+m)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 //	m2 := map[string]int{"a": 1, "b": 20, "d": 4}
@@ -163,7 +167,8 @@ func DiffKeys[K comparable, V comparable](m1, m2 map[K]V) []K {
 // Time complexity: O(n*m) where n is the number of maps and m is the average map size
 // 시간 복잡도: O(n*m) 여기서 n은 맵 개수, m은 평균 맵 크기
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 //	m2 := map[string]int{"b": 20, "c": 30, "d": 40}
@@ -207,7 +212,8 @@ func CommonKeys[K comparable, V any](maps ...map[K]V) []K {
 // Time complexity: O(n*m)
 // 시간 복잡도: O(n*m)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string]int{"a": 1, "b": 2}
 //	m2 := map[string]int{"b": 20, "c": 30}
@@ -245,7 +251,8 @@ func AllKeys[K comparable, V any](maps ...map[K]V) []K {
 // Time complexity: O(n+m)
 // 시간 복잡도: O(n+m)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 //	m2 := map[string]int{"a": 1, "b": 20, "d": 4}

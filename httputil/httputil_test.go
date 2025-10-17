@@ -464,7 +464,8 @@ func TestProgressReader(t *testing.T) {
 // TestFileOperations는 파일 다운로드 및 업로드 기능을 테스트합니다.
 func TestFileOperations(t *testing.T) {
 	t.Run("Download", func(t *testing.T) {
-		// Create test server / 테스트 서버 생성
+		// Create test server
+		// 테스트 서버 생성
 		testData := []byte("test file content for download")
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/octet-stream")
@@ -475,7 +476,8 @@ func TestFileOperations(t *testing.T) {
 
 		client := NewClient()
 
-		// Test Download (to memory) / Download 테스트 (메모리로)
+		// Test Download (to memory)
+		// Download 테스트 (메모리로)
 		data, err := client.Download(ts.URL)
 		if err != nil {
 			t.Fatalf("Download failed: %v", err)
@@ -487,7 +489,8 @@ func TestFileOperations(t *testing.T) {
 	})
 
 	t.Run("DownloadFile", func(t *testing.T) {
-		// Create test server / 테스트 서버 생성
+		// Create test server
+		// 테스트 서버 생성
 		testData := []byte("test file content for download to file")
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/octet-stream")
@@ -499,13 +502,15 @@ func TestFileOperations(t *testing.T) {
 		tempFile := "/tmp/httputil_test_download.txt"
 		defer os.Remove(tempFile)
 
-		// Test DownloadFile / DownloadFile 테스트
+		// Test DownloadFile
+		// DownloadFile 테스트
 		err := client.DownloadFile(ts.URL, tempFile)
 		if err != nil {
 			t.Fatalf("DownloadFile failed: %v", err)
 		}
 
-		// Verify file contents / 파일 내용 확인
+		// Verify file contents
+		// 파일 내용 확인
 		data, err := os.ReadFile(tempFile)
 		if err != nil {
 			t.Fatalf("Failed to read downloaded file: %v", err)
@@ -517,7 +522,8 @@ func TestFileOperations(t *testing.T) {
 	})
 
 	t.Run("DownloadFileContext with progress", func(t *testing.T) {
-		// Create test server / 테스트 서버 생성
+		// Create test server
+		// 테스트 서버 생성
 		testData := []byte(strings.Repeat("A", 1024)) // 1KB
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/octet-stream")
@@ -530,7 +536,8 @@ func TestFileOperations(t *testing.T) {
 		tempFile := "/tmp/httputil_test_download_progress.txt"
 		defer os.Remove(tempFile)
 
-		// Track progress / 진행 상황 추적
+		// Track progress
+		// 진행 상황 추적
 		var progressCalls int
 		var lastProgress int64
 		progress := func(current, total int64) {
@@ -552,7 +559,8 @@ func TestFileOperations(t *testing.T) {
 			t.Errorf("Last progress should be %d, got %d", len(testData), lastProgress)
 		}
 
-		// Verify file / 파일 확인
+		// Verify file
+		// 파일 확인
 		data, _ := os.ReadFile(tempFile)
 		if !bytes.Equal(data, testData) {
 			t.Error("Downloaded file content mismatch with progress")
@@ -560,7 +568,8 @@ func TestFileOperations(t *testing.T) {
 	})
 
 	t.Run("UploadFile", func(t *testing.T) {
-		// Create test file / 테스트 파일 생성
+		// Create test file
+		// 테스트 파일 생성
 		tempFile := "/tmp/httputil_test_upload.txt"
 		testData := []byte("test file content for upload")
 		err := os.WriteFile(tempFile, testData, 0644)
@@ -569,13 +578,15 @@ func TestFileOperations(t *testing.T) {
 		}
 		defer os.Remove(tempFile)
 
-		// Create test server / 테스트 서버 생성
+		// Create test server
+		// 테스트 서버 생성
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != "POST" {
 				t.Errorf("Expected POST method, got %s", r.Method)
 			}
 
-			// Parse multipart form / multipart form 파싱
+			// Parse multipart form
+			// multipart form 파싱
 			err := r.ParseMultipartForm(10 << 20) // 10MB
 			if err != nil {
 				t.Errorf("Failed to parse multipart form: %v", err)
@@ -587,7 +598,8 @@ func TestFileOperations(t *testing.T) {
 			}
 			defer file.Close()
 
-			// Read uploaded data / 업로드된 데이터 읽기
+			// Read uploaded data
+			// 업로드된 데이터 읽기
 			uploadedData, _ := io.ReadAll(file)
 			if !bytes.Equal(uploadedData, testData) {
 				t.Errorf("Uploaded data mismatch. Expected %s, got %s", testData, uploadedData)
@@ -601,7 +613,8 @@ func TestFileOperations(t *testing.T) {
 		client := NewClient()
 		var result map[string]string
 
-		// Test UploadFile / UploadFile 테스트
+		// Test UploadFile
+		// UploadFile 테스트
 		err = client.UploadFile(ts.URL, "file", tempFile, &result)
 		if err != nil {
 			t.Fatalf("UploadFile failed: %v", err)
@@ -613,7 +626,8 @@ func TestFileOperations(t *testing.T) {
 	})
 
 	t.Run("UploadFiles (multiple)", func(t *testing.T) {
-		// Create test files / 테스트 파일들 생성
+		// Create test files
+		// 테스트 파일들 생성
 		file1 := "/tmp/httputil_test_upload1.txt"
 		file2 := "/tmp/httputil_test_upload2.txt"
 		data1 := []byte("file1 content")
@@ -624,14 +638,16 @@ func TestFileOperations(t *testing.T) {
 		defer os.Remove(file1)
 		defer os.Remove(file2)
 
-		// Create test server / 테스트 서버 생성
+		// Create test server
+		// 테스트 서버 생성
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			err := r.ParseMultipartForm(10 << 20)
 			if err != nil {
 				t.Errorf("Failed to parse multipart form: %v", err)
 			}
 
-			// Check both files / 두 파일 모두 확인
+			// Check both files
+			// 두 파일 모두 확인
 			fileCount := 0
 			if _, _, err := r.FormFile("file1"); err == nil {
 				fileCount++
@@ -652,7 +668,8 @@ func TestFileOperations(t *testing.T) {
 		client := NewClient()
 		var result map[string]int
 
-		// Test UploadFiles / UploadFiles 테스트
+		// Test UploadFiles
+		// UploadFiles 테스트
 		files := map[string]string{
 			"file1": file1,
 			"file2": file2,
@@ -669,7 +686,8 @@ func TestFileOperations(t *testing.T) {
 	})
 
 	t.Run("UploadFileContext with progress", func(t *testing.T) {
-		// Create test file / 테스트 파일 생성
+		// Create test file
+		// 테스트 파일 생성
 		tempFile := "/tmp/httputil_test_upload_progress.txt"
 		testData := []byte(strings.Repeat("B", 2048)) // 2KB
 		err := os.WriteFile(tempFile, testData, 0644)
@@ -678,7 +696,8 @@ func TestFileOperations(t *testing.T) {
 		}
 		defer os.Remove(tempFile)
 
-		// Create test server / 테스트 서버 생성
+		// Create test server
+		// 테스트 서버 생성
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			r.ParseMultipartForm(10 << 20)
 			w.WriteHeader(http.StatusOK)
@@ -689,7 +708,8 @@ func TestFileOperations(t *testing.T) {
 		client := NewClient()
 		var result map[string]string
 
-		// Track progress / 진행 상황 추적
+		// Track progress
+		// 진행 상황 추적
 		var progressCalls int
 		progress := func(current, total int64) {
 			progressCalls++
@@ -714,7 +734,8 @@ func TestFileOperations(t *testing.T) {
 // TestSimpleAPI tests package-level simple API functions.
 // TestSimpleAPI는 패키지 레벨 Simple API 함수를 테스트합니다.
 func TestSimpleAPI(t *testing.T) {
-	// Create test server / 테스트 서버 생성
+	// Create test server
+	// 테스트 서버 생성
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/get":
@@ -831,7 +852,8 @@ func TestSimpleAPI(t *testing.T) {
 // TestPostForm tests form posting functionality.
 // TestPostForm은 폼 전송 기능을 테스트합니다.
 func TestPostForm(t *testing.T) {
-	// Create test server / 테스트 서버 생성
+	// Create test server
+	// 테스트 서버 생성
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Content-Type") != "application/x-www-form-urlencoded" {
 			t.Errorf("Expected Content-Type application/x-www-form-urlencoded, got %s",

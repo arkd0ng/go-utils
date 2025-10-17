@@ -4,7 +4,8 @@ import (
 	"testing"
 )
 
-// TestContainsAny tests the ContainsAny function / ContainsAny 함수 테스트
+// TestContainsAny tests the ContainsAny function
+// ContainsAny 함수 테스트
 func TestContainsAny(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -32,7 +33,8 @@ func TestContainsAny(t *testing.T) {
 	}
 }
 
-// TestContainsAll tests the ContainsAll function / ContainsAll 함수 테스트
+// TestContainsAll tests the ContainsAll function
+// ContainsAll 함수 테스트
 func TestContainsAll(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -60,7 +62,8 @@ func TestContainsAll(t *testing.T) {
 	}
 }
 
-// TestStartsWithAny tests the StartsWithAny function / StartsWithAny 함수 테스트
+// TestStartsWithAny tests the StartsWithAny function
+// StartsWithAny 함수 테스트
 func TestStartsWithAny(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -88,7 +91,8 @@ func TestStartsWithAny(t *testing.T) {
 	}
 }
 
-// TestEndsWithAny tests the EndsWithAny function / EndsWithAny 함수 테스트
+// TestEndsWithAny tests the EndsWithAny function
+// EndsWithAny 함수 테스트
 func TestEndsWithAny(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -116,7 +120,8 @@ func TestEndsWithAny(t *testing.T) {
 	}
 }
 
-// TestReplaceAll tests the ReplaceAll function / ReplaceAll 함수 테스트
+// TestReplaceAll tests the ReplaceAll function
+// ReplaceAll 함수 테스트
 func TestReplaceAll(t *testing.T) {
 	tests := []struct {
 		name         string
@@ -179,7 +184,8 @@ func TestReplaceAll(t *testing.T) {
 	}
 }
 
-// TestReplaceIgnoreCase tests the ReplaceIgnoreCase function / ReplaceIgnoreCase 함수 테스트
+// TestReplaceIgnoreCase tests the ReplaceIgnoreCase function
+// ReplaceIgnoreCase 함수 테스트
 func TestReplaceIgnoreCase(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -210,7 +216,8 @@ func TestReplaceIgnoreCase(t *testing.T) {
 	}
 }
 
-// Benchmarks / 벤치마크
+// Benchmarks
+// 벤치마크
 
 func BenchmarkContainsAny(b *testing.B) {
 	s := "hello world foo bar baz"

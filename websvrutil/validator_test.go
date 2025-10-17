@@ -14,13 +14,15 @@ func TestValidatorRequired(t *testing.T) {
 
 	validator := &DefaultValidator{}
 
-	// Valid case / 유효한 경우
+	// Valid case
+	// 유효한 경우
 	obj := TestStruct{Name: "John"}
 	if err := validator.Validate(&obj); err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
 
-	// Invalid case / 무효한 경우
+	// Invalid case
+	// 무효한 경우
 	obj = TestStruct{Name: ""}
 	err := validator.Validate(&obj)
 	if err == nil {
@@ -37,7 +39,8 @@ func TestValidatorEmail(t *testing.T) {
 
 	validator := &DefaultValidator{}
 
-	// Valid cases / 유효한 경우
+	// Valid cases
+	// 유효한 경우
 	validEmails := []string{
 		"test@example.com",
 		"user.name@example.co.uk",
@@ -51,7 +54,8 @@ func TestValidatorEmail(t *testing.T) {
 		}
 	}
 
-	// Invalid cases / 무효한 경우
+	// Invalid cases
+	// 무효한 경우
 	invalidEmails := []string{
 		"invalid",
 		"@example.com",
@@ -78,27 +82,31 @@ func TestValidatorMinMax(t *testing.T) {
 
 	validator := &DefaultValidator{}
 
-	// Valid case / 유효한 경우
+	// Valid case
+	// 유효한 경우
 	obj := TestStruct{Name: "John", Age: 25}
 	if err := validator.Validate(&obj); err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
 
-	// Invalid min / 무효한 최소값
+	// Invalid min
+	// 무효한 최소값
 	obj = TestStruct{Name: "Jo", Age: 25}
 	err := validator.Validate(&obj)
 	if err == nil {
 		t.Error("Expected error for name below min length")
 	}
 
-	// Invalid max / 무효한 최대값
+	// Invalid max
+	// 무효한 최대값
 	obj = TestStruct{Name: "VeryLongName", Age: 25}
 	err = validator.Validate(&obj)
 	if err == nil {
 		t.Error("Expected error for name above max length")
 	}
 
-	// Invalid age / 무효한 나이
+	// Invalid age
+	// 무효한 나이
 	obj = TestStruct{Name: "John", Age: 17}
 	err = validator.Validate(&obj)
 	if err == nil {
@@ -115,13 +123,15 @@ func TestValidatorLen(t *testing.T) {
 
 	validator := &DefaultValidator{}
 
-	// Valid case / 유효한 경우
+	// Valid case
+	// 유효한 경우
 	obj := TestStruct{Code: "ABC123"}
 	if err := validator.Validate(&obj); err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
 
-	// Invalid case / 무효한 경우
+	// Invalid case
+	// 무효한 경우
 	obj = TestStruct{Code: "ABC12"}
 	err := validator.Validate(&obj)
 	if err == nil {
@@ -139,20 +149,23 @@ func TestValidatorEqNe(t *testing.T) {
 
 	validator := &DefaultValidator{}
 
-	// Valid case / 유효한 경우
+	// Valid case
+	// 유효한 경우
 	obj := TestStruct{Status: "active", Type: "valid"}
 	if err := validator.Validate(&obj); err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
 
-	// Invalid eq / 무효한 eq
+	// Invalid eq
+	// 무효한 eq
 	obj = TestStruct{Status: "inactive", Type: "valid"}
 	err := validator.Validate(&obj)
 	if err == nil {
 		t.Error("Expected error for status not equal to active")
 	}
 
-	// Invalid ne / 무효한 ne
+	// Invalid ne
+	// 무효한 ne
 	obj = TestStruct{Status: "active", Type: "invalid"}
 	err = validator.Validate(&obj)
 	if err == nil {
@@ -171,20 +184,23 @@ func TestValidatorComparison(t *testing.T) {
 
 	validator := &DefaultValidator{}
 
-	// Valid case / 유효한 경우
+	// Valid case
+	// 유효한 경우
 	obj := TestStruct{Score: 75, Count: 500, Balance: 1000}
 	if err := validator.Validate(&obj); err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
 
-	// Invalid gte / 무효한 gte
+	// Invalid gte
+	// 무효한 gte
 	obj = TestStruct{Score: -1, Count: 500, Balance: 1000}
 	err := validator.Validate(&obj)
 	if err == nil {
 		t.Error("Expected error for score < 0")
 	}
 
-	// Invalid lte / 무효한 lte
+	// Invalid lte
+	// 무효한 lte
 	obj = TestStruct{Score: 101, Count: 500, Balance: 1000}
 	err = validator.Validate(&obj)
 	if err == nil {
@@ -201,7 +217,8 @@ func TestValidatorOneOf(t *testing.T) {
 
 	validator := &DefaultValidator{}
 
-	// Valid cases / 유효한 경우
+	// Valid cases
+	// 유효한 경우
 	validRoles := []string{"admin", "user", "guest"}
 	for _, role := range validRoles {
 		obj := TestStruct{Role: role}
@@ -210,7 +227,8 @@ func TestValidatorOneOf(t *testing.T) {
 		}
 	}
 
-	// Invalid case / 무효한 경우
+	// Invalid case
+	// 무효한 경우
 	obj := TestStruct{Role: "superadmin"}
 	err := validator.Validate(&obj)
 	if err == nil {
@@ -227,13 +245,15 @@ func TestValidatorAlpha(t *testing.T) {
 
 	validator := &DefaultValidator{}
 
-	// Valid case / 유효한 경우
+	// Valid case
+	// 유효한 경우
 	obj := TestStruct{Name: "JohnDoe"}
 	if err := validator.Validate(&obj); err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
 
-	// Invalid case / 무효한 경우
+	// Invalid case
+	// 무효한 경우
 	obj = TestStruct{Name: "John123"}
 	err := validator.Validate(&obj)
 	if err == nil {
@@ -250,13 +270,15 @@ func TestValidatorAlphanum(t *testing.T) {
 
 	validator := &DefaultValidator{}
 
-	// Valid case / 유효한 경우
+	// Valid case
+	// 유효한 경우
 	obj := TestStruct{Username: "user123"}
 	if err := validator.Validate(&obj); err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
 
-	// Invalid case / 무효한 경우
+	// Invalid case
+	// 무효한 경우
 	obj = TestStruct{Username: "user_123"}
 	err := validator.Validate(&obj)
 	if err == nil {
@@ -273,13 +295,15 @@ func TestValidatorNumeric(t *testing.T) {
 
 	validator := &DefaultValidator{}
 
-	// Valid case / 유효한 경우
+	// Valid case
+	// 유효한 경우
 	obj := TestStruct{Code: "123456"}
 	if err := validator.Validate(&obj); err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
 
-	// Invalid case / 무효한 경우
+	// Invalid case
+	// 무효한 경우
 	obj = TestStruct{Code: "12a456"}
 	err := validator.Validate(&obj)
 	if err == nil {
@@ -299,7 +323,8 @@ func TestValidatorMultipleTags(t *testing.T) {
 
 	validator := &DefaultValidator{}
 
-	// Valid case / 유효한 경우
+	// Valid case
+	// 유효한 경우
 	user := User{
 		Name:  "John",
 		Email: "john@example.com",
@@ -311,7 +336,8 @@ func TestValidatorMultipleTags(t *testing.T) {
 		t.Errorf("Expected no error, got %v", err)
 	}
 
-	// Invalid multiple fields / 여러 필드가 무효한 경우
+	// Invalid multiple fields
+	// 여러 필드가 무효한 경우
 	user = User{
 		Name:  "Jo",      // Too short
 		Email: "invalid", // Invalid email
@@ -324,7 +350,8 @@ func TestValidatorMultipleTags(t *testing.T) {
 		t.Error("Expected error for multiple invalid fields")
 	}
 
-	// Check that we have multiple errors / 여러 에러가 있는지 확인
+	// Check that we have multiple errors
+	// 여러 에러가 있는지 확인
 	validationErrors, ok := err.(ValidationErrors)
 	if !ok {
 		t.Fatalf("Expected ValidationErrors, got %T", err)
@@ -361,7 +388,8 @@ func TestBindWithValidation(t *testing.T) {
 		Email string `json:"email" validate:"required,email"`
 	}
 
-	// Create test request / 테스트 요청 생성
+	// Create test request
+	// 테스트 요청 생성
 	// This test would require a full HTTP request setup
 	// 이 테스트는 전체 HTTP 요청 설정이 필요합니다
 	// For now, we test the validator directly
@@ -369,13 +397,15 @@ func TestBindWithValidation(t *testing.T) {
 
 	validator := &DefaultValidator{}
 
-	// Valid user / 유효한 사용자
+	// Valid user
+	// 유효한 사용자
 	user := User{Name: "John", Email: "john@example.com"}
 	if err := validator.Validate(&user); err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
 
-	// Invalid user / 무효한 사용자
+	// Invalid user
+	// 무효한 사용자
 	user = User{Name: "Jo", Email: "invalid"}
 	err := validator.Validate(&user)
 	if err == nil {

@@ -13,24 +13,29 @@ import (
 // Client represents a MySQL database client with auto-management features
 // Client는 자동 관리 기능을 갖춘 MySQL 데이터베이스 클라이언트를 나타냅니다
 type Client struct {
-	// Connection pool / 연결 풀
+	// Connection pool
+	// 연결 풀
 	connections   []*sql.DB    // Multiple connections for rotation / 순환을 위한 여러 연결
 	currentIdx    int          // Current connection index (round-robin) / 현재 연결 인덱스 (round-robin)
 	rotationIdx   int          // Rotation index / 순환 인덱스
 	connectionsMu sync.RWMutex // Connection array synchronization / 연결 배열 동기화
 
-	// Configuration / 설정
+	// Configuration
+	// 설정
 	config *config
 
-	// Query statistics / 쿼리 통계
+	// Query statistics
+	// 쿼리 통계
 	statsTracker *queryStatsTracker
 
-	// Background tasks / 백그라운드 작업
+	// Background tasks
+	// 백그라운드 작업
 	stopChan        chan struct{} // Stop signal / 종료 신호
 	healthCheckStop chan struct{} // Health check stop / 헬스 체크 중지
 	rotationStop    chan struct{} // Rotation stop / 순환 중지
 
-	// Synchronization / 동기화
+	// Synchronization
+	// 동기화
 	mu     sync.RWMutex // General synchronization / 일반 동기화
 	closed bool         // Closed flag / 종료 플래그
 }
@@ -38,13 +43,15 @@ type Client struct {
 // New creates a new MySQL client with the given options
 // New는 주어진 옵션으로 새 MySQL 클라이언트를 생성합니다
 //
-// Example (static credentials) / 예제 (정적 자격 증명):
+// Example (static credentials)
+// 예제 (정적 자격 증명):
 //
 //	db, err := mysql.New(
 //	    mysql.WithDSN("user:pass@tcp(localhost:3306)/dbname"),
 //	)
 //
-// Example (dynamic credentials) / 예제 (동적 자격 증명):
+// Example (dynamic credentials)
+// 예제 (동적 자격 증명):
 //
 //	db, err := mysql.New(
 //	    mysql.WithCredentialRefresh(
@@ -57,22 +64,26 @@ type Client struct {
 //	    mysql.WithLogger(logger),
 //	)
 func New(opts ...Option) (*Client, error) {
-	// Create default config / 기본 설정 생성
+	// Create default config
+	// 기본 설정 생성
 	cfg := defaultConfig()
 
-	// Apply options / 옵션 적용
+	// Apply options
+	// 옵션 적용
 	for _, opt := range opts {
 		if err := opt(cfg); err != nil {
 			return nil, fmt.Errorf("failed to apply option: %w", err)
 		}
 	}
 
-	// Validate config / 설정 검증
+	// Validate config
+	// 설정 검증
 	if err := cfg.validate(); err != nil {
 		return nil, err
 	}
 
-	// Create client / 클라이언트 생성
+	// Create client
+	// 클라이언트 생성
 	client := &Client{
 		config:          cfg,
 		connections:     make([]*sql.DB, 0, cfg.poolCount),
@@ -82,22 +93,26 @@ func New(opts ...Option) (*Client, error) {
 		rotationStop:    make(chan struct{}),
 	}
 
-	// Enable stats tracking if configured / 설정된 경우 통계 추적 활성화
+	// Enable stats tracking if configured
+	// 설정된 경우 통계 추적 활성화
 	if cfg.enableStats {
 		client.statsTracker.enabled = true
 	}
 
-	// Initialize connections / 연결 초기화
+	// Initialize connections
+	// 연결 초기화
 	if err := client.initializeConnections(); err != nil {
 		return nil, err
 	}
 
-	// Start background tasks / 백그라운드 작업 시작
+	// Start background tasks
+	// 백그라운드 작업 시작
 	if cfg.enableHealthCheck {
 		client.startHealthCheck()
 	}
 
-	// Start credential rotation if configured / 설정된 경우 자격 증명 순환 시작
+	// Start credential rotation if configured
+	// 설정된 경우 자격 증명 순환 시작
 	if cfg.credRefreshFunc != nil {
 		client.startConnectionRotation()
 	}
@@ -108,7 +123,8 @@ func New(opts ...Option) (*Client, error) {
 // initializeConnections creates initial connection pools
 // initializeConnections는 초기 연결 풀을 생성합니다
 func (c *Client) initializeConnections() error {
-	// Get DSN / DSN 가져오기
+	// Get DSN
+	// DSN 가져오기
 	dsn := c.config.dsn
 	if c.config.credRefreshFunc != nil {
 		var err error
@@ -118,11 +134,13 @@ func (c *Client) initializeConnections() error {
 		}
 	}
 
-	// Create connection pools / 연결 풀 생성
+	// Create connection pools
+	// 연결 풀 생성
 	for i := 0; i < c.config.poolCount; i++ {
 		db, err := c.createConnection(dsn)
 		if err != nil {
-			// Close any created connections / 생성된 연결 모두 닫기
+			// Close any created connections
+			// 생성된 연결 모두 닫기
 			for _, conn := range c.connections {
 				conn.Close()
 			}
@@ -137,19 +155,22 @@ func (c *Client) initializeConnections() error {
 // createConnection creates a new database connection
 // createConnection은 새 데이터베이스 연결을 생성합니다
 func (c *Client) createConnection(dsn string) (*sql.DB, error) {
-	// Open connection / 연결 열기
+	// Open connection
+	// 연결 열기
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrConnectionFailed, err)
 	}
 
-	// Configure connection pool / 연결 풀 설정
+	// Configure connection pool
+	// 연결 풀 설정
 	db.SetMaxOpenConns(c.config.maxOpenConns)
 	db.SetMaxIdleConns(c.config.maxIdleConns)
 	db.SetConnMaxLifetime(c.config.connMaxLifetime)
 	db.SetConnMaxIdleTime(c.config.connMaxIdleTime)
 
-	// Test connection / 연결 테스트
+	// Test connection
+	// 연결 테스트
 	ctx, cancel := context.WithTimeout(context.Background(), c.config.connectTimeout)
 	defer cancel()
 
@@ -172,12 +193,14 @@ func (c *Client) Close() error {
 	c.closed = true
 	c.mu.Unlock()
 
-	// Stop background tasks / 백그라운드 작업 중지
+	// Stop background tasks
+	// 백그라운드 작업 중지
 	close(c.stopChan)
 	close(c.healthCheckStop)
 	close(c.rotationStop)
 
-	// Close all connections / 모든 연결 닫기
+	// Close all connections
+	// 모든 연결 닫기
 	c.connectionsMu.Lock()
 	defer c.connectionsMu.Unlock()
 
@@ -229,7 +252,8 @@ func (c *Client) getCurrentConnection() *sql.DB {
 	c.connectionsMu.RLock()
 	defer c.connectionsMu.RUnlock()
 
-	// Round-robin selection / Round-robin 선택
+	// Round-robin selection
+	// Round-robin 선택
 	conn := c.connections[c.currentIdx]
 	c.currentIdx = (c.currentIdx + 1) % len(c.connections)
 
@@ -252,10 +276,12 @@ func (c *Client) Query(ctx context.Context, query string, args ...interface{}) (
 	rows, err := db.QueryContext(ctx, query, args...)
 	duration := time.Since(start)
 
-	// Record stats / 통계 기록
+	// Record stats
+	// 통계 기록
 	c.statsTracker.recordQuery(query, args, duration, err)
 
-	// Log query / 쿼리 로깅
+	// Log query
+	// 쿼리 로깅
 	c.logQuery(query, args, duration, err)
 
 	if err != nil {
@@ -295,10 +321,12 @@ func (c *Client) Exec(ctx context.Context, query string, args ...interface{}) (s
 	result, err := db.ExecContext(ctx, query, args...)
 	duration := time.Since(start)
 
-	// Record stats / 통계 기록
+	// Record stats
+	// 통계 기록
 	c.statsTracker.recordQuery(query, args, duration, err)
 
-	// Log query / 쿼리 로깅
+	// Log query
+	// 쿼리 로깅
 	c.logQuery(query, args, duration, err)
 
 	if err != nil {
@@ -350,7 +378,8 @@ func (c *Client) logQuery(query string, args []interface{}, duration time.Durati
 		return
 	}
 
-	// Log all queries if enabled / 활성화된 경우 모든 쿼리 로깅
+	// Log all queries if enabled
+	// 활성화된 경우 모든 쿼리 로깅
 	if c.config.logQueries {
 		if err != nil {
 			c.config.logger.Error("Query failed",
@@ -366,7 +395,8 @@ func (c *Client) logQuery(query string, args []interface{}, duration time.Durati
 		}
 	}
 
-	// Log slow queries / 느린 쿼리 로깅
+	// Log slow queries
+	// 느린 쿼리 로깅
 	if c.config.logSlowQueries && duration >= c.config.slowQueryThreshold {
 		c.config.logger.Warn("Slow query detected",
 			"query", query,

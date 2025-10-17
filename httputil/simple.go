@@ -19,7 +19,8 @@ var defaultClient = NewClient()
 //	    log.Fatal(err)
 //	}
 //
-// With options / 옵션 포함:
+// With options
+// 옵션 포함:
 //
 //	err := httputil.Get("https://api.example.com/data", &result,
 //	    httputil.WithBearerToken("your-token"),
@@ -47,7 +48,8 @@ func GetContext(ctx context.Context, url string, result interface{}, opts ...Opt
 //	    log.Fatal(err)
 //	}
 //
-// With options / 옵션 포함:
+// With options
+// 옵션 포함:
 //
 //	err := httputil.Post("https://api.example.com/create", payload, &response,
 //	    httputil.WithBearerToken("your-token"),

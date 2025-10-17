@@ -20,7 +20,8 @@ func (c *Client) healthCheck() {
 			cancel()
 
 			if err != nil {
-				// Log error but don't panic / 에러 로깅하지만 패닉하지 않음
+				// Log error but don't panic
+				// 에러 로깅하지만 패닉하지 않음
 				fmt.Printf("Redis health check failed: %v\n", err)
 			}
 

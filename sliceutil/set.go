@@ -6,7 +6,8 @@ package sliceutil
 // Union returns the union of two slices (all unique elements from both).
 // Union은 두 슬라이스의 합집합을 반환합니다 (양쪽의 모든 고유 요소).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	a := []int{1, 2, 3}
 //	b := []int{3, 4, 5}
@@ -39,7 +40,8 @@ func Union[T comparable](a, b []T) []T {
 // Intersection returns the intersection of two slices (common elements).
 // Intersection은 두 슬라이스의 교집합을 반환합니다 (공통 요소).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	a := []int{1, 2, 3, 4}
 //	b := []int{3, 4, 5, 6}
@@ -70,7 +72,8 @@ func Intersection[T comparable](a, b []T) []T {
 // Difference returns the difference of two slices (elements in a but not in b).
 // Difference는 두 슬라이스의 차집합을 반환합니다 (a에 있지만 b에 없는 요소).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	a := []int{1, 2, 3, 4}
 //	b := []int{3, 4, 5, 6}
@@ -103,7 +106,8 @@ func Difference[T comparable](a, b []T) []T {
 // SymmetricDifference는 두 슬라이스의 대칭 차집합을 반환합니다.
 // a 또는 b에 있지만 둘 다에 있지 않은 요소.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	a := []int{1, 2, 3, 4}
 //	b := []int{3, 4, 5, 6}
@@ -146,7 +150,8 @@ func SymmetricDifference[T comparable](a, b []T) []T {
 // IsSubset returns true if a is a subset of b (all elements of a are in b).
 // IsSubset은 a가 b의 부분집합이면 true를 반환합니다 (a의 모든 요소가 b에 있음).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	a := []int{1, 2}
 //	b := []int{1, 2, 3, 4}
@@ -173,7 +178,8 @@ func IsSubset[T comparable](a, b []T) bool {
 // IsSuperset returns true if a is a superset of b (all elements of b are in a).
 // IsSuperset은 a가 b의 상위집합이면 true를 반환합니다 (b의 모든 요소가 a에 있음).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	a := []int{1, 2, 3, 4}
 //	b := []int{1, 2}

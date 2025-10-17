@@ -7,15 +7,22 @@
 // 이 패키지는 10개 카테고리에 걸쳐 80개 이상의 타입 안전 함수를 제공하여
 // 일반적인 맵 작업을 단순화합니다. 20줄 이상의 반복 코드를 단 1-2줄로 줄입니다.
 //
-// # Key Features / 주요 기능
+// # Key Features
+// 주요 기능
 //
-//   - Type-safe operations using Go 1.18+ generics / Go 1.18+ 제네릭을 사용한 타입 안전 작업
-//   - Functional programming style (Map, Filter, Reduce) / 함수형 프로그래밍 스타일
-//   - Immutable operations (original maps unchanged) / 불변 작업 (원본 맵 변경 없음)
-//   - Zero external dependencies / 외부 의존성 제로
-//   - 100% test coverage / 100% 테스트 커버리지
+// - Type-safe operations using Go 1.18+ generics
+// Go 1.18+ 제네릭을 사용한 타입 안전 작업
+// - Functional programming style (Map, Filter, Reduce)
+// 함수형 프로그래밍 스타일
+// - Immutable operations (original maps unchanged)
+// 불변 작업 (원본 맵 변경 없음)
+// - Zero external dependencies
+// 외부 의존성 제로
+// - 100% test coverage
+// 100% 테스트 커버리지
 //
-// # Categories / 카테고리
+// # Categories
+// 카테고리
 //
 //   - Basic Operations (11 functions): Get, Set, Delete, Clone, etc.
 //   - Transformation (10 functions): Map, MapKeys, Invert, Flatten, etc.
@@ -28,25 +35,30 @@
 //   - Value Operations (7 functions): ValuesSorted, UniqueValues, ReplaceValue, etc.
 //   - Comparison (6 functions): Diff, Compare, CommonKeys, etc.
 //
-// # Example Usage / 사용 예제
+// # Example Usage
+// 사용 예제
 //
-//	// Filter map / 맵 필터링
+// // Filter map
+// 맵 필터링
 //	data := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 //	result := maputil.Filter(data, func(k string, v int) bool {
 //	    return v > 2
 //	}) // map[string]int{"c": 3, "d": 4}
 //
-//	// Transform values / 값 변환
+// // Transform values
+// 값 변환
 //	doubled := maputil.MapValues(data, func(v int) int {
 //	    return v * 2
 //	}) // map[string]int{"a": 2, "b": 4, "c": 6, "d": 8}
 //
-//	// Merge maps / 맵 병합
+// // Merge maps
+// 맵 병합
 //	map1 := map[string]int{"a": 1, "b": 2}
 //	map2 := map[string]int{"b": 3, "c": 4}
 //	merged := maputil.Merge(map1, map2) // map[string]int{"a": 1, "b": 3, "c": 4}
 //
-//	// Group slice by key / 키로 슬라이스 그룹화
+// // Group slice by key
+// 키로 슬라이스 그룹화
 //	users := []User{{Name: "Alice", City: "Seoul"}, {Name: "Bob", City: "Seoul"}}
 //	byCity := maputil.GroupBy(users, func(u User) string { return u.City })
 //
@@ -85,7 +97,8 @@ func getVersion() string {
 // 이 타입은 Entries() 및 FromEntries()와 같이
 // 맵 항목을 다루는 함수에 사용됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	entries := []Entry[string, int]{
 //	    {Key: "a", Value: 1},

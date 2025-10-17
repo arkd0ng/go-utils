@@ -11,10 +11,12 @@ import (
 func TestGroup_BasicGroupCreation(t *testing.T) {
 	app := New()
 
-	// Create a group / 그룹 생성
+	// Create a group
+	// 그룹 생성
 	api := app.Group("/api")
 
-	// Register routes in the group / 그룹에 라우트 등록
+	// Register routes in the group
+	// 그룹에 라우트 등록
 	api.GET("/users", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("GET users"))
 	})
@@ -53,12 +55,14 @@ func TestGroup_BasicGroupCreation(t *testing.T) {
 func TestGroup_NestedGroups(t *testing.T) {
 	app := New()
 
-	// Create nested groups / 중첩 그룹 생성
+	// Create nested groups
+	// 중첩 그룹 생성
 	api := app.Group("/api")
 	v1 := api.Group("/v1")
 	admin := v1.Group("/admin")
 
-	// Register route in nested group / 중첩 그룹에 라우트 등록
+	// Register route in nested group
+	// 중첩 그룹에 라우트 등록
 	admin.GET("/users", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("admin users"))
 	})
@@ -81,7 +85,8 @@ func TestGroup_NestedGroups(t *testing.T) {
 func TestGroup_GroupMiddleware(t *testing.T) {
 	app := New()
 
-	// Middleware that adds header / 헤더를 추가하는 미들웨어
+	// Middleware that adds header
+	// 헤더를 추가하는 미들웨어
 	addHeader := func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("X-Test", "middleware")
@@ -89,7 +94,8 @@ func TestGroup_GroupMiddleware(t *testing.T) {
 		})
 	}
 
-	// Create group with middleware / 미들웨어가 있는 그룹 생성
+	// Create group with middleware
+	// 미들웨어가 있는 그룹 생성
 	api := app.Group("/api")
 	api.Use(addHeader)
 
@@ -97,12 +103,14 @@ func TestGroup_GroupMiddleware(t *testing.T) {
 		w.Write([]byte("users"))
 	})
 
-	// Route outside group (no middleware) / 그룹 외부 라우트 (미들웨어 없음)
+	// Route outside group (no middleware)
+	// 그룹 외부 라우트 (미들웨어 없음)
 	app.GET("/public", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("public"))
 	})
 
-	// Test group route (should have middleware) / 그룹 라우트 테스트 (미들웨어 있어야 함)
+	// Test group route (should have middleware)
+	// 그룹 라우트 테스트 (미들웨어 있어야 함)
 	req := httptest.NewRequest("GET", "/api/users", nil)
 	w := httptest.NewRecorder()
 	app.ServeHTTP(w, req)
@@ -111,7 +119,8 @@ func TestGroup_GroupMiddleware(t *testing.T) {
 		t.Errorf("Expected X-Test header, got none")
 	}
 
-	// Test non-group route (should not have middleware) / 비그룹 라우트 테스트 (미들웨어 없어야 함)
+	// Test non-group route (should not have middleware)
+	// 비그룹 라우트 테스트 (미들웨어 없어야 함)
 	req = httptest.NewRequest("GET", "/public", nil)
 	w = httptest.NewRecorder()
 	app.ServeHTTP(w, req)
@@ -128,7 +137,8 @@ func TestGroup_MiddlewareInheritance(t *testing.T) {
 
 	executionOrder := []string{}
 
-	// Parent middleware / 부모 미들웨어
+	// Parent middleware
+	// 부모 미들웨어
 	parentMiddleware := func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			executionOrder = append(executionOrder, "parent")
@@ -136,7 +146,8 @@ func TestGroup_MiddlewareInheritance(t *testing.T) {
 		})
 	}
 
-	// Child middleware / 자식 미들웨어
+	// Child middleware
+	// 자식 미들웨어
 	childMiddleware := func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			executionOrder = append(executionOrder, "child")
@@ -144,11 +155,13 @@ func TestGroup_MiddlewareInheritance(t *testing.T) {
 		})
 	}
 
-	// Create parent group with middleware / 미들웨어가 있는 부모 그룹 생성
+	// Create parent group with middleware
+	// 미들웨어가 있는 부모 그룹 생성
 	api := app.Group("/api")
 	api.Use(parentMiddleware)
 
-	// Create child group with additional middleware / 추가 미들웨어가 있는 자식 그룹 생성
+	// Create child group with additional middleware
+	// 추가 미들웨어가 있는 자식 그룹 생성
 	v1 := api.Group("/v1")
 	v1.Use(childMiddleware)
 
@@ -157,7 +170,8 @@ func TestGroup_MiddlewareInheritance(t *testing.T) {
 		w.Write([]byte("test"))
 	})
 
-	// Execute request / 요청 실행
+	// Execute request
+	// 요청 실행
 	req := httptest.NewRequest("GET", "/api/v1/test", nil)
 	w := httptest.NewRecorder()
 	app.ServeHTTP(w, req)
@@ -184,7 +198,8 @@ func TestGroup_AllHTTPMethods(t *testing.T) {
 	app := New()
 	api := app.Group("/api")
 
-	// Register all HTTP methods / 모든 HTTP 메서드 등록
+	// Register all HTTP methods
+	// 모든 HTTP 메서드 등록
 	api.GET("/test", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("GET"))
 	})
@@ -207,7 +222,8 @@ func TestGroup_AllHTTPMethods(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	// Test each method / 각 메서드 테스트
+	// Test each method
+	// 각 메서드 테스트
 	methods := []struct {
 		method   string
 		expected string
@@ -240,7 +256,8 @@ func TestGroup_AllHTTPMethods(t *testing.T) {
 func TestGroup_MethodChaining(t *testing.T) {
 	app := New()
 
-	// Test method chaining / 메서드 체이닝 테스트
+	// Test method chaining
+	// 메서드 체이닝 테스트
 	api := app.Group("/api").
 		GET("/users", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("users"))
@@ -249,7 +266,8 @@ func TestGroup_MethodChaining(t *testing.T) {
 			w.Write([]byte("create user"))
 		})
 
-	// Verify both routes work / 두 라우트 모두 작동하는지 확인
+	// Verify both routes work
+	// 두 라우트 모두 작동하는지 확인
 	req := httptest.NewRequest("GET", "/api/users", nil)
 	w := httptest.NewRecorder()
 	app.ServeHTTP(w, req)
@@ -266,7 +284,8 @@ func TestGroup_MethodChaining(t *testing.T) {
 		t.Errorf("Expected 'create user', got %s", w.Body.String())
 	}
 
-	// Verify we can continue using the group / 그룹을 계속 사용할 수 있는지 확인
+	// Verify we can continue using the group
+	// 그룹을 계속 사용할 수 있는지 확인
 	api.PUT("/users/:id", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("update user"))
 	})
@@ -287,7 +306,8 @@ func TestGroup_MultipleMiddleware(t *testing.T) {
 
 	executionOrder := []string{}
 
-	// First middleware / 첫 번째 미들웨어
+	// First middleware
+	// 첫 번째 미들웨어
 	middleware1 := func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			executionOrder = append(executionOrder, "middleware1")
@@ -295,7 +315,8 @@ func TestGroup_MultipleMiddleware(t *testing.T) {
 		})
 	}
 
-	// Second middleware / 두 번째 미들웨어
+	// Second middleware
+	// 두 번째 미들웨어
 	middleware2 := func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			executionOrder = append(executionOrder, "middleware2")
@@ -303,7 +324,8 @@ func TestGroup_MultipleMiddleware(t *testing.T) {
 		})
 	}
 
-	// Create group with multiple middleware / 여러 미들웨어가 있는 그룹 생성
+	// Create group with multiple middleware
+	// 여러 미들웨어가 있는 그룹 생성
 	api := app.Group("/api")
 	api.Use(middleware1, middleware2)
 
@@ -312,7 +334,8 @@ func TestGroup_MultipleMiddleware(t *testing.T) {
 		w.Write([]byte("test"))
 	})
 
-	// Execute request / 요청 실행
+	// Execute request
+	// 요청 실행
 	req := httptest.NewRequest("GET", "/api/test", nil)
 	w := httptest.NewRecorder()
 	app.ServeHTTP(w, req)
@@ -338,14 +361,16 @@ func TestGroup_MultipleMiddleware(t *testing.T) {
 func TestGroup_EmptyPrefix(t *testing.T) {
 	app := New()
 
-	// Create group with empty prefix / 빈 접두사로 그룹 생성
+	// Create group with empty prefix
+	// 빈 접두사로 그룹 생성
 	group := app.Group("")
 
 	group.GET("/test", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("test"))
 	})
 
-	// Test route / 라우트 테스트
+	// Test route
+	// 라우트 테스트
 	req := httptest.NewRequest("GET", "/test", nil)
 	w := httptest.NewRecorder()
 	app.ServeHTTP(w, req)
@@ -363,7 +388,8 @@ func TestGroup_EmptyPrefix(t *testing.T) {
 func TestGroup_DeepNesting(t *testing.T) {
 	app := New()
 
-	// Create deeply nested groups / 깊게 중첩된 그룹 생성
+	// Create deeply nested groups
+	// 깊게 중첩된 그룹 생성
 	level1 := app.Group("/level1")
 	level2 := level1.Group("/level2")
 	level3 := level2.Group("/level3")
@@ -373,7 +399,8 @@ func TestGroup_DeepNesting(t *testing.T) {
 		w.Write([]byte("deep"))
 	})
 
-	// Test route / 라우트 테스트
+	// Test route
+	// 라우트 테스트
 	req := httptest.NewRequest("GET", "/level1/level2/level3/level4/test", nil)
 	w := httptest.NewRecorder()
 	app.ServeHTTP(w, req)

@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-// TestWeekOfYear tests WeekOfYear function / WeekOfYear 함수 테스트
+// TestWeekOfYear tests WeekOfYear function
+// WeekOfYear 함수 테스트
 func TestWeekOfYear(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -39,7 +40,8 @@ func TestWeekOfYear(t *testing.T) {
 	}
 }
 
-// TestWeekOfMonth tests WeekOfMonth function / WeekOfMonth 함수 테스트
+// TestWeekOfMonth tests WeekOfMonth function
+// WeekOfMonth 함수 테스트
 func TestWeekOfMonth(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -78,7 +80,8 @@ func TestWeekOfMonth(t *testing.T) {
 	}
 }
 
-// TestDaysInMonth tests DaysInMonth function / DaysInMonth 함수 테스트
+// TestDaysInMonth tests DaysInMonth function
+// DaysInMonth 함수 테스트
 func TestDaysInMonth(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -117,7 +120,8 @@ func TestDaysInMonth(t *testing.T) {
 	}
 }
 
-// TestDaysInYear tests DaysInYear function / DaysInYear 함수 테스트
+// TestDaysInYear tests DaysInYear function
+// DaysInYear 함수 테스트
 func TestDaysInYear(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -151,9 +155,11 @@ func TestDaysInYear(t *testing.T) {
 	}
 }
 
-// Benchmark tests for week functions / week 함수 벤치마크 테스트
+// Benchmark tests for week functions
+// week 함수 벤치마크 테스트
 
-// BenchmarkWeekOfYear benchmarks WeekOfYear function / WeekOfYear 함수 벤치마크
+// BenchmarkWeekOfYear benchmarks WeekOfYear function
+// WeekOfYear 함수 벤치마크
 func BenchmarkWeekOfYear(b *testing.B) {
 	t := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 
@@ -163,7 +169,8 @@ func BenchmarkWeekOfYear(b *testing.B) {
 	}
 }
 
-// BenchmarkWeekOfMonth benchmarks WeekOfMonth function / WeekOfMonth 함수 벤치마크
+// BenchmarkWeekOfMonth benchmarks WeekOfMonth function
+// WeekOfMonth 함수 벤치마크
 func BenchmarkWeekOfMonth(b *testing.B) {
 	t := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 
@@ -173,7 +180,8 @@ func BenchmarkWeekOfMonth(b *testing.B) {
 	}
 }
 
-// BenchmarkDaysInMonth benchmarks DaysInMonth function / DaysInMonth 함수 벤치마크
+// BenchmarkDaysInMonth benchmarks DaysInMonth function
+// DaysInMonth 함수 벤치마크
 func BenchmarkDaysInMonth(b *testing.B) {
 	t := time.Date(2025, 10, 14, 0, 0, 0, 0, KST)
 

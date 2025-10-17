@@ -62,7 +62,8 @@ func NewSessionStore(opts SessionOptions) *SessionStore {
 		options:  opts,
 	}
 
-	// Start cleanup goroutine / 정리 고루틴 시작
+	// Start cleanup goroutine
+	// 정리 고루틴 시작
 	go store.cleanupExpiredSessions()
 
 	return store
@@ -73,7 +74,8 @@ func NewSessionStore(opts SessionOptions) *SessionStore {
 func (s *SessionStore) Get(r *http.Request) (*Session, error) {
 	cookie, err := r.Cookie(s.options.CookieName)
 	if err == nil {
-		// Try to get existing session / 기존 세션 가져오기 시도
+		// Try to get existing session
+		// 기존 세션 가져오기 시도
 		s.mu.RLock()
 		session, exists := s.sessions[cookie.Value]
 		s.mu.RUnlock()
@@ -83,7 +85,8 @@ func (s *SessionStore) Get(r *http.Request) (*Session, error) {
 		}
 	}
 
-	// Create new session / 새 세션 생성
+	// Create new session
+	// 새 세션 생성
 	return s.New(), nil
 }
 
@@ -107,10 +110,12 @@ func (s *SessionStore) New() *Session {
 // Save saves the session and sets the cookie.
 // Save는 세션을 저장하고 쿠키를 설정합니다.
 func (s *SessionStore) Save(w http.ResponseWriter, session *Session) {
-	// Update expiration / 만료 시간 업데이트
+	// Update expiration
+	// 만료 시간 업데이트
 	session.ExpiresAt = time.Now().Add(s.options.MaxAge)
 
-	// Set cookie / 쿠키 설정
+	// Set cookie
+	// 쿠키 설정
 	http.SetCookie(w, &http.Cookie{
 		Name:     s.options.CookieName,
 		Value:    session.ID,
@@ -131,12 +136,14 @@ func (s *SessionStore) Destroy(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	// Remove session from store / 저장소에서 세션 제거
+	// Remove session from store
+	// 저장소에서 세션 제거
 	s.mu.Lock()
 	delete(s.sessions, cookie.Value)
 	s.mu.Unlock()
 
-	// Clear cookie / 쿠키 지우기
+	// Clear cookie
+	// 쿠키 지우기
 	http.SetCookie(w, &http.Cookie{
 		Name:     s.options.CookieName,
 		Value:    "",
@@ -220,45 +227,52 @@ func (sess *Session) Clear() {
 // generateSessionID generates a cryptographically secure session ID.
 // generateSessionID는 암호학적으로 안전한 세션 ID를 생성합니다.
 //
-// Security properties / 보안 속성:
-//   - Uses crypto/rand for cryptographically secure randomness
-//   - crypto/rand를 사용하여 암호학적으로 안전한 랜덤성 확보
-//   - 256-bit entropy (32 bytes) provides extremely high collision resistance
-//   - 256비트 엔트로피 (32바이트)로 극도로 높은 충돌 저항성 제공
-//   - Base64 URL-safe encoding for cookie compatibility (no +, /, = characters)
-//   - 쿠키 호환성을 위한 Base64 URL 안전 인코딩 (+, /, = 문자 없음)
+// Security properties
+// 보안 속성:
+// - Uses crypto/rand for cryptographically secure randomness
+// - crypto/rand를 사용하여 암호학적으로 안전한 랜덤성 확보
+// - 256-bit entropy (32 bytes) provides extremely high collision resistance
+// - 256비트 엔트로피 (32바이트)로 극도로 높은 충돌 저항성 제공
+// - Base64 URL-safe encoding for cookie compatibility (no +, /, = characters)
+// - 쿠키 호환성을 위한 Base64 URL 안전 인코딩 (+, /, = 문자 없음)
 //
-// Collision probability / 충돌 확률:
-//   - With 256 bits: approximately 1 in 2^256 (~1.16 × 10^77)
-//   - 256비트 사용 시: 약 1/2^256 (~1.16 × 10^77)
-//   - For comparison, there are ~10^80 atoms in the universe
-//   - 비교: 우주의 원자 수는 약 10^80개
-//   - Practically zero chance of collision in any realistic scenario
-//   - 실제 시나리오에서 충돌 가능성은 사실상 0
+// Collision probability
+// 충돌 확률:
+// - With 256 bits: approximately 1 in 2^256 (~1.16 × 10^77)
+// - 256비트 사용 시: 약 1/2^256 (~1.16 × 10^77)
+// - For comparison, there are ~10^80 atoms in the universe
+// - 비교: 우주의 원자 수는 약 10^80개
+// - Practically zero chance of collision in any realistic scenario
+// - 실제 시나리오에서 충돌 가능성은 사실상 0
 //
-// Fallback strategy / 대체 전략:
-//   - If crypto/rand fails (extremely rare), falls back to timestamp-based ID
-//   - crypto/rand 실패 시 (극히 드묾) 타임스탬프 기반 ID로 대체
-//   - Fallback should never happen in practice (crypto/rand failure indicates serious system issues)
-//   - 대체는 실제로 발생하지 않아야 함 (crypto/rand 실패는 심각한 시스템 문제를 나타냄)
+// Fallback strategy
+// 대체 전략:
+// - If crypto/rand fails (extremely rare), falls back to timestamp-based ID
+// - crypto/rand 실패 시 (극히 드묾) 타임스탬프 기반 ID로 대체
+// - Fallback should never happen in practice (crypto/rand failure indicates serious system issues)
+// - 대체는 실제로 발생하지 않아야 함 (crypto/rand 실패는 심각한 시스템 문제를 나타냄)
 //
-// Output format / 출력 형식:
-//   - Base64 URL-safe encoded string, 43 characters long (32 bytes → 43 chars)
-//   - Base64 URL 안전 인코딩 문자열, 43자 길이 (32바이트 → 43자)
+// Output format
+// 출력 형식:
+// - Base64 URL-safe encoded string, 43 characters long (32 bytes → 43 chars)
+// - Base64 URL 안전 인코딩 문자열, 43자 길이 (32바이트 → 43자)
 //
-// Example output / 출력 예제:
+// Example output
+// 출력 예제:
 //   "kqZ9Xx3vR_5yJKl2Nw8PmQ7VtBcDfGhE1WsIuO6A4ZY"
 //   "9hTmPq2Wz8Lx4Vb7Nc1Yd6Rj3Fg5Ks0Hu9Ia8Qe2Ow7U"
 //
-// Performance / 성능:
-//   - Time complexity: O(1) - fixed 32-byte generation
-//   - 시간 복잡도: O(1) - 고정 32바이트 생성
-//   - Typical execution: <1μs on modern hardware
-//   - 일반 실행 시간: 최신 하드웨어에서 1마이크로초 미만
+// Performance
+// 성능:
+// - Time complexity: O(1) - fixed 32-byte generation
+// - 시간 복잡도: O(1) - 고정 32바이트 생성
+// - Typical execution: <1μs on modern hardware
+// - 일반 실행 시간: 최신 하드웨어에서 1마이크로초 미만
 func (s *SessionStore) generateSessionID() string {
 	b := make([]byte, 32)
 	if _, err := rand.Read(b); err != nil {
-		// Fallback to timestamp-based ID / 타임스탬프 기반 ID로 대체
+		// Fallback to timestamp-based ID
+		// 타임스탬프 기반 ID로 대체
 		return base64.URLEncoding.EncodeToString([]byte(time.Now().String()))
 	}
 	return base64.URLEncoding.EncodeToString(b)
@@ -267,15 +281,17 @@ func (s *SessionStore) generateSessionID() string {
 // cleanupExpiredSessions periodically removes expired sessions.
 // cleanupExpiredSessions는 주기적으로 만료된 세션을 제거합니다.
 //
-// Cleanup strategy / 정리 전략:
-//   - Runs in a background goroutine started by NewSessionStore()
-//   - NewSessionStore()가 시작한 백그라운드 고루틴에서 실행
-//   - Executes periodically based on SessionOptions.CleanupTime interval
-//   - SessionOptions.CleanupTime 간격에 따라 주기적으로 실행
-//   - Default interval: 5 minutes (configurable via SessionOptions)
-//   - 기본 간격: 5분 (SessionOptions로 설정 가능)
+// Cleanup strategy
+// 정리 전략:
+// - Runs in a background goroutine started by NewSessionStore()
+// - NewSessionStore()가 시작한 백그라운드 고루틴에서 실행
+// - Executes periodically based on SessionOptions.CleanupTime interval
+// - SessionOptions.CleanupTime 간격에 따라 주기적으로 실행
+// - Default interval: 5 minutes (configurable via SessionOptions)
+// - 기본 간격: 5분 (SessionOptions로 설정 가능)
 //
-// Process / 프로세스:
+// Process
+// 프로세스:
 //   1. Create ticker with configured cleanup interval
 //   2. Wait for ticker signal
 //   3. Acquire write lock (blocks all session operations during cleanup)
@@ -292,33 +308,37 @@ func (s *SessionStore) generateSessionID() string {
 //   6. 쓰기 락 해제
 //   7. 프로그램 종료까지 무한 반복
 //
-// Thread safety / 스레드 안전성:
-//   - Uses sync.RWMutex.Lock() for exclusive access during cleanup
-//   - 정리 중 배타적 액세스를 위해 sync.RWMutex.Lock() 사용
-//   - Blocks all Get(), New(), Save() operations while cleaning
-//   - 정리 중 모든 Get(), New(), Save() 작업 차단
-//   - Lock duration proportional to number of sessions
-//   - 락 기간은 세션 수에 비례
+// Thread safety
+// 스레드 안전성:
+// - Uses sync.RWMutex.Lock() for exclusive access during cleanup
+// - 정리 중 배타적 액세스를 위해 sync.RWMutex.Lock() 사용
+// - Blocks all Get(), New(), Save() operations while cleaning
+// - 정리 중 모든 Get(), New(), Save() 작업 차단
+// - Lock duration proportional to number of sessions
+// - 락 기간은 세션 수에 비례
 //
-// Performance considerations / 성능 고려사항:
-//   - Time complexity: O(n) where n = number of sessions in store
-//   - 시간 복잡도: O(n), n = 저장소의 세션 수
-//   - Space complexity: O(1) - no additional memory allocation
-//   - 공간 복잡도: O(1) - 추가 메모리 할당 없음
-//   - For large session counts (>10,000), consider increasing CleanupTime interval
-//   - 대규모 세션 수(>10,000)의 경우 CleanupTime 간격 증가 고려
-//   - Deleted sessions are immediately eligible for garbage collection
-//   - 삭제된 세션은 즉시 가비지 컬렉션 대상이 됨
+// Performance considerations
+// 성능 고려사항:
+// - Time complexity: O(n) where n = number of sessions in store
+// - 시간 복잡도: O(n), n = 저장소의 세션 수
+// - Space complexity: O(1) - no additional memory allocation
+// - 공간 복잡도: O(1) - 추가 메모리 할당 없음
+// - For large session counts (>10,000), consider increasing CleanupTime interval
+// - 대규모 세션 수(>10,000)의 경우 CleanupTime 간격 증가 고려
+// - Deleted sessions are immediately eligible for garbage collection
+// - 삭제된 세션은 즉시 가비지 컬렉션 대상이 됨
 //
-// Memory management / 메모리 관리:
-//   - Deleted map entries are reclaimed by Go's garbage collector
-//   - 삭제된 맵 항목은 Go 가비지 컬렉터가 회수
-//   - Does not shrink the underlying map capacity (Go limitation)
-//   - 기본 맵 용량을 축소하지 않음 (Go 제약)
-//   - For memory-critical applications, consider recreating the map periodically
-//   - 메모리 중요 애플리케이션의 경우 맵을 주기적으로 재생성 고려
+// Memory management
+// 메모리 관리:
+// - Deleted map entries are reclaimed by Go's garbage collector
+// - 삭제된 맵 항목은 Go 가비지 컬렉터가 회수
+// - Does not shrink the underlying map capacity (Go limitation)
+// - 기본 맵 용량을 축소하지 않음 (Go 제약)
+// - For memory-critical applications, consider recreating the map periodically
+// - 메모리 중요 애플리케이션의 경우 맵을 주기적으로 재생성 고려
 //
-// Example behavior / 동작 예제:
+// Example behavior
+// 동작 예제:
 //   CleanupTime = 5 minutes
 //   MaxAge = 1 hour
 //

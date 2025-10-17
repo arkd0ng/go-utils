@@ -30,8 +30,7 @@ type Route struct {
 	// Method는 HTTP 메서드입니다 (GET, POST 등)
 	Method string
 
-	// Pattern is the URL pattern (e.g., "/users/:id")
-	// Pattern은 URL 패턴입니다 (예: "/users/:id")
+	// Pattern is the URL pattern (e.g., "/users/:id") / Pattern은 URL 패턴입니다 (예: "/users/:id")
 	Pattern string
 
 	// Handler is the function to call when the route matches
@@ -73,12 +72,14 @@ func newRouter() *Router {
 // Handle registers a new route with the given method, pattern, and handler.
 // Handle은 주어진 메서드, 패턴 및 핸들러로 새 라우트를 등록합니다.
 //
-// Pattern syntax / 패턴 구문:
+// Pattern syntax
+// 패턴 구문:
 //   - "/users" - exact match / 정확한 일치
 //   - "/users/:id" - parameter (accessible via Context.Param("id")) / 매개변수
 //   - "/files/*" - wildcard (matches everything after /files/) / 와일드카드
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	router.Handle("GET", "/users/:id", func(w http.ResponseWriter, r *http.Request) {
 //	    // Handler implementation
@@ -199,7 +200,8 @@ func contextWithValue(ctx context.Context, c *Context) context.Context {
 // match checks if the route matches the given path and extracts parameters.
 // match는 라우트가 주어진 경로와 일치하는지 확인하고 매개변수를 추출합니다.
 //
-// Matching algorithm / 매칭 알고리즘:
+// Matching algorithm
+// 매칭 알고리즘:
 //   1. Parse incoming path into segments
 //   2. Check segment count compatibility:
 //      - Without wildcard: must match exactly
@@ -210,11 +212,13 @@ func contextWithValue(ctx context.Context, c *Context) context.Context {
 //      - Literal: must match exactly (case-sensitive)
 //   4. Return parameters map and match status
 //
-// Return values / 반환 값:
+// Return values
+// 반환 값:
 //   - params: Map of parameter names to values (e.g., {"id": "123"})
 //   - matched: true if route matches, false otherwise
 //
-// Examples / 예제:
+// Examples
+// 예제:
 //   Pattern: "/users/:id", Path: "/users/123"
 //   -> params: {"id": "123"}, matched: true
 //
@@ -288,15 +292,14 @@ func (route *Route) match(path string) (map[string]string, bool) {
 // parsePattern parses a URL pattern string into segments for efficient matching.
 // parsePattern은 효율적인 매칭을 위해 URL 패턴 문자열을 세그먼트로 파싱합니다.
 //
-// Pattern syntax / 패턴 구문:
-//   - Static segments: "/users/profile" - Exact match required
-//   - 정적 세그먼트: "/users/profile" - 정확한 일치 필요
-//   - Parameters: "/users/:id" - Captures value into "id" parameter
-//   - 매개변수: "/users/:id" - "id" 매개변수로 값 캡처
-//   - Wildcards: "/files/*" - Matches all remaining path segments
-//   - 와일드카드: "/files/*" - 나머지 모든 경로 세그먼트 일치
+// Pattern syntax
+// 패턴 구문:
+// - Static segments: "/users/profile" - Exact match required / - 정적 세그먼트: "/users/profile" - 정확한 일치 필요
+// - Parameters: "/users/:id" - Captures value into "id" parameter / - 매개변수: "/users/:id" - "id" 매개변수로 값 캡처
+// - Wildcards: "/files/*" - Matches all remaining path segments / - 와일드카드: "/files/*" - 나머지 모든 경로 세그먼트 일치
 //
-// Implementation details / 구현 세부사항:
+// Implementation details
+// 구현 세부사항:
 //   1. Trim leading/trailing slashes from pattern
 //   2. Split pattern by "/" separator
 //   3. Identify segment types:
@@ -308,7 +311,8 @@ func (route *Route) match(path string) (map[string]string, bool) {
 // Time complexity: O(n) where n = number of path segments
 // 시간 복잡도: O(n), n = 경로 세그먼트 수
 //
-// Examples / 예제:
+// Examples
+// 예제:
 //   parsePattern("/users") -> [segment{value: "users"}]
 //   parsePattern("/users/:id") -> [segment{value: "users"}, segment{value: "id", isParam: true}]
 //   parsePattern("/files/*") -> [segment{value: "files"}, segment{isWildcard: true}]
@@ -321,8 +325,8 @@ func parsePattern(pattern string) []segment {
 		return []segment{}
 	}
 
-	// Split by /
-	// /로 분할
+	// Split by
+	// / 로 분할
 	parts := strings.Split(pattern, "/")
 	segments := make([]segment, 0, len(parts))
 
@@ -357,14 +361,16 @@ func parsePattern(pattern string) []segment {
 // parsePath parses a URL path into segments for route matching.
 // parsePath는 라우트 매칭을 위해 URL 경로를 세그먼트로 파싱합니다.
 //
-// Process / 프로세스:
+// Process
+// 프로세스:
 //   1. Trim leading and trailing slashes
 //   2. Handle empty path (returns empty slice)
 //   3. Split by "/" separator
 //   4. Filter out empty segments (from consecutive slashes)
 //   5. Return cleaned segment list
 //
-// Examples / 예제:
+// Examples
+// 예제:
 //   parsePath("/users/123") -> ["users", "123"]
 //   parsePath("/users/123/") -> ["users", "123"] (trailing slash removed)
 //   parsePath("/api//v1/users") -> ["api", "v1", "users"] (double slash cleaned)
@@ -382,8 +388,8 @@ func parsePath(path string) []string {
 		return []string{}
 	}
 
-	// Split by /
-	// /로 분할
+	// Split by
+	// / 로 분할
 	parts := strings.Split(path, "/")
 	segments := make([]string, 0, len(parts))
 

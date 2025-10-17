@@ -20,35 +20,39 @@ import (
 // Recovery returns a middleware that recovers from panics.
 // Recovery는 패닉에서 복구하는 미들웨어를 반환합니다.
 //
-// Panic recovery mechanism / 패닉 복구 메커니즘:
-//   - Wraps handler execution in defer/recover block
-//   - defer/recover 블록으로 핸들러 실행 래핑
-//   - Prevents server crashes from unhandled panics
-//   - 처리되지 않은 패닉으로 인한 서버 충돌 방지
-//   - Logs panic details with full stack trace
-//   - 전체 스택 트레이스와 함께 패닉 세부정보 로깅
-//   - Returns 500 Internal Server Error to client
-//   - 클라이언트에 500 Internal Server Error 반환
+// Panic recovery mechanism
+// 패닉 복구 메커니즘:
+// - Wraps handler execution in defer/recover block
+// - defer/recover 블록으로 핸들러 실행 래핑
+// - Prevents server crashes from unhandled panics
+// - 처리되지 않은 패닉으로 인한 서버 충돌 방지
+// - Logs panic details with full stack trace
+// - 전체 스택 트레이스와 함께 패닉 세부정보 로깅
+// - Returns 500 Internal Server Error to client
+// - 클라이언트에 500 Internal Server Error 반환
 //
-// Why panic recovery is critical / 패닉 복구가 중요한 이유:
-//   - Go's panic mechanism immediately terminates the goroutine
-//   - Go의 패닉 메커니즘은 즉시 고루틴을 종료함
-//   - Without recovery, a single panic in any handler kills the entire server
-//   - 복구 없이는 모든 핸들러의 단일 패닉이 전체 서버를 중단시킴
-//   - Recovery middleware ensures server stability and availability
-//   - 복구 미들웨어는 서버 안정성과 가용성을 보장함
-//   - Allows graceful degradation instead of catastrophic failure
-//   - 재앙적 실패 대신 우아한 성능 저하 허용
+// Why panic recovery is critical
+// 패닉 복구가 중요한 이유:
+// - Go's panic mechanism immediately terminates the goroutine
+// - Go의 패닉 메커니즘은 즉시 고루틴을 종료함
+// - Without recovery, a single panic in any handler kills the entire server
+// - 복구 없이는 모든 핸들러의 단일 패닉이 전체 서버를 중단시킴
+// - Recovery middleware ensures server stability and availability
+// - 복구 미들웨어는 서버 안정성과 가용성을 보장함
+// - Allows graceful degradation instead of catastrophic failure
+// - 재앙적 실패 대신 우아한 성능 저하 허용
 //
-// What gets logged / 로깅되는 내용:
-//   - Panic value (error message, value, or custom type)
-//   - 패닉 값 (에러 메시지, 값 또는 커스텀 타입)
-//   - Full goroutine stack trace using runtime/debug.Stack()
-//   - runtime/debug.Stack()을 사용한 전체 고루틴 스택 트레이스
-//   - File paths, line numbers, and function names
-//   - 파일 경로, 줄 번호 및 함수 이름
+// What gets logged
+// 로깅되는 내용:
+// - Panic value (error message, value, or custom type)
+// - 패닉 값 (에러 메시지, 값 또는 커스텀 타입)
+// - Full goroutine stack trace using runtime/debug.Stack()
+// - runtime/debug.Stack()을 사용한 전체 고루틴 스택 트레이스
+// - File paths, line numbers, and function names
+// - 파일 경로, 줄 번호 및 함수 이름
 //
-// Stack trace format example / 스택 트레이스 형식 예제:
+// Stack trace format example
+// 스택 트레이스 형식 예제:
 //   PANIC: runtime error: index out of range [5] with length 3
 //   goroutine 123 [running]:
 //   runtime/debug.Stack()
@@ -57,49 +61,54 @@ import (
 //       /app/middleware.go:37 +0x89
 //   ...
 //
-// Response to client / 클라이언트에 대한 응답:
+// Response to client
+// 클라이언트에 대한 응답:
 //   - HTTP 500 Internal Server Error
-//   - Generic "Internal Server Error" message (no stack trace exposed)
-//   - 일반적인 "Internal Server Error" 메시지 (스택 트레이스 노출 없음)
-//   - Prevents information disclosure to attackers
-//   - 공격자에게 정보 공개 방지
-//   - Detailed error only in server logs for debugging
-//   - 디버깅을 위한 서버 로그에만 상세 에러 기록
+// - Generic "Internal Server Error" message (no stack trace exposed) / - 일반적인 "Internal Server Error" 메시지 (스택 트레이스 노출 없음)
+// - Prevents information disclosure to attackers
+// - 공격자에게 정보 공개 방지
+// - Detailed error only in server logs for debugging
+// - 디버깅을 위한 서버 로그에만 상세 에러 기록
 //
-// Thread safety / 스레드 안전성:
-//   - Each request runs in separate goroutine with own defer/recover
-//   - 각 요청은 자체 defer/recover를 가진 별도 고루틴에서 실행
-//   - Panic in one request does NOT affect other concurrent requests
-//   - 하나의 요청에서 패닉이 발생해도 다른 동시 요청에 영향 없음
-//   - Server continues serving other requests normally
-//   - 서버는 다른 요청을 정상적으로 계속 제공
+// Thread safety
+// 스레드 안전성:
+// - Each request runs in separate goroutine with own defer/recover
+// - 각 요청은 자체 defer/recover를 가진 별도 고루틴에서 실행
+// - Panic in one request does NOT affect other concurrent requests
+// - 하나의 요청에서 패닉이 발생해도 다른 동시 요청에 영향 없음
+// - Server continues serving other requests normally
+// - 서버는 다른 요청을 정상적으로 계속 제공
 //
-// Performance / 성능:
-//   - Negligible overhead (defer is cheap in Go)
-//   - 무시할 만한 오버헤드 (Go에서 defer는 저렴함)
-//   - Only activates on actual panic (zero cost in happy path)
-//   - 실제 패닉 발생 시에만 활성화 (정상 경로에서 비용 없음)
-//   - Stack trace generation only happens during panic
-//   - 스택 트레이스 생성은 패닉 중에만 발생
+// Performance
+// 성능:
+// - Negligible overhead (defer is cheap in Go)
+// - 무시할 만한 오버헤드 (Go에서 defer는 저렴함)
+// - Only activates on actual panic (zero cost in happy path)
+// - 실제 패닉 발생 시에만 활성화 (정상 경로에서 비용 없음)
+// - Stack trace generation only happens during panic
+// - 스택 트레이스 생성은 패닉 중에만 발생
 //
-// Common panic causes / 일반적인 패닉 원인:
+// Common panic causes
+// 일반적인 패닉 원인:
 //   - Nil pointer dereference: var p *User; p.Name
 //   - Out of bounds access: arr[999] when len(arr) < 999
 //   - Type assertion failure: val.(int) when val is not int
 //   - Division by zero: x / 0 (for integers)
 //   - Map concurrent read/write without mutex
 //
-// Best practices / 모범 사례:
-//   - ALWAYS use Recovery() as the FIRST middleware
-//   - 항상 Recovery()를 첫 번째 미들웨어로 사용
-//   - Ensures all subsequent middleware/handlers are protected
-//   - 모든 후속 미들웨어/핸들러가 보호되도록 보장
-//   - Use RecoveryWithConfig() for custom logging behavior
-//   - 커스텀 로깅 동작을 위해 RecoveryWithConfig() 사용
-//   - Monitor panic frequency (frequent panics indicate bugs)
-//   - 패닉 빈도 모니터링 (빈번한 패닉은 버그를 나타냄)
+// Best practices
+// 모범 사례:
+// - ALWAYS use Recovery() as the FIRST middleware
+// - 항상 Recovery()를 첫 번째 미들웨어로 사용
+// - Ensures all subsequent middleware/handlers are protected
+// - 모든 후속 미들웨어/핸들러가 보호되도록 보장
+// - Use RecoveryWithConfig() for custom logging behavior
+// - 커스텀 로깅 동작을 위해 RecoveryWithConfig() 사용
+// - Monitor panic frequency (frequent panics indicate bugs)
+// - 패닉 빈도 모니터링 (빈번한 패닉은 버그를 나타냄)
 //
-// Example usage / 사용 예제:
+// Example usage
+// 사용 예제:
 //
 //	app := websvrutil.New()
 //	app.Use(websvrutil.Recovery()) // MUST be first middleware
@@ -112,7 +121,8 @@ import (
 //	    // Recovery catches this, logs stack trace, returns 500
 //	})
 //
-// Advanced configuration / 고급 설정:
+// Advanced configuration
+// 고급 설정:
 //
 //	app.Use(websvrutil.RecoveryWithConfig(websvrutil.RecoveryConfig{
 //	    PrintStack: true,
@@ -146,7 +156,8 @@ func Recovery() MiddlewareFunc {
 // RecoveryWithConfig returns a Recovery middleware with custom configuration.
 // RecoveryWithConfig는 커스텀 설정으로 Recovery 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Use(websvrutil.RecoveryWithConfig(websvrutil.RecoveryConfig{
 //	    PrintStack: true,
@@ -200,7 +211,8 @@ type RecoveryConfig struct {
 // Logger returns a middleware that logs HTTP requests.
 // Logger는 HTTP 요청을 로깅하는 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app := websvrutil.New()
 //	app.Use(websvrutil.Logger())
@@ -228,7 +240,8 @@ func Logger() MiddlewareFunc {
 // LoggerWithConfig returns a Logger middleware with custom configuration.
 // LoggerWithConfig는 커스텀 설정으로 Logger 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Use(websvrutil.LoggerWithConfig(websvrutil.LoggerConfig{
 //	    Format: "${method} ${path} ${status} ${duration}",
@@ -269,7 +282,8 @@ type LoggerConfig struct {
 // CORS returns a middleware that handles Cross-Origin Resource Sharing.
 // CORS는 Cross-Origin Resource Sharing을 처리하는 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app := websvrutil.New()
 //	app.Use(websvrutil.CORS())
@@ -284,7 +298,8 @@ func CORS() MiddlewareFunc {
 // CORSWithConfig returns a CORS middleware with custom configuration.
 // CORSWithConfig는 커스텀 설정으로 CORS 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Use(websvrutil.CORSWithConfig(websvrutil.CORSConfig{
 //	    AllowOrigins: []string{"https://example.com"},
@@ -412,7 +427,8 @@ func joinStrings(strs []string, sep string) string {
 // The request ID is added to the request context and response headers.
 // 요청 ID는 요청 컨텍스트와 응답 헤더에 추가됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app := websvrutil.New()
 //	app.Use(websvrutil.RequestID())
@@ -444,7 +460,8 @@ type RequestIDConfig struct {
 // RequestIDWithConfig returns a RequestID middleware with custom configuration.
 // RequestIDWithConfig는 커스텀 설정으로 RequestID 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Use(websvrutil.RequestIDWithConfig(websvrutil.RequestIDConfig{
 //	    Header: "X-Custom-Request-ID",
@@ -501,7 +518,8 @@ func generateRequestID() string {
 // If the handler does not complete within the timeout, a 503 Service Unavailable response is sent.
 // 핸들러가 타임아웃 내에 완료되지 않으면 503 Service Unavailable 응답이 전송됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app := websvrutil.New()
 //	app.Use(websvrutil.Timeout(5 * time.Second))
@@ -528,7 +546,8 @@ type TimeoutConfig struct {
 // TimeoutWithConfig returns a Timeout middleware with custom configuration.
 // TimeoutWithConfig는 커스텀 설정으로 Timeout 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Use(websvrutil.TimeoutWithConfig(websvrutil.TimeoutConfig{
 //	    Timeout: 10 * time.Second,
@@ -565,7 +584,8 @@ func TimeoutWithConfig(config TimeoutConfig) MiddlewareFunc {
 // BasicAuth returns a middleware that enforces HTTP Basic Authentication.
 // BasicAuth는 HTTP Basic Authentication을 적용하는 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app := websvrutil.New()
 //	app.Use(websvrutil.BasicAuth("admin", "password"))
@@ -602,7 +622,8 @@ type BasicAuthConfig struct {
 // BasicAuthWithConfig returns a BasicAuth middleware with custom configuration.
 // BasicAuthWithConfig는 커스텀 설정으로 BasicAuth 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Use(websvrutil.BasicAuthWithConfig(websvrutil.BasicAuthConfig{
 //	    Validator: func(username, password string) bool {
@@ -661,7 +682,8 @@ func BasicAuthWithConfig(config BasicAuthConfig) MiddlewareFunc {
 // Uses a simple token bucket algorithm with IP-based rate limiting.
 // IP 기반 rate limiting과 함께 간단한 토큰 버킷 알고리즘을 사용합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app := websvrutil.New()
 //	app.Use(websvrutil.RateLimiter(100, time.Minute)) // 100 requests per minute
@@ -702,7 +724,8 @@ type rateLimitEntry struct {
 // RateLimiterWithConfig returns a RateLimiter middleware with custom configuration.
 // RateLimiterWithConfig는 커스텀 설정으로 RateLimiter 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Use(websvrutil.RateLimiterWithConfig(websvrutil.RateLimiterConfig{
 //	    Requests: 50,
@@ -816,7 +839,8 @@ func RateLimiterWithConfig(config RateLimiterConfig) MiddlewareFunc {
 // Automatically compresses responses when client supports gzip (Accept-Encoding: gzip).
 // 클라이언트가 gzip을 지원할 때 자동으로 응답을 압축합니다 (Accept-Encoding: gzip).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app := websvrutil.New()
 //	app.Use(websvrutil.Compression())
@@ -861,7 +885,8 @@ func (w *gzipResponseWriter) Write(b []byte) (int, error) {
 // CompressionWithConfig returns a Compression middleware with custom configuration.
 // CompressionWithConfig는 커스텀 설정으로 Compression 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Use(websvrutil.CompressionWithConfig(websvrutil.CompressionConfig{
 //	    Level: gzip.BestCompression,
@@ -919,7 +944,8 @@ func CompressionWithConfig(config CompressionConfig) MiddlewareFunc {
 // Adds headers like X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, etc.
 // X-Frame-Options, X-Content-Type-Options, X-XSS-Protection 등의 헤더를 추가합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app := websvrutil.New()
 //	app.Use(websvrutil.SecureHeaders())
@@ -964,7 +990,8 @@ type SecureHeadersConfig struct {
 // SecureHeadersWithConfig returns a SecureHeaders middleware with custom configuration.
 // SecureHeadersWithConfig는 커스텀 설정으로 SecureHeaders 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Use(websvrutil.SecureHeadersWithConfig(websvrutil.SecureHeadersConfig{
 //	    XFrameOptions: "DENY",
@@ -1029,10 +1056,11 @@ type BodyLimitConfig struct {
 // Default limit is 10MB.
 // 기본 제한은 10MB입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// Limit request body to 5MB
-//	// 요청 본문을 5MB로 제한
+// // Limit request body to 5MB
+// 요청 본문을 5MB로 제한
 //	server.Use(BodyLimit(5 * 1024 * 1024))
 func BodyLimit(maxBytes int64) MiddlewareFunc {
 	return BodyLimitWithConfig(BodyLimitConfig{
@@ -1065,8 +1093,7 @@ type StaticConfig struct {
 	// Root는 파일을 제공할 루트 디렉토리입니다
 	Root string
 
-	// Index is the index file to serve (default: "index.html")
-	// Index는 제공할 인덱스 파일입니다 (기본값: "index.html")
+	// Index is the index file to serve (default: "index.html") / Index는 제공할 인덱스 파일입니다 (기본값: "index.html")
 	Index string
 
 	// Browse enables directory browsing
@@ -1077,10 +1104,10 @@ type StaticConfig struct {
 // Static returns a middleware that serves static files from the specified directory.
 // Static는 지정된 디렉토리에서 정적 파일을 제공하는 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// Serve static files from "./public" directory
-//	// "./public" 디렉토리에서 정적 파일 제공
+// // Serve static files from "./public" directory / "./public" 디렉토리에서 정적 파일 제공
 //	server.Use(Static("./public"))
 func Static(root string) MiddlewareFunc {
 	return StaticWithConfig(StaticConfig{
@@ -1152,10 +1179,11 @@ type RedirectConfig struct {
 // Uses 301 Moved Permanently by default.
 // 기본적으로 301 Moved Permanently를 사용합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// Redirect all HTTP to HTTPS
-//	// 모든 HTTP를 HTTPS로 리디렉션
+// // Redirect all HTTP to HTTPS
+// 모든 HTTP를 HTTPS로 리디렉션
 //	httpServer.Use(Redirect("https://example.com"))
 func Redirect(to string) MiddlewareFunc {
 	return RedirectWithConfig(RedirectConfig{
@@ -1182,10 +1210,11 @@ func RedirectWithConfig(config RedirectConfig) MiddlewareFunc {
 // HTTPSRedirect returns a middleware that redirects HTTP requests to HTTPS.
 // HTTPSRedirect는 HTTP 요청을 HTTPS로 리디렉션하는 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// Redirect all HTTP to HTTPS
-//	// 모든 HTTP를 HTTPS로 리디렉션
+// // Redirect all HTTP to HTTPS
+// 모든 HTTP를 HTTPS로 리디렉션
 //	httpServer.Use(HTTPSRedirect())
 func HTTPSRedirect() MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
@@ -1210,10 +1239,11 @@ func HTTPSRedirect() MiddlewareFunc {
 // WWWRedirect returns a middleware that redirects non-www to www or vice versa.
 // WWWRedirect는 non-www를 www로 또는 그 반대로 리디렉션하는 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// Redirect to www version
-//	// www 버전으로 리디렉션
+// // Redirect to www version
+// www 버전으로 리디렉션
 //	server.Use(WWWRedirect(true))
 func WWWRedirect(addWWW bool) MiddlewareFunc {
 	return func(next http.Handler) http.Handler {

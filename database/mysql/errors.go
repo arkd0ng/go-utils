@@ -6,7 +6,8 @@ import (
 	"time"
 )
 
-// Predefined errors / 사전 정의된 에러
+// Predefined errors
+// 사전 정의된 에러
 var (
 	ErrConnectionFailed  = errors.New("database connection failed")
 	ErrQueryFailed       = errors.New("query execution failed")
@@ -57,7 +58,8 @@ func isRetryableError(err error) bool {
 	// 재시도 가능한 MySQL 에러 코드
 	errStr := err.Error()
 
-	// Connection errors / 연결 에러
+	// Connection errors
+	// 연결 에러
 	retryableErrors := []string{
 		"connection refused",
 		"connection reset",

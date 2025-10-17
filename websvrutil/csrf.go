@@ -11,7 +11,8 @@ import (
 )
 
 // ============================================================================
-// CSRF Protection / CSRF 보호
+// CSRF Protection
+// CSRF 보호
 // ============================================================================
 
 // CSRFConfig represents the configuration for CSRF protection.
@@ -31,12 +32,10 @@ type CSRFConfig struct {
 	// Default: "header:X-CSRF-Token"
 	TokenLookup string
 
-	// CookieName is the name of the CSRF cookie (default: "_csrf")
-	// CookieName은 CSRF 쿠키의 이름입니다 (기본값: "_csrf")
+	// CookieName is the name of the CSRF cookie (default: "_csrf") / CookieName은 CSRF 쿠키의 이름입니다 (기본값: "_csrf")
 	CookieName string
 
-	// CookiePath is the path of the CSRF cookie (default: "/")
-	// CookiePath는 CSRF 쿠키의 경로입니다 (기본값: "/")
+	// CookiePath is the path of the CSRF cookie (default: "/") / CookiePath는 CSRF 쿠키의 경로입니다 (기본값: "/")
 	CookiePath string
 
 	// CookieDomain is the domain of the CSRF cookie
@@ -59,8 +58,7 @@ type CSRFConfig struct {
 	// CookieMaxAge는 CSRF 쿠키의 최대 수명(초)입니다 (기본값: 86400 = 24시간)
 	CookieMaxAge int
 
-	// ContextKey is the key used to store the CSRF token in context (default: "csrf_token")
-	// ContextKey는 컨텍스트에 CSRF 토큰을 저장하는 데 사용되는 키입니다 (기본값: "csrf_token")
+	// ContextKey is the key used to store the CSRF token in context (default: "csrf_token") / ContextKey는 컨텍스트에 CSRF 토큰을 저장하는 데 사용되는 키입니다 (기본값: "csrf_token")
 	ContextKey string
 
 	// ErrorHandler is called when CSRF validation fails
@@ -83,7 +81,8 @@ type csrfTokenStore struct {
 	tokens map[string]time.Time
 }
 
-// global token store / 전역 토큰 저장소
+// global token store
+// 전역 토큰 저장소
 var globalCSRFStore = &csrfTokenStore{
 	tokens: make(map[string]time.Time),
 }
@@ -107,7 +106,8 @@ func (s *csrfTokenStore) validate(token string) bool {
 		return false
 	}
 
-	// Check if token is expired / 토큰이 만료되었는지 확인
+	// Check if token is expired
+	// 토큰이 만료되었는지 확인
 	if time.Now().After(expiration) {
 		delete(s.tokens, token)
 		return false
@@ -130,9 +130,11 @@ func (s *csrfTokenStore) cleanup() {
 	}
 }
 
-// Start periodic cleanup / 주기적 정리 시작
+// Start periodic cleanup
+// 주기적 정리 시작
 func init() {
-	// Run cleanup every hour / 1시간마다 정리 실행
+	// Run cleanup every hour
+	// 1시간마다 정리 실행
 	go func() {
 		ticker := time.NewTicker(1 * time.Hour)
 		defer ticker.Stop()
@@ -161,7 +163,8 @@ func DefaultCSRFConfig() CSRFConfig {
 // CSRF returns a CSRF middleware with default configuration.
 // CSRF는 기본 설정으로 CSRF 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Use(websvrutil.CSRF())
 func CSRF() MiddlewareFunc {
@@ -171,7 +174,8 @@ func CSRF() MiddlewareFunc {
 // CSRFWithConfig returns a CSRF middleware with custom configuration.
 // CSRFWithConfig는 커스텀 설정으로 CSRF 미들웨어를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	app.Use(websvrutil.CSRFWithConfig(websvrutil.CSRFConfig{
 //	    TokenLength:  32,
@@ -179,7 +183,8 @@ func CSRF() MiddlewareFunc {
 //	    CookieSecure: true,
 //	}))
 func CSRFWithConfig(config CSRFConfig) MiddlewareFunc {
-	// Set defaults if not provided / 제공되지 않은 경우 기본값 설정
+	// Set defaults if not provided
+	// 제공되지 않은 경우 기본값 설정
 	if config.TokenLength == 0 {
 		config.TokenLength = DefaultCSRFConfig().TokenLength
 	}
@@ -199,7 +204,8 @@ func CSRFWithConfig(config CSRFConfig) MiddlewareFunc {
 		config.ContextKey = DefaultCSRFConfig().ContextKey
 	}
 
-	// Default error handler / 기본 에러 핸들러
+	// Default error handler
+	// 기본 에러 핸들러
 	if config.ErrorHandler == nil {
 		config.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
 			http.Error(w, "CSRF token validation failed: "+err.Error(), http.StatusForbidden)
@@ -215,14 +221,16 @@ func CSRFWithConfig(config CSRFConfig) MiddlewareFunc {
 				return
 			}
 
-			// Get or create CSRF token / CSRF 토큰 가져오기 또는 생성
+			// Get or create CSRF token
+			// CSRF 토큰 가져오기 또는 생성
 			token, err := getOrCreateCSRFToken(w, r, &config)
 			if err != nil {
 				config.ErrorHandler(w, r, err)
 				return
 			}
 
-			// Store token in context / 컨텍스트에 토큰 저장
+			// Store token in context
+			// 컨텍스트에 토큰 저장
 			ctx := GetContext(r)
 			if ctx != nil {
 				ctx.Set(config.ContextKey, token)
@@ -245,25 +253,30 @@ func CSRFWithConfig(config CSRFConfig) MiddlewareFunc {
 // getOrCreateCSRFToken retrieves or creates a CSRF token.
 // getOrCreateCSRFToken은 CSRF 토큰을 검색하거나 생성합니다.
 func getOrCreateCSRFToken(w http.ResponseWriter, r *http.Request, config *CSRFConfig) (string, error) {
-	// Try to get token from cookie / 쿠키에서 토큰 가져오기 시도
+	// Try to get token from cookie
+	// 쿠키에서 토큰 가져오기 시도
 	cookie, err := r.Cookie(config.CookieName)
 	if err == nil && cookie.Value != "" {
-		// Validate that token exists in store / 저장소에 토큰이 존재하는지 검증
+		// Validate that token exists in store
+		// 저장소에 토큰이 존재하는지 검증
 		if globalCSRFStore.validate(cookie.Value) {
 			return cookie.Value, nil
 		}
 	}
 
-	// Generate new token / 새 토큰 생성
+	// Generate new token
+	// 새 토큰 생성
 	token, err := generateCSRFToken(config.TokenLength)
 	if err != nil {
 		return "", fmt.Errorf("failed to generate CSRF token: %w", err)
 	}
 
-	// Store token / 토큰 저장
+	// Store token
+	// 토큰 저장
 	globalCSRFStore.add(token, config.CookieMaxAge)
 
-	// Set cookie / 쿠키 설정
+	// Set cookie
+	// 쿠키 설정
 	http.SetCookie(w, &http.Cookie{
 		Name:     config.CookieName,
 		Value:    token,
@@ -281,7 +294,8 @@ func getOrCreateCSRFToken(w http.ResponseWriter, r *http.Request, config *CSRFCo
 // validateCSRFToken validates the CSRF token from the request.
 // validateCSRFToken은 요청에서 CSRF 토큰을 검증합니다.
 func validateCSRFToken(r *http.Request, expectedToken string, config *CSRFConfig) error {
-	// Extract token from request / 요청에서 토큰 추출
+	// Extract token from request
+	// 요청에서 토큰 추출
 	token := extractCSRFToken(r, config)
 	if token == "" {
 		return fmt.Errorf("CSRF token not found")
@@ -299,7 +313,8 @@ func validateCSRFToken(r *http.Request, expectedToken string, config *CSRFConfig
 // extractCSRFToken extracts the CSRF token from the request.
 // extractCSRFToken은 요청에서 CSRF 토큰을 추출합니다.
 func extractCSRFToken(r *http.Request, config *CSRFConfig) string {
-	// Parse TokenLookup / TokenLookup 파싱
+	// Parse TokenLookup
+	// TokenLookup 파싱
 	// Format: "<source>:<name>"
 	source := "header"
 	name := "X-CSRF-Token"
@@ -312,7 +327,8 @@ func extractCSRFToken(r *http.Request, config *CSRFConfig) string {
 		}
 	}
 
-	// Extract token based on source / 소스에 따라 토큰 추출
+	// Extract token based on source
+	// 소스에 따라 토큰 추출
 	switch source {
 	case "header":
 		return r.Header.Get(name)
@@ -361,7 +377,8 @@ func isSafeMethod(method string) bool {
 // This is useful for rendering the token in HTML forms or JavaScript.
 // HTML 폼이나 JavaScript에서 토큰을 렌더링하는 데 유용합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	token := websvrutil.GetCSRFToken(ctx)
 //	// Use token in HTML form:

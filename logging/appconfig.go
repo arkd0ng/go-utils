@@ -30,11 +30,15 @@ type AppConfig struct {
 //   5. ../apps/app.yaml (parent directory)
 //   6. ../app.yaml (parent directory)
 //
-// Returns / 반환값:
-//   - *AppConfig: loaded configuration / 로드된 설정
-//   - error: error if file not found or parsing failed / 파일을 찾지 못하거나 파싱 실패 시 에러
+// Returns
+// 반환값:
+// - *AppConfig: loaded configuration
+// 로드된 설정
+// - error: error if file not found or parsing failed
+// 파일을 찾지 못하거나 파싱 실패 시 에러
 func LoadAppConfig() (*AppConfig, error) {
-	// Search paths in order / 순서대로 검색 경로
+	// Search paths in order
+	// 순서대로 검색 경로
 	searchPaths := []string{
 		"cfg/app.yaml",
 		"apps/app.yaml",
@@ -56,26 +60,30 @@ func LoadAppConfig() (*AppConfig, error) {
 		lastErr = err
 	}
 
-	// If no file found, return default config / 파일을 찾지 못하면 기본 설정 반환
+	// If no file found, return default config
+	// 파일을 찾지 못하면 기본 설정 반환
 	return &AppConfig{}, fmt.Errorf("app.yaml not found in cfg/, apps/, or root directory: %w", lastErr)
 }
 
 // loadFromPath loads configuration from a specific path
 // loadFromPath는 특정 경로에서 설정을 로드합니다
 func loadFromPath(path string) (*AppConfig, error) {
-	// Make path absolute / 절대 경로로 변환
+	// Make path absolute
+	// 절대 경로로 변환
 	absPath, err := filepath.Abs(path)
 	if err != nil {
 		return nil, err
 	}
 
-	// Read file / 파일 읽기
+	// Read file
+	// 파일 읽기
 	data, err := os.ReadFile(absPath)
 	if err != nil {
 		return nil, err
 	}
 
-	// Parse YAML / YAML 파싱
+	// Parse YAML
+	// YAML 파싱
 	var config AppConfig
 	if err := yaml.Unmarshal(data, &config); err != nil {
 		return nil, fmt.Errorf("failed to parse %s: %w", path, err)

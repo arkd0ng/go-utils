@@ -14,18 +14,27 @@ import (
 // 이 함수는 키 시퀀스를 사용하여 중첩 map[string]interface{} 구조를 탐색합니다.
 // 최종 키의 값과 경로가 유효하고 값이 존재하는지를 나타내는 부울을 반환합니다.
 //
-// Time Complexity / 시간 복잡도: O(d) where d is depth (path length)
-// Space Complexity / 공간 복잡도: O(1)
+// Time Complexity
+// 시간 복잡도: O(d) where d is depth (path length)
+// Space Complexity
+// 공간 복잡도: O(1)
 //
-// Parameters / 매개변수:
-//   - m: The nested map to navigate / 탐색할 중첩 맵
-//   - path: Sequence of keys to follow / 따를 키 시퀀스
+// Parameters
+// 매개변수:
+// - m: The nested map to navigate
+// 탐색할 중첩 맵
+// - path: Sequence of keys to follow
+// 따를 키 시퀀스
 //
-// Returns / 반환값:
-//   - interface{}: The value at the path (nil if not found) / 경로의 값 (찾을 수 없으면 nil)
-//   - bool: true if path exists, false otherwise / 경로가 존재하면 true, 그렇지 않으면 false
+// Returns
+// 반환값:
+// - interface{}: The value at the path (nil if not found)
+// 경로의 값 (찾을 수 없으면 nil)
+// - bool: true if path exists, false otherwise
+// 경로가 존재하면 true, 그렇지 않으면 false
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	data := map[string]interface{}{
 //		"user": map[string]interface{}{
@@ -41,11 +50,16 @@ import (
 //	missing, ok := maputil.GetNested(data, "user", "phone")
 //	// missing = nil, ok = false
 //
-// Use Case / 사용 사례:
-//   - JSON/YAML configuration access / JSON/YAML 설정 접근
-//   - API response parsing / API 응답 파싱
-//   - Nested data structure navigation / 중첩 데이터 구조 탐색
-//   - Safe property access without panic / panic 없는 안전한 속성 접근
+// Use Case
+// 사용 사례:
+// - JSON/YAML configuration access
+// JSON/YAML 설정 접근
+// - API response parsing
+// API 응답 파싱
+// - Nested data structure navigation
+// 중첩 데이터 구조 탐색
+// - Safe property access without panic
+// panic 없는 안전한 속성 접근
 func GetNested(m map[string]interface{}, path ...string) (interface{}, bool) {
 	if len(path) == 0 {
 		return nil, false
@@ -89,18 +103,27 @@ func GetNested(m map[string]interface{}, path ...string) (interface{}, bool) {
 // 지정된 경로에 값을 설정합니다. 누락된 중간 맵을 자동으로 생성합니다.
 // 함수는 수정된 새 맵을 반환합니다 (불변).
 //
-// Time Complexity / 시간 복잡도: O(d) where d is depth (path length)
-// Space Complexity / 공간 복잡도: O(n) for deep copy
+// Time Complexity
+// 시간 복잡도: O(d) where d is depth (path length)
+// Space Complexity
+// 공간 복잡도: O(n) for deep copy
 //
-// Parameters / 매개변수:
-//   - m: The nested map to modify / 수정할 중첩 맵
-//   - value: The value to set at the path / 경로에 설정할 값
-//   - path: Sequence of keys to follow / 따를 키 시퀀스
+// Parameters
+// 매개변수:
+// - m: The nested map to modify
+// 수정할 중첩 맵
+// - value: The value to set at the path
+// 경로에 설정할 값
+// - path: Sequence of keys to follow
+// 따를 키 시퀀스
 //
-// Returns / 반환값:
-//   - map[string]interface{}: New map with the value set / 값이 설정된 새 맵
+// Returns
+// 반환값:
+// - map[string]interface{}: New map with the value set
+// 값이 설정된 새 맵
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	data := map[string]interface{}{}
 //	result := maputil.SetNested(data, "Seoul", "user", "address", "city")
@@ -112,11 +135,16 @@ func GetNested(m map[string]interface{}, path ...string) (interface{}, bool) {
 //	//   },
 //	// }
 //
-// Use Case / 사용 사례:
-//   - Dynamic configuration building / 동적 설정 구축
-//   - API request body construction / API 요청 본문 구성
-//   - Nested data structure initialization / 중첩 데이터 구조 초기화
-//   - Deep property updates / 깊은 속성 업데이트
+// Use Case
+// 사용 사례:
+// - Dynamic configuration building
+// 동적 설정 구축
+// - API request body construction
+// API 요청 본문 구성
+// - Nested data structure initialization
+// 중첩 데이터 구조 초기화
+// - Deep property updates
+// 깊은 속성 업데이트
 func SetNested(m map[string]interface{}, value interface{}, path ...string) map[string]interface{} {
 	if len(path) == 0 {
 		return m
@@ -168,17 +196,25 @@ func SetNested(m map[string]interface{}, value interface{}, path ...string) map[
 // 이 함수는 경로의 모든 키가 존재하고 중간 값이 맵인지 확인합니다.
 // 전체 경로가 유효한 경우에만 true를 반환합니다.
 //
-// Time Complexity / 시간 복잡도: O(d) where d is depth (path length)
-// Space Complexity / 공간 복잡도: O(1)
+// Time Complexity
+// 시간 복잡도: O(d) where d is depth (path length)
+// Space Complexity
+// 공간 복잡도: O(1)
 //
-// Parameters / 매개변수:
-//   - m: The nested map to check / 확인할 중첩 맵
-//   - path: Sequence of keys to verify / 확인할 키 시퀀스
+// Parameters
+// 매개변수:
+// - m: The nested map to check
+// 확인할 중첩 맵
+// - path: Sequence of keys to verify
+// 확인할 키 시퀀스
 //
-// Returns / 반환값:
-//   - bool: true if entire path exists, false otherwise / 전체 경로가 존재하면 true, 그렇지 않으면 false
+// Returns
+// 반환값:
+// - bool: true if entire path exists, false otherwise
+// 전체 경로가 존재하면 true, 그렇지 않으면 false
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	data := map[string]interface{}{
 //		"user": map[string]interface{}{
@@ -190,11 +226,16 @@ func SetNested(m map[string]interface{}, value interface{}, path ...string) map[
 //	maputil.HasNested(data, "user", "phone") // false
 //	maputil.HasNested(data, "admin")         // false
 //
-// Use Case / 사용 사례:
-//   - Configuration validation / 설정 검증
-//   - Required field checking / 필수 필드 확인
-//   - API response validation / API 응답 검증
-//   - Safe navigation guards / 안전한 탐색 가드
+// Use Case
+// 사용 사례:
+// - Configuration validation
+// 설정 검증
+// - Required field checking
+// 필수 필드 확인
+// - API response validation
+// API 응답 검증
+// - Safe navigation guards
+// 안전한 탐색 가드
 func HasNested(m map[string]interface{}, path ...string) bool {
 	if len(path) == 0 {
 		return false
@@ -232,17 +273,25 @@ func HasNested(m map[string]interface{}, path ...string) bool {
 // 이 함수는 중첩 구조를 탐색하고 최종 키의 값을 제거합니다.
 // 중간 맵이 비어 있어도 제거하지 않습니다. 수정된 새 맵을 반환합니다 (불변).
 //
-// Time Complexity / 시간 복잡도: O(d) where d is depth (path length)
-// Space Complexity / 공간 복잡도: O(n) for deep copy
+// Time Complexity
+// 시간 복잡도: O(d) where d is depth (path length)
+// Space Complexity
+// 공간 복잡도: O(n) for deep copy
 //
-// Parameters / 매개변수:
-//   - m: The nested map to modify / 수정할 중첩 맵
-//   - path: Sequence of keys to the value to delete / 삭제할 값의 키 시퀀스
+// Parameters
+// 매개변수:
+// - m: The nested map to modify
+// 수정할 중첩 맵
+// - path: Sequence of keys to the value to delete
+// 삭제할 값의 키 시퀀스
 //
-// Returns / 반환값:
-//   - map[string]interface{}: New map with the value deleted / 값이 삭제된 새 맵
+// Returns
+// 반환값:
+// - map[string]interface{}: New map with the value deleted
+// 값이 삭제된 새 맵
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	data := map[string]interface{}{
 //		"user": map[string]interface{}{
@@ -257,11 +306,16 @@ func HasNested(m map[string]interface{}, path ...string) bool {
 //	//   },
 //	// }
 //
-// Use Case / 사용 사례:
-//   - Removing sensitive data / 민감한 데이터 제거
-//   - Configuration cleanup / 설정 정리
-//   - API response filtering / API 응답 필터링
-//   - Nested property removal / 중첩 속성 제거
+// Use Case
+// 사용 사례:
+// - Removing sensitive data
+// 민감한 데이터 제거
+// - Configuration cleanup
+// 설정 정리
+// - API response filtering
+// API 응답 필터링
+// - Nested property removal
+// 중첩 속성 제거
 func DeleteNested(m map[string]interface{}, path ...string) map[string]interface{} {
 	if len(path) == 0 {
 		return m
@@ -311,18 +365,27 @@ func DeleteNested(m map[string]interface{}, path ...string) map[string]interface
 // 경로가 유효하지 않거나 타입 어설션이 실패할 때 더 자세한 에러 메시지를 제공합니다.
 // GetNested와 달리 모든 입력 타입에서 작동합니다.
 //
-// Time Complexity / 시간 복잡도: O(d) where d is depth (path length)
-// Space Complexity / 공간 복잡도: O(1)
+// Time Complexity
+// 시간 복잡도: O(d) where d is depth (path length)
+// Space Complexity
+// 공간 복잡도: O(1)
 //
-// Parameters / 매개변수:
-//   - m: The value to navigate (typically a map) / 탐색할 값 (일반적으로 맵)
-//   - path: Sequence of keys to follow / 따를 키 시퀀스
+// Parameters
+// 매개변수:
+// - m: The value to navigate (typically a map)
+// 탐색할 값 (일반적으로 맵)
+// - path: Sequence of keys to follow
+// 따를 키 시퀀스
 //
-// Returns / 반환값:
-//   - interface{}: The value at the path / 경로의 값
-//   - error: Error if path is invalid or type assertion fails / 경로가 유효하지 않거나 타입 어설션이 실패하면 에러
+// Returns
+// 반환값:
+// - interface{}: The value at the path
+// 경로의 값
+// - error: Error if path is invalid or type assertion fails
+// 경로가 유효하지 않거나 타입 어설션이 실패하면 에러
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	data := map[string]interface{}{
 //		"server": map[string]interface{}{
@@ -337,11 +400,16 @@ func DeleteNested(m map[string]interface{}, path ...string) map[string]interface
 //	invalid, err := maputil.SafeGet(data, "server", "timeout")
 //	// invalid = nil, err = "key 'timeout' not found in map"
 //
-// Use Case / 사용 사례:
-//   - Safe config access with error reporting / 에러 보고와 함께 안전한 설정 접근
-//   - API response parsing with validation / 검증과 함께 API 응답 파싱
-//   - Debugging nested data access / 중첩 데이터 접근 디버깅
-//   - Error-driven nested navigation / 에러 기반 중첩 탐색
+// Use Case
+// 사용 사례:
+// - Safe config access with error reporting
+// 에러 보고와 함께 안전한 설정 접근
+// - API response parsing with validation
+// 검증과 함께 API 응답 파싱
+// - Debugging nested data access
+// 중첩 데이터 접근 디버깅
+// - Error-driven nested navigation
+// 에러 기반 중첩 탐색
 func SafeGet(m interface{}, path ...string) (interface{}, error) {
 	if len(path) == 0 {
 		return nil, fmt.Errorf("path cannot be empty")

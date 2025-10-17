@@ -2,7 +2,8 @@ package stringutil
 
 import "testing"
 
-// Test FormatNumber / FormatNumber 테스트
+// Test FormatNumber
+// FormatNumber 테스트
 func TestFormatNumber(t *testing.T) {
 	tests := []struct {
 		n         int
@@ -25,7 +26,8 @@ func TestFormatNumber(t *testing.T) {
 	}
 }
 
-// Test FormatBytes / FormatBytes 테스트
+// Test FormatBytes
+// FormatBytes 테스트
 func TestFormatBytes(t *testing.T) {
 	tests := []struct {
 		bytes    int64
@@ -48,7 +50,8 @@ func TestFormatBytes(t *testing.T) {
 	}
 }
 
-// Test Pluralize / Pluralize 테스트
+// Test Pluralize
+// Pluralize 테스트
 func TestPluralize(t *testing.T) {
 	tests := []struct {
 		count    int
@@ -72,7 +75,8 @@ func TestPluralize(t *testing.T) {
 	}
 }
 
-// Test FormatWithCount / FormatWithCount 테스트
+// Test FormatWithCount
+// FormatWithCount 테스트
 func TestFormatWithCount(t *testing.T) {
 	tests := []struct {
 		count    int
@@ -94,7 +98,8 @@ func TestFormatWithCount(t *testing.T) {
 	}
 }
 
-// Test Ellipsis / Ellipsis 테스트
+// Test Ellipsis
+// Ellipsis 테스트
 func TestEllipsis(t *testing.T) {
 	tests := []struct {
 		s        string
@@ -116,7 +121,8 @@ func TestEllipsis(t *testing.T) {
 	}
 }
 
-// Test Mask / Mask 테스트
+// Test Mask
+// Mask 테스트
 func TestMask(t *testing.T) {
 	tests := []struct {
 		s        string
@@ -140,7 +146,8 @@ func TestMask(t *testing.T) {
 	}
 }
 
-// Test MaskEmail / MaskEmail 테스트
+// Test MaskEmail
+// MaskEmail 테스트
 func TestMaskEmail(t *testing.T) {
 	tests := []struct {
 		email    string
@@ -160,7 +167,8 @@ func TestMaskEmail(t *testing.T) {
 	}
 }
 
-// Test MaskCreditCard / MaskCreditCard 테스트
+// Test MaskCreditCard
+// MaskCreditCard 테스트
 func TestMaskCreditCard(t *testing.T) {
 	tests := []struct {
 		card     string
@@ -179,7 +187,8 @@ func TestMaskCreditCard(t *testing.T) {
 	}
 }
 
-// Test AddLineNumbers / AddLineNumbers 테스트
+// Test AddLineNumbers
+// AddLineNumbers 테스트
 func TestAddLineNumbers(t *testing.T) {
 	input := "line1\nline2\nline3"
 	expected := "1: line1\n2: line2\n3: line3"
@@ -189,7 +198,8 @@ func TestAddLineNumbers(t *testing.T) {
 	}
 }
 
-// Test Indent / Indent 테스트
+// Test Indent
+// Indent 테스트
 func TestIndent(t *testing.T) {
 	tests := []struct {
 		s        string
@@ -209,7 +219,8 @@ func TestIndent(t *testing.T) {
 	}
 }
 
-// Test Dedent / Dedent 테스트
+// Test Dedent
+// Dedent 테스트
 func TestDedent(t *testing.T) {
 	tests := []struct {
 		s        string
@@ -228,7 +239,8 @@ func TestDedent(t *testing.T) {
 	}
 }
 
-// Test WrapText / WrapText 테스트
+// Test WrapText
+// WrapText 테스트
 func TestWrapText(t *testing.T) {
 	input := "The quick brown fox jumps"
 	expected := "The quick\nbrown fox\njumps"
@@ -244,7 +256,8 @@ func TestWrapText(t *testing.T) {
 	}
 }
 
-// Benchmark formatting functions / 포맷팅 함수 벤치마크
+// Benchmark formatting functions
+// 포맷팅 함수 벤치마크
 func BenchmarkFormatNumber(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = FormatNumber(1234567890, ",")

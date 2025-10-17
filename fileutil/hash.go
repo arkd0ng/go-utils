@@ -17,7 +17,8 @@ import (
 // MD5 calculates the MD5 hash of a file
 // MD5는 파일의 MD5 해시를 계산합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	hash, err := fileutil.MD5("path/to/file.txt")
 //	if err != nil {
@@ -31,7 +32,8 @@ func MD5(path string) (string, error) {
 // SHA1 calculates the SHA1 hash of a file
 // SHA1은 파일의 SHA1 해시를 계산합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	hash, err := fileutil.SHA1("path/to/file.txt")
 //	if err != nil {
@@ -45,7 +47,8 @@ func SHA1(path string) (string, error) {
 // SHA256 calculates the SHA256 hash of a file
 // SHA256은 파일의 SHA256 해시를 계산합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	hash, err := fileutil.SHA256("path/to/file.txt")
 //	if err != nil {
@@ -59,7 +62,8 @@ func SHA256(path string) (string, error) {
 // SHA512 calculates the SHA512 hash of a file
 // SHA512는 파일의 SHA512 해시를 계산합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	hash, err := fileutil.SHA512("path/to/file.txt")
 //	if err != nil {
@@ -76,7 +80,8 @@ func SHA512(path string) (string, error) {
 // Supported algorithms: md5, sha1, sha256, sha512
 // 지원되는 알고리즘: md5, sha1, sha256, sha512
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	hash, err := fileutil.Hash("path/to/file.txt", "sha256")
 //	if err != nil {
@@ -84,14 +89,16 @@ func SHA512(path string) (string, error) {
 //	}
 //	fmt.Println("Hash:", hash)
 func Hash(path string, algorithm string) (string, error) {
-	// Open file / 파일 열기
+	// Open file
+	// 파일 열기
 	file, err := os.Open(path)
 	if err != nil {
 		return "", fmt.Errorf("fileutil.Hash: %w", err)
 	}
 	defer file.Close()
 
-	// Create hasher based on algorithm / 알고리즘에 따라 해셔 생성
+	// Create hasher based on algorithm
+	// 알고리즘에 따라 해셔 생성
 	var hasher hash.Hash
 	switch strings.ToLower(algorithm) {
 	case "md5":
@@ -106,12 +113,14 @@ func Hash(path string, algorithm string) (string, error) {
 		return "", fmt.Errorf("fileutil.Hash: unsupported algorithm: %s", algorithm)
 	}
 
-	// Copy file contents to hasher / 파일 내용을 해셔로 복사
+	// Copy file contents to hasher
+	// 파일 내용을 해셔로 복사
 	if _, err := io.Copy(hasher, file); err != nil {
 		return "", fmt.Errorf("fileutil.Hash: %w", err)
 	}
 
-	// Return hex-encoded hash / 16진수 인코딩된 해시 반환
+	// Return hex-encoded hash
+	// 16진수 인코딩된 해시 반환
 	return hex.EncodeToString(hasher.Sum(nil)), nil
 }
 
@@ -121,7 +130,8 @@ func Hash(path string, algorithm string) (string, error) {
 // This is useful when you need the raw hash bytes instead of a hex string.
 // 이는 16진수 문자열 대신 원시 해시 바이트가 필요할 때 유용합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	hashBytes, err := fileutil.HashBytes("path/to/file.txt")
 //	if err != nil {
@@ -148,7 +158,8 @@ func HashBytes(path string) ([]byte, error) {
 // Returns true if the files are identical, false otherwise.
 // 파일이 동일하면 true를, 그렇지 않으면 false를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	same, err := fileutil.CompareFiles("file1.txt", "file2.txt")
 //	if err != nil {
@@ -158,7 +169,8 @@ func HashBytes(path string) ([]byte, error) {
 //	    fmt.Println("Files are identical")
 //	}
 func CompareFiles(path1, path2 string) (bool, error) {
-	// Check if both files exist / 두 파일 모두 존재하는지 확인
+	// Check if both files exist
+	// 두 파일 모두 존재하는지 확인
 	info1, err := os.Stat(path1)
 	if err != nil {
 		return false, fmt.Errorf("fileutil.CompareFiles: %w", err)
@@ -168,12 +180,14 @@ func CompareFiles(path1, path2 string) (bool, error) {
 		return false, fmt.Errorf("fileutil.CompareFiles: %w", err)
 	}
 
-	// Quick check: if sizes are different, files are different / 빠른 확인: 크기가 다르면 파일이 다름
+	// Quick check: if sizes are different, files are different
+	// 빠른 확인: 크기가 다르면 파일이 다름
 	if info1.Size() != info2.Size() {
 		return false, nil
 	}
 
-	// Open both files / 두 파일 모두 열기
+	// Open both files
+	// 두 파일 모두 열기
 	file1, err := os.Open(path1)
 	if err != nil {
 		return false, fmt.Errorf("fileutil.CompareFiles: %w", err)
@@ -186,7 +200,8 @@ func CompareFiles(path1, path2 string) (bool, error) {
 	}
 	defer file2.Close()
 
-	// Compare contents in chunks / 청크 단위로 내용 비교
+	// Compare contents in chunks
+	// 청크 단위로 내용 비교
 	buf1 := make([]byte, DefaultBufferSize)
 	buf2 := make([]byte, DefaultBufferSize)
 
@@ -225,7 +240,8 @@ func CompareFiles(path1, path2 string) (bool, error) {
 // This is faster than byte-by-byte comparison for large files.
 // 이는 큰 파일에 대해 바이트 단위 비교보다 빠릅니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	same, err := fileutil.CompareHash("file1.txt", "file2.txt")
 //	if err != nil {
@@ -254,7 +270,8 @@ func CompareHash(path1, path2 string) (bool, error) {
 // This is an alias for SHA256.
 // 이는 SHA256의 별칭입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	checksum, err := fileutil.Checksum("path/to/file.txt")
 //	if err != nil {
@@ -268,7 +285,8 @@ func Checksum(path string) (string, error) {
 // VerifyChecksum verifies that a file's checksum matches the expected value
 // VerifyChecksum은 파일의 체크섬이 예상 값과 일치하는지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	expected := "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 //	valid, err := fileutil.VerifyChecksum("path/to/file.txt", expected)
@@ -284,7 +302,8 @@ func VerifyChecksum(path, expectedChecksum string) (bool, error) {
 		return false, err
 	}
 
-	// Compare checksums (case-insensitive) / 체크섬 비교 (대소문자 구분 안함)
+	// Compare checksums (case-insensitive)
+	// 체크섬 비교 (대소문자 구분 안함)
 	return strings.EqualFold(actualChecksum, expectedChecksum), nil
 }
 
@@ -294,7 +313,8 @@ func VerifyChecksum(path, expectedChecksum string) (bool, error) {
 // This is useful for detecting changes in a directory.
 // 이는 디렉토리의 변경 사항을 감지하는 데 유용합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	hash, err := fileutil.HashDir("path/to/directory")
 //	if err != nil {
@@ -302,28 +322,32 @@ func VerifyChecksum(path, expectedChecksum string) (bool, error) {
 //	}
 //	fmt.Println("Directory hash:", hash)
 func HashDir(path string) (string, error) {
-	// Check if path is a directory / 경로가 디렉토리인지 확인
+	// Check if path is a directory
+	// 경로가 디렉토리인지 확인
 	if !IsDir(path) {
 		return "", fmt.Errorf("fileutil.HashDir: %w", ErrNotDirectory)
 	}
 
 	hasher := sha256.New()
 
-	// Walk directory and hash each file / 디렉토리 순회 및 각 파일 해시
+	// Walk directory and hash each file
+	// 디렉토리 순회 및 각 파일 해시
 	err := filepath.Walk(path, func(filePath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
 		if !info.IsDir() {
-			// Hash filename / 파일 이름 해시
+			// Hash filename
+			// 파일 이름 해시
 			relPath, err := filepath.Rel(path, filePath)
 			if err != nil {
 				return err
 			}
 			hasher.Write([]byte(relPath))
 
-			// Hash file contents / 파일 내용 해시
+			// Hash file contents
+			// 파일 내용 해시
 			file, err := os.Open(filePath)
 			if err != nil {
 				return err

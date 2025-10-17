@@ -9,7 +9,8 @@ import (
 	"time"
 )
 
-// Test file reading operations / 파일 읽기 작업 테스트
+// Test file reading operations
+// 파일 읽기 작업 테스트
 func TestFileReading(t *testing.T) {
 	tempDir, err := CreateTempDir("", "fileutil-test-*")
 	if err != nil {
@@ -180,7 +181,8 @@ func TestFileReading(t *testing.T) {
 	})
 }
 
-// Test file writing operations / 파일 쓰기 작업 테스트
+// Test file writing operations
+// 파일 쓰기 작업 테스트
 func TestFileWriting(t *testing.T) {
 	tempDir, err := CreateTempDir("", "fileutil-test-*")
 	if err != nil {
@@ -320,7 +322,8 @@ func TestFileWriting(t *testing.T) {
 	})
 }
 
-// Test path operations / 경로 작업 테스트
+// Test path operations
+// 경로 작업 테스트
 func TestPathOperations(t *testing.T) {
 	t.Run("Join", func(t *testing.T) {
 		path := Join("home", "user", "file.txt")
@@ -483,7 +486,8 @@ func TestPathOperations(t *testing.T) {
 	})
 }
 
-// Test file information operations / 파일 정보 작업 테스트
+// Test file information operations
+// 파일 정보 작업 테스트
 func TestFileInformation(t *testing.T) {
 	tempDir, err := CreateTempDir("", "fileutil-test-*")
 	if err != nil {
@@ -601,7 +605,8 @@ func TestFileInformation(t *testing.T) {
 	})
 }
 
-// Test copy operations / 복사 작업 테스트
+// Test copy operations
+// 복사 작업 테스트
 func TestCopyOperations(t *testing.T) {
 	tempDir, err := CreateTempDir("", "fileutil-test-*")
 	if err != nil {
@@ -685,7 +690,8 @@ func TestCopyOperations(t *testing.T) {
 	})
 }
 
-// Test move operations / 이동 작업 테스트
+// Test move operations
+// 이동 작업 테스트
 func TestMoveOperations(t *testing.T) {
 	tempDir, err := CreateTempDir("", "fileutil-test-*")
 	if err != nil {
@@ -762,7 +768,8 @@ func TestMoveOperations(t *testing.T) {
 	})
 }
 
-// Test delete operations / 삭제 작업 테스트
+// Test delete operations
+// 삭제 작업 테스트
 func TestDeleteOperations(t *testing.T) {
 	tempDir, err := CreateTempDir("", "fileutil-test-*")
 	if err != nil {
@@ -881,7 +888,8 @@ func TestDeleteOperations(t *testing.T) {
 	})
 }
 
-// Test directory operations / 디렉토리 작업 테스트
+// Test directory operations
+// 디렉토리 작업 테스트
 func TestDirectoryOperations(t *testing.T) {
 	tempDir, err := CreateTempDir("", "fileutil-test-*")
 	if err != nil {
@@ -1028,7 +1036,8 @@ func TestDirectoryOperations(t *testing.T) {
 	})
 }
 
-// Test hash operations / 해시 작업 테스트
+// Test hash operations
+// 해시 작업 테스트
 func TestHashOperations(t *testing.T) {
 	tempDir, err := CreateTempDir("", "fileutil-test-*")
 	if err != nil {
@@ -1178,7 +1187,8 @@ func TestHashOperations(t *testing.T) {
 	})
 }
 
-// Benchmarks / 벤치마크
+// Benchmarks
+// 벤치마크
 func BenchmarkWriteFile(b *testing.B) {
 	tempDir, _ := CreateTempDir("", "fileutil-bench-*")
 	defer os.RemoveAll(tempDir)

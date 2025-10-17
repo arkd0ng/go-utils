@@ -94,13 +94,15 @@ func TestLogLevels(t *testing.T) {
 	defer logger.Close()
 	defer cleanupTestLogs()
 
-	// Test all log levels / 모든 로그 레벨 테스트
+	// Test all log levels
+	// 모든 로그 레벨 테스트
 	logger.Debug("Debug message")
 	logger.Info("Info message")
 	logger.Warn("Warning message")
 	logger.Error("Error message")
 
-	// Verify log file exists / 로그 파일이 존재하는지 확인
+	// Verify log file exists
+	// 로그 파일이 존재하는지 확인
 	if _, err := os.Stat("./test_logs/levels.log"); os.IsNotExist(err) {
 		t.Error("Log file should exist")
 	}
@@ -119,12 +121,14 @@ func TestSetLevel(t *testing.T) {
 	defer logger.Close()
 	defer cleanupTestLogs()
 
-	// Initial level / 초기 레벨
+	// Initial level
+	// 초기 레벨
 	if logger.GetLevel() != INFO {
 		t.Errorf("Initial level should be INFO, got %v", logger.GetLevel())
 	}
 
-	// Change level / 레벨 변경
+	// Change level
+	// 레벨 변경
 	logger.SetLevel(DEBUG)
 	if logger.GetLevel() != DEBUG {
 		t.Errorf("Level should be DEBUG after change, got %v", logger.GetLevel())
@@ -143,20 +147,23 @@ func TestStructuredLogging(t *testing.T) {
 	defer logger.Close()
 	defer cleanupTestLogs()
 
-	// Log with structured data / 구조화된 데이터로 로깅
+	// Log with structured data
+	// 구조화된 데이터로 로깅
 	logger.Info("User login",
 		"user_id", 12345,
 		"ip", "192.168.1.1",
 		"duration", time.Millisecond*120,
 	)
 
-	// Read log file / 로그 파일 읽기
+	// Read log file
+	// 로그 파일 읽기
 	content, err := os.ReadFile("./test_logs/structured.log")
 	if err != nil {
 		t.Fatalf("Failed to read log file: %v", err)
 	}
 
-	// Verify structured data is in the log / 구조화된 데이터가 로그에 있는지 확인
+	// Verify structured data is in the log
+	// 구조화된 데이터가 로그에 있는지 확인
 	logStr := string(content)
 	if !strings.Contains(logStr, "user_id=12345") {
 		t.Error("Log should contain user_id=12345")
@@ -181,13 +188,15 @@ func TestPrefix(t *testing.T) {
 
 	logger.Info("Test message")
 
-	// Read log file / 로그 파일 읽기
+	// Read log file
+	// 로그 파일 읽기
 	content, err := os.ReadFile("./test_logs/prefix.log")
 	if err != nil {
 		t.Fatalf("Failed to read log file: %v", err)
 	}
 
-	// Verify prefix is in the log / 프리픽스가 로그에 있는지 확인
+	// Verify prefix is in the log
+	// 프리픽스가 로그에 있는지 확인
 	if !strings.Contains(string(content), "[TEST]") {
 		t.Error("Log should contain [TEST] prefix")
 	}
@@ -207,7 +216,8 @@ func TestRotate(t *testing.T) {
 
 	logger.Info("Before rotation")
 
-	// Manually trigger rotation / 수동으로 로테이션 트리거
+	// Manually trigger rotation
+	// 수동으로 로테이션 트리거
 	err = logger.Rotate()
 	if err != nil {
 		t.Errorf("Rotate should not return error: %v", err)
@@ -281,14 +291,16 @@ func TestBanner(t *testing.T) {
 	defer logger.Close()
 	defer cleanupTestLogs()
 
-	// Test different banner types / 다양한 배너 타입 테스트
+	// Test different banner types
+	// 다양한 배너 타입 테스트
 	logger.Banner("Test App", "v1.0.0")
 	logger.SimpleBanner("Simple", "v2.0.0")
 	logger.DoubleBanner("Double", "v3.0.0", "Description")
 	logger.SeparatorLine("=", 50)
 	logger.CustomBanner([]string{"Custom", "Banner"})
 
-	// Verify log file exists / 로그 파일이 존재하는지 확인
+	// Verify log file exists
+	// 로그 파일이 존재하는지 확인
 	if _, err := os.Stat("./test_logs/banner.log"); os.IsNotExist(err) {
 		t.Error("Log file should exist")
 	}
@@ -362,10 +374,12 @@ func TestAutoBanner(t *testing.T) {
 			defer logger.Close()
 			defer cleanupTestLogs()
 
-			// Write a test log to ensure file is created / 파일 생성을 위해 테스트 로그 작성
+			// Write a test log to ensure file is created
+			// 파일 생성을 위해 테스트 로그 작성
 			logger.Info("Test log message")
 
-			// Read log file / 로그 파일 읽기
+			// Read log file
+			// 로그 파일 읽기
 			content, err := os.ReadFile(logger.config.filename)
 			if err != nil {
 				t.Fatalf("Failed to read log file: %v", err)
@@ -384,8 +398,7 @@ func TestAutoBanner(t *testing.T) {
 			// Verify app name in banner
 			// 배너에 앱 이름 확인
 			if logger.config.appName != "" && logger.config.appName != "Application" && tt.shouldHaveBanner {
-				// Verify config appName if it's not the default "Application"
-				// 기본값 "Application"이 아닌 경우 config appName 확인
+				// Verify config appName if it's not the default "Application" / 기본값 "Application"이 아닌 경우 config appName 확인
 				if !strings.Contains(logStr, logger.config.appName) {
 					t.Errorf("Log file should contain app name: %s", logger.config.appName)
 				}
@@ -455,7 +468,8 @@ func TestMultipleLoggers(t *testing.T) {
 	}
 	defer logger3.Close()
 
-	// Log to different loggers / 다른 로거에 로깅
+	// Log to different loggers
+	// 다른 로거에 로깅
 	logger1.Info("Message from logger1")
 	logger2.Info("Message from logger2")
 	logger3.Info("Message from logger3")
@@ -534,7 +548,8 @@ func TestPrintfStyleLogging(t *testing.T) {
 	defer logger.Close()
 	defer cleanupTestLogs()
 
-	// Test all Printf-style methods / 모든 Printf 스타일 메서드 테스트
+	// Test all Printf-style methods
+	// 모든 Printf 스타일 메서드 테스트
 	user := "john_doe"
 	userID := 12345
 
@@ -543,7 +558,8 @@ func TestPrintfStyleLogging(t *testing.T) {
 	logger.Warnf("Warning: User %s with ID %d", user, userID)
 	logger.Errorf("Error: User %s with ID %d", user, userID)
 
-	// Read log file and verify content / 로그 파일 읽기 및 내용 확인
+	// Read log file and verify content
+	// 로그 파일 읽기 및 내용 확인
 	content, err := os.ReadFile("./test_logs/printf_style.log")
 	if err != nil {
 		t.Fatalf("Failed to read log file: %v", err)
@@ -551,7 +567,8 @@ func TestPrintfStyleLogging(t *testing.T) {
 
 	logStr := string(content)
 
-	// Verify formatted messages are in the log / 형식화된 메시지가 로그에 있는지 확인
+	// Verify formatted messages are in the log
+	// 형식화된 메시지가 로그에 있는지 확인
 	expectedMessages := []string{
 		"Debug: User john_doe with ID 12345",
 		"Info: User john_doe with ID 12345",
@@ -565,7 +582,8 @@ func TestPrintfStyleLogging(t *testing.T) {
 		}
 	}
 
-	// Verify log levels are present / 로그 레벨이 있는지 확인
+	// Verify log levels are present
+	// 로그 레벨이 있는지 확인
 	for _, level := range []string{"[DEBUG]", "[INFO]", "[WARN]", "[ERROR]"} {
 		if !strings.Contains(logStr, level) {
 			t.Errorf("Log should contain level: %s", level)
@@ -588,13 +606,16 @@ func TestPrintfVsStructured(t *testing.T) {
 	user := "alice"
 	userID := 67890
 
-	// Printf-style logging / Printf 스타일 로깅
+	// Printf-style logging
+	// Printf 스타일 로깅
 	logger.Infof("User login: %s (ID: %d)", user, userID)
 
-	// Structured logging / 구조화된 로깅
+	// Structured logging
+	// 구조화된 로깅
 	logger.Info("User login", "username", user, "user_id", userID)
 
-	// Read log file / 로그 파일 읽기
+	// Read log file
+	// 로그 파일 읽기
 	content, err := os.ReadFile("./test_logs/printf_vs_structured.log")
 	if err != nil {
 		t.Fatalf("Failed to read log file: %v", err)
@@ -602,7 +623,8 @@ func TestPrintfVsStructured(t *testing.T) {
 
 	logStr := string(content)
 
-	// Both should contain user information / 둘 다 사용자 정보를 포함해야 함
+	// Both should contain user information
+	// 둘 다 사용자 정보를 포함해야 함
 	if !strings.Contains(logStr, "alice") {
 		t.Error("Log should contain username 'alice'")
 	}
@@ -610,7 +632,8 @@ func TestPrintfVsStructured(t *testing.T) {
 		t.Error("Log should contain user ID '67890'")
 	}
 
-	// Structured logging should have key=value format / 구조화된 로깅은 키=값 형식이어야 함
+	// Structured logging should have key=value format
+	// 구조화된 로깅은 키=값 형식이어야 함
 	if !strings.Contains(logStr, "username=alice") {
 		t.Error("Log should contain structured data 'username=alice'")
 	}
@@ -622,7 +645,8 @@ func TestPrintfVsStructured(t *testing.T) {
 // TestAppYamlIntegration tests that app.yaml is loaded and used in banner
 // TestAppYamlIntegration은 app.yaml이 로드되고 배너에 사용되는지 테스트합니다
 func TestAppYamlIntegration(t *testing.T) {
-	// Load expected values from app.yaml / app.yaml에서 예상 값 로드
+	// Load expected values from app.yaml
+	// app.yaml에서 예상 값 로드
 	config, err := LoadAppConfig()
 	if err != nil {
 		t.Fatalf("Failed to load app.yaml: %v", err)
@@ -647,10 +671,12 @@ func TestAppYamlIntegration(t *testing.T) {
 	defer logger.Close()
 	defer cleanupTestLogs()
 
-	// Write a test log to ensure file is created / 파일 생성을 위해 테스트 로그 작성
+	// Write a test log to ensure file is created
+	// 파일 생성을 위해 테스트 로그 작성
 	logger.Info("Test log message")
 
-	// Read log file / 로그 파일 읽기
+	// Read log file
+	// 로그 파일 읽기
 	content, err := os.ReadFile("./test_logs/app_yaml.log")
 	if err != nil {
 		t.Fatalf("Failed to read log file: %v", err)
@@ -658,13 +684,16 @@ func TestAppYamlIntegration(t *testing.T) {
 
 	logStr := string(content)
 
-	// Verify that app.yaml values are in the banner / app.yaml 값이 배너에 있는지 확인
-	// Should contain app name from cfg/app.yaml / cfg/app.yaml의 앱 이름이 포함되어야 함
+	// Verify that app.yaml values are in the banner
+	// app.yaml 값이 배너에 있는지 확인
+	// Should contain app name from cfg/app.yaml
+	// cfg/app.yaml의 앱 이름이 포함되어야 함
 	if !strings.Contains(logStr, expectedName) {
 		t.Errorf("Log file should contain app name '%s' from cfg/app.yaml", expectedName)
 	}
 
-	// Should contain version from cfg/app.yaml / cfg/app.yaml의 버전이 포함되어야 함
+	// Should contain version from cfg/app.yaml
+	// cfg/app.yaml의 버전이 포함되어야 함
 	if !strings.Contains(logStr, expectedVersion) {
 		t.Errorf("Log file should contain version '%s' from cfg/app.yaml", expectedVersion)
 	}

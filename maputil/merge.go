@@ -9,7 +9,8 @@ package maputil
 // Time complexity: O(n*m) where n is the number of maps and m is the average map size
 // 시간 복잡도: O(n*m) 여기서 n은 맵 개수, m은 평균 맵 크기
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string]int{"a": 1, "b": 2}
 //	m2 := map[string]int{"b": 3, "c": 4}
@@ -40,12 +41,13 @@ func Merge[K comparable, V any](maps ...map[K]V) map[K]V {
 // Time complexity: O(n*m) where n is the number of maps and m is the average map size
 // 시간 복잡도: O(n*m) 여기서 n은 맵 개수, m은 평균 맵 크기
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string]int{"a": 1, "b": 2}
 //	m2 := map[string]int{"b": 3, "c": 4}
-//	result := maputil.MergeWith(
-//	    func(old, new int) int { return old + new }, // Sum on conflict / 충돌 시 합산
+// result := maputil.MergeWith(
+// func(old, new int) int { return old + new }, // Sum on conflict / 충돌 시 합산
 //	    m1, m2,
 //	) // map[string]int{"a": 1, "b": 5, "c": 4}
 func MergeWith[K comparable, V any](fn func(V, V) V, maps ...map[K]V) map[K]V {
@@ -77,7 +79,8 @@ func MergeWith[K comparable, V any](fn func(V, V) V, maps ...map[K]V) map[K]V {
 // Time complexity: O(n*m*d) where d is the average nesting depth
 // 시간 복잡도: O(n*m*d) 여기서 d는 평균 중첩 깊이
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string]interface{}{
 //	    "user": map[string]interface{}{"name": "Alice", "age": 25},
@@ -127,7 +130,8 @@ func Union[K comparable, V any](maps ...map[K]V) map[K]V {
 // Time complexity: O(n*m) where n is the number of maps and m is the average map size
 // 시간 복잡도: O(n*m) 여기서 n은 맵 개수, m은 평균 맵 크기
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 //	m2 := map[string]int{"b": 20, "c": 30, "d": 40}
@@ -171,7 +175,8 @@ func Intersection[K comparable, V any](maps ...map[K]V) map[K]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 //	m2 := map[string]int{"b": 20, "d": 40}
@@ -194,7 +199,8 @@ func Difference[K comparable, V any](m1, m2 map[K]V) map[K]V {
 // Time complexity: O(n+m)
 // 시간 복잡도: O(n+m)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m1 := map[string]int{"a": 1, "b": 2, "c": 3}
 //	m2 := map[string]int{"b": 20, "c": 30, "d": 40}
@@ -230,11 +236,11 @@ func SymmetricDifference[K comparable, V any](m1, m2 map[K]V) map[K]V {
 // Time complexity: O(n*m)
 // 시간 복잡도: O(n*m)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	target := map[string]int{"a": 1, "b": 2}
-//	source := map[string]int{"b": 3, "c": 4}
-//	result := maputil.Assign(target, source) // target is modified / target이 수정됨
+// source := map[string]int{"b": 3, "c": 4} / result := maputil.Assign(target, source) // target is modified / target이 수정됨
 //	// result = map[string]int{"a": 1, "b": 3, "c": 4}
 func Assign[K comparable, V any](target map[K]V, sources ...map[K]V) map[K]V {
 	for _, source := range sources {

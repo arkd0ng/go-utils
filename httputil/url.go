@@ -59,7 +59,8 @@ func (u *URLBuilder) ParamIf(condition bool, key, value string) *URLBuilder {
 // Build returns the final URL string.
 // Build는 최종 URL 문자열을 반환합니다.
 func (u *URLBuilder) Build() string {
-	// Build path / 경로 구축
+	// Build path
+	// 경로 구축
 	fullPath := u.baseURL
 	if len(u.path) > 0 {
 		for _, segment := range u.path {
@@ -67,7 +68,8 @@ func (u *URLBuilder) Build() string {
 		}
 	}
 
-	// Add query parameters / 쿼리 매개변수 추가
+	// Add query parameters
+	// 쿼리 매개변수 추가
 	if len(u.params) > 0 {
 		fullPath += "?" + u.params.Encode()
 	}
@@ -81,7 +83,8 @@ func (u *URLBuilder) String() string {
 	return u.Build()
 }
 
-// URL utility functions / URL 유틸리티 함수들
+// URL utility functions
+// URL 유틸리티 함수들
 
 // JoinURL joins base URL with path segments.
 // JoinURL은 기본 URL을 경로 세그먼트와 결합합니다.

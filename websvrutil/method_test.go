@@ -5,7 +5,8 @@ import (
 	"testing"
 )
 
-// TestContextIsGET tests IsGET method / IsGET 메서드 테스트
+// TestContextIsGET tests IsGET method
+// IsGET 메서드 테스트
 func TestContextIsGET(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	ctx := &Context{Request: req}
@@ -22,7 +23,8 @@ func TestContextIsGET(t *testing.T) {
 	}
 }
 
-// TestContextIsPOST tests IsPOST method / IsPOST 메서드 테스트
+// TestContextIsPOST tests IsPOST method
+// IsPOST 메서드 테스트
 func TestContextIsPOST(t *testing.T) {
 	req := httptest.NewRequest("POST", "/", nil)
 	ctx := &Context{Request: req}
@@ -39,7 +41,8 @@ func TestContextIsPOST(t *testing.T) {
 	}
 }
 
-// TestContextIsPUT tests IsPUT method / IsPUT 메서드 테스트
+// TestContextIsPUT tests IsPUT method
+// IsPUT 메서드 테스트
 func TestContextIsPUT(t *testing.T) {
 	req := httptest.NewRequest("PUT", "/", nil)
 	ctx := &Context{Request: req}
@@ -56,7 +59,8 @@ func TestContextIsPUT(t *testing.T) {
 	}
 }
 
-// TestContextIsPATCH tests IsPATCH method / IsPATCH 메서드 테스트
+// TestContextIsPATCH tests IsPATCH method
+// IsPATCH 메서드 테스트
 func TestContextIsPATCH(t *testing.T) {
 	req := httptest.NewRequest("PATCH", "/", nil)
 	ctx := &Context{Request: req}
@@ -73,7 +77,8 @@ func TestContextIsPATCH(t *testing.T) {
 	}
 }
 
-// TestContextIsDELETE tests IsDELETE method / IsDELETE 메서드 테스트
+// TestContextIsDELETE tests IsDELETE method
+// IsDELETE 메서드 테스트
 func TestContextIsDELETE(t *testing.T) {
 	req := httptest.NewRequest("DELETE", "/", nil)
 	ctx := &Context{Request: req}
@@ -90,7 +95,8 @@ func TestContextIsDELETE(t *testing.T) {
 	}
 }
 
-// TestContextIsHEAD tests IsHEAD method / IsHEAD 메서드 테스트
+// TestContextIsHEAD tests IsHEAD method
+// IsHEAD 메서드 테스트
 func TestContextIsHEAD(t *testing.T) {
 	req := httptest.NewRequest("HEAD", "/", nil)
 	ctx := &Context{Request: req}
@@ -107,7 +113,8 @@ func TestContextIsHEAD(t *testing.T) {
 	}
 }
 
-// TestContextIsOPTIONS tests IsOPTIONS method / IsOPTIONS 메서드 테스트
+// TestContextIsOPTIONS tests IsOPTIONS method
+// IsOPTIONS 메서드 테스트
 func TestContextIsOPTIONS(t *testing.T) {
 	req := httptest.NewRequest("OPTIONS", "/", nil)
 	ctx := &Context{Request: req}
@@ -124,7 +131,8 @@ func TestContextIsOPTIONS(t *testing.T) {
 	}
 }
 
-// TestContextIsAjax tests IsAjax method / IsAjax 메서드 테스트
+// TestContextIsAjax tests IsAjax method
+// IsAjax 메서드 테스트
 func TestContextIsAjax(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("X-Requested-With", "XMLHttpRequest")
@@ -142,7 +150,8 @@ func TestContextIsAjax(t *testing.T) {
 	}
 }
 
-// TestContextIsWebSocket tests IsWebSocket method / IsWebSocket 메서드 테스트
+// TestContextIsWebSocket tests IsWebSocket method
+// IsWebSocket 메서드 테스트
 func TestContextIsWebSocket(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Upgrade", "websocket")
@@ -160,7 +169,8 @@ func TestContextIsWebSocket(t *testing.T) {
 	}
 }
 
-// TestContextAcceptsJSON tests AcceptsJSON method / AcceptsJSON 메서드 테스트
+// TestContextAcceptsJSON tests AcceptsJSON method
+// AcceptsJSON 메서드 테스트
 func TestContextAcceptsJSON(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -190,7 +200,8 @@ func TestContextAcceptsJSON(t *testing.T) {
 	}
 }
 
-// TestContextAcceptsHTML tests AcceptsHTML method / AcceptsHTML 메서드 테스트
+// TestContextAcceptsHTML tests AcceptsHTML method
+// AcceptsHTML 메서드 테스트
 func TestContextAcceptsHTML(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -220,7 +231,8 @@ func TestContextAcceptsHTML(t *testing.T) {
 	}
 }
 
-// TestContextAcceptsXML tests AcceptsXML method / AcceptsXML 메서드 테스트
+// TestContextAcceptsXML tests AcceptsXML method
+// AcceptsXML 메서드 테스트
 func TestContextAcceptsXML(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -251,7 +263,8 @@ func TestContextAcceptsXML(t *testing.T) {
 	}
 }
 
-// TestContextContainsContentType tests containsContentType method / containsContentType 메서드 테스트
+// TestContextContainsContentType tests containsContentType method
+// containsContentType 메서드 테스트
 func TestContextContainsContentType(t *testing.T) {
 	ctx := &Context{}
 
@@ -276,7 +289,8 @@ func TestContextContainsContentType(t *testing.T) {
 	}
 }
 
-// BenchmarkIsGET benchmarks IsGET method / IsGET 메서드 벤치마크
+// BenchmarkIsGET benchmarks IsGET method
+// IsGET 메서드 벤치마크
 func BenchmarkIsGET(b *testing.B) {
 	req := httptest.NewRequest("GET", "/", nil)
 	ctx := &Context{Request: req}
@@ -287,7 +301,8 @@ func BenchmarkIsGET(b *testing.B) {
 	}
 }
 
-// BenchmarkIsAjax benchmarks IsAjax method / IsAjax 메서드 벤치마크
+// BenchmarkIsAjax benchmarks IsAjax method
+// IsAjax 메서드 벤치마크
 func BenchmarkIsAjax(b *testing.B) {
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("X-Requested-With", "XMLHttpRequest")
@@ -299,7 +314,8 @@ func BenchmarkIsAjax(b *testing.B) {
 	}
 }
 
-// BenchmarkAcceptsJSON benchmarks AcceptsJSON method / AcceptsJSON 메서드 벤치마크
+// BenchmarkAcceptsJSON benchmarks AcceptsJSON method
+// AcceptsJSON 메서드 벤치마크
 func BenchmarkAcceptsJSON(b *testing.B) {
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept", "application/json")

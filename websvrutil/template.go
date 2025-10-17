@@ -55,7 +55,8 @@ type TemplateEngine struct {
 // NewTemplateEngine creates a new template engine.
 // NewTemplateEngine은 새로운 템플릿 엔진을 생성합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	engine := NewTemplateEngine("views")
 func NewTemplateEngine(dir string) *TemplateEngine {
@@ -150,7 +151,8 @@ func (e *TemplateEngine) addBuiltinFuncs() {
 // SetDelimiters sets custom template delimiters.
 // SetDelimiters는 커스텀 템플릿 구분자를 설정합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	engine.SetDelimiters("[[", "]]")
 func (e *TemplateEngine) SetDelimiters(left, right string) {
@@ -162,7 +164,8 @@ func (e *TemplateEngine) SetDelimiters(left, right string) {
 // AddFunc adds a custom template function.
 // AddFunc는 커스텀 템플릿 함수를 추가합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	engine.AddFunc("upper", strings.ToUpper)
 func (e *TemplateEngine) AddFunc(name string, fn interface{}) {
@@ -174,7 +177,8 @@ func (e *TemplateEngine) AddFunc(name string, fn interface{}) {
 // AddFuncs adds multiple custom template functions.
 // AddFuncs는 여러 커스텀 템플릿 함수를 추가합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	engine.AddFuncs(template.FuncMap{
 //	    "upper": strings.ToUpper,
@@ -191,7 +195,8 @@ func (e *TemplateEngine) AddFuncs(funcs template.FuncMap) {
 // Load loads a single template file.
 // Load는 단일 템플릿 파일을 로드합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := engine.Load("index.html")
 func (e *TemplateEngine) Load(name string) error {
@@ -239,7 +244,8 @@ func (e *TemplateEngine) Load(name string) error {
 // LoadGlob loads all templates matching the pattern.
 // LoadGlob는 패턴과 일치하는 모든 템플릿을 로드합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := engine.LoadGlob("*.html")
 func (e *TemplateEngine) LoadGlob(pattern string) error {
@@ -307,7 +313,8 @@ func (e *TemplateEngine) LoadGlob(pattern string) error {
 // LoadAll loads all templates from the directory recursively.
 // LoadAll은 디렉토리에서 모든 템플릿을 재귀적으로 로드합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := engine.LoadAll()
 func (e *TemplateEngine) LoadAll() error {
@@ -383,7 +390,8 @@ func (e *TemplateEngine) LoadAll() error {
 // Render renders a template with data to the writer.
 // Render는 템플릿을 데이터와 함께 writer에 렌더링합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := engine.Render(w, "index.html", data)
 func (e *TemplateEngine) Render(w io.Writer, name string, data interface{}) error {
@@ -431,7 +439,8 @@ func (e *TemplateEngine) Clear() {
 // SetLayoutDir sets the layout templates directory.
 // SetLayoutDir는 레이아웃 템플릿 디렉토리를 설정합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	engine.SetLayoutDir("views/layouts")
 func (e *TemplateEngine) SetLayoutDir(dir string) {
@@ -443,7 +452,8 @@ func (e *TemplateEngine) SetLayoutDir(dir string) {
 // LoadLayout loads a layout template.
 // LoadLayout는 레이아웃 템플릿을 로드합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := engine.LoadLayout("base.html")
 func (e *TemplateEngine) LoadLayout(name string) error {
@@ -491,7 +501,8 @@ func (e *TemplateEngine) LoadLayout(name string) error {
 // LoadAllLayouts loads all layout templates from the layout directory.
 // LoadAllLayouts는 레이아웃 디렉토리에서 모든 레이아웃 템플릿을 로드합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := engine.LoadAllLayouts()
 func (e *TemplateEngine) LoadAllLayouts() error {
@@ -569,7 +580,8 @@ func (e *TemplateEngine) LoadAllLayouts() error {
 // RenderWithLayout renders a template with a layout.
 // RenderWithLayout는 레이아웃과 함께 템플릿을 렌더링합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := engine.RenderWithLayout(w, "base.html", "index.html", data)
 func (e *TemplateEngine) RenderWithLayout(w io.Writer, layoutName, templateName string, data interface{}) error {
@@ -597,8 +609,7 @@ func (e *TemplateEngine) RenderWithLayout(w io.Writer, layoutName, templateName 
 		return fmt.Errorf("failed to clone layout: %w", err)
 	}
 
-	// Add content template as "content" to the layout
-	// 콘텐츠 템플릿을 "content"로 레이아웃에 추가
+	// Add content template as "content" to the layout / 콘텐츠 템플릿을 "content"로 레이아웃에 추가
 	_, err = layoutClone.AddParseTree("content", content.Tree)
 	if err != nil {
 		return fmt.Errorf("failed to add content to layout: %w", err)
@@ -639,7 +650,8 @@ func (e *TemplateEngine) ListLayouts() []string {
 // 이 기능은 개발 중에 유용합니다. 템플릿 디렉토리를 감시하고
 // 수정되면 자동으로 템플릿을 다시 로드합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	engine.EnableAutoReload()
 func (e *TemplateEngine) EnableAutoReload() error {
@@ -724,7 +736,8 @@ func (e *TemplateEngine) watchTemplates() {
 							lastMod[path] = info.ModTime()
 						}
 					} else {
-						// New file / 새 파일
+						// New file
+						// 새 파일
 						changed = true
 						lastMod[path] = info.ModTime()
 					}
@@ -746,7 +759,8 @@ func (e *TemplateEngine) watchTemplates() {
 								lastMod[path] = info.ModTime()
 							}
 						} else {
-							// New file / 새 파일
+							// New file
+							// 새 파일
 							changed = true
 							lastMod[path] = info.ModTime()
 						}

@@ -12,30 +12,38 @@ import (
 )
 
 func main() {
-	// Setup log file with backup management / 백업 관리와 함께 로그 파일 설정
+	// Setup log file with backup management
+	// 백업 관리와 함께 로그 파일 설정
 	logFilePath := "logs/random-example.log"
 
-	// Check if previous log file exists / 이전 로그 파일 존재 여부 확인
+	// Check if previous log file exists
+	// 이전 로그 파일 존재 여부 확인
 	if fileutil.Exists(logFilePath) {
-		// Get modification time of existing log file / 기존 로그 파일의 수정 시간 가져오기
+		// Get modification time of existing log file
+		// 기존 로그 파일의 수정 시간 가져오기
 		modTime, err := fileutil.ModTime(logFilePath)
 		if err == nil {
-			// Create backup filename with timestamp / 타임스탬프와 함께 백업 파일명 생성
+			// Create backup filename with timestamp
+			// 타임스탬프와 함께 백업 파일명 생성
 			backupName := fmt.Sprintf("logs/random-example-%s.log", modTime.Format("20060102-150405"))
 
-			// Backup existing log file / 기존 로그 파일 백업
+			// Backup existing log file
+			// 기존 로그 파일 백업
 			if err := fileutil.CopyFile(logFilePath, backupName); err == nil {
 				fmt.Printf("✅ Backed up previous log to: %s\n", backupName)
-				// Delete original log file to prevent content duplication / 내용 중복 방지를 위해 원본 로그 파일 삭제
+				// Delete original log file to prevent content duplication
+				// 내용 중복 방지를 위해 원본 로그 파일 삭제
 				fileutil.DeleteFile(logFilePath)
 			}
 		}
 
-		// Cleanup old backup files - keep only 5 most recent / 오래된 백업 파일 정리 - 최근 5개만 유지
+		// Cleanup old backup files - keep only 5 most recent
+		// 오래된 백업 파일 정리 - 최근 5개만 유지
 		backupPattern := "logs/random-example-*.log"
 		backupFiles, err := filepath.Glob(backupPattern)
 		if err == nil && len(backupFiles) > 5 {
-			// Sort by modification time / 수정 시간으로 정렬
+			// Sort by modification time
+			// 수정 시간으로 정렬
 			type fileInfo struct {
 				path    string
 				modTime time.Time
@@ -47,7 +55,8 @@ func main() {
 				}
 			}
 
-			// Sort oldest first / 가장 오래된 것부터 정렬
+			// Sort oldest first
+			// 가장 오래된 것부터 정렬
 			for i := 0; i < len(files)-1; i++ {
 				for j := i + 1; j < len(files); j++ {
 					if files[i].modTime.After(files[j].modTime) {
@@ -56,7 +65,8 @@ func main() {
 				}
 			}
 
-			// Delete oldest files to keep only 5 / 5개만 유지하도록 가장 오래된 파일 삭제
+			// Delete oldest files to keep only 5
+			// 5개만 유지하도록 가장 오래된 파일 삭제
 			for i := 0; i < len(files)-5; i++ {
 				fileutil.DeleteFile(files[i].path)
 				fmt.Printf("🗑️  Deleted old backup: %s\n", files[i].path)
@@ -64,7 +74,8 @@ func main() {
 		}
 	}
 
-	// Initialize logger with fixed filename / 고정 파일명으로 로거 초기화
+	// Initialize logger with fixed filename
+	// 고정 파일명으로 로거 초기화
 	logger, err := logging.New(
 		logging.WithFilePath(logFilePath),
 		logging.WithLevel(logging.DEBUG),
@@ -76,7 +87,8 @@ func main() {
 	}
 	defer logger.Close()
 
-	// Print banner / 배너 출력
+	// Print banner
+	// 배너 출력
 	logger.Banner("Random String Package Examples", "go-utils/random")
 
 	logger.Info("╔════════════════════════════════════════════════════════════════════════════╗")

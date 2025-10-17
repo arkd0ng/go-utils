@@ -5,7 +5,8 @@ import "time"
 // AgeInYears calculates age in years from birth date.
 // AgeInYears는 생년월일로부터 나이를 년 단위로 계산합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	birthDate := time.Date(1990, 5, 15, 0, 0, 0, 0, time.UTC)
 //	age := timeutil.AgeInYears(birthDate) // 35
@@ -28,7 +29,8 @@ func AgeInYears(birthDate time.Time) int {
 // AgeInMonths calculates age in months from birth date.
 // AgeInMonths는 생년월일로부터 나이를 월 단위로 계산합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	months := timeutil.AgeInMonths(birthDate)
 func AgeInMonths(birthDate time.Time) int {
@@ -50,7 +52,8 @@ func AgeInMonths(birthDate time.Time) int {
 // AgeInDays calculates age in days from birth date.
 // AgeInDays는 생년월일로부터 나이를 일 단위로 계산합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	days := timeutil.AgeInDays(birthDate)
 func AgeInDays(birthDate time.Time) int {
@@ -68,7 +71,8 @@ func AgeInDays(birthDate time.Time) int {
 // Age calculates detailed age (years, months, days) from birth date.
 // Age는 생년월일로부터 상세 나이 (년, 월, 일)를 계산합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	age := timeutil.Age(birthDate)
 //	fmt.Printf("%d years %d months %d days\n", age.Years, age.Months, age.Days)
@@ -80,16 +84,19 @@ func Age(birthDate time.Time) *AgeDetail {
 	months := int(now.Month()) - int(birthDate.Month())
 	days := now.Day() - birthDate.Day()
 
-	// Adjust days / 일 조정
+	// Adjust days
+	// 일 조정
 	if days < 0 {
 		months--
-		// Get days in previous month / 이전 달의 일 수 가져오기
+		// Get days in previous month
+		// 이전 달의 일 수 가져오기
 		prevMonth := now.AddDate(0, -1, 0)
 		daysInPrevMonth := time.Date(prevMonth.Year(), prevMonth.Month()+1, 0, 0, 0, 0, 0, defaultLocation).Day()
 		days += daysInPrevMonth
 	}
 
-	// Adjust months / 월 조정
+	// Adjust months
+	// 월 조정
 	if months < 0 {
 		years--
 		months += MonthsPerYear

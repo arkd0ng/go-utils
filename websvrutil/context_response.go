@@ -8,7 +8,8 @@ import (
 )
 
 // ============================================================================
-// Response Writing / 응답 작성
+// Response Writing
+// 응답 작성
 // ============================================================================
 
 // Status sets the HTTP response status code.
@@ -30,7 +31,8 @@ func (c *Context) WriteString(s string) (int, error) {
 }
 
 // ============================================================================
-// JSON Responses / JSON 응답
+// JSON Responses
+// JSON 응답
 // ============================================================================
 
 // JSON sends a JSON response with the given status code and data.
@@ -39,7 +41,8 @@ func (c *Context) WriteString(s string) (int, error) {
 // The data will be marshaled to JSON and sent with Content-Type: application/json.
 // 데이터는 JSON으로 마샬링되어 Content-Type: application/json으로 전송됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.JSON(200, map[string]string{"message": "success"})
 func (c *Context) JSON(code int, data interface{}) error {
@@ -56,7 +59,8 @@ func (c *Context) JSON(code int, data interface{}) error {
 // This is useful for debugging or development. For production, use JSON() instead.
 // 디버깅이나 개발에 유용합니다. 프로덕션에서는 JSON()을 사용하세요.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.JSONIndent(200, data, "", "  ")
 func (c *Context) JSONIndent(code int, data interface{}, prefix, indent string) error {
@@ -74,7 +78,8 @@ func (c *Context) JSONIndent(code int, data interface{}, prefix, indent string) 
 // This is a convenience wrapper around JSONIndent with default indentation.
 // 기본 들여쓰기가 있는 JSONIndent의 편의 래퍼입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.JSONPretty(200, data)
 func (c *Context) JSONPretty(code int, data interface{}) error {
@@ -82,13 +87,15 @@ func (c *Context) JSONPretty(code int, data interface{}) error {
 }
 
 // ============================================================================
-// HTML Responses / HTML 응답
+// HTML Responses
+// HTML 응답
 // ============================================================================
 
 // HTML sends an HTML response with the given status code and HTML content.
 // HTML은 주어진 상태 코드와 HTML 콘텐츠로 HTML 응답을 전송합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.HTML(200, "<h1>Hello World</h1>")
 func (c *Context) HTML(code int, html string) error {
@@ -104,7 +111,8 @@ func (c *Context) HTML(code int, html string) error {
 // The template is parsed and executed with the provided data.
 // 템플릿은 제공된 데이터로 파싱되고 실행됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	tmpl := "<h1>Hello {{.Name}}</h1>"
 //	ctx.HTMLTemplate(200, tmpl, map[string]string{"Name": "World"})
@@ -121,13 +129,15 @@ func (c *Context) HTMLTemplate(code int, tmpl string, data interface{}) error {
 }
 
 // ============================================================================
-// Text Responses / 텍스트 응답
+// Text Responses
+// 텍스트 응답
 // ============================================================================
 
 // Text sends a plain text response.
 // Text는 일반 텍스트 응답을 전송합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.Text(200, "Hello World")
 func (c *Context) Text(code int, text string) error {
@@ -143,7 +153,8 @@ func (c *Context) Text(code int, text string) error {
 // This uses fmt.Sprintf for formatting.
 // fmt.Sprintf를 사용하여 형식화합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.Textf(200, "Hello %s", "World")
 func (c *Context) Textf(code int, format string, args ...interface{}) error {
@@ -152,13 +163,15 @@ func (c *Context) Textf(code int, format string, args ...interface{}) error {
 }
 
 // ============================================================================
-// XML Responses / XML 응답
+// XML Responses
+// XML 응답
 // ============================================================================
 
 // XML sends an XML response.
 // XML은 XML 응답을 전송합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.XML(200, "<root><message>success</message></root>")
 func (c *Context) XML(code int, xml string) error {
@@ -169,7 +182,8 @@ func (c *Context) XML(code int, xml string) error {
 }
 
 // ============================================================================
-// Template Rendering / 템플릿 렌더링
+// Template Rendering
+// 템플릿 렌더링
 // ============================================================================
 
 // Render renders a template file with the given data.
@@ -178,7 +192,8 @@ func (c *Context) XML(code int, xml string) error {
 // The template file is loaded from the template engine.
 // 템플릿 파일은 템플릿 엔진에서 로드됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.Render(200, "index.html", map[string]string{"Title": "Home"})
 func (c *Context) Render(code int, name string, data interface{}) error {
@@ -209,7 +224,8 @@ func (c *Context) Render(code int, name string, data interface{}) error {
 // RenderWithLayout renders a template with a layout.
 // RenderWithLayout는 레이아웃과 함께 템플릿을 렌더링합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.RenderWithLayout(200, "base.html", "index.html", map[string]string{"Title": "Home"})
 func (c *Context) RenderWithLayout(code int, layoutName, templateName string, data interface{}) error {
@@ -238,7 +254,8 @@ func (c *Context) RenderWithLayout(code int, layoutName, templateName string, da
 }
 
 // ============================================================================
-// Redirects / 리다이렉트
+// Redirects
+// 리다이렉트
 // ============================================================================
 
 // Redirect sends an HTTP redirect response.
@@ -258,7 +275,8 @@ func (c *Context) RenderWithLayout(code int, layoutName, templateName string, da
 // - 307: 임시 리다이렉트
 // - 308: 영구 리다이렉트
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.Redirect(302, "/new-url")
 func (c *Context) Redirect(code int, url string) {
@@ -271,7 +289,8 @@ func (c *Context) Redirect(code int, url string) {
 // This is commonly used for successful DELETE requests or when no response body is needed.
 // DELETE 요청이 성공했거나 응답 본문이 필요없을 때 일반적으로 사용됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.NoContent()
 func (c *Context) NoContent() {
@@ -284,7 +303,8 @@ func (c *Context) NoContent() {
 // This is a convenience method for sending JSON error responses.
 // JSON 에러 응답 전송을 위한 편의 메서드입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx.Error(400, "Invalid input")
 func (c *Context) Error(code int, message string) error {

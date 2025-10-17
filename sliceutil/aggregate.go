@@ -12,7 +12,8 @@ import (
 // Reduce applies a reducer function to accumulate a single value from the slice.
 // Reduce는 슬라이스에서 단일 값을 누적하기 위해 reducer 함수를 적용합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	sum := sliceutil.Reduce(numbers, 0, func(acc, n int) int {
@@ -37,7 +38,8 @@ func Reduce[T any, R any](slice []T, initial R, reducer func(R, T) R) R {
 // Similar to Reduce, but processes elements from right to left.
 // Reduce와 유사하지만 요소를 오른쪽에서 왼쪽으로 처리합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	result := sliceutil.ReduceRight(numbers, 0, func(acc, n int) int {
@@ -49,7 +51,8 @@ func Reduce[T any, R any](slice []T, initial R, reducer func(R, T) R) R {
 //	    return acc + w
 //	}) // "worldhello" (reversed compared to Reduce)
 //
-//	// Useful for operations where order matters / 순서가 중요한 작업에 유용
+// // Useful for operations where order matters
+// 순서가 중요한 작업에 유용
 //	nested := [][]int{{1, 2}, {3, 4}, {5}}
 //	flattened := sliceutil.ReduceRight(nested, []int{}, func(acc, slice []int) []int {
 //	    return append(slice, acc...)
@@ -65,7 +68,8 @@ func ReduceRight[T any, R any](slice []T, initial R, reducer func(R, T) R) R {
 // Sum returns the sum of all elements in the slice.
 // Sum은 슬라이스의 모든 요소의 합을 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	sum := sliceutil.Sum(numbers) // 15
@@ -85,7 +89,8 @@ func Sum[T constraints.Integer | constraints.Float](slice []T) T {
 // Min은 슬라이스의 최소 요소를 반환합니다.
 // 슬라이스가 비어있으면 에러를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{3, 1, 4, 1, 5}
 //	min, _ := sliceutil.Min(numbers) // 1
@@ -111,7 +116,8 @@ func Min[T constraints.Ordered](slice []T) (T, error) {
 // Max는 슬라이스의 최대 요소를 반환합니다.
 // 슬라이스가 비어있으면 에러를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{3, 1, 4, 1, 5}
 //	max, _ := sliceutil.Max(numbers) // 5
@@ -137,7 +143,8 @@ func Max[T constraints.Ordered](slice []T) (T, error) {
 // Average는 슬라이스의 모든 요소의 평균을 반환합니다.
 // 슬라이스가 비어있으면 0을 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5}
 //	avg := sliceutil.Average(numbers) // 3.0
@@ -155,7 +162,8 @@ func Average[T constraints.Integer | constraints.Float](slice []T) float64 {
 // GroupBy groups elements by a key function and returns a map.
 // GroupBy는 키 함수로 요소를 그룹화하고 맵을 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type Person struct {
 //	    Name string
@@ -193,7 +201,8 @@ func GroupBy[T any, K comparable](slice []T, keyFunc func(T) K) map[K][]T {
 // 첫 번째 슬라이스는 조건을 만족하는 요소를 포함합니다.
 // 두 번째 슬라이스는 조건을 만족하지 않는 요소를 포함합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	numbers := []int{1, 2, 3, 4, 5, 6}
 //	evens, odds := sliceutil.Partition(numbers, func(n int) bool {
@@ -223,7 +232,8 @@ func Partition[T any](slice []T, predicate func(T) bool) ([]T, []T) {
 // Similar to GroupBy, but returns counts instead of grouped elements.
 // GroupBy와 유사하지만 그룹화된 요소 대신 개수를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type Person struct {
 //	    Name string
@@ -259,7 +269,8 @@ func CountBy[T any, K comparable](slice []T, keyFunc func(T) K) map[K]int {
 // MinBy는 keyFunc으로 추출한 키가 최소인 요소를 반환합니다.
 // 슬라이스가 비어있으면 에러를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type Person struct {
 //	    Name string
@@ -295,7 +306,8 @@ func MinBy[T any, K constraints.Ordered](slice []T, keyFunc func(T) K) (T, error
 // MaxBy는 keyFunc으로 추출한 키가 최대인 요소를 반환합니다.
 // 슬라이스가 비어있으면 에러를 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	type Person struct {
 //	    Name string

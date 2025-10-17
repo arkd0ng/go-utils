@@ -11,42 +11,51 @@ import (
 // config holds all configuration options for the MySQL client
 // config는 MySQL 클라이언트의 모든 설정 옵션을 보유합니다
 type config struct {
-	// Basic connection / 기본 연결
+	// Basic connection
+	// 기본 연결
 	dsn string
 
-	// Connection pool settings / 연결 풀 설정
+	// Connection pool settings
+	// 연결 풀 설정
 	maxOpenConns    int
 	maxIdleConns    int
 	connMaxLifetime time.Duration
 	connMaxIdleTime time.Duration
 
-	// Credential rotation (optional) / 자격 증명 순환 (선택)
+	// Credential rotation (optional)
+	// 자격 증명 순환 (선택)
 	credRefreshFunc  CredentialRefreshFunc // User-provided function / 사용자 제공 함수
 	poolCount        int                   // Number of connection pools / 연결 풀 개수
 	rotationInterval time.Duration         // Rotation interval / 순환 주기
 
-	// Timeout settings / 타임아웃 설정
+	// Timeout settings
+	// 타임아웃 설정
 	connectTimeout time.Duration
 	queryTimeout   time.Duration
 
-	// Retry settings / 재시도 설정
+	// Retry settings
+	// 재시도 설정
 	maxRetries int
 	retryDelay time.Duration
 
-	// Logging settings / 로깅 설정
+	// Logging settings
+	// 로깅 설정
 	logger             *logging.Logger
 	logQueries         bool
 	logSlowQueries     bool
 	slowQueryThreshold time.Duration
 
-	// Health check settings / 헬스 체크 설정
+	// Health check settings
+	// 헬스 체크 설정
 	enableHealthCheck   bool
 	healthCheckInterval time.Duration
 
-	// Query statistics settings / 쿼리 통계 설정
+	// Query statistics settings
+	// 쿼리 통계 설정
 	enableStats bool
 
-	// Security settings / 보안 설정
+	// Security settings
+	// 보안 설정
 	enableTLS bool
 	tlsConfig *tls.Config
 }
@@ -55,7 +64,8 @@ type config struct {
 // defaultConfig는 기본 설정을 반환합니다
 func defaultConfig() *config {
 	return &config{
-		// Connection pool defaults / 연결 풀 기본값
+		// Connection pool defaults
+		// 연결 풀 기본값
 		maxOpenConns:    25,                // 25 connections / 25개 연결
 		maxIdleConns:    10,                // 10 idle connections / 10개 유휴 연결
 		connMaxLifetime: 5 * time.Minute,   // 5 minutes / 5분
@@ -63,27 +73,33 @@ func defaultConfig() *config {
 		poolCount:       1,                 // Single pool by default / 기본적으로 단일 풀
 		rotationInterval: 1 * time.Hour,    // 1 hour default rotation / 1시간 기본 순환
 
-		// Timeout defaults / 타임아웃 기본값
+		// Timeout defaults
+		// 타임아웃 기본값
 		connectTimeout: 10 * time.Second, // 10 seconds / 10초
 		queryTimeout:   30 * time.Second, // 30 seconds / 30초
 
-		// Retry defaults / 재시도 기본값
+		// Retry defaults
+		// 재시도 기본값
 		maxRetries: 3,                      // 3 retries / 3번 재시도
 		retryDelay: 100 * time.Millisecond, // 100ms between retries / 재시도 간 100ms
 
-		// Logging defaults / 로깅 기본값
+		// Logging defaults
+		// 로깅 기본값
 		logQueries:         false,          // Don't log all queries by default / 기본적으로 모든 쿼리 로깅 안 함
 		logSlowQueries:     true,           // Log slow queries / 느린 쿼리 로깅
 		slowQueryThreshold: 1 * time.Second, // Queries > 1s are slow / 1초 이상은 느린 쿼리
 
-		// Health check defaults / 헬스 체크 기본값
+		// Health check defaults
+		// 헬스 체크 기본값
 		enableHealthCheck:   true,           // Enable by default / 기본적으로 활성화
 		healthCheckInterval: 30 * time.Second, // Every 30 seconds / 30초마다
 
-		// Query statistics defaults / 쿼리 통계 기본값
+		// Query statistics defaults
+		// 쿼리 통계 기본값
 		enableStats: false, // Disabled by default for performance / 성능을 위해 기본적으로 비활성화
 
-		// Security defaults / 보안 기본값
+		// Security defaults
+		// 보안 기본값
 		enableTLS: false,
 		tlsConfig: nil,
 	}

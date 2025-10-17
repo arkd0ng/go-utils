@@ -5,7 +5,8 @@ import "strings"
 // StringBuilder provides a fluent API for chaining string operations.
 // StringBuilder는 문자열 작업을 체이닝하기 위한 fluent API를 제공합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	result := stringutil.NewBuilder().
 //		Append("user profile data").
@@ -20,7 +21,8 @@ type StringBuilder struct {
 // NewBuilder creates a new StringBuilder.
 // NewBuilder는 새 StringBuilder를 생성합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb := stringutil.NewBuilder()
 func NewBuilder() *StringBuilder {
@@ -30,7 +32,8 @@ func NewBuilder() *StringBuilder {
 // NewBuilderWithString creates a new StringBuilder with an initial string.
 // NewBuilderWithString은 초기 문자열로 새 StringBuilder를 생성합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb := stringutil.NewBuilderWithString("hello")
 func NewBuilderWithString(s string) *StringBuilder {
@@ -40,7 +43,8 @@ func NewBuilderWithString(s string) *StringBuilder {
 // Append appends a string to the builder.
 // Append는 빌더에 문자열을 추가합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("hello").Append(" world")
 func (sb *StringBuilder) Append(s string) *StringBuilder {
@@ -51,7 +55,8 @@ func (sb *StringBuilder) Append(s string) *StringBuilder {
 // AppendLine appends a string followed by a newline.
 // AppendLine은 문자열 뒤에 줄바꿈을 추가합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.AppendLine("line1").AppendLine("line2")
 func (sb *StringBuilder) AppendLine(s string) *StringBuilder {
@@ -62,7 +67,8 @@ func (sb *StringBuilder) AppendLine(s string) *StringBuilder {
 // ToSnakeCase converts the current value to snake_case.
 // ToSnakeCase는 현재 값을 snake_case로 변환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("UserProfile").ToSnakeCase().Build()  // "user_profile"
 func (sb *StringBuilder) ToSnakeCase() *StringBuilder {
@@ -73,7 +79,8 @@ func (sb *StringBuilder) ToSnakeCase() *StringBuilder {
 // ToCamelCase converts the current value to camelCase.
 // ToCamelCase는 현재 값을 camelCase로 변환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("user_profile").ToCamelCase().Build()  // "userProfile"
 func (sb *StringBuilder) ToCamelCase() *StringBuilder {
@@ -84,7 +91,8 @@ func (sb *StringBuilder) ToCamelCase() *StringBuilder {
 // ToKebabCase converts the current value to kebab-case.
 // ToKebabCase는 현재 값을 kebab-case로 변환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("UserProfile").ToKebabCase().Build()  // "user-profile"
 func (sb *StringBuilder) ToKebabCase() *StringBuilder {
@@ -95,7 +103,8 @@ func (sb *StringBuilder) ToKebabCase() *StringBuilder {
 // ToPascalCase converts the current value to PascalCase.
 // ToPascalCase는 현재 값을 PascalCase로 변환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("user_profile").ToPascalCase().Build()  // "UserProfile"
 func (sb *StringBuilder) ToPascalCase() *StringBuilder {
@@ -106,7 +115,8 @@ func (sb *StringBuilder) ToPascalCase() *StringBuilder {
 // ToTitle converts the current value to Title Case.
 // ToTitle은 현재 값을 Title Case로 변환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("hello world").ToTitle().Build()  // "Hello World"
 func (sb *StringBuilder) ToTitle() *StringBuilder {
@@ -117,7 +127,8 @@ func (sb *StringBuilder) ToTitle() *StringBuilder {
 // ToUpper converts the current value to uppercase.
 // ToUpper는 현재 값을 대문자로 변환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("hello").ToUpper().Build()  // "HELLO"
 func (sb *StringBuilder) ToUpper() *StringBuilder {
@@ -128,7 +139,8 @@ func (sb *StringBuilder) ToUpper() *StringBuilder {
 // ToLower converts the current value to lowercase.
 // ToLower는 현재 값을 소문자로 변환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("HELLO").ToLower().Build()  // "hello"
 func (sb *StringBuilder) ToLower() *StringBuilder {
@@ -136,10 +148,10 @@ func (sb *StringBuilder) ToLower() *StringBuilder {
 	return sb
 }
 
-// Truncate truncates the current value to the specified length and appends "...".
-// Truncate는 현재 값을 지정된 길이로 자르고 "..."를 추가합니다.
+// Truncate truncates the current value to the specified length and appends "...". / Truncate는 현재 값을 지정된 길이로 자르고 "..."를 추가합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("Hello World").Truncate(8).Build()  // "Hello..."
 func (sb *StringBuilder) Truncate(length int) *StringBuilder {
@@ -150,7 +162,8 @@ func (sb *StringBuilder) Truncate(length int) *StringBuilder {
 // TruncateWithSuffix truncates the current value with a custom suffix.
 // TruncateWithSuffix는 현재 값을 사용자 정의 suffix로 자릅니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("Hello World").TruncateWithSuffix(8, "…").Build()  // "Hello Wo…"
 func (sb *StringBuilder) TruncateWithSuffix(length int, suffix string) *StringBuilder {
@@ -161,7 +174,8 @@ func (sb *StringBuilder) TruncateWithSuffix(length int, suffix string) *StringBu
 // Reverse reverses the current value (Unicode-safe).
 // Reverse는 현재 값을 뒤집습니다 (유니코드 안전).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("hello").Reverse().Build()  // "olleh"
 func (sb *StringBuilder) Reverse() *StringBuilder {
@@ -172,7 +186,8 @@ func (sb *StringBuilder) Reverse() *StringBuilder {
 // Capitalize capitalizes each word in the current value.
 // Capitalize는 현재 값의 각 단어를 대문자로 시작하게 합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("hello world").Capitalize().Build()  // "Hello World"
 func (sb *StringBuilder) Capitalize() *StringBuilder {
@@ -183,7 +198,8 @@ func (sb *StringBuilder) Capitalize() *StringBuilder {
 // CapitalizeFirst capitalizes only the first letter.
 // CapitalizeFirst는 첫 글자만 대문자로 변환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("hello world").CapitalizeFirst().Build()  // "Hello world"
 func (sb *StringBuilder) CapitalizeFirst() *StringBuilder {
@@ -194,7 +210,8 @@ func (sb *StringBuilder) CapitalizeFirst() *StringBuilder {
 // Clean trims and deduplicates spaces.
 // Clean은 공백을 제거하고 중복 공백을 정리합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("  hello   world  ").Clean().Build()  // "hello world"
 func (sb *StringBuilder) Clean() *StringBuilder {
@@ -205,7 +222,8 @@ func (sb *StringBuilder) Clean() *StringBuilder {
 // RemoveSpaces removes all whitespace.
 // RemoveSpaces는 모든 공백을 제거합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("hello world").RemoveSpaces().Build()  // "helloworld"
 func (sb *StringBuilder) RemoveSpaces() *StringBuilder {
@@ -216,7 +234,8 @@ func (sb *StringBuilder) RemoveSpaces() *StringBuilder {
 // RemoveSpecialChars removes all special characters (keeps only alphanumeric).
 // RemoveSpecialChars는 모든 특수 문자를 제거합니다 (영숫자만 유지).
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("hello@world!").RemoveSpecialChars().Build()  // "helloworld"
 func (sb *StringBuilder) RemoveSpecialChars() *StringBuilder {
@@ -227,7 +246,8 @@ func (sb *StringBuilder) RemoveSpecialChars() *StringBuilder {
 // Repeat repeats the current value count times.
 // Repeat는 현재 값을 count번 반복합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("ab").Repeat(3).Build()  // "ababab"
 func (sb *StringBuilder) Repeat(count int) *StringBuilder {
@@ -238,7 +258,8 @@ func (sb *StringBuilder) Repeat(count int) *StringBuilder {
 // Slugify converts the current value to a URL-friendly slug.
 // Slugify는 현재 값을 URL 친화적인 slug로 변환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("Hello World!").Slugify().Build()  // "hello-world"
 func (sb *StringBuilder) Slugify() *StringBuilder {
@@ -249,7 +270,8 @@ func (sb *StringBuilder) Slugify() *StringBuilder {
 // Quote wraps the current value in double quotes.
 // Quote는 현재 값을 큰따옴표로 감쌉니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("hello").Quote().Build()  // "\"hello\""
 func (sb *StringBuilder) Quote() *StringBuilder {
@@ -260,7 +282,8 @@ func (sb *StringBuilder) Quote() *StringBuilder {
 // Unquote removes surrounding quotes.
 // Unquote는 주변 따옴표를 제거합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("\"hello\"").Unquote().Build()  // "hello"
 func (sb *StringBuilder) Unquote() *StringBuilder {
@@ -271,7 +294,8 @@ func (sb *StringBuilder) Unquote() *StringBuilder {
 // PadLeft pads the current value on the left side to reach the specified length.
 // PadLeft는 지정된 길이에 도달하도록 현재 값의 왼쪽에 패딩을 추가합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("5").PadLeft(3, "0").Build()  // "005"
 func (sb *StringBuilder) PadLeft(length int, pad string) *StringBuilder {
@@ -282,7 +306,8 @@ func (sb *StringBuilder) PadLeft(length int, pad string) *StringBuilder {
 // PadRight pads the current value on the right side to reach the specified length.
 // PadRight는 지정된 길이에 도달하도록 현재 값의 오른쪽에 패딩을 추가합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("5").PadRight(3, "0").Build()  // "500"
 func (sb *StringBuilder) PadRight(length int, pad string) *StringBuilder {
@@ -293,7 +318,8 @@ func (sb *StringBuilder) PadRight(length int, pad string) *StringBuilder {
 // Trim removes leading and trailing whitespace.
 // Trim은 앞뒤 공백을 제거합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("  hello  ").Trim().Build()  // "hello"
 func (sb *StringBuilder) Trim() *StringBuilder {
@@ -304,7 +330,8 @@ func (sb *StringBuilder) Trim() *StringBuilder {
 // Replace replaces all occurrences of old with new.
 // Replace는 old를 모두 new로 치환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	sb.Append("hello world").Replace("world", "there").Build()  // "hello there"
 func (sb *StringBuilder) Replace(old, new string) *StringBuilder {
@@ -315,7 +342,8 @@ func (sb *StringBuilder) Replace(old, new string) *StringBuilder {
 // Build returns the final string value.
 // Build는 최종 문자열 값을 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	result := sb.Append("hello").ToUpper().Build()  // "HELLO"
 func (sb *StringBuilder) Build() string {

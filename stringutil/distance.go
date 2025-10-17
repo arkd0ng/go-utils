@@ -11,7 +11,8 @@ import "math"
 // Levenshtein 거리는 한 문자열을 다른 문자열로 변경하는 데 필요한
 // 최소 단일 문자 편집(삽입, 삭제 또는 치환) 횟수입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	LevenshteinDistance("kitten", "sitting")  // 3
 //	LevenshteinDistance("hello", "hello")     // 0
@@ -23,7 +24,8 @@ func LevenshteinDistance(a, b string) int {
 	lenA := len(runesA)
 	lenB := len(runesB)
 
-	// Early exit for empty strings / 빈 문자열에 대한 조기 종료
+	// Early exit for empty strings
+	// 빈 문자열에 대한 조기 종료
 	if lenA == 0 {
 		return lenB
 	}
@@ -31,13 +33,15 @@ func LevenshteinDistance(a, b string) int {
 		return lenA
 	}
 
-	// Create matrix / 행렬 생성
+	// Create matrix
+	// 행렬 생성
 	matrix := make([][]int, lenA+1)
 	for i := range matrix {
 		matrix[i] = make([]int, lenB+1)
 	}
 
-	// Initialize first row and column / 첫 행과 열 초기화
+	// Initialize first row and column
+	// 첫 행과 열 초기화
 	for i := 0; i <= lenA; i++ {
 		matrix[i][0] = i
 	}
@@ -45,7 +49,8 @@ func LevenshteinDistance(a, b string) int {
 		matrix[0][j] = j
 	}
 
-	// Fill matrix / 행렬 채우기
+	// Fill matrix
+	// 행렬 채우기
 	for i := 1; i <= lenA; i++ {
 		for j := 1; j <= lenB; j++ {
 			cost := 0
@@ -70,16 +75,18 @@ func LevenshteinDistance(a, b string) int {
 // Returns 1.0 for identical strings, 0.0 for completely different strings.
 // 동일한 문자열은 1.0, 완전히 다른 문자열은 0.0을 반환합니다.
 //
-// Formula: 1 - (distance / max(len(a), len(b)))
-// 공식: 1 - (거리 / max(len(a), len(b)))
+// Formula: 1 - (distance
+// max(len(a), len(b))) / 공식: 1 - (거리 / max(len(a), len(b)))
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	Similarity("hello", "hello")   // 1.0
 //	Similarity("hello", "hallo")   // 0.8
 //	Similarity("hello", "world")   // 0.2
 func Similarity(a, b string) float64 {
-	// Early exit for identical strings / 동일한 문자열에 대한 조기 종료
+	// Early exit for identical strings
+	// 동일한 문자열에 대한 조기 종료
 	if a == b {
 		return 1.0
 	}
@@ -92,7 +99,8 @@ func Similarity(a, b string) float64 {
 		maxLen = len(runesB)
 	}
 
-	// Early exit for empty strings / 빈 문자열에 대한 조기 종료
+	// Early exit for empty strings
+	// 빈 문자열에 대한 조기 종료
 	if maxLen == 0 {
 		return 1.0
 	}
@@ -110,7 +118,8 @@ func Similarity(a, b string) float64 {
 // Returns -1 if strings have different lengths.
 // 문자열 길이가 다르면 -1을 반환합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	HammingDistance("karolin", "kathrin")  // 3
 //	HammingDistance("hello", "hello")      // 0
@@ -143,7 +152,8 @@ func HammingDistance(a, b string) int {
 // Jaro-Winkler 유사도는 공통 접두사에 추가 가중치를 부여하는
 // Jaro 유사도 메트릭의 변형입니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	JaroWinklerSimilarity("martha", "marhta")  // 0.961
 //	JaroWinklerSimilarity("hello", "hello")    // 1.0
@@ -172,7 +182,8 @@ func JaroWinklerSimilarity(a, b string) float64 {
 		}
 	}
 
-	// Jaro-Winkler formula / Jaro-Winkler 공식
+	// Jaro-Winkler formula
+	// Jaro-Winkler 공식
 	return jaroSim + (float64(prefixLen) * 0.1 * (1.0 - jaroSim))
 }
 
@@ -195,7 +206,8 @@ func jaroSimilarity(a, b string) float64 {
 		return 0.0
 	}
 
-	// Calculate match window / 매치 윈도우 계산
+	// Calculate match window
+	// 매치 윈도우 계산
 	matchWindow := int(math.Max(float64(lenA), float64(lenB))/2) - 1
 	if matchWindow < 1 {
 		matchWindow = 1
@@ -207,7 +219,8 @@ func jaroSimilarity(a, b string) float64 {
 	matches := 0
 	transpositions := 0
 
-	// Find matches / 매치 찾기
+	// Find matches
+	// 매치 찾기
 	for i := 0; i < lenA; i++ {
 		start := int(math.Max(0, float64(i-matchWindow)))
 		end := int(math.Min(float64(lenB), float64(i+matchWindow+1)))
@@ -227,7 +240,8 @@ func jaroSimilarity(a, b string) float64 {
 		return 0.0
 	}
 
-	// Count transpositions / 전치 횟수 계산
+	// Count transpositions
+	// 전치 횟수 계산
 	k := 0
 	for i := 0; i < lenA; i++ {
 		if !matchesA[i] {
@@ -242,7 +256,8 @@ func jaroSimilarity(a, b string) float64 {
 		k++
 	}
 
-	// Jaro formula / Jaro 공식
+	// Jaro formula
+	// Jaro 공식
 	return (float64(matches)/float64(lenA) +
 		float64(matches)/float64(lenB) +
 		float64(matches-transpositions/2)/float64(matches)) / 3.0

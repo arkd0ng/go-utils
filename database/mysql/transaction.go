@@ -15,30 +15,33 @@ import (
 // 함수가 에러를 반환하면 트랜잭션이 롤백됩니다.
 // 함수가 성공하면 트랜잭션이 커밋됩니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	err := db.Transaction(ctx, func(tx *Tx) error {
-//	    // Insert user / 사용자 삽입
+// err := db.Transaction(ctx, func(tx *Tx) error {
+// Insert user / 사용자 삽입
 //	    result, err := tx.Insert(ctx, "users", map[string]interface{}{
 //	        "name": "John",
 //	        "email": "john@example.com",
 //	    })
-//	    if err != nil {
-//	        return err // Will rollback / 롤백됨
+// if err != nil {
+// return err // Will rollback / 롤백됨
 //	    }
 //
 //	    userID, _ := result.LastInsertId()
 //
-//	    // Insert profile / 프로필 삽입
+// // Insert profile
+// 프로필 삽입
 //	    _, err = tx.Insert(ctx, "profiles", map[string]interface{}{
 //	        "user_id": userID,
 //	        "bio": "Hello world",
 //	    })
-//	    if err != nil {
-//	        return err // Will rollback / 롤백됨
+// if err != nil {
+// return err // Will rollback / 롤백됨
 //	    }
 //
-//	    return nil // Will commit / 커밋됨
+// return nil // Will commit
+// 커밋됨
 //	})
 func (c *Client) Transaction(ctx context.Context, fn func(*Tx) error) error {
 	tx, err := c.Begin(ctx)
@@ -46,7 +49,8 @@ func (c *Client) Transaction(ctx context.Context, fn func(*Tx) error) error {
 		return err
 	}
 
-	// Ensure rollback if panic / 패닉 시 롤백 보장
+	// Ensure rollback if panic
+	// 패닉 시 롤백 보장
 	defer func() {
 		if p := recover(); p != nil {
 			tx.Rollback()
@@ -54,9 +58,11 @@ func (c *Client) Transaction(ctx context.Context, fn func(*Tx) error) error {
 		}
 	}()
 
-	// Execute function / 함수 실행
+	// Execute function
+	// 함수 실행
 	if err := fn(tx); err != nil {
-		// Rollback on error / 에러 시 롤백
+		// Rollback on error
+		// 에러 시 롤백
 		if rbErr := tx.Rollback(); rbErr != nil {
 			if c.config.logger != nil {
 				c.config.logger.Error("Failed to rollback transaction",
@@ -67,7 +73,8 @@ func (c *Client) Transaction(ctx context.Context, fn func(*Tx) error) error {
 		return err
 	}
 
-	// Commit on success / 성공 시 커밋
+	// Commit on success
+	// 성공 시 커밋
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("%w: %v", ErrTransactionFailed, err)
 	}
@@ -92,7 +99,8 @@ func (t *Tx) InsertContext(ctx context.Context, table string, data map[string]in
 		return nil, fmt.Errorf("%w: no data provided for insert", ErrQueryFailed)
 	}
 
-	// Build query (same as simple.go but use tx) / 쿼리 빌드 (simple.go와 동일하지만 tx 사용)
+	// Build query (same as simple.go but use tx)
+	// 쿼리 빌드 (simple.go와 동일하지만 tx 사용)
 	columns := make([]string, 0, len(data))
 	placeholders := make([]string, 0, len(data))
 	values := make([]interface{}, 0, len(data))
@@ -128,7 +136,8 @@ func (t *Tx) UpdateContext(ctx context.Context, table string, data map[string]in
 		return nil, fmt.Errorf("%w: no data provided for update", ErrQueryFailed)
 	}
 
-	// Build SET clause / SET 절 빌드
+	// Build SET clause
+	// SET 절 빌드
 	setClauses := make([]string, 0, len(data))
 	values := make([]interface{}, 0, len(data))
 
@@ -137,10 +146,12 @@ func (t *Tx) UpdateContext(ctx context.Context, table string, data map[string]in
 		values = append(values, val)
 	}
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("UPDATE %s SET %s", table, joinStrings(setClauses, ", "))
 
-	// Add WHERE clause if provided / 제공된 경우 WHERE 절 추가
+	// Add WHERE clause if provided
+	// 제공된 경우 WHERE 절 추가
 	if len(conditionAndArgs) > 0 {
 		condition := fmt.Sprintf("%v", conditionAndArgs[0])
 		query += " WHERE " + condition
@@ -165,7 +176,8 @@ func (t *Tx) DeleteContext(ctx context.Context, table string, conditionAndArgs .
 		return nil, ErrTransactionFailed
 	}
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("DELETE FROM %s", table)
 	var args []interface{}
 
@@ -193,7 +205,8 @@ func (t *Tx) SelectAllContext(ctx context.Context, table string, conditionAndArg
 		return nil, ErrTransactionFailed
 	}
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("SELECT * FROM %s", table)
 	var args []interface{}
 
@@ -226,7 +239,8 @@ func (t *Tx) SelectColumnContext(ctx context.Context, table string, column strin
 		return nil, ErrTransactionFailed
 	}
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("SELECT %s FROM %s", column, table)
 	var args []interface{}
 
@@ -263,7 +277,8 @@ func (t *Tx) SelectColumnsContext(ctx context.Context, table string, columns []s
 		return nil, fmt.Errorf("%w: no columns provided", ErrQueryFailed)
 	}
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	columnList := joinStrings(columns, ", ")
 	query := fmt.Sprintf("SELECT %s FROM %s", columnList, table)
 	var args []interface{}
@@ -297,7 +312,8 @@ func (t *Tx) SelectOneContext(ctx context.Context, table string, conditionAndArg
 		return nil, ErrTransactionFailed
 	}
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("SELECT * FROM %s", table)
 	var args []interface{}
 

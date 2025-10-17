@@ -37,25 +37,29 @@ func (c *Client) startConnectionRotation() {
 // rotateOneConnection rotates one connection pool
 // rotateOneConnection은 하나의 연결 풀을 순환합니다
 func (c *Client) rotateOneConnection() error {
-	// 1. Get new DSN from user function / 사용자 함수에서 새 DSN 가져오기
+	// 1. Get new DSN from user function
+	// 사용자 함수에서 새 DSN 가져오기
 	newDSN, err := c.config.credRefreshFunc()
 	if err != nil {
 		return fmt.Errorf("credential refresh function failed: %w", err)
 	}
 
-	// 2. Create new connection / 새 연결 생성
+	// 2. Create new connection
+	// 새 연결 생성
 	newDB, err := c.createConnection(newDSN)
 	if err != nil {
 		return fmt.Errorf("failed to create new connection: %w", err)
 	}
 
-	// 3. Find the connection to replace (round-robin) / 교체할 연결 찾기 (round-robin)
+	// 3. Find the connection to replace (round-robin)
+	// 교체할 연결 찾기 (round-robin)
 	c.connectionsMu.Lock()
 	oldestIdx := c.rotationIdx % len(c.connections)
 	c.rotationIdx++
 	oldDB := c.connections[oldestIdx]
 
-	// 4. Replace the connection / 연결 교체
+	// 4. Replace the connection
+	// 연결 교체
 	c.connections[oldestIdx] = newDB
 	c.connectionsMu.Unlock()
 

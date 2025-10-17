@@ -15,7 +15,8 @@ import (
 // WriteFile writes data to a file, creating the directory if it doesn't exist
 // WriteFile은 파일에 데이터를 쓰고, 디렉토리가 존재하지 않으면 생성합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.WriteFile("path/to/file.txt", []byte("Hello, World!"))
 //	if err != nil {
@@ -27,13 +28,15 @@ func WriteFile(path string, data []byte, perm ...os.FileMode) error {
 		mode = perm[0]
 	}
 
-	// Create directory if it doesn't exist / 디렉토리가 존재하지 않으면 생성
+	// Create directory if it doesn't exist
+	// 디렉토리가 존재하지 않으면 생성
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, DefaultDirMode); err != nil {
 		return fmt.Errorf("fileutil.WriteFile: %w", err)
 	}
 
-	// Write file / 파일 쓰기
+	// Write file
+	// 파일 쓰기
 	if err := os.WriteFile(path, data, mode); err != nil {
 		return fmt.Errorf("fileutil.WriteFile: %w", err)
 	}
@@ -44,7 +47,8 @@ func WriteFile(path string, data []byte, perm ...os.FileMode) error {
 // WriteString writes a string to a file, creating the directory if it doesn't exist
 // WriteString은 파일에 문자열을 쓰고, 디렉토리가 존재하지 않으면 생성합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.WriteString("path/to/file.txt", "Hello, World!")
 //	if err != nil {
@@ -57,7 +61,8 @@ func WriteString(path string, content string, perm ...os.FileMode) error {
 // WriteLines writes a slice of lines to a file, creating the directory if it doesn't exist
 // WriteLines는 줄의 슬라이스를 파일에 쓰고, 디렉토리가 존재하지 않으면 생성합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	lines := []string{"Line 1", "Line 2", "Line 3"}
 //	err := fileutil.WriteLines("path/to/file.txt", lines)
@@ -75,7 +80,8 @@ func WriteLines(path string, lines []string, perm ...os.FileMode) error {
 // WriteJSON marshals a value to JSON and writes it to a file
 // WriteJSON은 값을 JSON으로 마샬하고 파일에 씁니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	config := Config{Name: "app", Version: "1.0.0"}
 //	err := fileutil.WriteJSON("config.json", config)
@@ -94,7 +100,8 @@ func WriteJSON(path string, v interface{}, perm ...os.FileMode) error {
 // WriteYAML marshals a value to YAML and writes it to a file
 // WriteYAML은 값을 YAML로 마샬하고 파일에 씁니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	config := Config{Name: "app", Version: "1.0.0"}
 //	err := fileutil.WriteYAML("config.yaml", config)
@@ -113,7 +120,8 @@ func WriteYAML(path string, v interface{}, perm ...os.FileMode) error {
 // WriteCSV writes records to a CSV file
 // WriteCSV는 레코드를 CSV 파일에 씁니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	records := [][]string{
 //	    {"Name", "Age", "City"},
@@ -130,20 +138,23 @@ func WriteCSV(path string, records [][]string, perm ...os.FileMode) error {
 		mode = perm[0]
 	}
 
-	// Create directory if it doesn't exist / 디렉토리가 존재하지 않으면 생성
+	// Create directory if it doesn't exist
+	// 디렉토리가 존재하지 않으면 생성
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, DefaultDirMode); err != nil {
 		return fmt.Errorf("fileutil.WriteCSV: %w", err)
 	}
 
-	// Create file / 파일 생성
+	// Create file
+	// 파일 생성
 	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, mode)
 	if err != nil {
 		return fmt.Errorf("fileutil.WriteCSV: %w", err)
 	}
 	defer file.Close()
 
-	// Write CSV / CSV 쓰기
+	// Write CSV
+	// CSV 쓰기
 	writer := csv.NewWriter(file)
 	if err := writer.WriteAll(records); err != nil {
 		return fmt.Errorf("fileutil.WriteCSV: %w", err)
@@ -159,7 +170,8 @@ func WriteCSV(path string, records [][]string, perm ...os.FileMode) error {
 // This prevents corruption if the write operation is interrupted.
 // 이는 쓰기 작업이 중단될 경우 손상을 방지합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.WriteAtomic("important.txt", []byte("Critical data"))
 //	if err != nil {
@@ -171,19 +183,22 @@ func WriteAtomic(path string, data []byte, perm ...os.FileMode) error {
 		mode = perm[0]
 	}
 
-	// Create directory if it doesn't exist / 디렉토리가 존재하지 않으면 생성
+	// Create directory if it doesn't exist
+	// 디렉토리가 존재하지 않으면 생성
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, DefaultDirMode); err != nil {
 		return fmt.Errorf("fileutil.WriteAtomic: %w", err)
 	}
 
-	// Write to temporary file / 임시 파일에 쓰기
+	// Write to temporary file
+	// 임시 파일에 쓰기
 	tempPath := path + ".tmp"
 	if err := os.WriteFile(tempPath, data, mode); err != nil {
 		return fmt.Errorf("fileutil.WriteAtomic: %w", err)
 	}
 
-	// Rename temporary file to target path / 임시 파일을 대상 경로로 이름 변경
+	// Rename temporary file to target path
+	// 임시 파일을 대상 경로로 이름 변경
 	if err := os.Rename(tempPath, path); err != nil {
 		os.Remove(tempPath) // Clean up temp file on error / 에러 시 임시 파일 정리
 		return fmt.Errorf("fileutil.WriteAtomic: %w", err)
@@ -195,27 +210,31 @@ func WriteAtomic(path string, data []byte, perm ...os.FileMode) error {
 // AppendFile appends data to a file, creating it if it doesn't exist
 // AppendFile은 파일에 데이터를 추가하고, 파일이 존재하지 않으면 생성합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.AppendFile("log.txt", []byte("New log entry\n"))
 //	if err != nil {
 //	    log.Fatal(err)
 //	}
 func AppendFile(path string, data []byte) error {
-	// Create directory if it doesn't exist / 디렉토리가 존재하지 않으면 생성
+	// Create directory if it doesn't exist
+	// 디렉토리가 존재하지 않으면 생성
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, DefaultDirMode); err != nil {
 		return fmt.Errorf("fileutil.AppendFile: %w", err)
 	}
 
-	// Open file in append mode / 추가 모드로 파일 열기
+	// Open file in append mode
+	// 추가 모드로 파일 열기
 	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, DefaultFileMode)
 	if err != nil {
 		return fmt.Errorf("fileutil.AppendFile: %w", err)
 	}
 	defer file.Close()
 
-	// Write data / 데이터 쓰기
+	// Write data
+	// 데이터 쓰기
 	if _, err := file.Write(data); err != nil {
 		return fmt.Errorf("fileutil.AppendFile: %w", err)
 	}
@@ -226,7 +245,8 @@ func AppendFile(path string, data []byte) error {
 // AppendString appends a string to a file, creating it if it doesn't exist
 // AppendString은 파일에 문자열을 추가하고, 파일이 존재하지 않으면 생성합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	err := fileutil.AppendString("log.txt", "New log entry\n")
 //	if err != nil {
@@ -239,7 +259,8 @@ func AppendString(path string, content string) error {
 // AppendLines appends lines to a file, creating it if it doesn't exist
 // AppendLines는 파일에 줄을 추가하고, 파일이 존재하지 않으면 생성합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	lines := []string{"Line 1", "Line 2", "Line 3"}
 //	err := fileutil.AppendLines("log.txt", lines)
@@ -266,7 +287,8 @@ func AppendBytes(path string, data []byte) error {
 // This is useful for writing large amounts of data efficiently.
 // 이는 대량의 데이터를 효율적으로 쓰는 데 유용합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	file, err := fileutil.CreateFile("large-file.txt")
 //	if err != nil {
@@ -285,13 +307,15 @@ func CreateFile(path string, perm ...os.FileMode) (*os.File, error) {
 		mode = perm[0]
 	}
 
-	// Create directory if it doesn't exist / 디렉토리가 존재하지 않으면 생성
+	// Create directory if it doesn't exist
+	// 디렉토리가 존재하지 않으면 생성
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, DefaultDirMode); err != nil {
 		return nil, fmt.Errorf("fileutil.CreateFile: %w", err)
 	}
 
-	// Create file / 파일 생성
+	// Create file
+	// 파일 생성
 	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, mode)
 	if err != nil {
 		return nil, fmt.Errorf("fileutil.CreateFile: %w", err)
@@ -303,7 +327,8 @@ func CreateFile(path string, perm ...os.FileMode) (*os.File, error) {
 // NewWriter creates a new buffered writer for the specified file
 // NewWriter는 지정된 파일에 대한 새 버퍼링된 writer를 생성합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	writer, file, err := fileutil.NewWriter("output.txt")
 //	if err != nil {

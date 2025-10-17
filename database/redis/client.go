@@ -15,12 +15,14 @@ func New(opts ...Option) (*Client, error) {
 		opt(cfg)
 	}
 
-	// Validate configuration / 설정 검증
+	// Validate configuration
+	// 설정 검증
 	if cfg.Addr == "" {
 		return nil, ErrInvalidAddr
 	}
 
-	// Create Redis client / Redis 클라이언트 생성
+	// Create Redis client
+	// Redis 클라이언트 생성
 	rdb := redis.NewClient(&redis.Options{
 		Addr:         cfg.Addr,
 		Password:     cfg.Password,
@@ -32,7 +34,8 @@ func New(opts ...Option) (*Client, error) {
 		WriteTimeout: cfg.WriteTimeout,
 	})
 
-	// Test connection / 연결 테스트
+	// Test connection
+	// 연결 테스트
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.DialTimeout)
 	defer cancel()
 
@@ -46,7 +49,8 @@ func New(opts ...Option) (*Client, error) {
 		done:   make(chan struct{}),
 	}
 
-	// Start health check goroutine / 헬스 체크 고루틴 시작
+	// Start health check goroutine
+	// 헬스 체크 고루틴 시작
 	if cfg.EnableHealthCheck {
 		go client.healthCheck()
 	}

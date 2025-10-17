@@ -7,7 +7,8 @@ import (
 	"time"
 )
 
-// Predefined errors / 사전 정의된 에러
+// Predefined errors
+// 사전 정의된 에러
 var (
 	ErrConnectionFailed = errors.New("redis connection failed")
 	ErrCommandFailed    = errors.New("redis command failed")
@@ -52,12 +53,14 @@ func isRetriableError(err error) bool {
 		return false
 	}
 
-	// Context errors are not retriable / Context 에러는 재시도 불가
+	// Context errors are not retriable
+	// Context 에러는 재시도 불가
 	if errors.Is(err, ErrTimeout) {
 		return false
 	}
 
-	// Network errors are retriable / 네트워크 에러는 재시도 가능
+	// Network errors are retriable
+	// 네트워크 에러는 재시도 가능
 	retriableErrors := []string{
 		"connection refused",
 		"connection reset",

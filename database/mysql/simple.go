@@ -14,12 +14,15 @@ import (
 // SelectAll은 선택적 조건으로 테이블의 모든 행을 선택합니다
 // 내부적으로 context.Background()를 사용합니다. timeout/cancellation 제어가 필요하면 SelectAllContext를 사용하세요.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// Select all users / 모든 사용자 선택
+// // Select all users
+// 모든 사용자 선택
 //	users, err := db.SelectAll("users")
 //
-//	// Select with condition (use placeholder for safety) / 조건과 함께 선택 (안전을 위해 placeholder 사용)
+// // Select with condition (use placeholder for safety)
+// 조건과 함께 선택 (안전을 위해 placeholder 사용)
 //	users, err := db.SelectAll("users", "age > ?", 18)
 //	users, err := db.SelectAll("users", "age > ? AND city = ?", 18, "Seoul")
 func (c *Client) SelectAll(table string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
@@ -29,7 +32,8 @@ func (c *Client) SelectAll(table string, conditionAndArgs ...interface{}) ([]map
 // SelectAllContext selects all rows from a table with optional conditions
 // SelectAllContext는 선택적 조건으로 테이블의 모든 행을 선택합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 //	defer cancel()
@@ -42,7 +46,8 @@ func (c *Client) SelectAllContext(ctx context.Context, table string, conditionAn
 	}
 	c.mu.RUnlock()
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("SELECT * FROM %s", table)
 	var args []interface{}
 
@@ -56,7 +61,8 @@ func (c *Client) SelectAllContext(ctx context.Context, table string, conditionAn
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var rows *sql.Rows
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -72,7 +78,8 @@ func (c *Client) SelectAllContext(ctx context.Context, table string, conditionAn
 		return nil, c.wrapError("SelectAll", query, args, err, duration)
 	}
 
-	// Scan rows / 행 스캔
+	// Scan rows
+	// 행 스캔
 	results, err := scanRows(rows)
 	if err != nil {
 		c.logQuery(query, args, duration, err)
@@ -86,12 +93,15 @@ func (c *Client) SelectAllContext(ctx context.Context, table string, conditionAn
 // SelectColumn selects all rows with a single column from a table
 // SelectColumn은 테이블에서 단일 컬럼으로 모든 행을 선택합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// Select all emails / 모든 이메일 선택
+// // Select all emails
+// 모든 이메일 선택
 //	emails, err := db.SelectColumn("users", "email")
 //
-//	// Select with condition / 조건과 함께 선택
+// // Select with condition
+// 조건과 함께 선택
 //	emails, err := db.SelectColumn("users", "email", "age > ?", 18)
 func (c *Client) SelectColumn(table string, column string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
 	return c.SelectColumnContext(context.Background(), table, column, conditionAndArgs...)
@@ -107,7 +117,8 @@ func (c *Client) SelectColumnContext(ctx context.Context, table string, column s
 	}
 	c.mu.RUnlock()
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("SELECT %s FROM %s", column, table)
 	var args []interface{}
 
@@ -121,7 +132,8 @@ func (c *Client) SelectColumnContext(ctx context.Context, table string, column s
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var rows *sql.Rows
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -137,7 +149,8 @@ func (c *Client) SelectColumnContext(ctx context.Context, table string, column s
 		return nil, c.wrapError("SelectColumn", query, args, err, duration)
 	}
 
-	// Scan rows / 행 스캔
+	// Scan rows
+	// 행 스캔
 	results, err := scanRows(rows)
 	if err != nil {
 		c.logQuery(query, args, duration, err)
@@ -151,12 +164,15 @@ func (c *Client) SelectColumnContext(ctx context.Context, table string, column s
 // SelectColumns selects all rows with multiple columns from a table
 // SelectColumns는 테이블에서 여러 컬럼으로 모든 행을 선택합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	// Select multiple columns / 여러 컬럼 선택
+// // Select multiple columns
+// 여러 컬럼 선택
 //	users, err := db.SelectColumns("users", []string{"name", "email", "age"})
 //
-//	// Select with condition / 조건과 함께 선택
+// // Select with condition
+// 조건과 함께 선택
 //	users, err := db.SelectColumns("users", []string{"name", "email"}, "age > ?", 18)
 func (c *Client) SelectColumns(table string, columns []string, conditionAndArgs ...interface{}) ([]map[string]interface{}, error) {
 	return c.SelectColumnsContext(context.Background(), table, columns, conditionAndArgs...)
@@ -176,7 +192,8 @@ func (c *Client) SelectColumnsContext(ctx context.Context, table string, columns
 		return nil, fmt.Errorf("%w: no columns provided", ErrQueryFailed)
 	}
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	columnList := strings.Join(columns, ", ")
 	query := fmt.Sprintf("SELECT %s FROM %s", columnList, table)
 	var args []interface{}
@@ -191,7 +208,8 @@ func (c *Client) SelectColumnsContext(ctx context.Context, table string, columns
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var rows *sql.Rows
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -207,7 +225,8 @@ func (c *Client) SelectColumnsContext(ctx context.Context, table string, columns
 		return nil, c.wrapError("SelectColumns", query, args, err, duration)
 	}
 
-	// Scan rows / 행 스캔
+	// Scan rows
+	// 행 스캔
 	results, err := scanRows(rows)
 	if err != nil {
 		c.logQuery(query, args, duration, err)
@@ -221,7 +240,8 @@ func (c *Client) SelectColumnsContext(ctx context.Context, table string, columns
 // SelectOne selects a single row from a table with conditions
 // SelectOne은 조건과 함께 테이블에서 단일 행을 선택합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	user, err := db.SelectOne("users", "id = ?", 123)
 func (c *Client) SelectOne(table string, conditionAndArgs ...interface{}) (map[string]interface{}, error) {
@@ -238,7 +258,8 @@ func (c *Client) SelectOneContext(ctx context.Context, table string, conditionAn
 	}
 	c.mu.RUnlock()
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("SELECT * FROM %s", table)
 	var args []interface{}
 
@@ -254,7 +275,8 @@ func (c *Client) SelectOneContext(ctx context.Context, table string, conditionAn
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var rows *sql.Rows
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -270,7 +292,8 @@ func (c *Client) SelectOneContext(ctx context.Context, table string, conditionAn
 		return nil, c.wrapError("SelectOne", query, args, err, duration)
 	}
 
-	// Scan single row / 단일 행 스캔
+	// Scan single row
+	// 단일 행 스캔
 	result, err := scanRow(rows)
 	if err != nil {
 		c.logQuery(query, args, duration, err)
@@ -284,7 +307,8 @@ func (c *Client) SelectOneContext(ctx context.Context, table string, conditionAn
 // Insert inserts a new row into a table
 // Insert는 테이블에 새 행을 삽입합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	result, err := db.Insert("users", map[string]interface{}{
 //	    "name":  "John",
@@ -309,7 +333,8 @@ func (c *Client) InsertContext(ctx context.Context, table string, data map[strin
 		return nil, fmt.Errorf("%w: no data provided for insert", ErrQueryFailed)
 	}
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	columns := make([]string, 0, len(data))
 	placeholders := make([]string, 0, len(data))
 	values := make([]interface{}, 0, len(data))
@@ -327,7 +352,8 @@ func (c *Client) InsertContext(ctx context.Context, table string, data map[strin
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var result sql.Result
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -350,7 +376,8 @@ func (c *Client) InsertContext(ctx context.Context, table string, data map[strin
 // Update updates rows in a table
 // Update는 테이블의 행을 업데이트합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	result, err := db.Update("users",
 //	    map[string]interface{}{"name": "Jane", "age": 31},
@@ -373,7 +400,8 @@ func (c *Client) UpdateContext(ctx context.Context, table string, data map[strin
 		return nil, fmt.Errorf("%w: no data provided for update", ErrQueryFailed)
 	}
 
-	// Build SET clause / SET 절 빌드
+	// Build SET clause
+	// SET 절 빌드
 	setClauses := make([]string, 0, len(data))
 	values := make([]interface{}, 0, len(data))
 
@@ -382,10 +410,12 @@ func (c *Client) UpdateContext(ctx context.Context, table string, data map[strin
 		values = append(values, val)
 	}
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("UPDATE %s SET %s", table, strings.Join(setClauses, ", "))
 
-	// Add WHERE clause if provided / 제공된 경우 WHERE 절 추가
+	// Add WHERE clause if provided
+	// 제공된 경우 WHERE 절 추가
 	if len(conditionAndArgs) > 0 {
 		condition := fmt.Sprintf("%v", conditionAndArgs[0])
 		query += " WHERE " + condition
@@ -396,7 +426,8 @@ func (c *Client) UpdateContext(ctx context.Context, table string, data map[strin
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var result sql.Result
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -419,7 +450,8 @@ func (c *Client) UpdateContext(ctx context.Context, table string, data map[strin
 // Delete deletes rows from a table
 // Delete는 테이블에서 행을 삭제합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	result, err := db.Delete("users", "id = ?", 123)
 func (c *Client) Delete(table string, conditionAndArgs ...interface{}) (sql.Result, error) {
@@ -436,7 +468,8 @@ func (c *Client) DeleteContext(ctx context.Context, table string, conditionAndAr
 	}
 	c.mu.RUnlock()
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("DELETE FROM %s", table)
 	var args []interface{}
 
@@ -450,7 +483,8 @@ func (c *Client) DeleteContext(ctx context.Context, table string, conditionAndAr
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var result sql.Result
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -473,7 +507,8 @@ func (c *Client) DeleteContext(ctx context.Context, table string, conditionAndAr
 // Count counts rows in a table with optional conditions
 // Count는 선택적 조건으로 테이블의 행 수를 계산합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	count, err := db.Count("users")
 //	count, err := db.Count("users", "age > ?", 18)
@@ -491,7 +526,8 @@ func (c *Client) CountContext(ctx context.Context, table string, conditionAndArg
 	}
 	c.mu.RUnlock()
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("SELECT COUNT(*) FROM %s", table)
 	var args []interface{}
 
@@ -505,7 +541,8 @@ func (c *Client) CountContext(ctx context.Context, table string, conditionAndArg
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var rows *sql.Rows
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -521,7 +558,8 @@ func (c *Client) CountContext(ctx context.Context, table string, conditionAndArg
 		return 0, c.wrapError("Count", query, args, err, duration)
 	}
 
-	// Scan count / 카운트 스캔
+	// Scan count
+	// 카운트 스캔
 	count, err := scanCount(rows)
 	if err != nil {
 		c.logQuery(query, args, duration, err)
@@ -535,7 +573,8 @@ func (c *Client) CountContext(ctx context.Context, table string, conditionAndArg
 // Exists checks if at least one row exists with the given conditions
 // Exists는 주어진 조건으로 최소한 하나의 행이 존재하는지 확인합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	exists, err := db.Exists("users", "email = ?", "john@example.com")
 func (c *Client) Exists(table string, conditionAndArgs ...interface{}) (bool, error) {

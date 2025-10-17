@@ -11,16 +11,18 @@ import (
 // BatchInsert inserts multiple rows in a single query for better performance
 // BatchInsert는 성능 향상을 위해 단일 쿼리로 여러 행을 삽입합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	data := []map[string]interface{}{
-//	    {"name": "John", "age": 30, "email": "john@example.com"},
-//	    {"name": "Jane", "age": 25, "email": "jane@example.com"},
-//	    {"name": "Bob", "age": 35, "email": "bob@example.com"},
+//	data := []map[string]interface{}{ // 예제 데이터 슬라이스 초기화
+//	    {"name": "John", "age": 30, "email": "john@example.com"}, // 첫 번째 사용자
+//	    {"name": "Jane", "age": 25, "email": "jane@example.com"}, // 두 번째 사용자
+//	    {"name": "Bob", "age": 35, "email": "bob@example.com"},   // 세 번째 사용자
 //	}
-//	result, err := db.BatchInsert(ctx, "users", data)
+//	result, err := db.BatchInsert(ctx, "users", data) // BatchInsert 호출
 //
 // This generates: INSERT INTO users (name, age, email) VALUES (?,?,?),(?,?,?),(?,?,?)
+// 생성되는 SQL: INSERT INTO users (name, age, email) VALUES (?,?,?),(?,?,?),(?,?,?)
 func (c *Client) BatchInsert(ctx context.Context, table string, data []map[string]interface{}) (sql.Result, error) {
 	c.mu.RLock()
 	if c.closed {
@@ -33,7 +35,8 @@ func (c *Client) BatchInsert(ctx context.Context, table string, data []map[strin
 		return nil, fmt.Errorf("no data to insert")
 	}
 
-	// Get column names from first row / 첫 번째 행에서 컬럼 이름 가져오기
+	// Get column names from first row
+	// 첫 번째 행에서 컬럼 이름 가져오기
 	var columns []string
 	for col := range data[0] {
 		columns = append(columns, col)
@@ -43,24 +46,29 @@ func (c *Client) BatchInsert(ctx context.Context, table string, data []map[strin
 		return nil, fmt.Errorf("no columns to insert")
 	}
 
-	// Build column list / 컬럼 목록 빌드
+	// Build column list
+	// 컬럼 목록 빌드
 	columnList := strings.Join(columns, ", ")
 
-	// Build value placeholders / 값 플레이스홀더 빌드
+	// Build value placeholders
+	// 값 플레이스홀더 빌드
 	valuePlaceholder := "(" + strings.Repeat("?,", len(columns))
 	valuePlaceholder = valuePlaceholder[:len(valuePlaceholder)-1] + ")"
 
-	// Build multiple value placeholders / 여러 값 플레이스홀더 빌드
+	// Build multiple value placeholders
+	// 여러 값 플레이스홀더 빌드
 	var valuePlaceholders []string
 	for i := 0; i < len(data); i++ {
 		valuePlaceholders = append(valuePlaceholders, valuePlaceholder)
 	}
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("INSERT INTO %s (%s) VALUES %s",
 		table, columnList, strings.Join(valuePlaceholders, ","))
 
-	// Collect all values / 모든 값 수집
+	// Collect all values
+	// 모든 값 수집
 	var args []interface{}
 	for _, row := range data {
 		for _, col := range columns {
@@ -70,7 +78,8 @@ func (c *Client) BatchInsert(ctx context.Context, table string, data []map[strin
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var result sql.Result
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -100,25 +109,27 @@ type BatchUpdateItem struct {
 // BatchUpdate performs multiple update operations in a transaction
 // BatchUpdate는 트랜잭션에서 여러 업데이트 작업을 수행합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	updates := []mysql.BatchUpdateItem{
+//	updates := []mysql.BatchUpdateItem{ // 업데이트 항목 정의
 //	    {
-//	        Data: map[string]interface{}{"age": 31},
-//	        ConditionAndArgs: []interface{}{"id = ?", 1},
+//	        Data: map[string]interface{}{"age": 31},                 // 변경할 데이터
+//	        ConditionAndArgs: []interface{}{"id = ?", 1},            // WHERE 조건
 //	    },
 //	    {
-//	        Data: map[string]interface{}{"age": 26},
-//	        ConditionAndArgs: []interface{}{"id = ?", 2},
+//	        Data: map[string]interface{}{"age": 26},                 // 두 번째 변경 데이터
+//	        ConditionAndArgs: []interface{}{"id = ?", 2},            // 두 번째 WHERE 조건
 //	    },
 //	}
-//	err := db.BatchUpdate(ctx, "users", updates)
+//	err := db.BatchUpdate(ctx, "users", updates) // BatchUpdate 실행
 func (c *Client) BatchUpdate(ctx context.Context, table string, updates []BatchUpdateItem) error {
 	if len(updates) == 0 {
 		return fmt.Errorf("no updates to perform")
 	}
 
-	// Use transaction for atomicity / 원자성을 위해 트랜잭션 사용
+	// Use transaction for atomicity
+	// 원자성을 위해 트랜잭션 사용
 	return c.Transaction(ctx, func(tx *Tx) error {
 		for _, item := range updates {
 			_, err := tx.Update(table, item.Data, item.ConditionAndArgs...)
@@ -133,12 +144,14 @@ func (c *Client) BatchUpdate(ctx context.Context, table string, updates []BatchU
 // BatchDelete deletes multiple rows by IDs in a single query
 // BatchDelete는 단일 쿼리로 ID로 여러 행을 삭제합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	ids := []interface{}{1, 2, 3, 4, 5}
-//	result, err := db.BatchDelete(ctx, "users", "id", ids)
+//	ids := []interface{}{1, 2, 3, 4, 5} // 삭제할 ID 목록
+//	result, err := db.BatchDelete(ctx, "users", "id", ids) // BatchDelete 호출
 //
 // This generates: DELETE FROM users WHERE id IN (?,?,?,?,?)
+// 생성되는 SQL: DELETE FROM users WHERE id IN (?,?,?,?,?)
 func (c *Client) BatchDelete(ctx context.Context, table string, idColumn string, ids []interface{}) (sql.Result, error) {
 	c.mu.RLock()
 	if c.closed {
@@ -151,16 +164,19 @@ func (c *Client) BatchDelete(ctx context.Context, table string, idColumn string,
 		return nil, fmt.Errorf("no IDs to delete")
 	}
 
-	// Build placeholders / 플레이스홀더 빌드
+	// Build placeholders
+	// 플레이스홀더 빌드
 	placeholders := strings.Repeat("?,", len(ids))
 	placeholders = placeholders[:len(placeholders)-1] // Remove last comma / 마지막 쉼표 제거
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("DELETE FROM %s WHERE %s IN (%s)", table, idColumn, placeholders)
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var result sql.Result
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -183,12 +199,14 @@ func (c *Client) BatchDelete(ctx context.Context, table string, idColumn string,
 // BatchSelectByIDs selects multiple rows by IDs in a single query
 // BatchSelectByIDs는 단일 쿼리로 ID로 여러 행을 선택합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	ids := []interface{}{1, 2, 3, 4, 5}
-//	users, err := db.BatchSelectByIDs(ctx, "users", "id", ids)
+//	ids := []interface{}{1, 2, 3, 4, 5} // 조회할 ID 목록
+//	users, err := db.BatchSelectByIDs(ctx, "users", "id", ids) // BatchSelectByIDs 호출
 //
 // This generates: SELECT * FROM users WHERE id IN (?,?,?,?,?)
+// 생성되는 SQL: SELECT * FROM users WHERE id IN (?,?,?,?,?)
 func (c *Client) BatchSelectByIDs(ctx context.Context, table string, idColumn string, ids []interface{}) ([]map[string]interface{}, error) {
 	c.mu.RLock()
 	if c.closed {
@@ -201,16 +219,19 @@ func (c *Client) BatchSelectByIDs(ctx context.Context, table string, idColumn st
 		return []map[string]interface{}{}, nil
 	}
 
-	// Build placeholders / 플레이스홀더 빌드
+	// Build placeholders
+	// 플레이스홀더 빌드
 	placeholders := strings.Repeat("?,", len(ids))
 	placeholders = placeholders[:len(placeholders)-1] // Remove last comma / 마지막 쉼표 제거
 
-	// Build query / 쿼리 빌드
+	// Build query
+	// 쿼리 빌드
 	query := fmt.Sprintf("SELECT * FROM %s WHERE %s IN (%s)", table, idColumn, placeholders)
 
 	start := time.Now()
 
-	// Execute with retry / 재시도로 실행
+	// Execute with retry
+	// 재시도로 실행
 	var rows *sql.Rows
 	err := c.executeWithRetry(ctx, func() error {
 		db := c.getCurrentConnection()
@@ -226,7 +247,8 @@ func (c *Client) BatchSelectByIDs(ctx context.Context, table string, idColumn st
 		return nil, c.wrapError("BatchSelectByIDs", query, ids, err, duration)
 	}
 
-	// Scan rows / 행 스캔
+	// Scan rows
+	// 행 스캔
 	results, err := scanRows(rows)
 	if err != nil {
 		c.logQuery(query, ids, duration, err)

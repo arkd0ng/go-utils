@@ -136,7 +136,8 @@ func ToTitle(s string) string {
 //	Slugify("User Profile Data")      // "user-profile-data"
 //	Slugify("Go Utils -- Package")    // "go-utils-package"
 func Slugify(s string) string {
-	// Convert to lowercase / 소문자로 변환
+	// Convert to lowercase
+	// 소문자로 변환
 	s = strings.ToLower(s)
 
 	// Replace spaces and special characters with hyphens
@@ -185,8 +186,7 @@ func Quote(s string) string {
 // Unquote removes surrounding quotes from a string and unescapes internal quotes.
 // Unquote는 문자열에서 주변 따옴표를 제거하고 내부 따옴표의 이스케이프를 해제합니다.
 //
-// Supports both double quotes (") and single quotes (').
-// 큰따옴표(")와 작은따옴표(') 모두 지원합니다.
+// Supports both double quotes (") and single quotes ('). / 큰따옴표(")와 작은따옴표(') 모두 지원합니다.
 //
 // Example:
 //
@@ -198,12 +198,14 @@ func Unquote(s string) string {
 		return s
 	}
 
-	// Check if string is quoted / 문자열이 따옴표로 감싸져 있는지 확인
+	// Check if string is quoted
+	// 문자열이 따옴표로 감싸져 있는지 확인
 	if (s[0] == '"' && s[len(s)-1] == '"') || (s[0] == '\'' && s[len(s)-1] == '\'') {
 		s = s[1 : len(s)-1]
 	}
 
-	// Unescape internal quotes / 내부 따옴표 이스케이프 해제
+	// Unescape internal quotes
+	// 내부 따옴표 이스케이프 해제
 	s = strings.ReplaceAll(s, "\\\"", "\"")
 	s = strings.ReplaceAll(s, "\\'", "'")
 	s = strings.ReplaceAll(s, "\\\\", "\\")
@@ -216,7 +218,8 @@ func Unquote(s string) string {
 //
 // Handles:
 // 처리:
-//   - Delimiters: -, _, space / 구분자: -, _, 공백
+// - Delimiters: -, _, space
+// 구분자: -, _, 공백
 //   - Case changes: "UserProfile" → ["User", "Profile"]
 //   - Consecutive uppercase: "HTTPServer" → ["HTTP", "Server"]
 func splitIntoWords(s string) []string {
@@ -231,7 +234,8 @@ func splitIntoWords(s string) []string {
 	for i := 0; i < len(runes); i++ {
 		r := runes[i]
 
-		// Skip delimiters / 구분자 건너뛰기
+		// Skip delimiters
+		// 구분자 건너뛰기
 		if r == '-' || r == '_' || r == ' ' {
 			if len(currentWord) > 0 {
 				words = append(words, string(currentWord))
@@ -240,7 +244,8 @@ func splitIntoWords(s string) []string {
 			continue
 		}
 
-		// Handle case changes / 케이스 변경 처리
+		// Handle case changes
+		// 케이스 변경 처리
 		if unicode.IsUpper(r) && len(currentWord) > 0 {
 			// Check if previous character was lowercase
 			// 이전 문자가 소문자였는지 확인
@@ -250,8 +255,7 @@ func splitIntoWords(s string) []string {
 				continue
 			}
 
-			// Check if next character is lowercase (e.g., "HTTPServer" → "HTTP" "Server")
-			// 다음 문자가 소문자인지 확인 (예: "HTTPServer" → "HTTP" "Server")
+			// Check if next character is lowercase (e.g., "HTTPServer" → "HTTP" "Server") / 다음 문자가 소문자인지 확인 (예: "HTTPServer" → "HTTP" "Server")
 			if i+1 < len(runes) && unicode.IsLower(runes[i+1]) && len(currentWord) > 0 {
 				words = append(words, string(currentWord))
 				currentWord = []rune{r}

@@ -6,7 +6,8 @@ package maputil
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 //	result := maputil.Filter(m, func(k string, v int) bool {
@@ -30,7 +31,8 @@ func Filter[K comparable, V any](m map[K]V, fn func(K, V) bool) map[K]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"apple": 1, "banana": 2, "cherry": 3}
 //	result := maputil.FilterKeys(m, func(k string) bool {
@@ -54,7 +56,8 @@ func FilterKeys[K comparable, V any](m map[K]V, fn func(K) bool) map[K]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 //	result := maputil.FilterValues(m, func(v int) bool {
@@ -78,7 +81,8 @@ func FilterValues[K comparable, V any](m map[K]V, fn func(V) bool) map[K]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 //	result := maputil.Omit(m, "b", "d") // map[string]int{"a": 1, "c": 3}
@@ -113,7 +117,8 @@ func Omit[K comparable, V any](m map[K]V, keys ...K) map[K]V {
 // Time complexity: O(k) where k is the number of keys to pick
 // 시간 복잡도: O(k) 여기서 k는 선택할 키의 개수
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 //	result := maputil.Pick(m, "a", "c", "e") // map[string]int{"a": 1, "c": 3}
@@ -138,7 +143,8 @@ func Pick[K comparable, V any](m map[K]V, keys ...K) map[K]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 //	result := maputil.OmitBy(m, func(k string, v int) bool {
@@ -165,7 +171,8 @@ func OmitBy[K comparable, V any](m map[K]V, fn func(K, V) bool) map[K]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 //	result := maputil.PickBy(m, func(k string, v int) bool {

@@ -7,7 +7,8 @@ import (
 	"testing"
 )
 
-// TestKeys tests the Keys function / Keys 함수 테스트
+// TestKeys tests the Keys function
+// Keys 함수 테스트
 func TestKeys(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3}
 
@@ -26,7 +27,8 @@ func TestKeys(t *testing.T) {
 	}
 }
 
-// TestKeysEmpty tests Keys with empty map / 빈 맵으로 Keys 테스트
+// TestKeysEmpty tests Keys with empty map
+// 빈 맵으로 Keys 테스트
 func TestKeysEmpty(t *testing.T) {
 	result := Keys(map[string]int{})
 	if len(result) != 0 {
@@ -34,7 +36,8 @@ func TestKeysEmpty(t *testing.T) {
 	}
 }
 
-// TestValues tests the Values function / Values 함수 테스트
+// TestValues tests the Values function
+// Values 함수 테스트
 func TestValues(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3}
 
@@ -44,7 +47,8 @@ func TestValues(t *testing.T) {
 		t.Errorf("Values() returned %d values, want 3", len(result))
 	}
 
-	// Check all values are present / 모든 값이 존재하는지 확인
+	// Check all values are present
+	// 모든 값이 존재하는지 확인
 	sort.Ints(result)
 	expected := []int{1, 2, 3}
 	if !reflect.DeepEqual(result, expected) {
@@ -52,7 +56,8 @@ func TestValues(t *testing.T) {
 	}
 }
 
-// TestEntries tests the Entries function / Entries 함수 테스트
+// TestEntries tests the Entries function
+// Entries 함수 테스트
 func TestEntries(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3}
 
@@ -62,7 +67,8 @@ func TestEntries(t *testing.T) {
 		t.Errorf("Entries() returned %d entries, want 3", len(result))
 	}
 
-	// Create map from entries to verify / 항목으로부터 맵을 생성하여 검증
+	// Create map from entries to verify
+	// 항목으로부터 맵을 생성하여 검증
 	reconstructed := make(map[string]int)
 	for _, entry := range result {
 		reconstructed[entry.Key] = entry.Value
@@ -73,7 +79,8 @@ func TestEntries(t *testing.T) {
 	}
 }
 
-// TestFromEntries tests the FromEntries function / FromEntries 함수 테스트
+// TestFromEntries tests the FromEntries function
+// FromEntries 함수 테스트
 func TestFromEntries(t *testing.T) {
 	entries := []Entry[string, int]{
 		{"a", 1},
@@ -88,7 +95,8 @@ func TestFromEntries(t *testing.T) {
 		t.Errorf("FromEntries() = %v, want %v", result, expected)
 	}
 
-	// Test with duplicate keys (should use last value) / 중복 키로 테스트 (마지막 값 사용)
+	// Test with duplicate keys (should use last value)
+	// 중복 키로 테스트 (마지막 값 사용)
 	entries = []Entry[string, int]{
 		{"a", 1},
 		{"a", 10},
@@ -100,7 +108,8 @@ func TestFromEntries(t *testing.T) {
 	}
 }
 
-// TestToJSON tests the ToJSON function / ToJSON 함수 테스트
+// TestToJSON tests the ToJSON function
+// ToJSON 함수 테스트
 func TestToJSON(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3}
 
@@ -109,7 +118,8 @@ func TestToJSON(t *testing.T) {
 		t.Fatalf("ToJSON() error = %v", err)
 	}
 
-	// Verify it's valid JSON containing all keys / 모든 키를 포함하는 유효한 JSON인지 확인
+	// Verify it's valid JSON containing all keys
+	// 모든 키를 포함하는 유효한 JSON인지 확인
 	if !strings.Contains(result, `"a"`) ||
 		!strings.Contains(result, `"b"`) ||
 		!strings.Contains(result, `"c"`) {
@@ -117,7 +127,8 @@ func TestToJSON(t *testing.T) {
 	}
 }
 
-// TestFromJSON tests the FromJSON function / FromJSON 함수 테스트
+// TestFromJSON tests the FromJSON function
+// FromJSON 함수 테스트
 func TestFromJSON(t *testing.T) {
 	jsonStr := `{"a":1,"b":2,"c":3}`
 
@@ -132,14 +143,16 @@ func TestFromJSON(t *testing.T) {
 		t.Errorf("FromJSON() = %v, want %v", result, expected)
 	}
 
-	// Test with invalid JSON / 잘못된 JSON으로 테스트
+	// Test with invalid JSON
+	// 잘못된 JSON으로 테스트
 	err = FromJSON(`{invalid}`, &result)
 	if err == nil {
 		t.Error("FromJSON() should return error for invalid JSON")
 	}
 }
 
-// TestToSlice tests the ToSlice function / ToSlice 함수 테스트
+// TestToSlice tests the ToSlice function
+// ToSlice 함수 테스트
 func TestToSlice(t *testing.T) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3}
 
@@ -151,7 +164,8 @@ func TestToSlice(t *testing.T) {
 		t.Errorf("ToSlice() returned %d elements, want 3", len(result))
 	}
 
-	// Sort for predictable comparison / 예측 가능한 비교를 위해 정렬
+	// Sort for predictable comparison
+	// 예측 가능한 비교를 위해 정렬
 	sort.Strings(result)
 	expected := []string{"a=1", "b=2", "c=3"}
 	if !reflect.DeepEqual(result, expected) {
@@ -159,7 +173,8 @@ func TestToSlice(t *testing.T) {
 	}
 }
 
-// TestFromSlice tests the FromSlice function / FromSlice 함수 테스트
+// TestFromSlice tests the FromSlice function
+// FromSlice 함수 테스트
 func TestFromSlice(t *testing.T) {
 	type User struct {
 		ID   int
@@ -167,7 +182,8 @@ func TestFromSlice(t *testing.T) {
 	}
 	users := []User{{ID: 1, Name: "Alice"}, {ID: 2, Name: "Bob"}}
 
-	// Create map with ID as key / ID를 키로 사용하는 맵 생성
+	// Create map with ID as key
+	// ID를 키로 사용하는 맵 생성
 	result := FromSlice(users, func(u User) int {
 		return u.ID
 	})
@@ -177,18 +193,21 @@ func TestFromSlice(t *testing.T) {
 		t.Errorf("FromSlice() = %v, want %v", result, expected)
 	}
 
-	// Test with duplicate IDs / 중복 ID로 테스트
+	// Test with duplicate IDs
+	// 중복 ID로 테스트
 	users = []User{{ID: 1, Name: "Alice"}, {ID: 1, Name: "Andy"}, {ID: 2, Name: "Bob"}}
 	result = FromSlice(users, func(u User) int {
 		return u.ID
 	})
-	// ID 1 should have last user / ID 1은 마지막 사용자를 가져야 함
+	// ID 1 should have last user
+	// ID 1은 마지막 사용자를 가져야 함
 	if result[1].Name != "Andy" {
 		t.Errorf("FromSlice() with duplicates: result[1].Name = %s, want Andy", result[1].Name)
 	}
 }
 
-// TestFromSliceBy tests the FromSliceBy function / FromSliceBy 함수 테스트
+// TestFromSliceBy tests the FromSliceBy function
+// FromSliceBy 함수 테스트
 func TestFromSliceBy(t *testing.T) {
 	slice := []string{"apple", "banana", "cherry"}
 
@@ -204,19 +223,22 @@ func TestFromSliceBy(t *testing.T) {
 		t.Errorf("FromSliceBy() = %v, want %v", result, expected)
 	}
 
-	// Test with duplicate keys / 중복 키로 테스트
+	// Test with duplicate keys
+	// 중복 키로 테스트
 	slice = []string{"alice", "andy", "bob"}
 	result = FromSliceBy(slice,
 		func(s string) string { return string(s[0]) },
 		func(s string) int { return len(s) },
 	)
-	// 'a' key should have last value / 'a' 키는 마지막 값을 가져야 함
+	// 'a' key should have last value
+	// 'a' 키는 마지막 값을 가져야 함
 	if result["a"] != 4 { // "andy" length
 		t.Errorf("FromSliceBy() with duplicates: result['a'] = %d, want 4", result["a"])
 	}
 }
 
-// Benchmarks / 벤치마크
+// Benchmarks
+// 벤치마크
 
 func BenchmarkKeys(b *testing.B) {
 	data := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}
@@ -318,7 +340,8 @@ func BenchmarkFromSliceBy(b *testing.B) {
 // TestToYAML는 다양한 시나리오로 ToYAML 함수를 테스트합니다.
 func TestToYAML(t *testing.T) {
 	t.Run("SimpleMap", func(t *testing.T) {
-		// Test simple map / 간단한 맵 테스트
+		// Test simple map
+		// 간단한 맵 테스트
 		data := map[string]int{"a": 1, "b": 2, "c": 3}
 		result, err := ToYAML(data)
 		if err != nil {
@@ -334,7 +357,8 @@ func TestToYAML(t *testing.T) {
 	})
 
 	t.Run("NestedMap", func(t *testing.T) {
-		// Test nested map / 중첩 맵 테스트
+		// Test nested map
+		// 중첩 맵 테스트
 		data := map[string]interface{}{
 			"server": map[string]interface{}{
 				"host": "localhost",
@@ -355,7 +379,8 @@ func TestToYAML(t *testing.T) {
 	})
 
 	t.Run("EmptyMap", func(t *testing.T) {
-		// Test empty map / 빈 맵 테스트
+		// Test empty map
+		// 빈 맵 테스트
 		data := map[string]int{}
 		result, err := ToYAML(data)
 		if err != nil {
@@ -367,7 +392,8 @@ func TestToYAML(t *testing.T) {
 	})
 
 	t.Run("StringValues", func(t *testing.T) {
-		// Test with string values / 문자열 값 테스트
+		// Test with string values
+		// 문자열 값 테스트
 		data := map[string]string{
 			"name":  "Alice",
 			"email": "alice@example.com",
@@ -383,7 +409,8 @@ func TestToYAML(t *testing.T) {
 	})
 
 	t.Run("MixedTypes", func(t *testing.T) {
-		// Test with mixed types / 혼합 타입 테스트
+		// Test with mixed types
+		// 혼합 타입 테스트
 		data := map[string]interface{}{
 			"name":    "Alice",
 			"age":     30,
@@ -400,7 +427,8 @@ func TestToYAML(t *testing.T) {
 	})
 
 	t.Run("ArrayValues", func(t *testing.T) {
-		// Test with array values / 배열 값 테스트
+		// Test with array values
+		// 배열 값 테스트
 		data := map[string]interface{}{
 			"numbers": []int{1, 2, 3},
 			"strings": []string{"a", "b", "c"},
@@ -419,7 +447,8 @@ func TestToYAML(t *testing.T) {
 // TestFromYAML는 다양한 시나리오로 FromYAML 함수를 테스트합니다.
 func TestFromYAML(t *testing.T) {
 	t.Run("SimpleYAML", func(t *testing.T) {
-		// Test simple YAML / 간단한 YAML 테스트
+		// Test simple YAML
+		// 간단한 YAML 테스트
 		yamlStr := `
 a: 1
 b: 2
@@ -438,7 +467,8 @@ c: 3
 	})
 
 	t.Run("NestedYAML", func(t *testing.T) {
-		// Test nested YAML / 중첩 YAML 테스트
+		// Test nested YAML
+		// 중첩 YAML 테스트
 		yamlStr := `
 server:
   host: localhost
@@ -465,7 +495,8 @@ database:
 	})
 
 	t.Run("EmptyYAML", func(t *testing.T) {
-		// Test empty YAML / 빈 YAML 테스트
+		// Test empty YAML
+		// 빈 YAML 테스트
 		yamlStr := `{}`
 		result, err := FromYAML(yamlStr)
 		if err != nil {
@@ -477,7 +508,8 @@ database:
 	})
 
 	t.Run("StringValues", func(t *testing.T) {
-		// Test with string values / 문자열 값 테스트
+		// Test with string values
+		// 문자열 값 테스트
 		yamlStr := `
 name: Alice
 email: alice@example.com
@@ -493,7 +525,8 @@ role: admin
 	})
 
 	t.Run("MixedTypes", func(t *testing.T) {
-		// Test with mixed types / 혼합 타입 테스트
+		// Test with mixed types
+		// 혼합 타입 테스트
 		yamlStr := `
 name: Alice
 age: 30
@@ -510,7 +543,8 @@ balance: 1234.56
 	})
 
 	t.Run("ArrayValues", func(t *testing.T) {
-		// Test with array values / 배열 값 테스트
+		// Test with array values
+		// 배열 값 테스트
 		yamlStr := `
 numbers:
   - 1
@@ -536,7 +570,8 @@ strings:
 	})
 
 	t.Run("InvalidYAML", func(t *testing.T) {
-		// Test with invalid YAML / 유효하지 않은 YAML 테스트
+		// Test with invalid YAML
+		// 유효하지 않은 YAML 테스트
 		yamlStr := `invalid: yaml: content:`
 		_, err := FromYAML(yamlStr)
 		if err == nil {
@@ -545,7 +580,8 @@ strings:
 	})
 
 	t.Run("RoundTrip", func(t *testing.T) {
-		// Test round-trip conversion / 왕복 변환 테스트
+		// Test round-trip conversion
+		// 왕복 변환 테스트
 		original := map[string]interface{}{
 			"name": "Alice",
 			"age":  30,

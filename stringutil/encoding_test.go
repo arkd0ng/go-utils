@@ -2,7 +2,8 @@ package stringutil
 
 import "testing"
 
-// Test Base64 encoding/decoding / Base64 인코딩/디코딩 테스트
+// Test Base64 encoding/decoding
+// Base64 인코딩/디코딩 테스트
 func TestBase64Encode(t *testing.T) {
 	tests := []struct {
 		input    string
@@ -52,7 +53,8 @@ func TestBase64Decode(t *testing.T) {
 	}
 }
 
-// Test Base64 round-trip / Base64 왕복 테스트
+// Test Base64 round-trip
+// Base64 왕복 테스트
 func TestBase64RoundTrip(t *testing.T) {
 	inputs := []string{
 		"hello",
@@ -75,7 +77,8 @@ func TestBase64RoundTrip(t *testing.T) {
 	}
 }
 
-// Test Base64URL encoding/decoding / Base64URL 인코딩/디코딩 테스트
+// Test Base64URL encoding/decoding
+// Base64URL 인코딩/디코딩 테스트
 func TestBase64URLEncode(t *testing.T) {
 	tests := []struct {
 		input    string
@@ -123,7 +126,8 @@ func TestBase64URLDecode(t *testing.T) {
 	}
 }
 
-// Test URL encoding/decoding / URL 인코딩/디코딩 테스트
+// Test URL encoding/decoding
+// URL 인코딩/디코딩 테스트
 func TestURLEncode(t *testing.T) {
 	tests := []struct {
 		input    string
@@ -177,7 +181,8 @@ func TestURLDecode(t *testing.T) {
 	}
 }
 
-// Test URL round-trip / URL 왕복 테스트
+// Test URL round-trip
+// URL 왕복 테스트
 func TestURLRoundTrip(t *testing.T) {
 	inputs := []string{
 		"hello world",
@@ -199,7 +204,8 @@ func TestURLRoundTrip(t *testing.T) {
 	}
 }
 
-// Test HTML escape/unescape / HTML 이스케이프/언이스케이프 테스트
+// Test HTML escape/unescape
+// HTML 이스케이프/언이스케이프 테스트
 func TestHTMLEscape(t *testing.T) {
 	tests := []struct {
 		input    string
@@ -240,7 +246,8 @@ func TestHTMLUnescape(t *testing.T) {
 	}
 }
 
-// Test HTML round-trip / HTML 왕복 테스트
+// Test HTML round-trip
+// HTML 왕복 테스트
 func TestHTMLRoundTrip(t *testing.T) {
 	inputs := []string{
 		"<div>hello</div>",
@@ -257,7 +264,8 @@ func TestHTMLRoundTrip(t *testing.T) {
 	}
 }
 
-// Benchmark encoding functions / 인코딩 함수 벤치마크
+// Benchmark encoding functions
+// 인코딩 함수 벤치마크
 func BenchmarkBase64Encode(b *testing.B) {
 	s := "The quick brown fox jumps over the lazy dog"
 	for i := 0; i < b.N; i++ {

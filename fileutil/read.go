@@ -14,7 +14,8 @@ import (
 // ReadFile reads the entire file and returns its contents as a byte slice
 // ReadFile은 전체 파일을 읽고 내용을 바이트 슬라이스로 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	data, err := fileutil.ReadFile("path/to/file.txt")
 //	if err != nil {
@@ -32,7 +33,8 @@ func ReadFile(path string) ([]byte, error) {
 // ReadString reads the entire file and returns its contents as a string
 // ReadString은 전체 파일을 읽고 내용을 문자열로 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	content, err := fileutil.ReadString("path/to/file.txt")
 //	if err != nil {
@@ -50,7 +52,8 @@ func ReadString(path string) (string, error) {
 // ReadLines reads a file and returns its contents as a slice of lines
 // ReadLines는 파일을 읽고 내용을 줄의 슬라이스로 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	lines, err := fileutil.ReadLines("path/to/file.txt")
 //	if err != nil {
@@ -68,7 +71,8 @@ func ReadLines(path string) ([]string, error) {
 
 	var lines []string
 	scanner := bufio.NewScanner(file)
-	// Set max buffer size to handle long lines / 긴 줄을 처리하기 위해 최대 버퍼 크기 설정
+	// Set max buffer size to handle long lines
+	// 긴 줄을 처리하기 위해 최대 버퍼 크기 설정
 	buf := make([]byte, 0, DefaultBufferSize)
 	scanner.Buffer(buf, 1024*1024) // 1MB max token size
 
@@ -86,7 +90,8 @@ func ReadLines(path string) ([]string, error) {
 // ReadJSON reads a JSON file and unmarshals it into the provided value
 // ReadJSON은 JSON 파일을 읽고 제공된 값으로 언마샬합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	var config Config
 //	err := fileutil.ReadJSON("config.json", &config)
@@ -109,7 +114,8 @@ func ReadJSON(path string, v interface{}) error {
 // ReadYAML reads a YAML file and unmarshals it into the provided value
 // ReadYAML은 YAML 파일을 읽고 제공된 값으로 언마샬합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	var config Config
 //	err := fileutil.ReadYAML("config.yaml", &config)
@@ -132,7 +138,8 @@ func ReadYAML(path string, v interface{}) error {
 // ReadCSV reads a CSV file and returns its contents as a slice of string slices
 // ReadCSV는 CSV 파일을 읽고 내용을 문자열 슬라이스의 슬라이스로 반환합니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	records, err := fileutil.ReadCSV("data.csv")
 //	if err != nil {
@@ -160,7 +167,8 @@ func ReadCSV(path string) ([][]string, error) {
 // ReadBytes reads a specific number of bytes from a file at a given offset
 // ReadBytes는 주어진 오프셋에서 파일로부터 특정 바이트 수를 읽습니다
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	// Read 100 bytes starting from offset 1000
 //	data, err := fileutil.ReadBytes("large-file.bin", 1000, 100)
@@ -174,12 +182,14 @@ func ReadBytes(path string, offset, size int64) ([]byte, error) {
 	}
 	defer file.Close()
 
-	// Seek to offset / 오프셋으로 이동
+	// Seek to offset
+	// 오프셋으로 이동
 	if _, err := file.Seek(offset, io.SeekStart); err != nil {
 		return nil, fmt.Errorf("fileutil.ReadBytes: %w", err)
 	}
 
-	// Read size bytes / size 바이트 읽기
+	// Read size bytes
+	// size 바이트 읽기
 	data := make([]byte, size)
 	n, err := io.ReadFull(file, data)
 	if err != nil && err != io.ErrUnexpectedEOF {
@@ -195,10 +205,10 @@ func ReadBytes(path string, offset, size int64) ([]byte, error) {
 // This is useful for processing large files without loading them entirely into memory.
 // 이는 파일을 메모리에 전체 로드하지 않고 큰 파일을 처리하는 데 유용합니다.
 //
-// Example / 예제:
+// Example
+// 예제:
 //
-//	err := fileutil.ReadChunk("large-file.txt", 1024*1024, func(chunk []byte) error {
-//	    // Process chunk / 청크 처리
+// err := fileutil.ReadChunk("large-file.txt", 1024*1024, func(chunk []byte) error { / Process chunk / 청크 처리
 //	    fmt.Printf("Read %d bytes\n", len(chunk))
 //	    return nil
 //	})

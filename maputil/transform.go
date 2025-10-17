@@ -11,7 +11,8 @@ import (
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	result := maputil.Map(m, func(k string, v int) string {
@@ -34,7 +35,8 @@ func Map[K comparable, V any, R any](m map[K]V, fn func(K, V) R) map[K]R {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	result := maputil.MapKeys(m, func(k string, v int) string {
@@ -55,7 +57,8 @@ func MapKeys[K comparable, V any, R comparable](m map[K]V, fn func(K, V) R) map[
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	result := maputil.MapValues(m, func(v int) int {
@@ -78,11 +81,12 @@ func MapValues[K comparable, V any, R any](m map[K]V, fn func(V) R) map[K]R {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2}
-//	result := maputil.MapEntries(m, func(k string, v int) (int, string) {
-//	    return v, k // Swap key and value types / 키와 값 타입 교환
+// result := maputil.MapEntries(m, func(k string, v int) (int, string) {
+// return v, k // Swap key and value types / 키와 값 타입 교환
 //	}) // map[int]string{1: "a", 2: "b"}
 func MapEntries[K1 comparable, V1 any, K2 comparable, V2 any](m map[K1]V1, fn func(K1, V1) (K2, V2)) map[K2]V2 {
 	result := make(map[K2]V2, len(m))
@@ -102,7 +106,8 @@ func MapEntries[K1 comparable, V1 any, K2 comparable, V2 any](m map[K1]V1, fn fu
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3}
 //	result := maputil.Invert(m) // map[int]string{1: "a", 2: "b", 3: "c"}
@@ -120,7 +125,8 @@ func Invert[K comparable, V comparable](m map[K]V) map[V]K {
 // Time complexity: O(n*m) where n is the number of keys and m is the average nested map size
 // 시간 복잡도: O(n*m) 여기서 n은 키 개수, m은 평균 중첩 맵 크기
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]map[string]int{
 //	    "user1": {"age": 25, "score": 100},
@@ -145,7 +151,8 @@ func Flatten[K comparable, V any](m map[K]map[string]V, delimiter string) map[st
 // Time complexity: O(n*k) where n is the number of keys and k is the average key depth
 // 시간 복잡도: O(n*k) 여기서 n은 키 개수, k는 평균 키 깊이
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"user.name": 1, "user.age": 25, "admin.name": 2}
 //	result := maputil.Unflatten(m, ".") // map[string]interface{}{"user": {...}, "admin": {...}}
@@ -176,7 +183,8 @@ func Unflatten[V any](m map[string]V, delimiter string) map[string]interface{} {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}
 //	result := maputil.Chunk(m, 2) // []map[string]int{{"a": 1, "b": 2}, {"c": 3, "d": 4}, {"e": 5}}
@@ -219,7 +227,8 @@ func Chunk[K comparable, V any](m map[K]V, size int) []map[K]V {
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
 //	even, odd := maputil.Partition(m, func(k string, v int) bool {
@@ -246,7 +255,8 @@ func Partition[K comparable, V any](m map[K]V, fn func(K, V) bool) (map[K]V, map
 // Time complexity: O(n)
 // 시간 복잡도: O(n)
 //
-// Example / 예제:
+// Example
+// 예제:
 //
 //	m := map[string]int{"a": 1, "b": 0, "c": 3, "d": 0}
 //	result := maputil.Compact(m) // map[string]int{"a": 1, "c": 3}

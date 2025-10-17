@@ -165,20 +165,24 @@ func (qb *QueryBuilder) buildQuery() (string, []interface{}) {
 	var parts []string
 	var args []interface{}
 
-	// SELECT
+	// SELECT clause
+	// SELECT 절
 	parts = append(parts, "SELECT "+strings.Join(qb.columns, ", "))
 
-	// FROM
+	// FROM clause
+	// FROM 절
 	if qb.table != "" {
 		parts = append(parts, "FROM "+qb.table)
 	}
 
-	// JOINs
+	// JOIN clauses
+	// JOIN 절들
 	for _, join := range qb.joins {
 		parts = append(parts, fmt.Sprintf("%s %s ON %s", join.joinType, join.table, join.condition))
 	}
 
-	// WHERE
+	// WHERE clause
+	// WHERE 절
 	if len(qb.whereClauses) > 0 {
 		conditions := make([]string, 0, len(qb.whereClauses))
 		for _, wc := range qb.whereClauses {
@@ -188,12 +192,14 @@ func (qb *QueryBuilder) buildQuery() (string, []interface{}) {
 		parts = append(parts, "WHERE "+strings.Join(conditions, " AND "))
 	}
 
-	// GROUP BY
+	// GROUP BY clause
+	// GROUP BY 절
 	if len(qb.groupByCols) > 0 {
 		parts = append(parts, "GROUP BY "+strings.Join(qb.groupByCols, ", "))
 	}
 
-	// HAVING
+	// HAVING clause
+	// HAVING 절
 	if len(qb.havingClauses) > 0 {
 		conditions := make([]string, 0, len(qb.havingClauses))
 		for _, hc := range qb.havingClauses {
@@ -203,17 +209,20 @@ func (qb *QueryBuilder) buildQuery() (string, []interface{}) {
 		parts = append(parts, "HAVING "+strings.Join(conditions, " AND "))
 	}
 
-	// ORDER BY
+	// ORDER BY clause
+	// ORDER BY 절
 	if qb.orderBy != "" {
 		parts = append(parts, "ORDER BY "+qb.orderBy)
 	}
 
-	// LIMIT
+	// LIMIT clause
+	// LIMIT 절
 	if qb.limitNum != nil {
 		parts = append(parts, fmt.Sprintf("LIMIT %d", *qb.limitNum))
 	}
 
-	// OFFSET
+	// OFFSET clause
+	// OFFSET 절
 	if qb.offsetNum != nil {
 		parts = append(parts, fmt.Sprintf("OFFSET %d", *qb.offsetNum))
 	}
@@ -227,7 +236,7 @@ func (qb *QueryBuilder) All(ctx context.Context) ([]map[string]interface{}, erro
 	query, args := qb.buildQuery()
 
 	// Use transaction if available, otherwise use client
-	// 트랜잭션이 있으면 트랜잭션 사용, 없으면 클라이언트 사용
+	// 트랜잭션이 있으면 트랜잭션을 사용하고 없으면 클라이언트를 사용합니다
 	if qb.tx != nil {
 		return qb.executeQueryTx(ctx, query, args)
 	}
@@ -237,7 +246,8 @@ func (qb *QueryBuilder) All(ctx context.Context) ([]map[string]interface{}, erro
 // One executes the query and returns a single row
 // One은 쿼리를 실행하고 단일 행을 반환합니다
 func (qb *QueryBuilder) One(ctx context.Context) (map[string]interface{}, error) {
-	// Add LIMIT 1 if not already set / 이미 설정되지 않았으면 LIMIT 1 추가
+	// Add LIMIT 1 if not already set
+	// 이미 설정되지 않았으면 LIMIT 1 추가
 	if qb.limitNum == nil {
 		limit := 1
 		qb.limitNum = &limit
