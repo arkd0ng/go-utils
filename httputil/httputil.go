@@ -92,10 +92,8 @@ package httputil
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 
-	"gopkg.in/yaml.v3"
+	"github.com/arkd0ng/go-utils/internal/version"
 )
 
 // Version is the current version of the httputil package.
@@ -106,50 +104,7 @@ import (
 //
 // 버전은 패키지 초기화 시 cfg/app.yaml에서 자동으로 로드됩니다.
 // 버전을 로드할 수 없는 경우 "unknown"으로 기본 설정됩니다.
-var Version = getVersion()
-
-// getVersion loads the version from cfg/app.yaml
-// getVersion은 cfg/app.yaml에서 버전을 로드합니다
-func getVersion() string {
-	// Try to find cfg/app.yaml relative to the current working directory
-	// 현재 작업 디렉토리를 기준으로 cfg/app.yaml을 찾습니다
-	configPaths := []string{
-		"cfg/app.yaml",
-		"../cfg/app.yaml",
-		"../../cfg/app.yaml",
-	}
-
-	for _, path := range configPaths {
-		if data, err := os.ReadFile(path); err == nil {
-			var config struct {
-				App struct {
-					Version string `yaml:"version"`
-				} `yaml:"app"`
-			}
-			if err := yaml.Unmarshal(data, &config); err == nil && config.App.Version != "" {
-				return config.App.Version
-			}
-		}
-	}
-
-	// If we can't find the config, try to find it relative to this source file
-	// 설정을 찾을 수 없는 경우 이 소스 파일을 기준으로 찾습니다
-	if execPath, err := os.Executable(); err == nil {
-		configPath := filepath.Join(filepath.Dir(execPath), "..", "cfg", "app.yaml")
-		if data, err := os.ReadFile(configPath); err == nil {
-			var config struct {
-				App struct {
-					Version string `yaml:"version"`
-				} `yaml:"app"`
-			}
-			if err := yaml.Unmarshal(data, &config); err == nil && config.App.Version != "" {
-				return config.App.Version
-			}
-		}
-	}
-
-	return "unknown"
-}
+var Version = version.Get()
 
 // Example demonstrates basic usage of the httputil package.
 // Example은 httputil 패키지의 기본 사용법을 보여줍니다.

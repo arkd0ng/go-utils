@@ -51,22 +51,12 @@ package fileutil
 import (
 	"os"
 
-	"github.com/arkd0ng/go-utils/logging"
+	"github.com/arkd0ng/go-utils/internal/version"
 )
 
 // Version is the current version of the fileutil package
 // Version은 fileutil 패키지의 현재 버전입니다
-var Version = getVersion()
-
-// getVersion loads the application version from cfg/app.yaml.
-// getVersion은 cfg/app.yaml에서 애플리케이션 버전을 로드합니다.
-func getVersion() string {
-	version := logging.TryLoadAppVersion()
-	if version == "" {
-		return "unknown"
-	}
-	return version
-}
+var Version = version.Get()
 
 // Default file and directory permissions
 // 기본 파일 및 디렉토리 권한

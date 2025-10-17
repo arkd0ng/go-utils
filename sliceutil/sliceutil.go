@@ -122,22 +122,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/arkd0ng/go-utils/logging"
+	"github.com/arkd0ng/go-utils/internal/version"
 )
 
 // Version is the current package version loaded from cfg/app.yaml.
 // Version은 cfg/app.yaml에서 로드되는 현재 패키지 버전입니다.
-var Version = getVersion()
-
-// getVersion loads the application version from cfg/app.yaml.
-// getVersion은 cfg/app.yaml에서 애플리케이션 버전을 로드합니다.
-func getVersion() string {
-	version := logging.TryLoadAppVersion()
-	if version == "" {
-		return "unknown"
-	}
-	return version
-}
+var Version = version.Get()
 
 // Global random number generator for thread-safe random operations
 // 스레드 안전 랜덤 작업을 위한 전역 랜덤 번호 생성기

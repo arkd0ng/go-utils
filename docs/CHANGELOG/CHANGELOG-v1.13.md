@@ -6,6 +6,59 @@ Go 애플리케이션을 위한 검증 유틸리티 패키지입니다.
 
 ---
 
+## [v1.13.008] - 2025-10-17
+
+### Changed / 변경
+- 모든 패키지의 버전 관리를 동적 로딩으로 변경
+  - `internal/version` 패키지 사용으로 통합
+  - 하드코딩된 버전 제거
+  - cfg/app.yaml에서 중앙 집중식 버전 관리
+
+### Files Changed / 변경된 파일
+- `errorutil/types.go` - 하드코딩된 const를 internal/version.Get()으로 변경
+- `sliceutil/sliceutil.go` - logging.TryLoadAppVersion()을 internal/version.Get()으로 변경
+- `maputil/maputil.go` - logging.TryLoadAppVersion()을 internal/version.Get()으로 변경
+- `fileutil/fileutil.go` - logging.TryLoadAppVersion()을 internal/version.Get()으로 변경
+- `httputil/httputil.go` - 커스텀 로직을 internal/version.Get()으로 변경
+- `websvrutil/websvrutil.go` - logging.TryLoadAppVersion()을 internal/version.Get()으로 변경
+- `httputil/httputil_test.go` - TestVersion 수정 (동적 버전 체크)
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**: "일단 작업을 멈추고 버전정보 업데이트 하는 부분을 현재의 방식대로 다른패키지에 전체 적용하고 계속 진행바랍니다"
+
+**Why / 이유**:
+- 각 패키지마다 버전 로딩 방식이 달라 유지보수 어려움
+- 하드코딩된 버전은 실제 버전과 불일치 가능성 있음
+- 단일 소스(cfg/app.yaml)에서 중앙 집중식 관리 필요
+
+**Impact / 영향**:
+- ✅ 모든 패키지가 동일한 방식으로 버전 로딩
+- ✅ 버전 불일치 문제 해결
+- ✅ 유지보수성 향상
+- ✅ 모든 테스트 통과 (go test ./... 성공)
+
+**Pattern / 패턴**:
+```go
+// ❌ Before - Hardcoded
+const Version = "v1.12.005"
+
+// ❌ Before - Custom logic
+func getVersion() string {
+    version := logging.TryLoadAppVersion()
+    if version == "" {
+        return "unknown"
+    }
+    return version
+}
+
+// ✅ After - Unified approach
+import "github.com/arkd0ng/go-utils/internal/version"
+var Version = version.Get()
+```
+
+---
+
 ## [v1.13.003] - 2025-10-17
 
 ### Added / 추가

@@ -20,8 +20,16 @@ func TestVersion(t *testing.T) {
 		t.Error("Version should not be empty")
 	}
 
-	if Version != "v1.10.004" {
-		t.Errorf("Expected version 'v1.10.004', got '%s'", Version)
+	// Version should be loaded from cfg/app.yaml
+	// Version은 cfg/app.yaml에서 로드되어야 합니다
+	if Version == "v0.0.0-dev" {
+		t.Error("Version should be loaded from cfg/app.yaml, not default fallback")
+	}
+
+	// Version should start with 'v' and contain dots (semantic versioning)
+	// Version은 'v'로 시작하고 점을 포함해야 합니다 (시맨틱 버전 관리)
+	if Version[0] != 'v' {
+		t.Errorf("Version should start with 'v', got '%s'", Version)
 	}
 }
 

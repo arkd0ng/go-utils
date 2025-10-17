@@ -49,11 +49,13 @@ package errorutil
 
 import (
 	"fmt"
+
+	"github.com/arkd0ng/go-utils/internal/version"
 )
 
 // Version is the current version of the errorutil package.
 // Version은 errorutil 패키지의 현재 버전입니다.
-const Version = "v1.12.005"
+var Version = version.Get()
 
 // Unwrapper is the interface for errors that wrap other errors.
 // This is compatible with the standard library errors.Unwrap function.
