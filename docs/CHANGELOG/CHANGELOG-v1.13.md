@@ -6,6 +6,96 @@ Go 애플리케이션을 위한 검증 유틸리티 패키지입니다.
 
 ---
 
+## [v1.13.017] - 2025-10-17
+
+### Added / 추가
+- **DateTime Validators (Phase 1)**: 4 new date and time validation functions
+  - `DateFormat(format)` - Validates date string format (ISO 8601, US, EU formats)
+  - `TimeFormat(format)` - Validates time string format (24-hour, 12-hour formats)
+  - `DateBefore(time)` - Validates date is before specified time
+  - `DateAfter(time)` - Validates date is after specified time
+
+### Implementation Details / 구현 세부사항
+- **Go time Package**: Uses standard `time.Parse()` for format validation
+- **Multiple Format Support**: DateFormat and TimeFormat accept any Go time format string
+- **Flexible Input Types**: DateBefore/DateAfter accept `time.Time`, RFC3339, or ISO 8601 strings
+- **Type Safety**: Validates input types with clear error messages
+- **Bilingual Messages**: English/Korean error messages
+
+### Test Coverage / 테스트 커버리지
+- **rules_datetime.go**: 100% coverage
+- **Total Package Coverage**: 100.0% (maintained)
+- **Test Cases**: 70+ test cases covering valid/invalid inputs, type mismatches, edge cases
+- **StopOnError Coverage**: All validators tested with StopOnError path
+- **Combined Validation Tests**: Date format + range validation scenarios
+
+### Performance Benchmarks / 성능 벤치마크
+```
+BenchmarkDateFormat-8    16,156,556 ns/op     ~76 ns/op   0 allocs
+BenchmarkTimeFormat-8    18,182,242 ns/op     ~69 ns/op   0 allocs
+BenchmarkDateBefore-8    34,154,138 ns/op     ~32 ns/op   1 alloc
+BenchmarkDateAfter-8     37,245,488 ns/op     ~32 ns/op   1 alloc
+```
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bump to v1.13.017
+- `validation/rules_datetime.go` - NEW: 4 datetime validators (~180 LOC)
+- `validation/rules_datetime_test.go` - NEW: Comprehensive tests (~400 LOC)
+- `validation/benchmark_test.go` - Added 4 datetime validator benchmarks
+- `validation/example_test.go` - Added 5 datetime validator examples
+- `docs/validation/USER_MANUAL.md` - Added DateTime Validators section (~245 lines)
+- `docs/CHANGELOG/CHANGELOG-v1.13.md` - Updated with v1.13.017 entry
+
+### Context / 컨텍스트
+**User Request**: "계속 작업해주세요" (Continue working on Phase 1 implementation)
+
+**Why**: DateTime validation is essential for:
+- Event scheduling and booking systems
+- User registration (birth date, age validation)
+- Document expiry validation
+- Date range validation (check-in/check-out, start/end dates)
+- Time slot management
+
+**Impact**:
+- ✅ 58+ validators implemented (String 20 + Numeric 10 + Collection 10 + Comparison 10 + Network 5 + DateTime 4)
+- ✅ 100% test coverage maintained
+- ✅ All tests passing (unit + benchmark + example tests)
+- ✅ Comprehensive documentation (USER_MANUAL.md updated)
+- ✅ Real-world examples added (event scheduling, booking, registration)
+- ✅ Performance benchmarks established
+
+### Common Use Cases / 일반적인 사용 사례
+```go
+// Event scheduling validation
+minDate := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+maxDate := time.Date(2025, 12, 31, 23, 59, 59, 0, time.UTC)
+
+mv := validation.NewValidator()
+mv.Field("2025-10-17", "event_date").Required().DateFormat("2006-01-02")
+mv.Field("14:30:00", "event_time").Required().TimeFormat("15:04:05")
+mv.Field(eventDateTime, "event_datetime").DateAfter(minDate).DateBefore(maxDate)
+
+// User registration (birth date validation)
+minAge := time.Now().AddDate(-120, 0, 0)  // Max 120 years old
+maxAge := time.Now().AddDate(-18, 0, 0)   // Min 18 years old
+
+mv.Field("1990-05-15", "birth_date").
+    Required().
+    DateFormat("2006-01-02").
+    DateAfter(minAge).
+    DateBefore(maxAge)
+
+// Document expiry validation
+now := time.Now()
+v := validation.New(expiryDate, "passport_expiry")
+v.Required().DateAfter(now)  // Must not be expired
+```
+
+### Next Steps / 다음 단계
+- v1.13.018: Range Validators (IntRange, FloatRange, DateRange) - Phase 1 completion
+
+---
+
 ## [v1.13.016] - 2025-10-17
 
 ### Added / 추가

@@ -297,3 +297,47 @@ func BenchmarkMAC(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkDateFormat benchmarks the DateFormat validator
+// BenchmarkDateFormat는 DateFormat 검증기를 벤치마크합니다
+func BenchmarkDateFormat(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("2025-10-17", "date")
+		v.DateFormat("2006-01-02")
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkTimeFormat benchmarks the TimeFormat validator
+// BenchmarkTimeFormat는 TimeFormat 검증기를 벤치마크합니다
+func BenchmarkTimeFormat(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("14:30:00", "time")
+		v.TimeFormat("15:04:05")
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkDateBefore benchmarks the DateBefore validator
+// BenchmarkDateBefore는 DateBefore 검증기를 벤치마크합니다
+func BenchmarkDateBefore(b *testing.B) {
+	baseDate := time.Date(2025, 12, 31, 23, 59, 59, 0, time.UTC)
+	testDate := time.Date(2025, 10, 17, 12, 0, 0, 0, time.UTC)
+	for i := 0; i < b.N; i++ {
+		v := New(testDate, "date")
+		v.DateBefore(baseDate)
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkDateAfter benchmarks the DateAfter validator
+// BenchmarkDateAfter는 DateAfter 검증기를 벤치마크합니다
+func BenchmarkDateAfter(b *testing.B) {
+	baseDate := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+	testDate := time.Date(2025, 10, 17, 12, 0, 0, 0, time.UTC)
+	for i := 0; i < b.N; i++ {
+		v := New(testDate, "date")
+		v.DateAfter(baseDate)
+		_ = v.Validate()
+	}
+}

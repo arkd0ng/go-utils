@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.016
+**Version / 버전**: v1.13.017
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -15,12 +15,13 @@
 6. [Numeric Validators / 숫자 검증기](#numeric-validators--숫자-검증기)
 7. [Collection Validators / 컬렉션 검증기](#collection-validators--컬렉션-검증기)
 8. [Comparison Validators / 비교 검증기](#comparison-validators--비교-검증기)
-9. [Network Validators / 네트워크 검증기](#network-validators--네트워크-검증기) 🆕
-10. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
-11. [Error Handling / 에러 처리](#error-handling--에러-처리)
-12. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
-13. [Best Practices / 모범 사례](#best-practices--모범-사례)
-14. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
+9. [Network Validators / 네트워크 검증기](#network-validators--네트워크-검증기)
+10. [DateTime Validators / 날짜/시간 검증기](#datetime-validators--날짜시간-검증기) 🆕
+11. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
+12. [Error Handling / 에러 처리](#error-handling--에러-처리)
+13. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
+14. [Best Practices / 모범 사례](#best-practices--모범-사례)
+15. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
 
 ---
 
@@ -32,7 +33,7 @@ The `validation` package provides a **fluent, type-safe validation library** for
 
 ### Key Features / 주요 기능
 
-- ✅ **54+ Built-in Validators** / **54개 이상의 내장 검증기**
+- ✅ **58+ Built-in Validators** / **58개 이상의 내장 검증기**
 - ✅ **Fluent API with Method Chaining** / **메서드 체이닝을 통한 플루언트 API**
 - ✅ **Type-Safe with Go Generics** / **Go 제네릭을 활용한 타입 안전성**
 - ✅ **Bilingual Error Messages (EN/KR)** / **양방향 에러 메시지 (영어/한글)**
@@ -41,7 +42,8 @@ The `validation` package provides a **fluent, type-safe validation library** for
 - ✅ **Multi-Field Validation** / **다중 필드 검증**
 - ✅ **Custom Validators** / **사용자 정의 검증기**
 - ✅ **Stop-on-First-Error Support** / **첫 에러에서 멈춤 지원**
-- ✅ **Network Validators (IPv4, IPv6, CIDR, MAC)** 🆕 / **네트워크 검증기** 🆕
+- ✅ **Network Validators (IPv4, IPv6, CIDR, MAC)** / **네트워크 검증기**
+- ✅ **DateTime Validators (DateFormat, TimeFormat, DateBefore, DateAfter)** 🆕 / **날짜/시간 검증기** 🆕
 
 ---
 
@@ -997,6 +999,250 @@ Network validators use Go's standard `net` package which is highly optimized:
            ip := val.(string)
            return !strings.HasPrefix(ip, "127.")  // Reject localhost
        }, "Server IP cannot be localhost")
+   ```
+
+---
+
+### DateTime Validators / 날짜/시간 검증기
+
+DateTime validators validate date and time formats and ranges.
+
+DateTime 검증기는 날짜 및 시간 형식과 범위를 검증합니다.
+
+#### Available Validators / 사용 가능한 검증기
+
+| Validator | Description | 설명 |
+|-----------|-------------|------|
+| `DateFormat(format)` | Validates date string format | 날짜 문자열 형식 검증 |
+| `TimeFormat(format)` | Validates time string format | 시간 문자열 형식 검증 |
+| `DateBefore(time)` | Validates date is before specified time | 지정된 시간 이전인지 검증 |
+| `DateAfter(time)` | Validates date is after specified time | 지정된 시간 이후인지 검증 |
+
+#### DateFormat(format) - Date Format Validation / 날짜 형식 검증
+
+Validates that a string matches a specific date format using Go's time.Parse format.
+
+Go의 time.Parse 형식을 사용하여 문자열이 특정 날짜 형식과 일치하는지 검증합니다.
+
+**Validation Rules** / **검증 규칙**:
+- Value must be a string / 값은 문자열이어야 함
+- Must match the specified format exactly / 지정된 형식과 정확히 일치해야 함
+- Date must be valid (e.g., no Feb 30) / 날짜가 유효해야 함 (예: 2월 30일 불가)
+
+**Examples** / **예제**:
+
+```go
+// ISO 8601 format (YYYY-MM-DD)
+v := validation.New("2025-10-17", "birth_date")
+v.DateFormat("2006-01-02")
+// Valid: "2025-10-17", "2025-01-01"
+// Invalid: "10/17/2025", "2025-13-01", "not-a-date"
+
+// US format (MM/DD/YYYY)
+v := validation.New("10/17/2025", "event_date")
+v.DateFormat("01/02/2006")
+// Valid: "10/17/2025", "01/31/2025"
+// Invalid: "2025-10-17", "13/01/2025"
+
+// EU format (DD/MM/YYYY)
+v := validation.New("17/10/2025", "meeting_date")
+v.DateFormat("02/01/2006")
+// Valid: "17/10/2025", "31/12/2025"
+// Invalid: "10/17/2025", "32/01/2025"
+```
+
+#### TimeFormat(format) - Time Format Validation / 시간 형식 검증
+
+Validates that a string matches a specific time format.
+
+문자열이 특정 시간 형식과 일치하는지 검증합니다.
+
+**Validation Rules** / **검증 규칙**:
+- Value must be a string / 값은 문자열이어야 함
+- Must match the specified format exactly / 지정된 형식과 정확히 일치해야 함
+- Time components must be valid / 시간 구성요소가 유효해야 함
+
+**Examples** / **예제**:
+
+```go
+// 24-hour format (HH:MM:SS)
+v := validation.New("14:30:00", "meeting_time")
+v.TimeFormat("15:04:05")
+// Valid: "14:30:00", "00:00:00", "23:59:59"
+// Invalid: "2:30 PM", "25:00:00", "14:60:00"
+
+// 24-hour format without seconds (HH:MM)
+v := validation.New("14:30", "start_time")
+v.TimeFormat("15:04")
+// Valid: "14:30", "00:00", "23:59"
+// Invalid: "14:30:00", "2:30 PM"
+
+// 12-hour format (hh:MM:SS AM/PM)
+v := validation.New("02:30:00 PM", "appointment")
+v.TimeFormat("03:04:05 PM")
+// Valid: "02:30:00 PM", "11:59:59 AM"
+// Invalid: "14:30:00", "13:00:00 PM"
+```
+
+#### DateBefore(time) - Date Before Validation / 날짜 이전 검증
+
+Validates that a date is before the specified time.
+
+날짜가 지정된 시간 이전인지 검증합니다.
+
+**Supported Input Types** / **지원되는 입력 타입**:
+- `time.Time` object / time.Time 객체
+- RFC3339 string: `"2006-01-02T15:04:05Z07:00"`
+- ISO 8601 string: `"2006-01-02"`
+
+**Examples** / **예제**:
+
+```go
+// Using time.Time
+maxDate := time.Date(2025, 12, 31, 0, 0, 0, 0, time.UTC)
+testDate := time.Date(2025, 10, 17, 12, 0, 0, 0, time.UTC)
+v := validation.New(testDate, "expiry_date")
+v.DateBefore(maxDate)
+// Valid: any date before 2025-12-31
+// Invalid: 2025-12-31 or later
+
+// Using RFC3339 string
+v := validation.New("2025-10-17T12:00:00Z", "deadline")
+v.DateBefore(time.Date(2025, 12, 31, 0, 0, 0, 0, time.UTC))
+
+// Using ISO 8601 string
+v := validation.New("2025-10-17", "event_date")
+v.DateBefore(time.Date(2025, 12, 31, 0, 0, 0, 0, time.UTC))
+```
+
+#### DateAfter(time) - Date After Validation / 날짜 이후 검증
+
+Validates that a date is after the specified time.
+
+날짜가 지정된 시간 이후인지 검증합니다.
+
+**Supported Input Types** / **지원되는 입력 타입**:
+- `time.Time` object / time.Time 객체
+- RFC3339 string: `"2006-01-02T15:04:05Z07:00"`
+- ISO 8601 string: `"2006-01-02"`
+
+**Examples** / **예제**:
+
+```go
+// Using time.Time
+minDate := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+testDate := time.Date(2025, 10, 17, 12, 0, 0, 0, time.UTC)
+v := validation.New(testDate, "start_date")
+v.DateAfter(minDate)
+// Valid: any date after 2025-01-01
+// Invalid: 2025-01-01 or earlier
+
+// Using RFC3339 string
+v := validation.New("2025-10-17T12:00:00Z", "publish_date")
+v.DateAfter(time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC))
+
+// Using ISO 8601 string
+v := validation.New("2025-10-17", "launch_date")
+v.DateAfter(time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC))
+```
+
+#### Common Use Cases / 일반적인 사용 사례
+
+**1. Event Scheduling Validation / 이벤트 일정 검증**
+
+```go
+minDate := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+maxDate := time.Date(2025, 12, 31, 23, 59, 59, 0, time.UTC)
+
+mv := validation.NewValidator()
+mv.Field("2025-10-17", "event_date").Required().DateFormat("2006-01-02")
+mv.Field("14:30:00", "event_time").Required().TimeFormat("15:04:05")
+mv.Field(eventDateTime, "event_datetime").DateAfter(minDate).DateBefore(maxDate)
+```
+
+**2. User Registration (Birth Date) / 사용자 등록 (생년월일)**
+
+```go
+minAge := time.Now().AddDate(-120, 0, 0)  // Max 120 years old
+maxAge := time.Now().AddDate(-18, 0, 0)   // Min 18 years old
+
+mv := validation.NewValidator()
+mv.Field("1990-05-15", "birth_date").
+    Required().
+    DateFormat("2006-01-02").
+    DateAfter(minAge).
+    DateBefore(maxAge)
+```
+
+**3. Booking System (Date Range) / 예약 시스템 (날짜 범위)**
+
+```go
+now := time.Now()
+minBooking := now.AddDate(0, 0, 1)   // Tomorrow
+maxBooking := now.AddDate(0, 6, 0)   // 6 months from now
+
+mv := validation.NewValidator()
+mv.Field(checkInDate, "check_in").
+    Required().
+    DateAfter(minBooking).
+    DateBefore(maxBooking)
+mv.Field(checkOutDate, "check_out").
+    Required().
+    DateAfter(checkInDate)  // Must be after check-in
+```
+
+**4. Document Expiry Validation / 문서 만료 검증**
+
+```go
+now := time.Now()
+
+v := validation.New(expiryDate, "passport_expiry")
+v.Required().DateAfter(now)  // Must not be expired
+err := v.Validate()
+```
+
+#### Performance Characteristics / 성능 특성
+
+| Validator | Time Complexity | Avg Time | Allocations |
+|-----------|----------------|----------|-------------|
+| DateFormat | O(n) | ~76 ns/op | 0 allocs |
+| TimeFormat | O(n) | ~69 ns/op | 0 allocs |
+| DateBefore | O(1) | ~32 ns/op | 1 alloc |
+| DateAfter | O(1) | ~32 ns/op | 1 alloc |
+
+**Notes** / **참고사항**:
+- DateFormat and TimeFormat parse strings, so they're slightly slower / DateFormat과 TimeFormat은 문자열을 파싱하므로 약간 느립니다
+- DateBefore and DateAfter are very fast for time.Time objects / DateBefore와 DateAfter는 time.Time 객체에 대해 매우 빠릅니다
+- All validators have minimal memory allocations / 모든 검증기는 최소한의 메모리 할당을 합니다
+
+#### Tips and Best Practices / 팁 및 모범 사례
+
+1. **Use Standard Formats** / **표준 형식 사용**
+   - Prefer ISO 8601 (`2006-01-02`) for portability
+   - ISO 8601 형식은 이식성을 위해 선호됩니다
+
+2. **Validate Format Before Range** / **범위 전에 형식 검증**
+   ```go
+   // Good: Format validation first
+   v.DateFormat("2006-01-02").DateAfter(minDate).DateBefore(maxDate)
+   ```
+
+3. **Use UTC for Server-Side Validation** / **서버 측 검증에는 UTC 사용**
+   ```go
+   now := time.Now().UTC()
+   v.DateAfter(now)
+   ```
+
+4. **Combine with Custom Validators** / **사용자 정의 검증기와 결합**
+   ```go
+   v := validation.New(date, "meeting_date")
+   v.DateFormat("2006-01-02").
+       Custom(func(val interface{}) bool {
+           // Check if date is a weekday
+           dateStr := val.(string)
+           t, _ := time.Parse("2006-01-02", dateStr)
+           return t.Weekday() != time.Saturday && t.Weekday() != time.Sunday
+       }, "Meeting date must be a weekday")
    ```
 
 ---
