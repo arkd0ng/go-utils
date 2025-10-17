@@ -996,7 +996,7 @@ const ConstantName = "value"
 ---
 
 ## 11. database/mysql Package
-**파일 수**: 추정 30개 이상 파일  
+**파일 수**: 총 36개 파일 (소스 18개 + 테스트 18개)  
 **패키지 설명**: MySQL 데이터베이스 연동 및 관리  
 **특별 주의사항**:
 - 연결 풀 설정 최적화 가이드
@@ -1004,6 +1004,157 @@ const ConstantName = "value"
 - 데드락 처리 방법
 - 쿼리 성능 최적화 팁
 - 마이그레이션 롤백 전략
+
+#### Core Files
+- [ ] `database/mysql/client.go` - MySQL 클라이언트 메인
+- [ ] `database/mysql/connection.go` - 연결 관리
+- [ ] `database/mysql/config.go` - 설정 관리
+- [ ] `database/mysql/options.go` - 옵션 설정
+- [ ] `database/mysql/types.go` - 타입 정의
+- [ ] `database/mysql/errors.go` - 에러 정의
+
+#### Query & Transaction
+- [ ] `database/mysql/simple.go` - 간단한 쿼리 함수
+- [ ] `database/mysql/builder.go` - 쿼리 빌더
+- [ ] `database/mysql/select_options.go` - SELECT 옵션
+- [ ] `database/mysql/transaction.go` - 트랜잭션 관리
+- [ ] `database/mysql/scan.go` - 스캔 유틸리티
+
+#### Advanced Operations
+- [ ] `database/mysql/batch.go` - 배치 작업
+- [ ] `database/mysql/upsert.go` - UPSERT 작업
+- [ ] `database/mysql/softdelete.go` - 소프트 삭제
+- [ ] `database/mysql/pagination.go` - 페이지네이션
+
+#### Database Management
+- [ ] `database/mysql/migration.go` - 마이그레이션
+- [ ] `database/mysql/schema.go` - 스키마 관리
+- [ ] `database/mysql/export.go` - 데이터 내보내기
+
+#### Monitoring & Utilities
+- [ ] `database/mysql/metrics.go` - 메트릭 수집
+- [ ] `database/mysql/stats.go` - 통계 정보
+- [ ] `database/mysql/retry.go` - 재시도 로직
+- [ ] `database/mysql/rotation.go` - 로테이션
+
+#### Test Files
+- [ ] `database/mysql/client_test.go`
+- [ ] `database/mysql/batch_test.go`
+- [ ] `database/mysql/upsert_test.go`
+- [ ] `database/mysql/softdelete_test.go`
+- [ ] `database/mysql/pagination_test.go`
+- [ ] `database/mysql/migration_test.go`
+- [ ] `database/mysql/schema_test.go`
+- [ ] `database/mysql/export_test.go`
+- [ ] `database/mysql/metrics_test.go`
+- [ ] `database/mysql/stats_test.go`
+- [ ] `database/mysql/mysql_integration_test.go`
+- [ ] `database/mysql/test_utils_test.go`
+- [ ] `database/mysql/testhelper_test.go`
+
+**작업 노트**:
+- 연결 풀 관리 상세 설명
+- 트랜잭션 사용 패턴 및 주의사항
+- 쿼리 빌더 사용 예제
+- 마이그레이션 전략 및 롤백 방법
+- 성능 모니터링 및 최적화
+- SQL 인젝션 방지 방법
+
+---
+
+## 12. database/redis Package
+**파일 수**: 총 28개 파일 (소스 14개 + 테스트 14개)  
+**패키지 설명**: Redis 연동 및 명령 실행  
+**특별 주의사항**:
+- 각 데이터 타입별 사용 시나리오
+- 파이프라인 vs 트랜잭션 비교
+- 연결 풀 최적화 전략
+- 클러스터 설정 가이드
+- 메모리 관리 주의사항
+
+#### Core Files
+- [ ] `database/redis/client.go` - Redis 클라이언트 메인
+- [ ] `database/redis/connection.go` - 연결 관리
+- [ ] `database/redis/config.go` - 설정 관리
+- [ ] `database/redis/options.go` - 옵션 설정
+- [ ] `database/redis/types.go` - 타입 정의
+- [ ] `database/redis/errors.go` - 에러 정의
+
+#### Data Type Operations
+- [ ] `database/redis/string.go` - String 타입 명령
+- [ ] `database/redis/hash.go` - Hash 타입 명령
+- [ ] `database/redis/list.go` - List 타입 명령
+- [ ] `database/redis/set.go` - Set 타입 명령
+- [ ] `database/redis/zset.go` - Sorted Set 타입 명령
+
+#### Advanced Features
+- [ ] `database/redis/key.go` - 키 관리
+- [ ] `database/redis/pipeline.go` - 파이프라인
+- [ ] `database/redis/transaction.go` - 트랜잭션
+- [ ] `database/redis/pubsub.go` - Pub/Sub
+- [ ] `database/redis/retry.go` - 재시도 로직
+
+#### Test Files
+- [ ] `database/redis/client_test.go`
+- [ ] `database/redis/string_test.go`
+- [ ] `database/redis/hash_test.go`
+- [ ] `database/redis/list_test.go`
+- [ ] `database/redis/set_test.go`
+- [ ] `database/redis/zset_test.go`
+- [ ] `database/redis/key_test.go`
+- [ ] `database/redis/pipeline_test.go`
+- [ ] `database/redis/transaction_test.go`
+- [ ] `database/redis/pubsub_test.go`
+- [ ] `database/redis/testhelper_test.go`
+
+**작업 노트**:
+- 각 데이터 타입의 특징과 사용 시나리오
+- 파이프라인 사용을 통한 성능 최적화
+- 트랜잭션 WATCH/MULTI/EXEC 설명
+- Pub/Sub 패턴 구현 가이드
+- 연결 풀링 및 재시도 전략
+- TTL 및 메모리 관리
+
+---
+
+## 13. validation Package
+**파일 수**: 총 8개 파일 (소스 4개 + 테스트 4개)  
+**패키지 설명**: 데이터 검증 및 유효성 검사  
+**특별 주의사항**:
+- 검증 규칙 작성 방법
+- 커스텀 검증기 구현
+- 에러 메시지 국제화
+- 성능 최적화
+
+#### Core Files
+- [ ] `validation/validator.go` - 메인 검증기
+- [ ] `validation/types.go` - 타입 정의
+- [ ] `validation/errors.go` - 에러 정의
+- [ ] `validation/version.go` - 버전 정보
+
+#### Test Files
+- [ ] `validation/validator_test.go`
+- [ ] `validation/types_test.go`
+- [ ] `validation/errors_test.go`
+
+**작업 노트**:
+- 다양한 검증 규칙 예제
+- 중첩된 구조체 검증 방법
+- 조건부 검증 구현
+- 커스텀 검증 함수 작성 가이드
+- 에러 메시지 커스터마이징
+- 성능 고려사항
+
+---
+
+## 14. examples Directory
+**파일 수**: 총 12개 예제 파일  
+**패키지 설명**: 각 패키지의 사용 예제  
+**특별 주의사항**:
+- 초보자 친화적인 설명
+- 단계별 주석
+- 예상 출력 명시
+- 실행 방법 안내
 - [ ] `errorutil/inspect_test.go`
 
 **작업 노트**:
@@ -1133,68 +1284,210 @@ const ConstantName = "value"
 4. **학습 포인트**: 핵심 개념이나 주의사항을 강조
 5. **실행 방법**: 예제 실행 명령어 및 필요한 환경 설정
 
-**예제 주석 템플릿**:
+**예제 주석 작성 템플릿**:
 ```go
 // Example: [Example Name]
-// This example demonstrates [purpose and key concepts].
+//
+// Purpose:
+// This example demonstrates [specific purpose and key concepts].
+// It shows how to [main task] using [package name].
+//
+// Prerequisites:
+//   - [any required setup, e.g., database running]
+//   - [environment variables needed]
 //
 // Learning points:
-//   - Point 1
-//   - Point 2
+//   - [Key concept 1]: [explanation]
+//   - [Key concept 2]: [explanation]
+//   - [Key concept 3]: [explanation]
 //
 // How to run:
 //   go run examples/[package]/main.go
 //
 // Expected output:
-//   [output description]
+//   [detailed description of expected output]
+//   [example output text]
+//
+// Common issues:
+//   - [Issue 1]: [solution]
+//   - [Issue 2]: [solution]
 //
 // 예제: [예제 이름]
-// 이 예제는 [목적과 핵심 개념]을 보여줍니다.
+//
+// 목적:
+// 이 예제는 [구체적인 목적과 핵심 개념]을 보여줍니다.
+// [패키지 이름]을 사용하여 [주요 작업]을 수행하는 방법을 보여줍니다.
+//
+// 사전 요구사항:
+//   - [필요한 설정, 예: 데이터베이스 실행 중]
+//   - [필요한 환경 변수]
 //
 // 학습 포인트:
-//   - 포인트 1
-//   - 포인트 2
+//   - [핵심 개념 1]: [설명]
+//   - [핵심 개념 2]: [설명]
+//   - [핵심 개념 3]: [설명]
 //
 // 실행 방법:
 //   go run examples/[package]/main.go
 //
 // 예상 출력:
-//   [출력 설명]
+//   [예상 출력에 대한 상세 설명]
+//   [출력 예시 텍스트]
+//
+// 일반적인 문제:
+//   - [문제 1]: [해결 방법]
+//   - [문제 2]: [해결 방법]
+
+package main
+
+import (
+    // imports with comments explaining why each is needed
+    // 각 import가 필요한 이유를 주석으로 설명
+)
+
+func main() {
+    // Step 1: [First step description]
+    // 1단계: [첫 번째 단계 설명]
+    
+    // Step 2: [Second step description]
+    // 2단계: [두 번째 단계 설명]
+    
+    // ... and so on
+}
 ```
+
+**작업 노트**:
+- 각 예제의 전체 흐름을 상단에 명확히 설명
+- 코드 블록마다 영문/한글 주석 병기
+- 초보자가 막힐 수 있는 부분 미리 안내
+- 실제 실행 가능한 완전한 예제 제공
+- 출력 결과를 주석으로 표시
+- 일반적인 에러와 해결 방법 포함
 
 ---
 
 ## Test Files (테스트 파일)
-**우선순위**: ⭐⭐⭐ (중간)  
-**작업 전략**: 주요 패키지 작업 시 함께 진행
+**총 파일 수**: 100개 이상 (각 패키지의 테스트 파일)  
+**작업 특성**: 주요 패키지 작업 시 함께 진행
 
 ### 테스트 파일 주석 작성 원칙
-1. **테스트 목적**: 각 테스트 함수가 무엇을 검증하는지 명시
-2. **테스트 시나리오**: Given-When-Then 패턴으로 구조화
-3. **경계 조건**: 엣지 케이스와 에러 케이스 설명
-4. **설정 정보**: 테스트에 필요한 환경 설정이나 전제 조건
 
-**테스트 주석 템플릿**:
+#### 1. 테스트 함수 주석
+**목표**: 각 테스트가 무엇을 검증하는지, 왜 중요한지 명확히 설명
+
 ```go
-// TestFunctionName tests [what is being tested].
+// TestFunctionName verifies [what is being tested].
 //
-// Test scenarios:
-//   - Scenario 1: [description]
-//   - Scenario 2: [description]
+// Purpose:
+// This test ensures that [specific behavior or requirement].
+// It validates [expected behavior] under [specific conditions].
+//
+// Test coverage:
+//   - [Scenario 1]: [what is tested]
+//   - [Scenario 2]: [what is tested]
+//   - [Edge case 1]: [what is tested]
+//   - [Error case 1]: [what is tested]
+//
+// Test methodology:
+// Uses [testing approach, e.g., table-driven tests, mocking]
+// to verify [aspect being tested].
+//
+// Important assumptions:
+//   - [Assumption 1]
+//   - [Assumption 2]
 //
 // TestFunctionName은 [테스트 대상]을 검증합니다.
 //
-// 테스트 시나리오:
-//   - 시나리오 1: [설명]
-//   - 시나리오 2: [설명]
+// 목적:
+// 이 테스트는 [특정 동작이나 요구사항]을 보장합니다.
+// [특정 조건] 하에서 [예상 동작]을 검증합니다.
+//
+// 테스트 범위:
+//   - [시나리오 1]: [테스트 내용]
+//   - [시나리오 2]: [테스트 내용]
+//   - [엣지 케이스 1]: [테스트 내용]
+//   - [에러 케이스 1]: [테스트 내용]
+//
+// 테스트 방법론:
+// [테스트 방식, 예: 테이블 기반 테스트, 모킹]을 사용하여
+// [테스트 대상 측면]을 검증합니다.
+//
+// 중요한 가정:
+//   - [가정 1]
+//   - [가정 2]
 func TestFunctionName(t *testing.T) {
-    // Given: [setup description] / 준비: [설정 설명]
+    // Given: [setup and preconditions]
+    // 준비: [설정 및 사전 조건]
     
-    // When: [action description] / 실행: [동작 설명]
+    // When: [action being tested]
+    // 실행: [테스트할 동작]
     
-    // Then: [assertion description] / 검증: [검증 설명]
+    // Then: [expected outcomes and assertions]
+    // 검증: [예상 결과 및 단언]
 }
 ```
+
+#### 2. 테스트 케이스 주석
+테이블 기반 테스트의 각 케이스에도 주석 추가:
+
+```go
+tests := []struct {
+    name    string // Test case name / 테스트 케이스 이름
+    input   string // Input description / 입력 설명
+    want    string // Expected output / 예상 출력
+    wantErr bool   // Should return error / 에러 반환 여부
+}{
+    {
+        name:    "valid input",
+        input:   "test", // Tests normal case / 정상 케이스 테스트
+        want:    "TEST",
+        wantErr: false,
+    },
+    {
+        name:    "empty string",
+        input:   "", // Edge case: empty input / 엣지 케이스: 빈 입력
+        want:    "",
+        wantErr: true,
+    },
+}
+```
+
+#### 3. 테스트 헬퍼 함수 주석
+```go
+// setupTestDB creates a test database connection for integration tests.
+// It returns the database connection and a cleanup function.
+// The cleanup function should be called with defer to ensure proper cleanup.
+//
+// Parameters:
+//   - t: testing.T instance for logging and failing
+//
+// Returns:
+//   - *sql.DB: test database connection
+//   - func(): cleanup function to close connection and remove test data
+//
+// setupTestDB는 통합 테스트를 위한 테스트 데이터베이스 연결을 생성합니다.
+// 데이터베이스 연결과 정리 함수를 반환합니다.
+// 정리 함수는 defer로 호출하여 적절한 정리를 보장해야 합니다.
+//
+// 매개변수:
+//   - t: 로깅 및 실패를 위한 testing.T 인스턴스
+//
+// 반환값:
+//   - *sql.DB: 테스트 데이터베이스 연결
+//   - func(): 연결을 닫고 테스트 데이터를 제거하는 정리 함수
+func setupTestDB(t *testing.T) (*sql.DB, func()) {
+    // implementation
+}
+```
+
+### 테스트 파일 체크리스트
+- [ ] 모든 테스트 함수에 목적 설명
+- [ ] Given-When-Then 패턴 명확히 표시
+- [ ] 테스트 케이스별 의도 설명
+- [ ] 엣지 케이스와 에러 케이스 문서화
+- [ ] 테스트 헬퍼 함수 상세 설명
+- [ ] 필요한 환경 설정 명시
+- [ ] 영문/한글 주석 병기
 
 ---
 
@@ -1229,26 +1522,72 @@ func TestFunctionName(t *testing.T) {
 
 ## Progress Tracking (진행 상황 추적)
 
-### 현재 진행 상황
-- **작업 시작일**: [YYYY-MM-DD]
-- **현재 작업 중인 파일**: 
-- **완료된 패키지**: 
-- **전체 진행률**: 0% (0/[total] 파일)
+### 📊 전체 진행 상황 요약
+**업데이트 날짜**: 2025-10-17
 
-### Next Steps (다음 단계)
-1. [ ] [다음 작업 항목]
-2. [ ] [다음 작업 항목]
-3. [ ] [다음 작업 항목]
+| 패키지 | 총 파일 수 | 완료 파일 | 진행률 | 상태 |
+|--------|-----------|----------|--------|------|
+| websvrutil | 51 | 0 | 0% | 대기 |
+| sliceutil | 32 | 0 | 0% | 대기 |
+| maputil | 28 | 0 | 0% | 대기 |
+| stringutil | 22 | 0 | 0% | 대기 |
+| timeutil | 24 | 0 | 0% | 대기 |
+| fileutil | 20 | 0 | 0% | 대기 |
+| httputil | 20 | 0 | 0% | 대기 |
+| logging | 12 | 0 | 0% | 대기 |
+| errorutil | 6 | 0 | 0% | 대기 |
+| random | 2 | 0 | 0% | 대기 |
+| database/mysql | 36 | 0 | 0% | 대기 |
+| database/redis | 28 | 0 | 0% | 대기 |
+| validation | 8 | 0 | 0% | 대기 |
+| examples | 12 | 0 | 0% | 대기 |
+| **전체** | **~301** | **0** | **0%** | **시작 전** |
 
-### 발견된 이슈 및 특이사항
-- [이슈 1]
-- [이슈 2]
+### 📝 현재 작업 상태
+- **작업 시작일**: [미시작]
+- **마지막 업데이트**: 2025-10-17
+- **현재 작업 중인 파일**: 없음
+- **현재 세션 진행 상황**: todo-codex.md 마스터 체크리스트 보강 완료
 
-### 작업 히스토리
-| 날짜 | 패키지/파일 | 작업 내용 | 상태 |
-|------|------------|----------|------|
-| 2025-10-17 | todo-codex.md | 마스터 체크리스트 보강 | ✅ |
-|  |  |  |  |
+### 🎯 Next Steps (다음 작업 계획)
+1. [ ] 작업 순서 결정 (권장: websvrutil 또는 errorutil부터 시작)
+2. [ ] 첫 번째 파일 선택 및 체크박스 `[-]`로 변경
+3. [ ] 기존 주석 분석 및 보강 계획 수립
+4. [ ] 주석 작성 시작
+
+### 💡 작업 팁
+- **한 번에 한 파일씩**: 완전히 끝낸 후 다음 파일로
+- **테스트와 함께**: 소스 파일 완료 후 바로 테스트 파일 작업
+- **자주 커밋**: 파일 2-3개 완료 시마다 커밋
+- **정기적 문서화**: 5-10개 파일 완료 시마다 BILINGUAL_AUDIT.md 업데이트
+- **품질 > 속도**: 빠르게 하기보다 충분히 자세하게 작성
+
+### 📌 발견된 이슈 및 특이사항
+_작업 중 발견되는 이슈를 여기에 기록_
+
+- [날짜] [파일명]: [이슈 설명]
+
+### 📚 작업 히스토리
+| 날짜 | 패키지/파일 | 작업 내용 | 파일 수 | 상태 |
+|------|------------|----------|---------|------|
+| 2025-10-17 | todo-codex.md | 마스터 체크리스트 보강 작업 | 1 | ✅ 완료 |
+|  |  |  |  |  |
+
+### 🏆 마일스톤
+- [ ] **마일스톤 1**: 첫 10개 파일 완료
+- [ ] **마일스톤 2**: 첫 패키지 완전 완료
+- [ ] **마일스톤 3**: 100개 파일 완료
+- [ ] **마일스톤 4**: 모든 소스 파일 완료
+- [ ] **마일스톤 5**: 모든 테스트 파일 완료
+- [ ] **마일스톤 6**: 전체 프로젝트 완료 및 최종 검증
+
+### 📈 주간 진행 목표
+_각 주의 목표 파일 수를 설정하고 추적_
+
+- **1주차**: [목표 파일 수] (예: 20-30 파일)
+- **2주차**: [목표 파일 수]
+- **3주차**: [목표 파일 수]
+- **완료 예상일**: [예상 날짜]
 
 ---
 
@@ -1277,5 +1616,235 @@ grep -r "^func " --include="*.go" --exclude-dir="vendor" | wc -l
 # 주석 라인 수
 grep -r "^//" --include="*.go" --exclude-dir="vendor" | wc -l
 ```
+
+### 파일별 주석 비율 확인
+```bash
+# 특정 파일의 주석 비율 확인
+count_comments() {
+    local file=$1
+    local total=$(wc -l < "$file")
+    local comments=$(grep -c "^[[:space:]]*\/\/" "$file" || echo 0)
+    local ratio=$(awk "BEGIN {printf \"%.1f\", ($comments/$total)*100}")
+    echo "$file: $comments/$total lines ($ratio%)"
+}
+
+# 사용 예
+count_comments "sliceutil/slice.go"
+```
+
+### 진행률 계산
+```bash
+# 완료된 파일 수 계산 (체크리스트에서 [x] 카운트)
+grep -c "\[x\]" todo-codex.md
+
+# 전체 항목 수 계산
+grep -c "\[ \]\|\[-\]\|\[x\]" todo-codex.md
+```
+
+---
+
+## Quick Reference (빠른 참조)
+
+### 🚀 작업 시작하기
+1. `todo-codex.md` 열기
+2. 작업할 파일 선택하고 `[ ]` → `[-]`로 변경
+3. 파일 열고 기존 주석 검토
+4. 주석 작성 표준에 따라 주석 보강
+5. 테스트 실행: `go test ./[package]`
+6. 완료 시 `[-]` → `[x]`로 변경
+7. 문서 업데이트 (BILINGUAL_AUDIT.md, CHANGELOG)
+
+### 📝 주석 작성 체크리스트 (빠른 확인)
+작업 완료 전 반드시 확인:
+
+**필수 사항**:
+- [ ] 모든 public 함수에 주석
+- [ ] 영문/한글 모두 동일한 수준으로 상세
+- [ ] Purpose, Parameters, Returns, Errors 모두 포함
+- [ ] 특수 값(nil, 0 등) 처리 방법 명시
+- [ ] Thread-safety 명시 (필요한 경우)
+
+**권장 사항**:
+- [ ] 복잡한 함수에 사용 예제
+- [ ] 성능 특성 (시간/공간 복잡도)
+- [ ] 알려진 제한사항
+- [ ] 관련 함수 참조
+
+**품질 확인**:
+- [ ] 초보자가 이해할 수 있는가?
+- [ ] 주석이 코드보다 짧지 않은가?
+- [ ] 실제 코드와 일치하는가?
+
+### 🎨 주석 템플릿 (복사하여 사용)
+
+#### 간단한 함수
+```go
+// FunctionName [동사] [명사구].
+// It [상세 설명 2-3문장].
+//
+// Parameters:
+//   - param: [설명, 제약조건]
+//
+// Returns:
+//   - [타입]: [설명]
+//
+// FunctionName은 [동사] [명사구].
+// [상세 설명 2-3문장].
+//
+// 매개변수:
+//   - param: [설명, 제약조건]
+//
+// 반환값:
+//   - [타입]: [설명]
+```
+
+#### 에러를 반환하는 함수
+```go
+// FunctionName [동사] [명사구].
+// [상세 설명 및 목적].
+//
+// Parameters:
+//   - param1: [설명]
+//   - param2: [설명]
+//
+// Returns:
+//   - [타입]: [성공 시 반환값]
+//   - error: [에러 설명]
+//
+// Errors:
+//   - ErrXXX: when [조건]
+//   - ErrYYY: when [조건]
+//
+// Example:
+//   result, err := FunctionName(arg1, arg2)
+//   if err != nil {
+//       // handle error
+//   }
+//
+// [동일 내용 한글]
+```
+
+### 📊 진행 상황 업데이트 방법
+```markdown
+1. 파일 완료 시:
+   - [ ] → [x] 변경
+   
+2. 패키지 완료 시:
+   - Progress Tracking 테이블 업데이트
+   - BILINGUAL_AUDIT.md 업데이트
+   
+3. 세션 종료 시:
+   - 현재 작업 파일 [-] 상태 유지
+   - "현재 작업 상태" 섹션 업데이트
+   - "Next Steps" 업데이트
+```
+
+### 🔧 자주 사용하는 명령어
+```bash
+# 특정 패키지 테스트
+go test ./sliceutil -v
+
+# 전체 테스트
+go test ./...
+
+# 레이스 검사와 함께 테스트
+go test -race ./...
+
+# 커버리지 확인
+go test -cover ./sliceutil
+
+# 코드 포맷팅
+go fmt ./...
+
+# Vet 실행
+go vet ./...
+```
+
+### 💬 GitHub Copilot에게 요청하는 방법
+```
+[좋은 요청 예시]
+
+"sliceutil/slice.go 파일의 Map 함수에 대해 충분히 자세하고 
+매우 친절한 영문/한글 병기 주석을 작성해주세요. 
+다음을 포함해주세요:
+- 함수의 목적과 사용 시나리오
+- 모든 파라미터의 의미와 제약 조건
+- 반환값 설명
+- 시간/공간 복잡도
+- nil 슬라이스 처리 방법
+- 사용 예제
+- thread-safety 여부"
+```
+
+### 📖 참고 문서
+- `docs/BILINGUAL_AUDIT.md` - 주석 감사 결과
+- `docs/CHANGELOG/CHANGELOG-specials.md` - 변경 이력
+- `README.md` - 각 패키지 README
+- [Effective Go](https://go.dev/doc/effective_go) - Go 주석 가이드
+
+---
+
+## Appendix (부록)
+
+### A. 패키지별 특수 고려사항
+
+**websvrutil**:
+- HTTP 핸들러 체인의 실행 순서
+- 컨텍스트 값의 생명주기
+- 미들웨어 작성 패턴
+
+**database/mysql, database/redis**:
+- 연결 풀 관리 방법
+- 트랜잭션 사용 패턴
+- 에러 재시도 전략
+
+**sliceutil, maputil**:
+- 제네릭 타입 설명
+- 성능 특성 (O-notation)
+- 메모리 할당 패턴
+
+**timeutil**:
+- 시간대 처리
+- DST 고려사항
+- time.Time의 zero value 처리
+
+**fileutil**:
+- 파일 권한 (Unix vs Windows)
+- 심볼릭 링크 처리
+- 대용량 파일 처리
+
+### B. 용어집 (Glossary)
+
+**영문 → 한글**:
+- Thread-safe → Thread-safe (스레드 안전)
+- Goroutine-safe → Goroutine-safe (고루틴 안전)
+- Immutable → 불변
+- Mutable → 가변
+- Time complexity → 시간 복잡도
+- Space complexity → 공간 복잡도
+- Edge case → 엣지 케이스 / 경계 조건
+- Corner case → 코너 케이스 / 특수 상황
+
+### C. 문서 버전 관리
+
+| 버전 | 날짜 | 변경 내용 | 작성자 |
+|------|------|----------|--------|
+| 1.0.0 | 2025-10-17 | 초기 마스터 체크리스트 생성 | AI |
+|  |  |  |  |
+
+---
+
+## 📞 문의 및 이슈
+
+문서나 작업 진행에 대한 질문이나 이슈가 있으면 다음과 같이 기록:
+
+1. GitHub Issues 생성
+2. 또는 이 문서의 "발견된 이슈 및 특이사항" 섹션에 기록
+
+---
+
+**마지막 업데이트**: 2025-10-17  
+**문서 상태**: 활성화 (Active)  
+**다음 리뷰 예정일**: [작업 시작 시 설정]
 
 ---
