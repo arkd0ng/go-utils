@@ -6,6 +6,53 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.021] - 2025-10-17
+
+### Changed / 변경
+- README.md 업데이트 - websvrutil과 errorutil을 완료 패키지로 표시
+  - websvrutil을 "개발 중"에서 "완료" 섹션으로 이동
+  - errorutil 패키지를 "완료" 섹션에 추가
+  - 패키지 구조 섹션에 websvrutil과 errorutil 추가
+  - 각 패키지의 핵심 기능 및 사용 예제 포함
+- CHANGELOG.md 업데이트 - v1.11.x와 v1.12.x 완료 상태 반영
+  - v1.11.x (websvrutil) 상태를 "개발 중"에서 "완료"로 변경
+  - 모든 구현된 기능 목록 추가 (App & Router, 10+ Middleware, Context & Handlers 등)
+  - v1.12.x (errorutil) 최신 패치를 v1.12.020으로 업데이트
+  - 21개 함수 (6 Error Creation + 6 Error Wrapping + 9 Error Inspection) 명시
+
+### Files Changed / 변경된 파일
+- `README.md` - websvrutil과 errorutil 섹션 추가 및 재구성 (~200줄 변경)
+- `CHANGELOG.md` - v1.11.x와 v1.12.x 완료 상태 업데이트 (~100줄 변경)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.021 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+"현재 루트에 있는 README.md와 CHANGELOG.md에 내용을 업데이트 합시다. 현재 상황은 websvrutil과 errorutil까지 모두 완료된 상황입니다."
+
+**Why / 이유**:
+- websvrutil과 errorutil 패키지가 모두 완료되었으나 루트 문서에 반영되지 않음
+- 사용자와 기여자들이 프로젝트의 현재 상태를 명확히 파악할 수 있어야 함
+- 완료된 패키지를 "개발 중"으로 표시하면 혼란을 초래함
+
+**Impact / 영향**:
+- ✅ 프로젝트 현재 상태가 문서에 정확히 반영됨
+- ✅ 사용자가 websvrutil과 errorutil을 즉시 사용 가능함을 알 수 있음
+- ✅ 프로젝트 완성도 상승 (12개 완료 패키지)
+
+**Test Results / 테스트 결과**:
+
+```bash
+go build ./...
+# Build successful ✅
+
+go test ./errorutil -v
+# All 29 tests passed ✅
+# Coverage: 99.2% ✅
+```
+
+---
+
 ## [v1.12.020] - 2025-10-17
 
 ### Added / 추가

@@ -36,17 +36,19 @@ This library is organized into subpackages for better modularity:
 
 ```
 go-utils/
-├── random/          # Random generation utilities / 랜덤 생성 유틸리티
+├── random/          # Random generation utilities (14 methods) / 랜덤 생성 유틸리티 (14개 메서드)
 ├── logging/         # Logging with file rotation / 파일 로테이션 로깅
 ├── database/
 │   ├── mysql/       # Extreme simplicity MySQL client / 극도로 간단한 MySQL 클라이언트
 │   └── redis/       # Extreme simplicity Redis client / 극도로 간단한 Redis 클라이언트
 ├── stringutil/      # String manipulation utilities (53 functions) / 문자열 처리 유틸리티 (53개 함수)
-├── timeutil/        # Time and date utilities (114 functions) / 시간 및 날짜 유틸리티 (114개 함수)
+├── timeutil/        # Time and date utilities (114+ functions) / 시간 및 날짜 유틸리티 (114+ 함수)
 ├── sliceutil/       # Slice utilities (95 functions) / 슬라이스 유틸리티 (95개 함수)
 ├── maputil/         # Map utilities (99 functions) / 맵 유틸리티 (99개 함수)
 ├── fileutil/        # File and path utilities (~91 functions) / 파일 및 경로 유틸리티 (약 91개 함수)
-├── httputil/        # HTTP client utilities (10 methods + 12 options) / HTTP 클라이언트 유틸리티 (10개 메서드 + 12개 옵션)
+├── httputil/        # HTTP client utilities / HTTP 클라이언트 유틸리티
+├── websvrutil/      # Web server utilities / 웹 서버 유틸리티
+├── errorutil/       # Error handling utilities (21 functions) / 에러 처리 유틸리티 (21개 함수)
 └── ...
 ```
 
@@ -814,34 +816,125 @@ err := httputil.Get(url, &users, httputil.WithBearerToken("token"))
 
 ---
 
-### 🚧 In Development / 개발 중
-
-#### [websvrutil](./websvrutil/) - Web Server Utilities (v1.11.x)
-
-**Status / 상태**: In Development / 개발 중
-**Branch / 브랜치**: `feature/v1.11.x-websvrutil`
-**Version / 버전**: v1.11.044
+### ✅ [websvrutil](./websvrutil/) - Web Server Utilities
 
 Extreme simplicity web server utilities - reduce 50+ lines of server setup code to just 5 lines.
 
 극도로 간단한 웹 서버 유틸리티 - 50줄 이상의 서버 설정 코드를 단 5줄로 줄입니다.
 
-**Latest update / 최신 업데이트**: v1.11.044 consolidates the latest automation changes on `main`.  
-**최신 업데이트**: v1.11.044에서 최신 자동화 변경 사항을 `main` 브랜치에 통합했습니다.
+**Core Features**: Simple Router, RESTful routing with path parameters, middleware chaining, handler helpers / 간단한 라우터, 경로 매개변수를 가진 RESTful 라우팅, 미들웨어 체이닝, 핸들러 헬퍼
 
-**Planned Features / 계획된 기능**:
-- Simple Router with RESTful routing / RESTful 라우팅을 가진 간단한 라우터
-- Middleware (CORS, logging, recovery, auth, rate limiting) / 미들웨어
-- Handler helpers (JSON response, error response, file serving) / 핸들러 헬퍼
-- Request/Response utilities (body binding, cookie, headers) / 요청/응답 유틸리티
-- Server management (graceful shutdown, hot reload, health check) / 서버 관리
+**Middleware (10+ built-in)**: CORS, logging, recovery, auth, rate limiting, timeout, compression / 미들웨어 (10개 이상 내장): CORS, 로깅, 복구, 인증, 속도 제한, 타임아웃, 압축
+
+**Handler Helpers**: JSON response, error response, file serving, redirect / 핸들러 헬퍼: JSON 응답, 에러 응답, 파일 서빙, 리다이렉트
+
+**Request/Response Utilities**: Body binding, cookie management, headers, query/path params / 요청/응답 유틸리티: 본문 바인딩, 쿠키 관리, 헤더, 쿼리/경로 매개변수
+
+**Server Management**: Graceful shutdown, signal handling, health check / 서버 관리: 정상 종료, 시그널 처리, 헬스 체크
+
+**Template Engine**: Auto-discovery, hot reload, layout support / 템플릿 엔진: 자동 발견, 핫 리로드, 레이아웃 지원
+
+```go
+import "github.com/arkd0ng/go-utils/websvrutil"
+
+// Create app with middleware / 미들웨어와 함께 앱 생성
+app := websvrutil.New()
+app.Use(websvrutil.Logger(), websvrutil.Recovery())
+
+// Define routes / 라우트 정의
+app.GET("/", func(c *websvrutil.Context) error {
+    return c.JSON(200, map[string]string{"message": "Hello, World!"})
+})
+
+app.GET("/users/:id", func(c *websvrutil.Context) error {
+    id := c.Param("id")
+    return c.JSON(200, map[string]string{"user_id": id})
+})
+
+// Run with graceful shutdown / 정상 종료와 함께 실행
+app.RunWithGracefulShutdown(":8080", 10*time.Second)
+```
+
+**Before vs After**:
+```go
+// ❌ Before: 50+ lines with standard net/http
+mux := http.NewServeMux()
+mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(map[string]string{"message": "Hello"})
+})
+// ... CORS setup, logging, recovery, graceful shutdown - 40+ more lines
+
+// ✅ After: 5 lines with websvrutil
+app := websvrutil.New()
+app.Use(websvrutil.Logger(), websvrutil.Recovery(), websvrutil.CORS())
+app.GET("/", func(c *websvrutil.Context) error {
+    return c.JSON(200, map[string]string{"message": "Hello"})
+})
+app.RunWithGracefulShutdown(":8080", 10*time.Second)
+```
+
+**[→ View full documentation / 전체 문서 보기](./websvrutil/README.md)**
+
+---
+
+### ✅ [errorutil](./errorutil/) - Error Handling Utilities
+
+Comprehensive error handling utilities with error codes, context, and stack traces.
+
+에러 코드, 컨텍스트, 스택 트레이스를 갖춘 포괄적인 에러 처리 유틸리티.
+
+**Core Features**: Error creation/wrapping with codes, error inspection, standard library compatible / 핵심 기능: 코드를 가진 에러 생성/래핑, 에러 검사, 표준 라이브러리 호환
+
+**Error Creation (6 functions)**: New, Newf, WithCode, WithCodef, WithNumericCode, WithNumericCodef / 에러 생성 (6개 함수)
+
+**Error Wrapping (6 functions)**: Wrap, Wrapf, WrapWithCode, WrapWithCodef, WrapWithNumericCode, WrapWithNumericCodef / 에러 래핑 (6개 함수)
+
+**Error Inspection (9 functions)**: HasCode, HasNumericCode, GetCode, GetNumericCode, GetStackTrace, GetContext, Root, UnwrapAll, Contains / 에러 검사 (9개 함수)
+
+**Standard Compatible**: Works with errors.Is() and errors.As() / 표준 호환: errors.Is() 및 errors.As()와 동작
+
+**Zero Dependencies**: Standard library only / 외부 의존성 없음: 표준 라이브러리만
+
+**Test Coverage**: 99.2% / 테스트 커버리지: 99.2%
+
+```go
+import "github.com/arkd0ng/go-utils/errorutil"
+
+// Create error with code / 코드를 가진 에러 생성
+err := errorutil.WithCode("DB_ERROR", "failed to connect to database")
+
+// Wrap error with additional code / 추가 코드로 에러 래핑
+err = errorutil.WrapWithCode("API_ERROR", err, "failed to fetch user data")
+
+// Check for specific error code / 특정 에러 코드 확인
+if errorutil.HasCode(err, "DB_ERROR") {
+    log.Println("Database error occurred")
+}
+
+// Get error code / 에러 코드 가져오기
+code := errorutil.GetCode(err) // Returns "API_ERROR"
+
+// Numeric error codes / 숫자 에러 코드
+httpErr := errorutil.WithNumericCode(500, "internal server error")
+statusCode := errorutil.GetNumericCode(httpErr) // Returns 500
+
+// Get root cause / 근본 원인 가져오기
+root := errorutil.Root(err)
+
+// Check if error chain contains specific error / 에러 체인이 특정 에러를 포함하는지 확인
+if errorutil.Contains(err, io.EOF) {
+    log.Println("EOF found in error chain")
+}
+```
+
+**[→ View full documentation / 전체 문서 보기](./errorutil/README.md)**
 
 ---
 
 ### 🔜 Coming Soon / 개발 예정
 
 - **validation** - Validation utilities / 검증 유틸리티
-- **errorutil** - Error handling helpers / 에러 처리 헬퍼
 
 ## Quick Start / 빠른 시작
 
