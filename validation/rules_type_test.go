@@ -208,6 +208,9 @@ func TestEmpty(t *testing.T) {
 		{"nil map", (map[string]int)(nil), false},
 		{"empty map", map[string]int{}, false},
 		{"nil pointer", (*string)(nil), false},
+		{"empty array", [0]int{}, false},
+		{"nil channel", (chan int)(nil), false},
+		{"nil interface", (interface{})(nil), false},
 
 		// Invalid (non-empty values)
 		{"non-empty string", "hello", true},
@@ -217,6 +220,8 @@ func TestEmpty(t *testing.T) {
 		{"non-empty slice", []int{1, 2, 3}, true},
 		{"non-empty map", map[string]int{"a": 1}, true},
 		{"non-nil pointer", func() interface{} { s := "test"; return &s }(), true},
+		{"non-empty array", [3]int{1, 2, 3}, true},
+		{"struct value", struct{}{}, true},
 	}
 
 	for _, tt := range tests {
@@ -251,6 +256,8 @@ func TestNotEmpty(t *testing.T) {
 		{"non-empty slice", []int{1, 2, 3}, false},
 		{"non-empty map", map[string]int{"a": 1}, false},
 		{"non-nil pointer", func() interface{} { s := "test"; return &s }(), false},
+		{"non-empty array", [3]int{1, 2, 3}, false},
+		{"struct value", struct{}{}, false},
 
 		// Invalid (empty/zero values)
 		{"empty string", "", true},
@@ -263,6 +270,9 @@ func TestNotEmpty(t *testing.T) {
 		{"nil map", (map[string]int)(nil), true},
 		{"empty map", map[string]int{}, true},
 		{"nil pointer", (*string)(nil), true},
+		{"empty array", [0]int{}, true},
+		{"nil channel", (chan int)(nil), true},
+		{"nil interface", (interface{})(nil), true},
 	}
 
 	for _, tt := range tests {
