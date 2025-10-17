@@ -24,8 +24,8 @@ This file contains a high-level overview of major and minor versions. For detail
 
 **Status / 상태**: ✅ **Completed** / 완료
 **Branch / 브랜치**: `main`
-**Latest Patch / 최신 패치**: v1.12.016 – logger.Banner() for banner output / logger.Banner()로 배너 출력
-**Version Range / 버전 범위**: v1.12.001 ~ v1.12.016 (16 patches / 16개 패치)
+**Latest Patch / 최신 패치**: v1.12.017 – Root(), UnwrapAll(), Contains() functions added / Root(), UnwrapAll(), Contains() 함수 추가
+**Version Range / 버전 범위**: v1.12.001 ~ v1.12.017 (17 patches / 17개 패치)
 
 **Detailed Changes / 상세 변경사항**: [docs/CHANGELOG/CHANGELOG-v1.12.md](docs/CHANGELOG/CHANGELOG-v1.12.md)
 
