@@ -1065,3 +1065,86 @@ func Example_geographicValidation() {
 	}
 	// Output: All locations valid
 }
+
+// ExampleValidator_JWT demonstrates JWT validation
+// ExampleValidator_JWT는 JWT 검증을 보여줍니다
+func ExampleValidator_JWT() {
+	token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U"
+	v := validation.New(token, "jwt_token")
+	v.JWT()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid JWT")
+	} else {
+		fmt.Println("Valid JWT")
+	}
+	// Output: Valid JWT
+}
+
+// ExampleValidator_BCrypt demonstrates BCrypt hash validation
+// ExampleValidator_BCrypt는 BCrypt 해시 검증을 보여줍니다
+func ExampleValidator_BCrypt() {
+	hash := "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
+	v := validation.New(hash, "password_hash")
+	v.BCrypt()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid BCrypt hash")
+	} else {
+		fmt.Println("Valid BCrypt hash")
+	}
+	// Output: Valid BCrypt hash
+}
+
+// ExampleValidator_MD5 demonstrates MD5 hash validation
+// ExampleValidator_MD5는 MD5 해시 검증을 보여줍니다
+func ExampleValidator_MD5() {
+	hash := "5d41402abc4b2a76b9719d911017c592"
+	v := validation.New(hash, "file_hash")
+	v.MD5()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid MD5")
+	} else {
+		fmt.Println("Valid MD5")
+	}
+	// Output: Valid MD5
+}
+
+// ExampleValidator_SHA256 demonstrates SHA256 hash validation
+// ExampleValidator_SHA256는 SHA256 해시 검증을 보여줍니다
+func ExampleValidator_SHA256() {
+	hash := "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+	v := validation.New(hash, "file_hash")
+	v.SHA256()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid SHA256")
+	} else {
+		fmt.Println("Valid SHA256")
+	}
+	// Output: Valid SHA256
+}
+
+// Example_securityValidation demonstrates security validation
+// Example_securityValidation는 보안 검증을 보여줍니다
+func Example_securityValidation() {
+	mv := validation.NewValidator()
+
+	// Validate JWT token
+	mv.Field("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U", "token").JWT()
+
+	// Validate BCrypt password hash
+	mv.Field("$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy", "password").BCrypt()
+
+	// Validate file hash
+	mv.Field("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "file_hash").SHA256()
+
+	err := mv.Validate()
+	if err != nil {
+		fmt.Println("Invalid security data")
+	} else {
+		fmt.Println("All security data valid")
+	}
+	// Output: All security data valid
+}

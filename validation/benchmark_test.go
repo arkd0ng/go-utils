@@ -566,3 +566,69 @@ func BenchmarkCoordinate(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkJWT benchmarks the JWT validator
+// BenchmarkJWT는 JWT 검증기를 벤치마크합니다
+func BenchmarkJWT(b *testing.B) {
+	jwt := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U"
+	for i := 0; i < b.N; i++ {
+		v := New(jwt, "token")
+		v.JWT()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkBCrypt benchmarks the BCrypt validator
+// BenchmarkBCrypt는 BCrypt 검증기를 벤치마크합니다
+func BenchmarkBCrypt(b *testing.B) {
+	hash := "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
+	for i := 0; i < b.N; i++ {
+		v := New(hash, "password")
+		v.BCrypt()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkMD5 benchmarks the MD5 validator
+// BenchmarkMD5는 MD5 검증기를 벤치마크합니다
+func BenchmarkMD5(b *testing.B) {
+	hash := "5d41402abc4b2a76b9719d911017c592"
+	for i := 0; i < b.N; i++ {
+		v := New(hash, "hash")
+		v.MD5()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkSHA1 benchmarks the SHA1 validator
+// BenchmarkSHA1는 SHA1 검증기를 벤치마크합니다
+func BenchmarkSHA1(b *testing.B) {
+	hash := "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d"
+	for i := 0; i < b.N; i++ {
+		v := New(hash, "hash")
+		v.SHA1()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkSHA256 benchmarks the SHA256 validator
+// BenchmarkSHA256는 SHA256 검증기를 벤치마크합니다
+func BenchmarkSHA256(b *testing.B) {
+	hash := "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+	for i := 0; i < b.N; i++ {
+		v := New(hash, "hash")
+		v.SHA256()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkSHA512 benchmarks the SHA512 validator
+// BenchmarkSHA512는 SHA512 검증기를 벤치마크합니다
+func BenchmarkSHA512(b *testing.B) {
+	hash := "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+	for i := 0; i < b.N; i++ {
+		v := New(hash, "hash")
+		v.SHA512()
+		_ = v.Validate()
+	}
+}

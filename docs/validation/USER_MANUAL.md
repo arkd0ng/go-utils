@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.023
+**Version / 버전**: v1.13.024
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -21,12 +21,13 @@
 12. [File Validators / 파일 검증기](#file-validators--파일-검증기)
 13. [Credit Card Validators / 신용카드 검증기](#credit-card-validators--신용카드-검증기)
 14. [Business/ID Validators / 비즈니스/ID 검증기](#businessid-validators--비즈니스id-검증기)
-15. [Geographic Validators / 지리 좌표 검증기](#geographic-validators--지리-좌표-검증기) 🆕
-16. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
-17. [Error Handling / 에러 처리](#error-handling--에러-처리)
-18. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
-19. [Best Practices / 모범 사례](#best-practices--모범-사례)
-20. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
+15. [Geographic Validators / 지리 좌표 검증기](#geographic-validators--지리-좌표-검증기)
+16. [Security Validators / 보안 검증기](#security-validators--보안-검증기) 🆕
+17. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
+18. [Error Handling / 에러 처리](#error-handling--에러-처리)
+19. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
+20. [Best Practices / 모범 사례](#best-practices--모범-사례)
+21. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
 
 ---
 
@@ -38,7 +39,7 @@ The `validation` package provides a **fluent, type-safe validation library** for
 
 ### Key Features / 주요 기능
 
-- ✅ **79+ Built-in Validators** / **79개 이상의 내장 검증기**
+- ✅ **85+ Built-in Validators** / **85개 이상의 내장 검증기**
 - ✅ **Fluent API with Method Chaining** / **메서드 체이닝을 통한 플루언트 API**
 - ✅ **Type-Safe with Go Generics** / **Go 제네릭을 활용한 타입 안전성**
 - ✅ **Bilingual Error Messages (EN/KR)** / **양방향 에러 메시지 (영어/한글)**
@@ -54,7 +55,8 @@ The `validation` package provides a **fluent, type-safe validation library** for
 - ✅ **File Validators (FilePath, FileExists, FileReadable, FileWritable, FileSize, FileExtension)** / **파일 검증기**
 - ✅ **Credit Card Validators (CreditCard, CreditCardType, Luhn)** / **신용카드 검증기**
 - ✅ **Business/ID Validators (ISBN, ISSN, EAN)** / **비즈니스/ID 검증기**
-- ✅ **Geographic Validators (Latitude, Longitude, Coordinate)** 🆕 / **지리 좌표 검증기** 🆕
+- ✅ **Geographic Validators (Latitude, Longitude, Coordinate)** / **지리 좌표 검증기**
+- ✅ **Security Validators (JWT, BCrypt, MD5, SHA1, SHA256, SHA512)** 🆕 / **보안 검증기** 🆕
 
 ---
 
@@ -2877,5 +2879,206 @@ BenchmarkLatitude-8    3000000    350 ns/op
 BenchmarkLongitude-8   3000000    350 ns/op
 BenchmarkCoordinate-8  2000000    750 ns/op
 ```
+
+---
+
+## Security Validators / 보안 검증기
+
+Security validators ensure that cryptographic hashes, tokens, and security-related data formats are valid. These validators are essential for authentication systems, data integrity verification, and secure API communications.
+
+보안 검증기는 암호화 해시, 토큰 및 보안 관련 데이터 형식이 유효한지 확인합니다. 이러한 검증기는 인증 시스템, 데이터 무결성 검증 및 안전한 API 통신에 필수적입니다.
+
+### Available Validators / 사용 가능한 검증기
+
+| Validator | Description (EN) | Description (KR) | Format |
+|-----------|------------------|------------------|--------|
+| `JWT()` | Validates JWT (JSON Web Token) format | JWT 형식을 검증합니다 | header.payload.signature |
+| `BCrypt()` | Validates BCrypt password hash format | BCrypt 비밀번호 해시 형식을 검증합니다 | $2[abxy]$cost$hash |
+| `MD5()` | Validates MD5 hash (32 hex characters) | MD5 해시를 검증합니다 (32자리 16진수) | 32 hex chars |
+| `SHA1()` | Validates SHA1 hash (40 hex characters) | SHA1 해시를 검증합니다 (40자리 16진수) | 40 hex chars |
+| `SHA256()` | Validates SHA256 hash (64 hex characters) | SHA256 해시를 검증합니다 (64자리 16진수) | 64 hex chars |
+| `SHA512()` | Validates SHA512 hash (128 hex characters) | SHA512 해시를 검증합니다 (128자리 16진수) | 128 hex chars |
+
+### 1. JWT Validator / JWT 검증기
+
+The `JWT()` validator ensures that a value is a valid JSON Web Token format. It validates the three-part structure (header.payload.signature) and base64url encoding of each part.
+
+`JWT()` 검증기는 값이 유효한 JSON Web Token 형식인지 확인합니다. 세 부분 구조(header.payload.signature)와 각 부분의 base64url 인코딩을 검증합니다.
+
+**Validation Rules / 검증 규칙:**
+- **Format**: `header.payload.signature` (three parts separated by dots)
+- **Encoding**: Each part must be valid base64url
+- **Non-empty**: Header and payload must not be empty
+
+**Examples / 예시:**
+```go
+// Valid JWT token
+token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U"
+v := validation.New(token, "auth_token")
+v.JWT()
+
+// Authenticate API request
+mv := validation.NewValidator()
+mv.Field(authHeader, "authorization").Required().JWT()
+```
+
+**Use Cases:**
+- API authentication token validation
+- OAuth 2.0 / OpenID Connect token verification
+- Microservice inter-service communication
+- Mobile app authentication
+
+### 2. BCrypt Validator / BCrypt 검증기
+
+The `BCrypt()` validator validates BCrypt password hash format. BCrypt is a widely-used password hashing function with built-in salt.
+
+`BCrypt()` 검증기는 BCrypt 비밀번호 해시 형식을 검증합니다. BCrypt는 내장 솔트가 있는 널리 사용되는 비밀번호 해싱 함수입니다.
+
+**Validation Rules:**
+- **Prefix**: Must start with `$2a$`, `$2b$`, `$2x$`, or `$2y$`
+- **Length**: Exactly 60 characters
+- **Format**: `$2[abxy]$[cost]$[salt][hash]`
+
+**Examples:**
+```go
+// Validate password hash from database
+hash := "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
+v := validation.New(hash, "password_hash")
+v.BCrypt()
+
+// User registration validation
+mv.Field(user.PasswordHash, "password").Required().BCrypt()
+```
+
+**Use Cases:**
+- Password storage validation
+- User authentication systems
+- Secure credential verification
+- Password migration validation
+
+### 3. Hash Validators (MD5, SHA1, SHA256, SHA512) / 해시 검증기
+
+Hash validators ensure cryptographic hash values are correctly formatted. These are commonly used for file integrity, data verification, and checksum validation.
+
+해시 검증기는 암호화 해시 값이 올바르게 형식화되었는지 확인합니다. 파일 무결성, 데이터 검증 및 체크섬 검증에 일반적으로 사용됩니다.
+
+**MD5 (32 hex characters):**
+```go
+hash := "5d41402abc4b2a76b9719d911017c592"
+v := validation.New(hash, "file_md5")
+v.MD5()
+```
+
+**SHA1 (40 hex characters):**
+```go
+hash := "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d"
+v := validation.New(hash, "commit_hash")
+v.SHA1()
+```
+
+**SHA256 (64 hex characters):**
+```go
+hash := "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+v := validation.New(hash, "file_hash")
+v.SHA256()
+```
+
+**SHA512 (128 hex characters):**
+```go
+hash := "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+v := validation.New(hash, "secure_hash")
+v.SHA512()
+```
+
+### Multi-Field Security Validation / 다중 필드 보안 검증
+
+```go
+type SecureRequest struct {
+    Token          string
+    PasswordHash   string
+    FileChecksum   string
+}
+
+func ValidateSecureRequest(req SecureRequest) error {
+    mv := validation.NewValidator()
+
+    mv.Field(req.Token, "token").
+        Required().
+        JWT()
+
+    mv.Field(req.PasswordHash, "password").
+        Required().
+        BCrypt()
+
+    mv.Field(req.FileChecksum, "checksum").
+        Required().
+        SHA256()
+
+    return mv.Validate()
+}
+```
+
+### Real-World Use Cases / 실제 사용 사례
+
+**API Authentication:**
+```go
+// Validate JWT bearer token
+mv.Field(bearerToken, "authorization").
+    Required().
+    JWT()
+```
+
+**Password Management:**
+```go
+// Validate stored password hash
+mv.Field(user.PasswordHash, "password").
+    Required().
+    BCrypt()
+```
+
+**File Integrity Verification:**
+```go
+// Validate file checksums
+mv.Field(uploadedFileHash, "file_hash").
+    Required().
+    SHA256()
+
+mv.Field(expectedHash, "expected_hash").
+    Required().
+    SHA256()
+```
+
+**Git Commit Validation:**
+```go
+// Validate commit hashes
+mv.Field(commitSHA, "commit").
+    Required().
+    SHA1()
+```
+
+**Blockchain/Cryptocurrency:**
+```go
+// Validate transaction hashes
+mv.Field(txHash, "transaction").
+    Required().
+    SHA256()
+```
+
+### Performance / 성능
+
+Security validators are highly optimized with regex matching:
+
+보안 검증기는 정규식 매칭으로 고도로 최적화되어 있습니다:
+
+- **JWT**: ~800-1000 ns/op (base64 decoding + validation)
+- **BCrypt**: ~200-300 ns/op (regex pattern matching)
+- **MD5**: ~150-200 ns/op (32-char hex validation)
+- **SHA1**: ~150-200 ns/op (40-char hex validation)
+- **SHA256**: ~150-200 ns/op (64-char hex validation)
+- **SHA512**: ~150-200 ns/op (128-char hex validation)
+
+**Note**: Hash validators only validate format, not cryptographic correctness. For actual hash verification, use Go's `crypto` package.
+
+**참고**: 해시 검증기는 형식만 검증하며 암호화 정확성은 검증하지 않습니다. 실제 해시 검증을 위해서는 Go의 `crypto` 패키지를 사용하세요.
 
 ---
