@@ -1422,3 +1422,123 @@ func Example_logicalValidation() {
 	}
 	// Output: All validations passed
 }
+
+// ExampleValidator_True demonstrates boolean true validation.
+// ExampleValidator_True는 불리언 true 검증을 보여줍니다.
+func ExampleValidator_True() {
+	// Validate terms acceptance (must be true)
+	accepted := true
+	v := validation.New(accepted, "terms_accepted")
+	v.True()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Terms must be accepted")
+	} else {
+		fmt.Println("Terms accepted")
+	}
+	// Output: Terms accepted
+}
+
+// ExampleValidator_False demonstrates boolean false validation.
+// ExampleValidator_False는 불리언 false 검증을 보여줍니다.
+func ExampleValidator_False() {
+	// Validate newsletter opt-out (must be false)
+	optIn := false
+	v := validation.New(optIn, "newsletter_opt_in")
+	v.False()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Must opt out of newsletter")
+	} else {
+		fmt.Println("Newsletter opt-out confirmed")
+	}
+	// Output: Newsletter opt-out confirmed
+}
+
+// ExampleValidator_Nil demonstrates nil value validation.
+// ExampleValidator_Nil는 nil 값 검증을 보여줍니다.
+func ExampleValidator_Nil() {
+	// Validate optional field is nil
+	var optionalField *string
+	v := validation.New(optionalField, "optional_field")
+	v.Nil()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Field should be nil")
+	} else {
+		fmt.Println("Field is correctly nil")
+	}
+	// Output: Field is correctly nil
+}
+
+// ExampleValidator_NotNil demonstrates non-nil value validation.
+// ExampleValidator_NotNil는 non-nil 값 검증을 보여줍니다.
+func ExampleValidator_NotNil() {
+	// Validate required pointer is not nil
+	value := "test"
+	ptr := &value
+	v := validation.New(ptr, "required_ptr")
+	v.NotNil()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Pointer must not be nil")
+	} else {
+		fmt.Println("Pointer has a value")
+	}
+	// Output: Pointer has a value
+}
+
+// ExampleValidator_Type demonstrates type validation.
+// ExampleValidator_Type는 타입 검증을 보여줍니다.
+func ExampleValidator_Type() {
+	// Validate value is a string
+	text := "hello"
+	v := validation.New(text, "text")
+	v.Type("string")
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Must be a string")
+	} else {
+		fmt.Println("Correct type")
+	}
+	// Output: Correct type
+}
+
+// ExampleValidator_Empty demonstrates empty value validation.
+// ExampleValidator_Empty는 빈 값 검증을 보여줍니다.
+func ExampleValidator_Empty() {
+	// Validate optional field is empty
+	optionalField := ""
+	v := validation.New(optionalField, "optional_field")
+	v.Empty()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Field should be empty")
+	} else {
+		fmt.Println("Field is empty as expected")
+	}
+	// Output: Field is empty as expected
+}
+
+// ExampleValidator_NotEmpty demonstrates non-empty value validation.
+// ExampleValidator_NotEmpty는 비어있지 않은 값 검증을 보여줍니다.
+func ExampleValidator_NotEmpty() {
+	// Validate required field is not empty
+	requiredField := "value"
+	v := validation.New(requiredField, "required_field")
+	v.NotEmpty()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Field must not be empty")
+	} else {
+		fmt.Println("Field has a value")
+	}
+	// Output: Field has a value
+}

@@ -770,3 +770,76 @@ func BenchmarkUnless(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkTrue benchmarks the True validator
+// BenchmarkTrue는 True 검증기를 벤치마크합니다
+func BenchmarkTrue(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New(true, "accepted")
+		v.True()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkFalse benchmarks the False validator
+// BenchmarkFalse는 False 검증기를 벤치마크합니다
+func BenchmarkFalse(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New(false, "declined")
+		v.False()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkNil benchmarks the Nil validator
+// BenchmarkNil는 Nil 검증기를 벤치마크합니다
+func BenchmarkNil(b *testing.B) {
+	var ptr *string
+	for i := 0; i < b.N; i++ {
+		v := New(ptr, "optional")
+		v.Nil()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkNotNil benchmarks the NotNil validator
+// BenchmarkNotNil는 NotNil 검증기를 벤치마크합니다
+func BenchmarkNotNil(b *testing.B) {
+	str := "value"
+	ptr := &str
+	for i := 0; i < b.N; i++ {
+		v := New(ptr, "required_ptr")
+		v.NotNil()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkType benchmarks the Type validator
+// BenchmarkType는 Type 검증기를 벤치마크합니다
+func BenchmarkType(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("test string", "text")
+		v.Type("string")
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkEmpty benchmarks the Empty validator
+// BenchmarkEmpty는 Empty 검증기를 벤치마크합니다
+func BenchmarkEmpty(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("", "optional_field")
+		v.Empty()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkNotEmpty benchmarks the NotEmpty validator
+// BenchmarkNotEmpty는 NotEmpty 검증기를 벤치마크합니다
+func BenchmarkNotEmpty(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("value", "required_field")
+		v.NotEmpty()
+		_ = v.Validate()
+	}
+}

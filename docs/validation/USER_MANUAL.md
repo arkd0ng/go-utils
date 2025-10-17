@@ -3947,3 +3947,552 @@ Logical validators have minimal performance overhead:
 **참고**: When/Unless 성능은 전달된 검증 함수의 복잡도에 따라 달라집니다.
 
 ---
+
+## Type-Specific Validators / 타입별 검증기
+
+Type-specific validators check value types, nil status, and empty/zero values using Go's reflection system.
+
+타입별 검증기는 Go의 리플렉션 시스템을 사용하여 값의 타입, nil 상태, 빈/제로 값을 확인합니다.
+
+### Available Type-Specific Validators / 사용 가능한 타입별 검증기
+
+| Validator | Description | 설명 |
+|-----------|-------------|------|
+| `True()` | Value must be boolean true | 값이 불리언 true여야 함 |
+| `False()` | Value must be boolean false | 값이 불리언 false여야 함 |
+| `Nil()` | Value must be nil | 값이 nil이어야 함 |
+| `NotNil()` | Value must not be nil | 값이 nil이 아니어야 함 |
+| `Type(typeName)` | Value must match specified type | 값이 지정된 타입과 일치해야 함 |
+| `Empty()` | Value must be empty/zero value | 값이 빈/제로 값이어야 함 |
+| `NotEmpty()` | Value must not be empty/zero | 값이 빈/제로 값이 아니어야 함 |
+
+### True() - Boolean True Validation
+
+Validates that the value is boolean true. Useful for terms acceptance, checkboxes, and consent fields.
+
+값이 불리언 true인지 검증합니다. 약관 동의, 체크박스, 동의 필드에 유용합니다.
+
+```go
+// Terms and conditions acceptance
+accepted := true
+v := validation.New(accepted, "terms_accepted")
+v.True()
+
+err := v.Validate()
+if err != nil {
+    // Terms not accepted
+    fmt.Println(err)
+}
+
+// Privacy policy consent
+privacyConsent := false
+v2 := validation.New(privacyConsent, "privacy_consent")
+v2.True() // Will fail - value is false
+
+// Age verification
+isAdult := true
+v3 := validation.New(isAdult, "age_verified")
+v3.True() // Pass
+```
+
+**Validation Rules**:
+- Value must be of type `bool`
+- Boolean value must be `true`
+
+**검증 규칙**:
+- 값이 `bool` 타입이어야 함
+- 불리언 값이 `true`여야 함
+
+### False() - Boolean False Validation
+
+Validates that the value is boolean false. Useful for opt-out fields and negative confirmations.
+
+값이 불리언 false인지 검증합니다. 옵트아웃 필드와 부정 확인에 유용합니다.
+
+```go
+// Newsletter opt-out
+optOut := false
+v := validation.New(optOut, "newsletter_opt_out")
+v.False()
+
+err := v.Validate()
+if err != nil {
+    // Not opted out
+    fmt.Println(err)
+}
+
+// Disable notifications
+notificationsEnabled := false
+v2 := validation.New(notificationsEnabled, "notifications_enabled")
+v2.False() // Pass
+
+// Inactive flag
+isActive := true
+v3 := validation.New(isActive, "is_active")
+v3.False() // Will fail - value is true
+```
+
+**Validation Rules**:
+- Value must be of type `bool`
+- Boolean value must be `false`
+
+**검증 규칙**:
+- 값이 `bool` 타입이어야 함
+- 불리언 값이 `false`여야 함
+
+### Nil() - Nil Value Validation
+
+Validates that the value is nil. Works with pointers, slices, maps, interfaces, channels, and functions.
+
+값이 nil인지 검증합니다. 포인터, 슬라이스, 맵, 인터페이스, 채널, 함수에 사용됩니다.
+
+```go
+// Optional pointer field
+var ptr *string
+v := validation.New(ptr, "optional_field")
+v.Nil()
+
+err := v.Validate()
+if err != nil {
+    // Pointer is not nil
+    fmt.Println(err)
+}
+
+// Nil slice
+var items []string
+v2 := validation.New(items, "items")
+v2.Nil() // Pass
+
+// Nil map
+var config map[string]string
+v3 := validation.New(config, "config")
+v3.Nil() // Pass
+
+// Non-nil pointer (will fail)
+str := "value"
+v4 := validation.New(&str, "required_ptr")
+v4.Nil() // Will fail - pointer has value
+```
+
+**Validation Rules**:
+- Value can be any nilable type (pointer, slice, map, interface, channel, function)
+- Value must be nil
+
+**검증 규칙**:
+- 값이 nil 가능한 타입이어야 함 (포인터, 슬라이스, 맵, 인터페이스, 채널, 함수)
+- 값이 nil이어야 함
+
+### NotNil() - Non-Nil Value Validation
+
+Validates that the value is not nil. Useful for required pointers and references.
+
+값이 nil이 아닌지 검증합니다. 필수 포인터와 참조에 유용합니다.
+
+```go
+// Required pointer
+str := "value"
+ptr := &str
+v := validation.New(ptr, "required_ptr")
+v.NotNil()
+
+err := v.Validate()
+if err != nil {
+    // Pointer is nil
+    fmt.Println(err)
+}
+
+// Non-nil slice
+items := []string{"item1", "item2"}
+v2 := validation.New(items, "items")
+v2.NotNil() // Pass
+
+// Non-nil map
+config := map[string]string{"key": "value"}
+v3 := validation.New(config, "config")
+v3.NotNil() // Pass
+
+// Nil pointer (will fail)
+var nilPtr *string
+v4 := validation.New(nilPtr, "required_ptr")
+v4.NotNil() // Will fail - pointer is nil
+```
+
+**Validation Rules**:
+- Value can be any type
+- If value is nilable type, it must not be nil
+- Non-nilable types (string, int, etc.) always pass
+
+**검증 규칙**:
+- 값이 모든 타입일 수 있음
+- 값이 nil 가능한 타입이면 nil이 아니어야 함
+- nil 불가능한 타입(string, int 등)은 항상 통과
+
+### Type(typeName) - Type Matching Validation
+
+Validates that the value matches the specified type name. Uses reflection for type checking.
+
+값이 지정된 타입 이름과 일치하는지 검증합니다. 리플렉션을 사용하여 타입을 확인합니다.
+
+```go
+// String type validation
+text := "hello"
+v := validation.New(text, "text")
+v.Type("string")
+
+err := v.Validate()
+if err != nil {
+    // Type mismatch
+    fmt.Println(err)
+}
+
+// Integer type validation
+age := 25
+v2 := validation.New(age, "age")
+v2.Type("int") // Pass
+
+// Slice type validation
+items := []string{"a", "b"}
+v3 := validation.New(items, "items")
+v3.Type("slice") // Pass
+
+// Map type validation
+data := map[string]int{"key": 1}
+v4 := validation.New(data, "data")
+v4.Type("map") // Pass
+
+// Type mismatch (will fail)
+v5 := validation.New(123, "number")
+v5.Type("string") // Will fail - int vs string
+```
+
+**Supported Type Names**:
+- Primitives: `string`, `int`, `int8`, `int16`, `int32`, `int64`, `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `float32`, `float64`, `bool`
+- Complex: `slice`, `map`, `struct`, `ptr`, `interface`, `chan`, `func`
+
+**지원되는 타입 이름**:
+- 기본형: `string`, `int`, `int8`, `int16`, `int32`, `int64`, `uint`, `uint8`, `uint16`, `uint32`, `uint64`, `float32`, `float64`, `bool`
+- 복합형: `slice`, `map`, `struct`, `ptr`, `interface`, `chan`, `func`
+
+**Validation Rules**:
+- Value can be any type
+- Type name must match the value's actual type
+
+**검증 규칙**:
+- 값이 모든 타입일 수 있음
+- 타입 이름이 값의 실제 타입과 일치해야 함
+
+### Empty() - Empty/Zero Value Validation
+
+Validates that the value is empty or zero. Uses reflection to check for Go's zero value semantics.
+
+값이 비어있거나 제로 값인지 검증합니다. Go의 제로 값 의미론을 확인하기 위해 리플렉션을 사용합니다.
+
+```go
+// Empty string
+text := ""
+v := validation.New(text, "optional_field")
+v.Empty()
+
+err := v.Validate()
+if err != nil {
+    // Not empty
+    fmt.Println(err)
+}
+
+// Zero integer
+count := 0
+v2 := validation.New(count, "count")
+v2.Empty() // Pass
+
+// False boolean
+flag := false
+v3 := validation.New(flag, "flag")
+v3.Empty() // Pass
+
+// Nil slice
+var items []string
+v4 := validation.New(items, "items")
+v4.Empty() // Pass
+
+// Empty slice
+empty := []string{}
+v5 := validation.New(empty, "empty")
+v5.Empty() // Pass
+
+// Non-empty value (will fail)
+v6 := validation.New("value", "text")
+v6.Empty() // Will fail - string is not empty
+```
+
+**Empty/Zero Values by Type**:
+- `string`: empty string `""`
+- `int/uint/float`: zero `0` or `0.0`
+- `bool`: `false`
+- `slice/map`: nil or length 0
+- `pointer/interface`: nil
+
+**타입별 빈/제로 값**:
+- `string`: 빈 문자열 `""`
+- `int/uint/float`: 제로 `0` 또는 `0.0`
+- `bool`: `false`
+- `slice/map`: nil 또는 길이 0
+- `pointer/interface`: nil
+
+**Validation Rules**:
+- Value can be any type
+- Value must be zero value for its type
+
+**검증 규칙**:
+- 값이 모든 타입일 수 있음
+- 값이 해당 타입의 제로 값이어야 함
+
+### NotEmpty() - Non-Empty Value Validation
+
+Validates that the value is not empty or zero. Opposite of `Empty()`.
+
+값이 비어있지 않거나 제로 값이 아닌지 검증합니다. `Empty()`의 반대입니다.
+
+```go
+// Non-empty string
+text := "value"
+v := validation.New(text, "required_field")
+v.NotEmpty()
+
+err := v.Validate()
+if err != nil {
+    // Empty value
+    fmt.Println(err)
+}
+
+// Non-zero integer
+count := 5
+v2 := validation.New(count, "count")
+v2.NotEmpty() // Pass
+
+// True boolean
+flag := true
+v3 := validation.New(flag, "flag")
+v3.NotEmpty() // Pass
+
+// Non-empty slice
+items := []string{"item"}
+v4 := validation.New(items, "items")
+v4.NotEmpty() // Pass
+
+// Non-nil pointer
+str := "test"
+v5 := validation.New(&str, "ptr")
+v5.NotEmpty() // Pass
+
+// Empty value (will fail)
+v6 := validation.New("", "text")
+v6.NotEmpty() // Will fail - string is empty
+```
+
+**Validation Rules**:
+- Value can be any type
+- Value must NOT be zero value for its type
+
+**검증 규칙**:
+- 값이 모든 타입일 수 있음
+- 값이 해당 타입의 제로 값이 아니어야 함
+
+### Chaining Type-Specific Validators / 타입별 검증기 체이닝
+
+Type-specific validators can be chained with other validators:
+
+타입별 검증기는 다른 검증기와 체이닝할 수 있습니다:
+
+```go
+// Terms acceptance with type check
+accepted := true
+v := validation.New(accepted, "terms")
+v.NotNil().Type("bool").True()
+
+// Optional pointer with conditional validation
+var optionalPtr *string
+v2 := validation.New(optionalPtr, "optional")
+v2.When(optionalPtr != nil, func(val *validation.Validator) {
+    val.NotNil().NotEmpty()
+})
+
+// Required field with empty check
+text := "value"
+v3 := validation.New(text, "text")
+v3.NotEmpty().MinLength(5)
+
+// Collection validation
+items := []string{"a", "b", "c"}
+v4 := validation.New(items, "items")
+v4.NotNil().NotEmpty().Type("slice")
+```
+
+### Real-World Examples / 실제 사용 예시
+
+#### User Registration Form
+
+```go
+type UserRegistration struct {
+    AcceptedTerms    bool
+    AcceptedPrivacy  bool
+    OptInNewsletter  *bool
+    ReferralCode     *string
+}
+
+func ValidateRegistration(reg UserRegistration) error {
+    mv := validation.NewMultiple()
+
+    // Required: Terms acceptance
+    mv.Field(reg.AcceptedTerms, "terms").True()
+
+    // Required: Privacy acceptance
+    mv.Field(reg.AcceptedPrivacy, "privacy").True()
+
+    // Optional: Newsletter opt-in (can be nil)
+    if reg.OptInNewsletter != nil {
+        mv.Field(*reg.OptInNewsletter, "newsletter").Type("bool")
+    }
+
+    // Optional: Referral code (can be nil or empty)
+    if reg.ReferralCode != nil {
+        mv.Field(*reg.ReferralCode, "referral").NotEmpty().MinLength(6)
+    }
+
+    return mv.Validate()
+}
+```
+
+#### API Request Validation
+
+```go
+type APIRequest struct {
+    Data      interface{}
+    Metadata  map[string]interface{}
+    IsTest    bool
+    Callback  func()
+}
+
+func ValidateRequest(req APIRequest) error {
+    mv := validation.NewMultiple()
+
+    // Required: Data must not be nil
+    mv.Field(req.Data, "data").NotNil()
+
+    // Optional: Metadata can be empty but must be correct type
+    if req.Metadata != nil {
+        mv.Field(req.Metadata, "metadata").Type("map")
+    }
+
+    // Test flag validation
+    mv.Field(req.IsTest, "is_test").Type("bool")
+
+    // Optional callback
+    if req.Callback != nil {
+        mv.Field(req.Callback, "callback").NotNil().Type("func")
+    }
+
+    return mv.Validate()
+}
+```
+
+#### Configuration Validation
+
+```go
+type Config struct {
+    Debug     bool
+    Database  *DatabaseConfig
+    Cache     *CacheConfig
+    Features  []string
+}
+
+func ValidateConfig(cfg Config) error {
+    mv := validation.NewMultiple()
+
+    // Debug flag
+    mv.Field(cfg.Debug, "debug").Type("bool")
+
+    // Required: Database config
+    mv.Field(cfg.Database, "database").NotNil()
+
+    // Optional: Cache config
+    if cfg.Cache == nil {
+        // Use default cache settings
+    } else {
+        mv.Field(cfg.Cache, "cache").NotNil()
+    }
+
+    // Features can be empty array
+    mv.Field(cfg.Features, "features").NotNil().Type("slice")
+
+    return mv.Validate()
+}
+```
+
+### Common Pitfalls / 일반적인 함정
+
+#### Empty vs Nil for Collections
+
+```go
+// These are different for slices/maps:
+var nilSlice []string      // nil
+emptySlice := []string{}   // empty but not nil
+
+v1 := validation.New(nilSlice, "nil")
+v1.Nil()     // Pass
+v1.Empty()   // Pass
+
+v2 := validation.New(emptySlice, "empty")
+v2.Nil()     // Fail - not nil
+v2.Empty()   // Pass - length is 0
+```
+
+#### Zero Values vs Empty
+
+```go
+// For numbers, zero is considered empty:
+count := 0
+v := validation.New(count, "count")
+v.Empty()    // Pass - 0 is zero value
+
+// For booleans, false is considered empty:
+flag := false
+v2 := validation.New(flag, "flag")
+v2.Empty()   // Pass - false is zero value
+```
+
+#### Pointer to Zero Value
+
+```go
+// Pointer to zero value is NOT nil:
+zero := 0
+ptr := &zero
+
+v := validation.New(ptr, "ptr")
+v.NotNil()   // Pass - pointer is not nil
+v.Empty()    // Fail - pointer itself is not empty (only the value it points to is zero)
+```
+
+### Performance Characteristics / 성능 특성
+
+Type-specific validators use reflection and have different performance characteristics:
+
+타입별 검증기는 리플렉션을 사용하며 다양한 성능 특성을 가집니다:
+
+- **True/False**: ~15 ns/op (simple boolean check)
+- **Nil/NotNil**: ~20-30 ns/op (reflection for nilable types)
+- **Type**: ~40 ns/op (reflection type comparison)
+- **Empty/NotEmpty**: ~50-80 ns/op (reflection + zero value check)
+
+**Best Practices**:
+- Use `True()`/`False()` for boolean validations instead of custom validators
+- Prefer `NotNil()` over custom nil checks
+- Use `Empty()`/`NotEmpty()` for consistent zero value validation
+- Cache reflection results if validating many values of the same type
+
+**모범 사례**:
+- 커스텀 검증기 대신 불리언 검증에 `True()`/`False()` 사용
+- 커스텀 nil 체크보다 `NotNil()` 선호
+- 일관된 제로 값 검증을 위해 `Empty()`/`NotEmpty()` 사용
+- 동일한 타입의 여러 값을 검증할 경우 리플렉션 결과 캐시
+
+---
