@@ -6,6 +6,93 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.020] - 2025-10-17
+
+### Added / 추가
+- CLAUDE.md 파일 생성 - Claude Code를 위한 종합 가이드 문서
+  - 프로젝트 개요 및 핵심 특성 설명
+  - 표준 작업 사이클 5단계 프로세스 명시
+  - 빌드 및 테스트 명령어 레퍼런스
+  - 버전 관리 및 CHANGELOG 관리 가이드
+  - Git 커밋 메시지 형식 및 예제
+  - 패키지 아키텍처 및 구조 설명
+  - 문서화 표준 (이중 언어 요구사항)
+  - 테스트 표준 및 패턴
+  - 일반 개발 작업 가이드 (새 함수 추가, 버그 수정, 문서 업데이트)
+  - 브랜치 전략 설명
+  - 코드 품질 원칙 및 체크리스트
+  - 특별 참고사항 (KST, errorutil, database clients, generics)
+  - 디렉토리 구조 및 중요 파일 레퍼런스
+  - 안티패턴 및 모범 사례
+
+### Files Changed / 변경된 파일
+- `CLAUDE.md` - 새 파일 생성 (463줄)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.020 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+"Please analyze this codebase and create a CLAUDE.md file, which will be given to future instances of Claude Code to operate in this repository."
+
+"사용자가 Claude Code의 향후 인스턴스가 이 저장소에서 작업할 수 있도록 CLAUDE.md 파일 생성 요청"
+
+**Why / 이유**:
+- Claude Code의 새 인스턴스가 프로젝트에 빠르게 적응할 수 있도록 지원
+- 중요한 개발 워크플로우 및 규칙을 한 곳에 문서화
+- 5단계 표준 작업 사이클의 엄격한 준수 강조
+- 빌드, 테스트, 버전 관리에 대한 빠른 참조 제공
+- 프로젝트별 규칙과 패턴 명확화
+
+**Implementation Details / 구현 세부사항**:
+
+CLAUDE.md 구조:
+1. **Project Overview** - go-utils의 핵심 특성과 목표
+2. **Critical: Standard Work Cycle** - 5단계 필수 프로세스
+3. **Build and Test Commands** - 자주 사용하는 명령어
+4. **Version Management** - cfg/app.yaml 기반 버전 관리
+5. **CHANGELOG Management** - 2단계 CHANGELOG 시스템
+6. **Git Commit Message Format** - 형식 및 예제
+7. **Package Architecture** - 완료/개발 중 패키지 목록
+8. **Documentation Standards** - 이중 언어 요구사항
+9. **Testing Standards** - 커버리지 목표 및 패턴
+10. **Common Development Tasks** - 단계별 가이드
+11. **Branch Strategy** - main 및 feature 브랜치
+12. **Code Quality Principles** - 설계 철학 및 체크리스트
+13. **Special Notes** - 패키지별 특별 고려사항
+14. **Directory Structure** - 전체 프로젝트 구조
+15. **Quick Command Reference** - 빠른 명령어 참조
+16. **Important Files to Reference** - 핵심 문서 목록
+17. **Anti-Patterns to Avoid** - 피해야 할 패턴
+18. **Current Status** - v1.12.019 현재 상태
+
+핵심 포인트:
+- 🚨 5단계 작업 사이클 강조 (절대 건너뛰지 않기)
+- 모든 커밋 전 CHANGELOG 업데이트 필수
+- 이중 언어(영문/한글) 문서화 요구사항
+- 테스트 커버리지 목표 (신규 100%, 기존 80%+)
+- 버전 관리 단일 소스: cfg/app.yaml
+
+**Impact / 영향**:
+- ✅ Claude Code 인스턴스가 프로젝트에 즉시 기여 가능
+- ✅ 개발 워크플로우의 일관성 향상
+- ✅ 새 기여자의 온보딩 시간 단축
+- ✅ 중요한 규칙과 패턴의 명확한 문서화
+- ✅ 프로젝트 품질 표준 유지 강화
+- ✅ 빠른 참조 가이드로 생산성 향상
+
+**Test Results / 테스트 결과**:
+
+```bash
+go build ./...
+# Build successful ✅
+
+go test ./... -v
+# All non-MySQL/Redis tests passing ✅
+# MySQL/Redis tests skipped (Docker not configured) - expected behavior ✅
+```
+
+---
+
 ## [v1.12.019] - 2025-10-17
 
 ### Added / 추가
