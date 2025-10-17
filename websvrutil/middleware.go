@@ -17,30 +17,33 @@ import (
 	"time"
 )
 
-// Recovery returns middleware that shields handlers from panics and converts them into safe HTTP 500 responses.
-// Recovery는 핸들러에서 발생한 패닉을 안전한 HTTP 500 응답으로 변환하여 서비스 중단을 막는 미들웨어를 제공합니다.
+// Recovery returns middleware that wraps handlers with panic recovery and sends a safe HTTP 500 response when a panic occurs.
+// Recovery는 핸들러를 패닉 복구 로직으로 감싸 패닉이 발생하면 안전한 HTTP 500 응답을 보냅니다.
 //
-// Key behaviour / 핵심 동작:
-//   - Captures panic values and full stack traces for diagnostics.
-//   - 패닉 값과 전체 스택 트레이스를 수집하여 진단에 활용합니다.
-//   - Emits a generic 500 response so internal details never leak to the client.
-//   - 클라이언트에는 내부 정보가 노출되지 않도록 일반적인 500 응답만 전송합니다.
-//   - Must be registered first to stop cascading failures through other middleware.
-//   - 연쇄적인 실패를 막기 위해 반드시 첫 번째 미들웨어로 등록해야 합니다.
+// Key behaviors:
+// - Wraps handler execution with defer/recover to prevent server crashes.
+// - Logs the panic value together with the captured stack trace for diagnostics.
+// - Sends a generic 500 response so internal details never leak to clients.
 //
-// When to use / 사용 시나리오:
-//   - Protecting handlers that call unstable third-party or legacy modules.
-//   - 안정성이 낮은 서드파티·레거시 모듈을 호출하는 핸들러를 보호할 때.
-//   - Collecting panic telemetry for alerting or observability pipelines.
-//   - 경보·모니터링 파이프라인에 전달할 패닉 텔레메트리가 필요할 때.
+// 주요 동작:
+// - defer/recover로 핸들러 실행을 감싸 서버 전체가 중단되는 것을 방지합니다.
+// - 패닉 값과 캡처된 스택 트레이스를 함께 기록해 진단에 활용합니다.
+// - 내부 정보가 노출되지 않도록 클라이언트에는 일반적인 500 응답만 전달합니다.
 //
-// Example / 예제:
-//
-//	app := websvrutil.New() // 새 App 인스턴스 생성
-//	app.Use(websvrutil.Recovery()) // Ensure Recovery is first / Recovery를 가장 먼저 등록하세요
+// Example:
+//	app := websvrutil.New()
+//	app.Use(websvrutil.Recovery())
 //	app.GET("/panic", func(w http.ResponseWriter, r *http.Request) {
 //	    var user *User
-//	    fmt.Fprintf(w, "Name: %s", user.Name) // Panic is safely handled / 발생한 패닉은 안전하게 처리됩니다
+//	    fmt.Fprintf(w, "Name: %s", user.Name) // triggers panic for demonstration
+//	})
+//
+// 예제:
+//	app := websvrutil.New()
+//	app.Use(websvrutil.Recovery())
+//	app.GET("/panic", func(w http.ResponseWriter, r *http.Request) {
+//	    var user *User
+//	    fmt.Fprintf(w, "Name: %s", user.Name) // 데모를 위해 패닉을 유도합니다
 //	})
 func Recovery() MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
@@ -117,12 +120,10 @@ type RecoveryConfig struct {
 	LogFunc func(err interface{}, stack []byte)
 }
 
-// Logger returns a middleware that logs HTTP requests.
-// Logger는 HTTP 요청을 로깅하는 미들웨어를 반환합니다.
+// Logger returns middleware that records method, path, status code, and latency for each HTTP request.
+// Logger는 각 HTTP 요청의 메서드, 경로, 상태 코드, 지연 시간을 기록하는 미들웨어를 제공합니다.
 //
-// Example
-// 예제:
-//
+// Example / 예제:
 //	app := websvrutil.New()
 //	app.Use(websvrutil.Logger())
 func Logger() MiddlewareFunc {
@@ -140,27 +141,23 @@ func Logger() MiddlewareFunc {
 
 			// Log request
 			// 요청 로깅
-			duration := time.Since(start)
+			duration := time.Since(start) // 요청 처리에 걸린 시간
 			log.Printf("%s %s %d %v", r.Method, r.URL.Path, wrapper.statusCode, duration)
 		})
 	}
 }
 
-// LoggerWithConfig returns a Logger middleware with custom configuration.
-// LoggerWithConfig는 커스텀 설정으로 Logger 미들웨어를 반환합니다.
+// LoggerWithConfig returns middleware that applies a user-defined logging function per request.
+// LoggerWithConfig는 요청마다 사용자 정의 로깅 함수를 실행하는 미들웨어를 제공합니다.
 //
-// Example
-// 예제:
-//
+// Example / 예제:
 //	app.Use(websvrutil.LoggerWithConfig(websvrutil.LoggerConfig{
-//	    Format: "${method} ${path} ${status} ${duration}",
-//	    LogFunc: func(format string, args ...interface{}) {
-//	        log.Printf(format, args...)
+//	    LogFunc: func(method, path string, status int, duration time.Duration) {
+//	        log.Printf("[ACCESS] %s %s %d %v", method, path, status, duration)
 //	    },
 //	}))
 func LoggerWithConfig(config LoggerConfig) MiddlewareFunc {
-	// Set defaults if not provided
-	// 제공되지 않은 경우 기본값 설정
+	// Set defaults if not provided / 제공되지 않은 경우 기본값을 설정합니다.
 	if config.LogFunc == nil {
 		config.LogFunc = func(method, path string, status int, duration time.Duration) {
 			log.Printf("%s %s %d %v", method, path, status, duration)
@@ -170,12 +167,12 @@ func LoggerWithConfig(config LoggerConfig) MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
-			wrapper := &responseWriter{ResponseWriter: w, statusCode: http.StatusOK}
+			wrapper := &responseWriter{ResponseWriter: w, statusCode: http.StatusOK} // 기본 상태 코드를 OK로 초기화
 
-			next.ServeHTTP(wrapper, r)
+			next.ServeHTTP(wrapper, r) // 실제 핸들러 실행
 
-			duration := time.Since(start)
-			config.LogFunc(r.Method, r.URL.Path, wrapper.statusCode, duration)
+			duration := time.Since(start) // 요청 처리에 걸린 시간
+			config.LogFunc(r.Method, r.URL.Path, wrapper.statusCode, duration) // 사용자 정의 로거 호출
 		})
 	}
 }

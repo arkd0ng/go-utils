@@ -12,92 +12,86 @@ import (
 	"time"
 )
 
-// App is the main application instance for the web server.
-// App는 웹 서버의 주요 애플리케이션 인스턴스입니다.
+// App orchestrates HTTP routing, middleware execution, template rendering, and graceful shutdown.
+// App는 HTTP 라우팅, 미들웨어 실행, 템플릿 렌더링, 우아한 종료를 총괄하는 핵심 애플리케이션 컨테이너입니다.
 type App struct {
-	// router is the HTTP request router (placeholder for now, will be implemented in v1.11.003)
-	// router는 HTTP 요청 라우터입니다 (현재는 임시, v1.11.003에서 구현 예정)
+	// router stores the active HTTP router used to dispatch incoming requests to handlers.
+	// router는 들어오는 요청을 핸들러로 전달하는 활성 HTTP 라우터를 보관합니다.
 	router http.Handler
 
-	// middleware stores the middleware chain
-	// middleware는 미들웨어 체인을 저장합니다
+	// middleware keeps user-registered middleware functions in the order they should run.
+	// middleware는 사용자가 등록한 미들웨어 함수를 실행 순서대로 보관합니다.
 	middleware []MiddlewareFunc
 
-	// templates is the template engine
-	// templates는 템플릿 엔진입니다
+	// templates references the lazy-loaded HTML template engine (nil when templates are disabled).
+	// templates는 지연 로드되는 HTML 템플릿 엔진을 가리키며(비활성화 시 nil), 템플릿 기능을 제공합니다.
 	templates *TemplateEngine
 
-	// options holds the configuration options
-	// options는 설정 옵션을 보유합니다
+	// options contains immutable configuration chosen during App initialization.
+	// options는 App 초기화 시 결정되는 불변의 설정 값을 담고 있습니다.
 	options *Options
 
-	// server is the underlying HTTP server
-	// server는 기본 HTTP 서버입니다
+	// server points to the concrete http.Server created during Run.
+	// server는 Run 호출 시 생성되는 구체적인 http.Server 인스턴스를 가리킵니다.
 	server *http.Server
 
-	// mu protects concurrent access to the App
-	// mu는 App에 대한 동시 액세스를 보호합니다
+	// mu guards mutable fields (middleware, router, running flag) against concurrent access.
+	// mu는 변경 가능한 필드(middleware, router, running)를 동시 접근으로부터 보호합니다.
 	mu sync.RWMutex
 
-	// running indicates whether the server is currently running
-	// running은 서버가 현재 실행 중인지 나타냅니다
+	// running indicates whether Run has started the HTTP server and it is currently serving traffic.
+	// running은 Run 실행 후 HTTP 서버가 실제로 트래픽을 처리 중인지 여부를 나타냅니다.
 	running bool
 }
 
-// MiddlewareFunc is a function that wraps an http.Handler.
-// MiddlewareFunc는 http.Handler를 래핑하는 함수입니다.
+// MiddlewareFunc decorates an http.Handler with additional behavior (logging, auth, etc.) while preserving the signature.
+// MiddlewareFunc는 로깅, 인증 같은 부가 동작을 추가하면서 http.Handler 시그니처를 유지하는 래퍼 함수입니다.
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// New creates a new App instance with the given options.
-// New는 주어진 옵션으로 새 App 인스턴스를 생성합니다.
+// New builds a new App, applies functional options, prepares the router, and optionally loads templates.
+// New는 새로운 App을 생성하고 함수형 옵션을 적용하며 라우터를 준비하고 필요 시 템플릿을 로드합니다.
 //
-// Example
+// Example:
+//	app := websvrutil.New()
+//	app := websvrutil.New(
+//	    websvrutil.WithReadTimeout(30 * time.Second),
+//	    websvrutil.WithLogger(true),
+//	)
+//
 // 예제:
-//
 //	app := websvrutil.New()
 //	app := websvrutil.New(
 //	    websvrutil.WithReadTimeout(30 * time.Second),
 //	    websvrutil.WithLogger(true),
 //	)
 func New(opts ...Option) *App {
-	// Apply default options
-	// 기본 옵션 적용
+	// Apply default options / 기본 옵션 적용
 	options := defaultOptions()
 
-	// Apply user-provided options
-	// 사용자 제공 옵션 적용
+	// Apply user-provided options / 사용자 제공 옵션 적용
 	for _, opt := range opts {
 		opt(options)
 	}
 
-	// Create the router
-	// 라우터 생성
+	// Create the router / 라우터 생성
 	router := newRouter()
 
-	// Create template engine if template directory is set
-	// 템플릿 디렉토리가 설정된 경우 템플릿 엔진 생성
+	// Create template engine if template directory is set / 템플릿 디렉토리가 설정된 경우 템플릿 엔진을 준비합니다.
 	var templateEngine *TemplateEngine
 	if options.TemplateDir != "" {
 		templateEngine = NewTemplateEngine(options.TemplateDir)
 
-		// Auto-load templates if enabled
-		// 활성화된 경우 템플릿 자동 로드
+		// Auto-load templates if enabled / 자동 로드가 활성화된 경우 템플릿을 즉시 읽어옵니다.
 		if err := templateEngine.LoadAll(); err != nil {
-			// Log error but don't fail - templates might be loaded later
-			// 에러 로그하지만 실패하지 않음 - 템플릿은 나중에 로드될 수 있음
-			fmt.Printf("Warning: failed to auto-load templates: %v\n", err)
+			fmt.Printf("Warning: failed to auto-load templates: %v\n", err) // Log only; templates can be reloaded later / 로깅만 하고 추후 재로드 가능
 		}
 
-		// Auto-load layouts if layout directory exists
-		// 레이아웃 디렉토리가 존재하면 자동 로드
+		// Auto-load layouts if layout directory exists / 레이아웃 디렉토리가 존재하면 자동 로드합니다.
 		if err := templateEngine.LoadAllLayouts(); err != nil {
-			// Log error but don't fail - layouts might be loaded later
-			// 에러 로그하지만 실패하지 않음 - 레이아웃은 나중에 로드될 수 있음
-			fmt.Printf("Warning: failed to auto-load layouts: %v\n", err)
+			fmt.Printf("Warning: failed to auto-load layouts: %v\n", err) // Inform only; layouts remain optional / 알림만 남기고 레이아웃은 선택적입니다.
 		}
 
-		// Enable auto-reload if configured
-		// 설정된 경우 자동 재로드 활성화
+		// Enable auto-reload if configured / 자동 재로드가 설정된 경우 활성화합니다.
 		if options.EnableAutoReload {
 			if err := templateEngine.EnableAutoReload(); err != nil {
 				fmt.Printf("Warning: failed to enable auto-reload: %v\n", err)
@@ -107,15 +101,13 @@ func New(opts ...Option) *App {
 		}
 	}
 
-	// Create the app instance
-	// 앱 인스턴스 생성
+	// Create the app instance / App 인스턴스를 생성합니다.
 	app := &App{
 		router:     router,
 		middleware: make([]MiddlewareFunc, 0),
 		templates:  templateEngine,
 		options:    options,
-		// Will be created in Run()
-		// Run()에서 생성 예정
+		// Will be created in Run() / Run() 실행 시 http.Server가 생성됩니다.
 		server:  nil,
 		running: false,
 	}
