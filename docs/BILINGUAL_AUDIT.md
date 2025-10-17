@@ -126,3 +126,10 @@ _Refreshed: 2025-10-17_
    수정 후 동일 스크립트를 재실행하여 영어 전용/한글 전용 라인이 남아 있는 파일을 지속적으로 추적합니다.  
 5. **Resolve outstanding tests**  
    현재 `go test ./...` 실행 시 `httputil` 패키지에서 버전 불일치로 실패하므로, 문서/주석 개편과 병행해 버전 기대 값 정리를 권장합니다.
+
+## Progress Log (2025-10-17) / 진행 현황
+
+- `database/mysql/batch.go`: 모든 주석을 한 줄 내 영문/한글 병기로 통합하고 예제 코드에 보충 설명을 추가했습니다.  
+  → 남은 영문 전용 주석 0줄.
+- `websvrutil/middleware.go`: `Recovery` 섹션의 개요 주석을 양 언어로 재작성하고 예제 라인을 병기했으나, 나머지 미들웨어 주석은 후속 정리가 필요합니다.  
+  → 차기 작업: Logger·CORS·RateLimiter 등 주요 섹션 주석 보강.

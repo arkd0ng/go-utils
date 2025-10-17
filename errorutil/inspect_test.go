@@ -435,3 +435,170 @@ func TestGetContextImmutability(t *testing.T) {
 		t.Error("Context was modified: new_key should not exist")
 	}
 }
+
+// TestRoot tests the Root function
+func TestRoot(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+		want string
+	}{
+		{
+			name: "nil error",
+			err:  nil,
+			want: "",
+		},
+		{
+			name: "single error",
+			err:  errors.New("base error"),
+			want: "base error",
+		},
+		{
+			name: "wrapped once",
+			err:  Wrap(errors.New("base error"), "wrapped"),
+			want: "base error",
+		},
+		{
+			name: "wrapped multiple times",
+			err: func() error {
+				base := errors.New("base error")
+				err1 := Wrap(base, "layer 1")
+				err2 := Wrap(err1, "layer 2")
+				return Wrap(err2, "layer 3")
+			}(),
+			want: "base error",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			root := Root(tt.err)
+			if tt.want == "" {
+				if root != nil {
+					t.Errorf("Root() = %v, want nil", root)
+				}
+			} else {
+				if root == nil {
+					t.Errorf("Root() = nil, want %v", tt.want)
+				} else if root.Error() != tt.want {
+					t.Errorf("Root() = %v, want %v", root.Error(), tt.want)
+				}
+			}
+		})
+	}
+}
+
+// TestUnwrapAll tests the UnwrapAll function
+func TestUnwrapAll(t *testing.T) {
+	tests := []struct {
+		name      string
+		err       error
+		wantCount int
+		wantLast  string
+	}{
+		{
+			name:      "nil error",
+			err:       nil,
+			wantCount: 0,
+			wantLast:  "",
+		},
+		{
+			name:      "single error",
+			err:       errors.New("base error"),
+			wantCount: 1,
+			wantLast:  "base error",
+		},
+		{
+			name:      "wrapped once",
+			err:       Wrap(errors.New("base error"), "wrapped"),
+			wantCount: 2,
+			wantLast:  "base error",
+		},
+		{
+			name: "wrapped three times",
+			err: func() error {
+				base := errors.New("base error")
+				err1 := Wrap(base, "layer 1")
+				err2 := Wrap(err1, "layer 2")
+				return Wrap(err2, "layer 3")
+			}(),
+			wantCount: 4,
+			wantLast:  "base error",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			chain := UnwrapAll(tt.err)
+			if len(chain) != tt.wantCount {
+				t.Errorf("UnwrapAll() returned %d errors, want %d", len(chain), tt.wantCount)
+			}
+			if tt.wantCount > 0 && chain[len(chain)-1].Error() != tt.wantLast {
+				t.Errorf("UnwrapAll() last error = %v, want %v", chain[len(chain)-1].Error(), tt.wantLast)
+			}
+		})
+	}
+}
+
+// TestContains tests the Contains function
+func TestContains(t *testing.T) {
+	var ErrNotFound = errors.New("not found")
+	var ErrOther = errors.New("other error")
+
+	tests := []struct {
+		name   string
+		err    error
+		target error
+		want   bool
+	}{
+		{
+			name:   "nil error",
+			err:    nil,
+			target: ErrNotFound,
+			want:   false,
+		},
+		{
+			name:   "same error",
+			err:    ErrNotFound,
+			target: ErrNotFound,
+			want:   true,
+		},
+		{
+			name:   "different error",
+			err:    ErrOther,
+			target: ErrNotFound,
+			want:   false,
+		},
+		{
+			name:   "wrapped target",
+			err:    Wrap(ErrNotFound, "failed to get user"),
+			target: ErrNotFound,
+			want:   true,
+		},
+		{
+			name: "deeply wrapped target",
+			err: func() error {
+				err1 := Wrap(ErrNotFound, "layer 1")
+				err2 := Wrap(err1, "layer 2")
+				return Wrap(err2, "layer 3")
+			}(),
+			target: ErrNotFound,
+			want:   true,
+		},
+		{
+			name:   "wrapped different error",
+			err:    Wrap(ErrOther, "wrapped"),
+			target: ErrNotFound,
+			want:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Contains(tt.err, tt.target)
+			if got != tt.want {
+				t.Errorf("Contains() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

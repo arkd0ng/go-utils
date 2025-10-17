@@ -25,3 +25,4 @@
 - Compiled repository-wide bilingual compliance findings with priority ranking / 우선순위가 반영된 저장소 전역 이중 언어 점검 결과를 정리했습니다
 - Highlighted high-risk files (영문 전용 주석 ≥ 100줄) and provided remediation steps / 영문 전용 주석이 많은 고위험 파일과 개선 권장 사항을 제시했습니다
 - Refreshed metrics to include Korean-only hotspots, medium-priority groups, and actionable recommendations / 한글 전용 주석 다발 구간과 중간 우선순위 그룹, 권장 조치를 최신화했습니다
+- Documented progress on `database/mysql/batch.go` bilingual rewrite and noted remaining `websvrutil/middleware.go` follow-up items / `database/mysql/batch.go`의 병기 작업 완료 상황과 `websvrutil/middleware.go` 후속 정비 항목을 기록했습니다
