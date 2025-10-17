@@ -44,3 +44,9 @@ results/
 
 # Claude Code configuration (personal settings)
 .claude/
+CLAUDE.md
+
+# Temporary documentation files
+docs/temp/
+Status-Code-Comment.md
+todo-codex*.md
