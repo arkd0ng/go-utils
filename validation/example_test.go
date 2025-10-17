@@ -1234,3 +1234,89 @@ func Example_colorValidation() {
 	}
 	// Output: All colors valid
 }
+
+// ExampleValidator_ASCII demonstrates ASCII character validation.
+// ExampleValidator_ASCII는 ASCII 문자 검증을 보여줍니다.
+func ExampleValidator_ASCII() {
+	v := validation.New("Hello World 123", "text")
+	v.ASCII()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid ASCII")
+	} else {
+		fmt.Println("Valid ASCII")
+	}
+	// Output: Valid ASCII
+}
+
+// ExampleValidator_Printable demonstrates printable ASCII character validation.
+// ExampleValidator_Printable는 인쇄 가능한 ASCII 문자 검증을 보여줍니다.
+func ExampleValidator_Printable() {
+	v := validation.New("Hello World! 123", "text")
+	v.Printable()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid printable")
+	} else {
+		fmt.Println("Valid printable")
+	}
+	// Output: Valid printable
+}
+
+// ExampleValidator_Whitespace demonstrates whitespace-only validation.
+// ExampleValidator_Whitespace는 공백 문자만 있는지 검증을 보여줍니다.
+func ExampleValidator_Whitespace() {
+	v := validation.New(" \t\n  ", "text")
+	v.Whitespace()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Not whitespace")
+	} else {
+		fmt.Println("Valid whitespace")
+	}
+	// Output: Valid whitespace
+}
+
+// ExampleValidator_AlphaSpace demonstrates alpha+space validation.
+// ExampleValidator_AlphaSpace는 문자와 공백만 있는지 검증을 보여줍니다.
+func ExampleValidator_AlphaSpace() {
+	v := validation.New("John Doe", "name")
+	v.AlphaSpace()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid name")
+	} else {
+		fmt.Println("Valid name")
+	}
+	// Output: Valid name
+}
+
+// Example_dataFormatValidation demonstrates multiple data format validators.
+// Example_dataFormatValidation는 여러 데이터 형식 검증기를 보여줍니다.
+func Example_dataFormatValidation() {
+	mv := validation.NewValidator()
+
+	// Validate ASCII text
+	mv.Field("Hello World", "ascii_text").ASCII()
+
+	// Validate printable text (no control characters)
+	mv.Field("Display Text!", "display_text").Printable()
+
+	// Validate whitespace
+	mv.Field("   ", "spacing").Whitespace()
+
+	// Validate name with spaces
+	mv.Field("John Doe", "full_name").AlphaSpace()
+
+	err := mv.Validate()
+	if err != nil {
+		fmt.Println("Invalid data")
+	} else {
+		fmt.Println("All data valid")
+	}
+	// Output: All data valid
+}

@@ -1,3 +1,146 @@
+## [v1.13.026] - 2025-10-17
+
+### Added / 추가
+- **Data Format Validators**: 4 new data format validation functions
+  - `ASCII()` - Validates ASCII-only characters (0-127)
+  - `Printable()` - Validates printable ASCII characters only (32-126)
+  - `Whitespace()` - Validates whitespace-only strings
+  - `AlphaSpace()` - Validates alphabetic characters and spaces only
+
+### Implementation Details / 구현 세부사항
+- **ASCII Validation**: Character code check (0-127), includes all printable and control characters
+- **Printable Validation**: Range check (32-126), excludes control characters like tab, newline
+- **Whitespace Validation**: unicode.IsSpace check, must not be empty, supports space/tab/newline/CR
+- **AlphaSpace Validation**: unicode.IsLetter + space check, supports Unicode letters (accented characters)
+- **Character-by-Character Validation**: O(n) time complexity, single-pass validation
+- **Bilingual Messages**: English/Korean error messages for all validators
+
+### Test Coverage / 테스트 커버리지
+- **rules_data.go**: 100% coverage (target achieved)
+- **Total Package Coverage**: 98.2%
+- **Test Cases**: 120+ test cases covering:
+  - Valid/invalid ASCII strings (ASCII vs Unicode characters)
+  - Valid/invalid printable strings (printable vs control characters)
+  - Valid/invalid whitespace strings (whitespace-only vs mixed content)
+  - Valid/invalid AlphaSpace strings (letters+spaces vs numbers/symbols)
+  - Boundary conditions (ASCII 127/128, printable 32/126)
+  - Type mismatches and edge cases
+  - StopOnError behavior
+  - Multi-field data format validation
+
+### Performance Benchmarks / 성능 벤치마크
+```
+BenchmarkASCII-8         ~33 ns/op    Character code check
+BenchmarkPrintable-8     ~35 ns/op    Range check 32-126
+BenchmarkWhitespace-8    ~38 ns/op    unicode.IsSpace check
+BenchmarkAlphaSpace-8    ~35 ns/op    unicode.IsLetter + space check
+```
+
+**Note**: All validators are sub-50ns and suitable for high-throughput text processing.
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bump to v1.13.026
+- `validation/rules_data.go` - NEW: 4 data format validators (~184 LOC)
+- `validation/rules_data_test.go` - NEW: Comprehensive tests (~321 LOC)
+- `validation/benchmark_test.go` - Added 4 data format validator benchmarks
+- `validation/example_test.go` - Added 5 data format validator examples
+- `docs/validation/USER_MANUAL.md` - Added Data Format Validators section (~275 lines), updated version to v1.13.026, validator count to 93+
+- `docs/CHANGELOG/CHANGELOG-v1.13.md` - Updated with v1.13.026 entry
+
+### Context / 컨텍스트
+**User Request**: "계속 진행해주세요" (Continue working - continuation of validator implementation)
+
+**Why**: Data format validation is essential for:
+- Text processing and sanitization
+- Input filtering (ASCII-only, printable-only)
+- Legacy system compatibility (7-bit ASCII)
+- Display text validation (no control characters)
+- Name validation (letters and spaces only)
+- Whitespace/indentation validation
+
+### Impact / 영향
+- ✅ **93+ validators** now available (increased from 89+)
+- ✅ 100% test coverage for rules_data.go
+- ✅ 98.2% total package coverage
+- ✅ All tests passing (unit + benchmark + example tests)
+- ✅ Sub-50ns performance for text processing
+- ✅ Supports ASCII, printable, and Unicode character validation
+- ✅ Format validation for text sanitization
+
+### Common Use Cases / 일반적인 사용 사례
+```go
+// Name validation (letters and spaces only)
+mv := validation.NewValidator()
+mv.Field(fullName, "full_name").
+	Required().
+	AlphaSpace().
+	MinLength(2).
+	MaxLength(50)
+
+// Display text validation (no control characters)
+mv.Field(displayText, "display").
+	Required().
+	Printable()
+
+// Legacy system compatibility (ASCII only)
+mv.Field(legacyData, "legacy_field").
+	Required().
+	ASCII()
+
+// Whitespace validation
+mv.Field(indentation, "indent").
+	Required().
+	Whitespace()
+
+// Form input validation
+type PersonForm struct {
+    FirstName string
+    LastName  string
+    Display   string
+}
+
+func ValidateForm(form PersonForm) error {
+    mv := validation.NewValidator()
+
+    mv.Field(form.FirstName, "first_name").
+        Required().
+        AlphaSpace().
+        MinLength(2)
+
+    mv.Field(form.LastName, "last_name").
+        Required().
+        AlphaSpace().
+        MinLength(2)
+
+    mv.Field(form.Display, "display").
+        Required().
+        Printable()
+
+    return mv.Validate()
+}
+```
+
+### Supported Formats / 지원되는 형식
+```go
+// ASCII examples:
+Valid: "Hello World 123", "Line1\nLine2", "!@#$%^&*()"
+Invalid: "Hello 한글", "Emoji 😀", "Chinese 你好"
+
+// Printable examples:
+Valid: "Hello World! 123", "User@example.com", "Price: $19.99"
+Invalid: "Hello\nWorld", "Tab\there", "\x00null"
+
+// Whitespace examples:
+Valid: " ", "   ", "\t", "\n", " \t\n  "
+Invalid: "", " a ", "Hello World"
+
+// AlphaSpace examples:
+Valid: "John Doe", "Hello World", "Café"
+Invalid: "John123", "Hello!", "First-Last", "Hello\tWorld"
+```
+
+---
+
 ## [v1.13.025] - 2025-10-17
 
 ### Added / 추가

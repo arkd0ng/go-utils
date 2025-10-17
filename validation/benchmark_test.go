@@ -676,3 +676,47 @@ func BenchmarkHSL(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkASCII benchmarks the ASCII validator
+// BenchmarkASCII는 ASCII 검증기를 벤치마크합니다
+func BenchmarkASCII(b *testing.B) {
+	text := "Hello World 123"
+	for i := 0; i < b.N; i++ {
+		v := New(text, "text")
+		v.ASCII()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkPrintable benchmarks the Printable validator
+// BenchmarkPrintable는 Printable 검증기를 벤치마크합니다
+func BenchmarkPrintable(b *testing.B) {
+	text := "Hello World! 123"
+	for i := 0; i < b.N; i++ {
+		v := New(text, "text")
+		v.Printable()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkWhitespace benchmarks the Whitespace validator
+// BenchmarkWhitespace는 Whitespace 검증기를 벤치마크합니다
+func BenchmarkWhitespace(b *testing.B) {
+	text := " \t\n  "
+	for i := 0; i < b.N; i++ {
+		v := New(text, "text")
+		v.Whitespace()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkAlphaSpace benchmarks the AlphaSpace validator
+// BenchmarkAlphaSpace는 AlphaSpace 검증기를 벤치마크합니다
+func BenchmarkAlphaSpace(b *testing.B) {
+	text := "John Doe"
+	for i := 0; i < b.N; i++ {
+		v := New(text, "text")
+		v.AlphaSpace()
+		_ = v.Validate()
+	}
+}

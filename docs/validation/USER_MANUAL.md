@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.025
+**Version / 버전**: v1.13.026
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -23,12 +23,13 @@
 14. [Business/ID Validators / 비즈니스/ID 검증기](#businessid-validators--비즈니스id-검증기)
 15. [Geographic Validators / 지리 좌표 검증기](#geographic-validators--지리-좌표-검증기)
 16. [Security Validators / 보안 검증기](#security-validators--보안-검증기)
-17. [Color/CSS Validators / 색상/CSS 검증기](#colorcss-validators--색상css-검증기) 🆕
-18. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
-19. [Error Handling / 에러 처리](#error-handling--에러-처리)
-20. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
-21. [Best Practices / 모범 사례](#best-practices--모범-사례)
-22. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
+17. [Color/CSS Validators / 색상/CSS 검증기](#colorcss-validators--색상css-검증기)
+18. [Data Format Validators / 데이터 형식 검증기](#data-format-validators--데이터-형식-검증기) 🆕
+19. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
+20. [Error Handling / 에러 처리](#error-handling--에러-처리)
+21. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
+22. [Best Practices / 모범 사례](#best-practices--모범-사례)
+23. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
 
 ---
 
@@ -40,7 +41,7 @@ The `validation` package provides a **fluent, type-safe validation library** for
 
 ### Key Features / 주요 기능
 
-- ✅ **89+ Built-in Validators** / **89개 이상의 내장 검증기**
+- ✅ **93+ Built-in Validators** / **93개 이상의 내장 검증기**
 - ✅ **Fluent API with Method Chaining** / **메서드 체이닝을 통한 플루언트 API**
 - ✅ **Type-Safe with Go Generics** / **Go 제네릭을 활용한 타입 안전성**
 - ✅ **Bilingual Error Messages (EN/KR)** / **양방향 에러 메시지 (영어/한글)**
@@ -3304,5 +3305,281 @@ Color validators are highly optimized with regex matching:
 **Note**: All color validators only validate format correctness, not color theory or visual perception.
 
 **참고**: 모든 색상 검증기는 형식 정확성만 검증하며, 색상 이론이나 시각적 인식은 검증하지 않습니다.
+
+---
+
+## Data Format Validators / 데이터 형식 검증기
+
+Data format validators ensure that string values contain only specific character types. These validators are essential for text processing, data sanitization, and input filtering.
+
+데이터 형식 검증기는 문자열 값이 특정 문자 유형만 포함하는지 확인합니다. 이러한 검증기는 텍스트 처리, 데이터 정제 및 입력 필터링에 필수적입니다.
+
+### Available Validators / 사용 가능한 검증기
+
+| Validator | Description (EN) | Description (KR) | Character Range |
+|-----------|------------------|------------------|-----------------|
+| `ASCII()` | Validates ASCII characters only | ASCII 문자만 검증합니다 | 0-127 |
+| `Printable()` | Validates printable ASCII only | 인쇄 가능한 ASCII만 검증합니다 | 32-126 |
+| `Whitespace()` | Validates whitespace-only strings | 공백 문자만 검증합니다 | space, tab, newline, etc. |
+| `AlphaSpace()` | Validates letters and spaces only | 문자와 공백만 검증합니다 | a-z, A-Z, space |
+
+### 1. ASCII Validator / ASCII 검증기
+
+The `ASCII()` validator ensures that a string contains only ASCII characters (character codes 0-127). This includes all printable characters and control characters.
+
+`ASCII()` 검증기는 문자열이 ASCII 문자(문자 코드 0-127)만 포함하는지 확인합니다. 여기에는 모든 인쇄 가능한 문자와 제어 문자가 포함됩니다.
+
+**Validation Rules:**
+- All characters must be in ASCII range (0-127)
+- Includes letters, numbers, symbols, spaces, and control characters
+- Excludes Unicode characters (emoji, multibyte characters)
+
+**Examples:**
+```go
+// Valid ASCII strings
+v1 := validation.New("Hello World 123", "text").ASCII()
+v2 := validation.New("!@#$%^&*()", "symbols").ASCII()
+v3 := validation.New("Line1\nLine2", "multiline").ASCII()  // Newline is ASCII
+
+// Invalid - contains Unicode
+v4 := validation.New("Hello 한글", "mixed").ASCII()  // Error
+v5 := validation.New("Emoji 😀", "emoji").ASCII()  // Error
+```
+
+**Use Cases:**
+- Legacy system compatibility (7-bit ASCII only)
+- Email headers and SMTP protocols
+- HTTP headers and protocols
+- Plain text file validation
+- ASCII-only API requirements
+
+### 2. Printable Validator / 인쇄 가능 검증기
+
+The `Printable()` validator ensures that a string contains only printable ASCII characters (32-126). This excludes control characters like newline, tab, and null.
+
+`Printable()` 검증기는 문자열이 인쇄 가능한 ASCII 문자(32-126)만 포함하는지 확인합니다. 줄바꿈, 탭, null과 같은 제어 문자는 제외됩니다.
+
+**Validation Rules:**
+- Characters: 32-126 (space to tilde ~)
+- Includes letters, numbers, symbols, and space
+- Excludes control characters (0-31, 127)
+- Excludes Unicode characters
+
+**Examples:**
+```go
+// Valid printable ASCII
+v1 := validation.New("Hello World! 123", "display").Printable()
+v2 := validation.New("User@example.com", "email").Printable()
+v3 := validation.New("Price: $19.99", "price").Printable()
+
+// Invalid - contains control characters
+v4 := validation.New("Hello\nWorld", "newline").Printable()  // Error
+v5 := validation.New("Tab\there", "tab").Printable()  // Error
+v6 := validation.New("\x00null", "null").Printable()  // Error
+```
+
+**Use Cases:**
+- Display text validation (UI labels, messages)
+- Single-line input fields
+- CSV/TSV data validation
+- Log messages without control characters
+- Database fields that should only contain visible characters
+
+### 3. Whitespace Validator / 공백 검증기
+
+The `Whitespace()` validator ensures that a string contains only whitespace characters. This is useful for validating spacing, indentation, or blank lines.
+
+`Whitespace()` 검증기는 문자열이 공백 문자만 포함하는지 확인합니다. 간격, 들여쓰기 또는 빈 줄을 검증하는 데 유용합니다.
+
+**Validation Rules:**
+- Only whitespace characters allowed
+- Includes: space, tab (\t), newline (\n), carriage return (\r)
+- String must not be empty
+- Any non-whitespace character causes validation failure
+
+**Examples:**
+```go
+// Valid whitespace strings
+v1 := validation.New(" ", "single_space").Whitespace()
+v2 := validation.New("   ", "multiple_spaces").Whitespace()
+v3 := validation.New("\t", "tab").Whitespace()
+v4 := validation.New("\n", "newline").Whitespace()
+v5 := validation.New(" \t\n  ", "mixed").Whitespace()
+
+// Invalid - contains non-whitespace
+v6 := validation.New("", "empty").Whitespace()  // Error: must not be empty
+v7 := validation.New(" a ", "letter").Whitespace()  // Error
+v8 := validation.New("Hello World", "text").Whitespace()  // Error
+```
+
+**Use Cases:**
+- Indentation validation in code formatters
+- Blank line detection in parsers
+- Spacing validation in layouts
+- Separator validation in text processing
+
+### 4. AlphaSpace Validator / 문자+공백 검증기
+
+The `AlphaSpace()` validator ensures that a string contains only alphabetic characters and spaces. This is useful for validating names, titles, and other text that should only contain letters and spaces.
+
+`AlphaSpace()` 검증기는 문자열이 알파벳 문자와 공백만 포함하는지 확인합니다. 이름, 제목 및 문자와 공백만 포함해야 하는 기타 텍스트를 검증하는 데 유용합니다.
+
+**Validation Rules:**
+- Only letters (a-z, A-Z) and spaces allowed
+- Supports Unicode letters (accented characters, international alphabets)
+- No numbers, symbols, or special characters
+- No tabs or newlines (only regular space)
+
+**Examples:**
+```go
+// Valid alpha + space
+v1 := validation.New("John Doe", "full_name").AlphaSpace()
+v2 := validation.New("Hello World", "greeting").AlphaSpace()
+v3 := validation.New("UPPERCASE", "caps").AlphaSpace()
+v4 := validation.New("lowercase", "lower").AlphaSpace()
+v5 := validation.New("Café", "unicode").AlphaSpace()  // Unicode letters OK
+
+// Invalid - contains non-alpha characters
+v6 := validation.New("John123", "with_number").AlphaSpace()  // Error
+v7 := validation.New("Hello!", "with_symbol").AlphaSpace()  // Error
+v8 := validation.New("First-Last", "with_dash").AlphaSpace()  // Error
+v9 := validation.New("Hello\tWorld", "with_tab").AlphaSpace()  // Error
+```
+
+**Use Cases:**
+- Full name validation (first + last name)
+- Title and heading validation
+- Label text validation
+- Author names
+- Place names without numbers or symbols
+
+### Multi-Field Data Format Validation / 다중 필드 데이터 형식 검증
+
+```go
+type TextData struct {
+    DisplayText  string
+    PlainText    string
+    Spacing      string
+    AuthorName   string
+}
+
+func ValidateTextData(data TextData) error {
+    mv := validation.NewValidator()
+
+    // Validate display text (printable ASCII only)
+    mv.Field(data.DisplayText, "display_text").
+        Required().
+        Printable()
+
+    // Validate plain text (ASCII only)
+    mv.Field(data.PlainText, "plain_text").
+        Required().
+        ASCII()
+
+    // Validate spacing (whitespace only)
+    mv.Field(data.Spacing, "spacing").
+        Required().
+        Whitespace()
+
+    // Validate author name (letters and spaces only)
+    mv.Field(data.AuthorName, "author_name").
+        Required().
+        AlphaSpace()
+
+    return mv.Validate()
+}
+```
+
+### Real-World Use Cases / 실제 사용 사례
+
+**Form Input Validation:**
+```go
+// Name fields
+mv.Field(firstName, "first_name").
+    Required().
+    AlphaSpace()
+
+mv.Field(lastName, "last_name").
+    Required().
+    AlphaSpace()
+```
+
+**Text Display Validation:**
+```go
+// UI labels (no control characters)
+mv.Field(labelText, "label").
+    Required().
+    Printable()
+
+// Display messages
+mv.Field(messageText, "message").
+    Required().
+    Printable()
+```
+
+**Data Sanitization:**
+```go
+// Ensure ASCII-only for legacy systems
+mv.Field(legacyData, "legacy_field").
+    Required().
+    ASCII()
+
+// Ensure printable characters only
+mv.Field(displayData, "display_field").
+    Required().
+    Printable()
+```
+
+**Text Processing:**
+```go
+// Validate indentation/spacing
+mv.Field(indentation, "indent").
+    Required().
+    Whitespace()
+
+// Validate titles (no numbers/symbols)
+mv.Field(articleTitle, "title").
+    Required().
+    AlphaSpace()
+```
+
+### Chaining with Other Validators / 다른 검증기와 체이닝
+
+```go
+// Name validation with length constraints
+v := validation.New(fullName, "full_name")
+v.Required().
+    AlphaSpace().
+    MinLength(2).
+    MaxLength(50)
+
+// Display text with multiple constraints
+v := validation.New(displayText, "display")
+v.Required().
+    Printable().
+    MinLength(1).
+    MaxLength(200)
+
+// ASCII text with pattern matching
+v := validation.New(asciiText, "text")
+v.Required().
+    ASCII().
+    Regex(`^[A-Z]`)  // Must start with uppercase
+```
+
+### Performance / 성능
+
+Data format validators are highly optimized with character-by-character validation:
+
+데이터 형식 검증기는 문자별 검증으로 고도로 최적화되어 있습니다:
+
+- **ASCII**: ~33 ns/op (character code check)
+- **Printable**: ~35 ns/op (range check 32-126)
+- **Whitespace**: ~38 ns/op (unicode.IsSpace check)
+- **AlphaSpace**: ~35 ns/op (unicode.IsLetter + space check)
+
+All validators use O(n) time complexity where n is the string length.
+
+모든 검증기는 O(n) 시간 복잡도를 사용합니다 (n은 문자열 길이).
 
 ---
