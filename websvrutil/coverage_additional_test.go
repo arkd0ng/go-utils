@@ -1,6 +1,7 @@
 package websvrutil
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -632,7 +633,7 @@ func TestRunWithGracefulShutdownCoverage(t *testing.T) {
 		app := New(WithTemplateDir(""))
 
 		// Try to shutdown before server starts
-		err := app.Shutdown(nil)
+		err := app.Shutdown(context.TODO())
 		if err == nil {
 			t.Log("Shutdown before start returned no error (acceptable)")
 		} else {
@@ -657,10 +658,10 @@ func TestRunWithGracefulShutdownCoverage(t *testing.T) {
 		time.Sleep(100 * time.Millisecond)
 
 		// First shutdown
-		app.Shutdown(nil)
+		app.Shutdown(context.TODO())
 
 		// Second shutdown (should handle gracefully)
-		err := app.Shutdown(nil)
+		err := app.Shutdown(context.TODO())
 		if err != nil {
 			t.Logf("Second shutdown returned error: %v (acceptable)", err)
 		}

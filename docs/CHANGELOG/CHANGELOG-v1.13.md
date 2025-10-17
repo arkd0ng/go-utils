@@ -1,3 +1,59 @@
+## [v1.13.040] - 2025-10-17
+
+### 🐛 Bug Fix / 버그 수정
+
+**Fix: Resolve websvrutil Context lock copy issue / websvrutil Context 락 복사 이슈 해결**
+
+#### Problem / 문제
+- **File / 파일**: `websvrutil/context.go:347`
+- **Issue / 이슈**: `WithContext()` method was copying a `Context` struct that contains `sync.RWMutex`
+- **Warning / 경고**: Go copylocks analyzer reported "assignment copies lock value"
+- **Risk / 위험**: Copying a mutex can lead to undefined behavior and potential deadlocks
+
+#### Solution / 해결
+Changed `WithContext()` from struct copy to field-by-field construction:
+
+```go
+// ❌ Before - Copies sync.RWMutex (incorrect)
+func (c *Context) WithContext(ctx context.Context) *Context {
+    c2 := *c  // Copies the entire struct including mutex
+    c2.Request = c.Request.WithContext(ctx)
+    return &c2
+}
+
+// ✅ After - Creates new Context without copying mutex (correct)
+func (c *Context) WithContext(ctx context.Context) *Context {
+    return &Context{
+        Request:        c.Request.WithContext(ctx),
+        ResponseWriter: c.ResponseWriter,
+        params:         c.params,
+        values:         c.values,
+        app:            c.app,
+        mu:             c.mu,  // Shares mutex (safe)
+    }
+}
+```
+
+#### Impact / 영향
+- **Concurrency Safety / 동시성 안전성**: Mutex is now safely shared between original and copied Context
+- **Linter Warnings / 린터 경고**: Resolved copylocks warning
+- **Behavior / 동작**: No functional change - method behaves identically
+- **Testing / 테스트**: ✅ All websvrutil tests pass
+
+#### Version Management / 버전 관리
+- cfg/app.yaml: v1.13.039 → v1.13.040
+
+#### Files Changed / 변경된 파일
+- `websvrutil/context.go`: Fixed WithContext() method
+- `cfg/app.yaml`: Version bump
+- `docs/CHANGELOG/CHANGELOG-v1.13.md`: This entry
+
+#### References / 참조
+- [Go copylock analyzer](https://pkg.go.dev/golang.org/x/tools/go/analysis/passes/copylock)
+- [sync.Mutex documentation](https://pkg.go.dev/sync#Mutex) - States that mutex must not be copied
+
+---
+
 ## [v1.13.039] - 2025-10-17
 
 ### Merge & Release / 머지 및 릴리스

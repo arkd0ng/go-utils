@@ -342,11 +342,19 @@ func (c *Context) Context() context.Context {
 }
 
 // WithContext returns a shallow copy of Context with a new context.Context.
+// The returned Context shares the same mutex and values with the original.
+//
 // WithContext는 새 context.Context를 가진 Context의 얕은 복사본을 반환합니다.
+// 반환된 Context는 원본과 동일한 뮤텍스와 값을 공유합니다.
 func (c *Context) WithContext(ctx context.Context) *Context {
-	c2 := *c
-	c2.Request = c.Request.WithContext(ctx)
-	return &c2
+	return &Context{
+		Request:        c.Request.WithContext(ctx),
+		ResponseWriter: c.ResponseWriter,
+		params:         c.params,
+		values:         c.values,
+		app:            c.app,
+		mu:             c.mu,
+	}
 }
 
 // ============================================================================
