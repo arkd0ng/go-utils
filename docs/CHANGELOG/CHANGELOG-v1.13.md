@@ -6,6 +6,54 @@ Go 애플리케이션을 위한 검증 유틸리티 패키지입니다.
 
 ---
 
+## [v1.13.014] - 2025-10-17
+
+### Added / 추가
+- 완전한 validation 패키지 예제 코드 작성 (1,262 lines)
+- `examples/validation/main.go` - 모든 50+ validators를 시연하는 포괄적인 예제
+
+### Features / 기능
+- **Log Management**: 자동 백업 및 5개 최신 로그 유지
+- **Bilingual Logging**: 영문/한글 병기 with `logging.WithStdout(true)` for console + file output
+- **50+ Validator Demonstrations**: 모든 구현된 검증기에 대한 상세 예제
+- **4 Categories**: String (20), Numeric (10), Collection (10), Comparison (10)
+- **Advanced Features**: StopOnError, WithMessage, Custom validators, Multi-field validation
+- **3 Real-World Scenarios**:
+  - User Registration Validation
+  - API Request Validation (Create Post)
+  - Application Configuration Validation
+
+### Structure / 구조
+- 7-layer function demonstration pattern:
+  1. Function Signature / 함수 시그니처
+  2. Description / 설명
+  3. Use Cases / 사용 사례
+  4. Key Features / 주요 기능 (선택)
+  5. Execution / 실행
+  6. Results / 결과
+  7. Analysis / 분석
+
+### Fixed / 수정
+- Function name corrections:
+  - `AlphaNumeric()` → `Alphanumeric()`
+  - `Matches()` → `Regex()`
+  - `NonNegative()`, `NonPositive()` → `Zero()`, `NonZero()`
+  - Removed `NotEmpty()` (use `Required()` instead)
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bump to v1.13.014
+- `examples/validation/main.go` - Complete rewrite (1,262 lines)
+- `docs/CHANGELOG/CHANGELOG-v1.13.md` - Updated with v1.13.014 entry
+
+### Context / 컨텍스트
+**User Request**: "이제 예제 코드에 대해 작업합시다. 기본적으로 패키지내 구현된 함수와 기능에 대해 모두 예제를 만들어 줍니다. 예제는 단일 함수 및 복합사용 예제, 좋은 사용 시나리오 등을 모두 포함합니다. 로그는 매우 자세하고 구체적으로 나와서 로그만 보고도 메뉴얼을 보지 않아도 될만큼 자세하고 친절하게 만들어 줍니다."
+
+**Why**: Provide comprehensive, production-quality example code following standard patterns from other package examples (analyzed 13 existing example files)
+
+**Impact**: Users can understand all validators by running a single example with detailed logging, eliminating need for manual reference
+
+---
+
 ## [v1.13.013] - 2025-10-17
 
 ### Added / 추가
