@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"os"
 	"testing"
 	"time"
 )
@@ -402,6 +403,76 @@ func BenchmarkHex(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		v := New("0xdeadbeef", "hex")
 		v.Hex()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkFilePath benchmarks the FilePath validator
+// BenchmarkFilePath는 FilePath 검증기를 벤치마크합니다
+func BenchmarkFilePath(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("/usr/bin/test", "file_path")
+		v.FilePath()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkFileExists benchmarks the FileExists validator
+// BenchmarkFileExists는 FileExists 검증기를 벤치마크합니다
+func BenchmarkFileExists(b *testing.B) {
+	// Create a temporary file for benchmarking
+	tmpFile, _ := os.CreateTemp("", "bench_file_*.txt")
+	tmpFile.Close()
+	defer os.Remove(tmpFile.Name())
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		v := New(tmpFile.Name(), "file_path")
+		v.FileExists()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkFileReadable benchmarks the FileReadable validator
+// BenchmarkFileReadable는 FileReadable 검증기를 벤치마크합니다
+func BenchmarkFileReadable(b *testing.B) {
+	// Create a temporary file for benchmarking
+	tmpFile, _ := os.CreateTemp("", "bench_file_*.txt")
+	tmpFile.WriteString("test content")
+	tmpFile.Close()
+	defer os.Remove(tmpFile.Name())
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		v := New(tmpFile.Name(), "file_path")
+		v.FileReadable()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkFileSize benchmarks the FileSize validator
+// BenchmarkFileSize는 FileSize 검증기를 벤치마크합니다
+func BenchmarkFileSize(b *testing.B) {
+	// Create a temporary file for benchmarking
+	tmpFile, _ := os.CreateTemp("", "bench_file_*.txt")
+	tmpFile.WriteString("Hello, World!")
+	tmpFile.Close()
+	defer os.Remove(tmpFile.Name())
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		v := New(tmpFile.Name(), "file_path")
+		v.FileSize(0, 100)
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkFileExtension benchmarks the FileExtension validator
+// BenchmarkFileExtension는 FileExtension 검증기를 벤치마크합니다
+func BenchmarkFileExtension(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("test.txt", "file_path")
+		v.FileExtension(".txt", ".md")
 		_ = v.Validate()
 	}
 }

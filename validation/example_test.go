@@ -2,6 +2,7 @@ package validation_test
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/arkd0ng/go-utils/validation"
@@ -757,4 +758,100 @@ func Example_formatValidationComprehensive() {
 		fmt.Println("Valid request format")
 	}
 	// Output: Valid request format
+}
+
+// Example_filePathValidation demonstrates file path validation
+// Example_filePathValidation은 파일 경로 검증을 보여줍니다
+func Example_filePathValidation() {
+	v := validation.New("./config/app.json", "config_file")
+	v.FilePath()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid file path")
+	} else {
+		fmt.Println("Valid file path")
+	}
+	// Output: Valid file path
+}
+
+// Example_fileExistsValidation demonstrates file existence validation
+// Example_fileExistsValidation은 파일 존재 검증을 보여줍니다
+func Example_fileExistsValidation() {
+	// Create a temporary file for demonstration
+	tmpFile, _ := os.CreateTemp("", "example_*.txt")
+	tmpFile.Close()
+	defer os.Remove(tmpFile.Name())
+
+	v := validation.New(tmpFile.Name(), "log_file")
+	v.FileExists()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("File does not exist")
+	} else {
+		fmt.Println("File exists")
+	}
+	// Output: File exists
+}
+
+// Example_fileSizeValidation demonstrates file size validation
+// Example_fileSizeValidation은 파일 크기 검증을 보여줍니다
+func Example_fileSizeValidation() {
+	// Create a temporary file with content
+	tmpFile, _ := os.CreateTemp("", "example_*.txt")
+	tmpFile.WriteString("Hello, World!")
+	tmpFile.Close()
+	defer os.Remove(tmpFile.Name())
+
+	v := validation.New(tmpFile.Name(), "upload_file")
+	v.FileSize(0, 1024) // Max 1KB
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("File size out of range")
+	} else {
+		fmt.Println("File size OK")
+	}
+	// Output: File size OK
+}
+
+// Example_fileExtensionValidation demonstrates file extension validation
+// Example_fileExtensionValidation은 파일 확장자 검증을 보여줍니다
+func Example_fileExtensionValidation() {
+	v := validation.New("document.pdf", "file_name")
+	v.FileExtension(".pdf", ".doc", ".docx")
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid file extension")
+	} else {
+		fmt.Println("Valid file extension")
+	}
+	// Output: Valid file extension
+}
+
+// Example_fileValidationComprehensive demonstrates comprehensive file validation
+// Example_fileValidationComprehensive는 포괄적인 파일 검증을 보여줍니다
+func Example_fileValidationComprehensive() {
+	// Create a temporary file for demonstration
+	tmpFile, _ := os.CreateTemp("", "upload_*.txt")
+	tmpFile.WriteString("Test content")
+	tmpFile.Close()
+	defer os.Remove(tmpFile.Name())
+
+	mv := validation.NewValidator()
+	mv.Field(tmpFile.Name(), "upload_file").
+		FileExists().
+		FileReadable().
+		FileSize(0, 10240). // Max 10KB
+		FileExtension(".txt", ".log")
+
+	err := mv.Validate()
+	if err != nil {
+		fmt.Println("Invalid file")
+	} else {
+		fmt.Println("Valid file")
+	}
+	// Output: Valid file
 }

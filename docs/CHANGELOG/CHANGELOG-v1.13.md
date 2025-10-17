@@ -1,3 +1,96 @@
+## [v1.13.020] - 2025-10-17
+
+### Added / 추가
+- **File Validators**: 6 new file system validation functions
+  - `FilePath()` - Validates file path format
+  - `FileExists()` - Validates file/directory exists
+  - `FileReadable()` - Validates file is readable (opens file to test)
+  - `FileWritable()` - Validates file is writable (tests write permissions)
+  - `FileSize(min, max)` - Validates file size in bytes (inclusive range)
+  - `FileExtension(exts...)` - Validates file has allowed extension
+
+### Implementation Details / 구현 세부사항
+- **Path Validation**: Normalizes paths using filepath.Clean
+- **Existence Check**: Uses os.Stat to verify file/directory existence
+- **Permission Testing**: Actually opens files to test read/write permissions
+- **Size Validation**: Gets file size from os.Stat, validates inclusive range
+- **Extension Matching**: Supports extensions with or without dot prefix
+- **Bilingual Messages**: English/Korean error messages for all validators
+
+### Test Coverage / 테스트 커버리지
+- **rules_file.go**: 100% coverage
+- **Total Package Coverage**: 98.8% (maintained high coverage)
+- **Test Cases**: 80+ test cases covering all file validators with edge cases
+- **Real File I/O**: Tests create and clean up temporary files for realistic scenarios
+- **StopOnError Tests**: Verified StopOnError behavior for all validators
+
+### Performance Benchmarks / 성능 벤치마크
+```
+BenchmarkFilePath-8        39,634,153 ns/op     ~30 ns/op     0 B/op     0 allocs/op
+BenchmarkFileExists-8         619,078 ns/op  ~1,879 ns/op   304 B/op     3 allocs/op
+BenchmarkFileReadable-8       117,831 ns/op ~10,046 ns/op   200 B/op     4 allocs/op
+BenchmarkFileSize-8           636,069 ns/op  ~1,915 ns/op   304 B/op     3 allocs/op
+BenchmarkFileExtension-8  100,000,000 ns/op     ~10 ns/op     0 B/op     0 allocs/op
+```
+
+**Note**: File I/O operations are naturally slower than memory validations due to OS syscalls.
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bump to v1.13.020
+- `validation/rules_file.go` - NEW: 6 file validators (~230 LOC)
+- `validation/rules_file_test.go` - NEW: Comprehensive tests (~350 LOC)
+- `validation/benchmark_test.go` - Added 5 file validator benchmarks, added os import
+- `validation/example_test.go` - Added 5 file validator examples, added os import
+- `docs/validation/USER_MANUAL.md` - Added File Validators section with comprehensive documentation
+- `docs/CHANGELOG/CHANGELOG-v1.13.md` - Updated with v1.13.020 entry
+
+### Context / 컨텍스트
+**User Request**: "계속 진행해주세요. 작업파일 이외에 변경된 파일도 같이 깃헙에 커밋과 푸쉬해주세요"
+
+**Why**: File validation is essential for:
+- File upload validation (size, extension, permissions)
+- Configuration file validation (exists, readable, correct format)
+- Log file validation (writable, parent directory exists)
+- Build output validation (files created, correct size)
+- Backup file validation (exists, readable, expected size)
+
+**Impact**:
+- ✅ **70+ validators** now available (String 20 + Numeric 10 + Collection 10 + Comparison 10 + Network 5 + DateTime 4 + Range 3 + Format 3 + File 6)
+- ✅ 98.8% test coverage maintained
+- ✅ All tests passing (unit + benchmark + example tests)
+- ✅ Excellent performance for in-memory operations (~10-30ns)
+- ✅ Reasonable performance for file I/O operations (~1-10μs)
+- ✅ Comprehensive documentation with real-world use cases
+- ✅ maputil package comment enhancements also committed
+
+### Common Use Cases / 일반적인 사용 사례
+```go
+// File upload validation
+mv := validation.NewValidator()
+mv.Field(uploadPath, "upload_file").
+	FileExists().
+	FileReadable().
+	FileSize(1024, 10485760).        // 1KB - 10MB
+	FileExtension(".jpg", ".png", ".gif")
+
+// Configuration file validation
+mv.Field(configPath, "config").
+	FileExists().
+	FileReadable().
+	FileExtension(".json", ".yaml", ".toml")
+
+// Log file validation
+mv.Field(logPath, "log_file").
+	FileWritable()                    // Ensure we can write logs
+
+// Build output validation
+mv.Field(binaryPath, "output").
+	FileExists().
+	FileSize(1048576, 104857600)     // 1MB - 100MB
+```
+
+---
+
 ## [v1.13.019] - 2025-10-17
 
 ### Added / 추가

@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.019
+**Version / 버전**: v1.13.020
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -17,8 +17,9 @@
 8. [Comparison Validators / 비교 검증기](#comparison-validators--비교-검증기)
 9. [Network Validators / 네트워크 검증기](#network-validators--네트워크-검증기)
 10. [DateTime Validators / 날짜/시간 검증기](#datetime-validators--날짜시간-검증기)
-11. [Range Validators / 범위 검증기](#range-validators--범위-검증기) 🆕
-12. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
+11. [Range Validators / 범위 검증기](#range-validators--범위-검증기)
+12. [File Validators / 파일 검증기](#file-validators--파일-검증기) 🆕
+13. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
 13. [Error Handling / 에러 처리](#error-handling--에러-처리)
 14. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
 15. [Best Practices / 모범 사례](#best-practices--모범-사례)
@@ -34,7 +35,7 @@ The `validation` package provides a **fluent, type-safe validation library** for
 
 ### Key Features / 주요 기능
 
-- ✅ **64+ Built-in Validators** / **64개 이상의 내장 검증기**
+- ✅ **70+ Built-in Validators** / **70개 이상의 내장 검증기**
 - ✅ **Fluent API with Method Chaining** / **메서드 체이닝을 통한 플루언트 API**
 - ✅ **Type-Safe with Go Generics** / **Go 제네릭을 활용한 타입 안전성**
 - ✅ **Bilingual Error Messages (EN/KR)** / **양방향 에러 메시지 (영어/한글)**
@@ -46,7 +47,8 @@ The `validation` package provides a **fluent, type-safe validation library** for
 - ✅ **Network Validators (IPv4, IPv6, CIDR, MAC)** / **네트워크 검증기**
 - ✅ **DateTime Validators (DateFormat, TimeFormat, DateBefore, DateAfter)** / **날짜/시간 검증기**
 - ✅ **Range Validators (IntRange, FloatRange, DateRange)** / **범위 검증기**
-- ✅ **Format Validators (UUIDv4, XML, Hex)** 🆕 / **포맷 검증기** 🆕
+- ✅ **Format Validators (UUIDv4, XML, Hex)** / **포맷 검증기**
+- ✅ **File Validators (FilePath, FileExists, FileReadable, FileWritable, FileSize, FileExtension)** 🆕 / **파일 검증기** 🆕
 
 ---
 
@@ -1919,3 +1921,141 @@ v.DateRange(start, end)
 
 ---
 
+
+### File Validators / 파일 검증기
+
+File validators validate file paths, existence, permissions, sizes, and extensions. Perfect for file upload validation, configuration file validation, and file system operations.
+
+파일 검증기는 파일 경로, 존재 여부, 권한, 크기 및 확장자를 검증합니다. 파일 업로드 검증, 구성 파일 검증 및 파일 시스템 작업에 완벽합니다.
+
+#### Available Validators / 사용 가능한 검증기
+
+| Validator | Description | 설명 |
+|-----------|-------------|------|
+| `FilePath()` | Validates file path format | 파일 경로 형식 검증 |
+| `FileExists()` | Validates file/directory exists | 파일/디렉토리 존재 검증 |
+| `FileReadable()` | Validates file is readable | 파일 읽기 가능 검증 |
+| `FileWritable()` | Validates file is writable | 파일 쓰기 가능 검증 |
+| `FileSize(min, max)` | Validates file size in bytes | 바이트 단위 파일 크기 검증 |
+| `FileExtension(exts...)` | Validates file extension | 파일 확장자 검증 |
+
+#### FilePath() - File Path Format Validation / 파일 경로 형식 검증
+
+```go
+v := validation.New("./config/app.json", "config_file")
+v.FilePath()
+// Valid: any valid path format (absolute or relative)
+// 유효: 모든 유효한 경로 형식 (절대 또는 상대)
+```
+
+#### FileExists() - File Existence Validation / 파일 존재 검증
+
+```go
+v := validation.New("/etc/hosts", "hosts_file")
+v.FileExists()
+// Valid: file or directory must exist on filesystem
+// 유효: 파일 또는 디렉토리가 파일 시스템에 존재해야 함
+```
+
+#### FileReadable() - File Readability Validation / 파일 읽기 가능 검증
+
+```go
+v := validation.New("/var/log/app.log", "log_file")
+v.FileReadable()
+// Valid: file must be readable (opens file to test)
+// 유효: 파일이 읽기 가능해야 함 (파일을 열어 테스트)
+```
+
+#### FileWritable() - File Writability Validation / 파일 쓰기 가능 검증
+
+```go
+v := validation.New("/tmp/output.txt", "output_file")
+v.FileWritable()
+// Valid: existing file is writable or parent directory is writable for new files
+// 유효: 기존 파일은 쓰기 가능하거나 새 파일의 경우 부모 디렉토리가 쓰기 가능
+```
+
+#### FileSize(min, max) - File Size Validation / 파일 크기 검증
+
+```go
+v := validation.New("/path/to/upload.jpg", "upload_file")
+v.FileSize(1024, 10485760) // 1KB - 10MB
+// Valid: file size must be between min and max bytes (inclusive)
+// 유효: 파일 크기가 최소와 최대 바이트 사이여야 함 (포함)
+
+// Common sizes / 일반적인 크기
+// 1 KB = 1024 bytes
+// 1 MB = 1048576 bytes (1024 * 1024)
+// 10 MB = 10485760 bytes
+```
+
+#### FileExtension(extensions...) - File Extension Validation / 파일 확장자 검증
+
+```go
+v := validation.New("document.pdf", "file_name")
+v.FileExtension(".pdf", ".doc", ".docx")
+// Valid: file must have one of the allowed extensions
+// 유효: 파일이 허용된 확장자 중 하나를 가져야 함
+
+// Extensions can be specified with or without dot
+// 확장자는 점 포함 또는 제외로 지정 가능
+v.FileExtension("pdf", "doc", "docx") // Also valid / 또한 유효
+```
+
+#### Comprehensive Example / 종합 예제
+
+```go
+// File upload validation
+mv := validation.NewValidator()
+mv.Field(uploadPath, "upload_file").
+	FileExists().
+	FileReadable().
+	FileSize(1024, 10485760).        // 1KB - 10MB
+	FileExtension(".jpg", ".png", ".gif")
+
+err := mv.Validate()
+if err != nil {
+	// Handle validation errors
+	// 검증 에러 처리
+	fmt.Println(err.Error())
+}
+```
+
+#### Performance / 성능
+
+| Validator | Avg Time | Allocations | Note |
+|-----------|----------|-------------|------|
+| FilePath | ~30 ns/op | 0 allocs | Path format check only / 경로 형식만 확인 |
+| FileExists | ~1,879 ns/op | 3 allocs | OS stat call / OS stat 호출 |
+| FileReadable | ~10,046 ns/op | 4 allocs | Opens file / 파일 열기 |
+| FileSize | ~1,915 ns/op | 3 allocs | OS stat call / OS stat 호출 |
+| FileExtension | ~10 ns/op | 0 allocs | String comparison / 문자열 비교 |
+
+**Note**: File I/O operations are naturally slower than in-memory validations. FileReadable is the slowest because it actually opens the file to test read permissions.
+
+**참고**: 파일 I/O 작업은 메모리 내 검증보다 자연스럽게 느립니다. FileReadable은 읽기 권한을 테스트하기 위해 실제로 파일을 열기 때문에 가장 느립니다.
+
+#### Use Cases / 사용 사례
+
+**File Upload Validation** / **파일 업로드 검증**
+```go
+mv.Field(uploadFile, "upload").
+	FileSize(0, 5242880).            // Max 5MB
+	FileExtension(".jpg", ".png")
+```
+
+**Configuration File Validation** / **구성 파일 검증**
+```go
+mv.Field(configPath, "config").
+	FileExists().
+	FileReadable().
+	FileExtension(".json", ".yaml")
+```
+
+**Log File Validation** / **로그 파일 검증**
+```go
+mv.Field(logPath, "log_file").
+	FileWritable()                   // Must be writable
+```
+
+---
