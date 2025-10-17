@@ -855,3 +855,83 @@ func Example_fileValidationComprehensive() {
 	}
 	// Output: Valid file
 }
+
+// ExampleValidator_CreditCard demonstrates credit card validation
+// ExampleValidator_CreditCard는 신용카드 검증을 보여줍니다
+func ExampleValidator_CreditCard() {
+	v := validation.New("4532015112830366", "card_number")
+	v.CreditCard()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid credit card")
+	} else {
+		fmt.Println("Valid credit card")
+	}
+	// Output: Valid credit card
+}
+
+// ExampleValidator_CreditCardType demonstrates credit card type validation
+// ExampleValidator_CreditCardType는 신용카드 타입 검증을 보여줍니다
+func ExampleValidator_CreditCardType() {
+	v := validation.New("4532015112830366", "card_number")
+	v.CreditCardType("visa")
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid Visa card")
+	} else {
+		fmt.Println("Valid Visa card")
+	}
+	// Output: Valid Visa card
+}
+
+// ExampleValidator_Luhn demonstrates Luhn algorithm validation
+// ExampleValidator_Luhn는 Luhn 알고리즘 검증을 보여줍니다
+func ExampleValidator_Luhn() {
+	v := validation.New("79927398713", "identifier")
+	v.Luhn()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid Luhn number")
+	} else {
+		fmt.Println("Valid Luhn number")
+	}
+	// Output: Valid Luhn number
+}
+
+// Example_creditCardValidation demonstrates credit card validation with spaces and hyphens
+// Example_creditCardValidation는 공백과 하이픈이 있는 신용카드 검증을 보여줍니다
+func Example_creditCardValidation() {
+	// Credit card with spaces
+	v := validation.New("4532 0151 1283 0366", "card_number")
+	v.CreditCard()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid")
+	} else {
+		fmt.Println("Valid with spaces")
+	}
+	// Output: Valid with spaces
+}
+
+// Example_creditCardTypeValidation demonstrates validation of different card types
+// Example_creditCardTypeValidation는 다양한 카드 타입 검증을 보여줍니다
+func Example_creditCardTypeValidation() {
+	mv := validation.NewValidator()
+
+	// Validate Visa
+	mv.Field("4532015112830366", "visa_card").CreditCardType("visa")
+
+	// Validate Mastercard
+	mv.Field("5425233430109903", "mastercard").CreditCardType("mastercard")
+
+	// Validate Amex
+	mv.Field("374245455400126", "amex_card").CreditCardType("amex")
+
+	err := mv.Validate()
+	if err != nil {
+		fmt.Println("Invalid cards")
+	} else {
+		fmt.Println("All cards valid")
+	}
+	// Output: All cards valid
+}

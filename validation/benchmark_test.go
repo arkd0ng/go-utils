@@ -476,3 +476,33 @@ func BenchmarkFileExtension(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkCreditCard benchmarks the CreditCard validator
+// BenchmarkCreditCard는 CreditCard 검증기를 벤치마크합니다
+func BenchmarkCreditCard(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("4532015112830366", "card")
+		v.CreditCard()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkCreditCardType benchmarks the CreditCardType validator
+// BenchmarkCreditCardType는 CreditCardType 검증기를 벤치마크합니다
+func BenchmarkCreditCardType(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("4532015112830366", "card")
+		v.CreditCardType("visa")
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkLuhn benchmarks the Luhn validator
+// BenchmarkLuhn는 Luhn 검증기를 벤치마크합니다
+func BenchmarkLuhn(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("4532015112830366", "luhn")
+		v.Luhn()
+		_ = v.Validate()
+	}
+}

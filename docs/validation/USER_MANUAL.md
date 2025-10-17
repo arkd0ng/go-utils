@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.020
+**Version / 버전**: v1.13.021
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -18,12 +18,13 @@
 9. [Network Validators / 네트워크 검증기](#network-validators--네트워크-검증기)
 10. [DateTime Validators / 날짜/시간 검증기](#datetime-validators--날짜시간-검증기)
 11. [Range Validators / 범위 검증기](#range-validators--범위-검증기)
-12. [File Validators / 파일 검증기](#file-validators--파일-검증기) 🆕
-13. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
-13. [Error Handling / 에러 처리](#error-handling--에러-처리)
-14. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
-15. [Best Practices / 모범 사례](#best-practices--모범-사례)
-16. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
+12. [File Validators / 파일 검증기](#file-validators--파일-검증기)
+13. [Credit Card Validators / 신용카드 검증기](#credit-card-validators--신용카드-검증기) 🆕
+14. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
+15. [Error Handling / 에러 처리](#error-handling--에러-처리)
+16. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
+17. [Best Practices / 모범 사례](#best-practices--모범-사례)
+18. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
 
 ---
 
@@ -35,7 +36,7 @@ The `validation` package provides a **fluent, type-safe validation library** for
 
 ### Key Features / 주요 기능
 
-- ✅ **70+ Built-in Validators** / **70개 이상의 내장 검증기**
+- ✅ **73+ Built-in Validators** / **73개 이상의 내장 검증기**
 - ✅ **Fluent API with Method Chaining** / **메서드 체이닝을 통한 플루언트 API**
 - ✅ **Type-Safe with Go Generics** / **Go 제네릭을 활용한 타입 안전성**
 - ✅ **Bilingual Error Messages (EN/KR)** / **양방향 에러 메시지 (영어/한글)**
@@ -48,7 +49,8 @@ The `validation` package provides a **fluent, type-safe validation library** for
 - ✅ **DateTime Validators (DateFormat, TimeFormat, DateBefore, DateAfter)** / **날짜/시간 검증기**
 - ✅ **Range Validators (IntRange, FloatRange, DateRange)** / **범위 검증기**
 - ✅ **Format Validators (UUIDv4, XML, Hex)** / **포맷 검증기**
-- ✅ **File Validators (FilePath, FileExists, FileReadable, FileWritable, FileSize, FileExtension)** 🆕 / **파일 검증기** 🆕
+- ✅ **File Validators (FilePath, FileExists, FileReadable, FileWritable, FileSize, FileExtension)** / **파일 검증기**
+- ✅ **Credit Card Validators (CreditCard, CreditCardType, Luhn)** 🆕 / **신용카드 검증기** 🆕
 
 ---
 
@@ -2057,5 +2059,227 @@ mv.Field(configPath, "config").
 mv.Field(logPath, "log_file").
 	FileWritable()                   // Must be writable
 ```
+
+---
+
+## Credit Card Validators / 신용카드 검증기
+
+Credit card validators provide validation for credit card numbers, specific card types, and Luhn algorithm checking. Perfect for payment processing, e-commerce platforms, and financial applications.
+
+신용카드 검증기는 신용카드 번호, 특정 카드 타입 및 Luhn 알고리즘 확인을 위한 검증을 제공합니다. 결제 처리, 전자상거래 플랫폼 및 금융 애플리케이션에 완벽합니다.
+
+### Available Validators / 사용 가능한 검증기
+
+| Validator | Description | 설명 |
+|-----------|-------------|------|
+| `CreditCard()` | Validates credit card number using Luhn algorithm | Luhn 알고리즘을 사용한 신용카드 번호 검증 |
+| `CreditCardType(cardType)` | Validates specific card type (Visa, Mastercard, etc.) | 특정 카드 타입 검증 (Visa, Mastercard 등) |
+| `Luhn()` | Validates using Luhn algorithm (mod 10 checksum) | Luhn 알고리즘 검증 (mod 10 체크섬) |
+
+### CreditCard() - Credit Card Number Validation / 신용카드 번호 검증
+
+Validates a credit card number using the Luhn algorithm. Accepts numbers with spaces or hyphens, which are automatically removed. The card must be 13-19 digits long and pass the Luhn checksum.
+
+Luhn 알고리즘을 사용하여 신용카드 번호를 검증합니다. 공백이나 하이픈이 있는 번호를 허용하며, 자동으로 제거됩니다. 카드는 13-19자리여야 하며 Luhn 체크섬을 통과해야 합니다.
+
+```go
+v := validation.New("4532015112830366", "card_number")
+v.CreditCard()
+// Valid: passes Luhn algorithm, 16 digits
+// 유효: Luhn 알고리즘 통과, 16자리
+
+// With spaces (automatically cleaned)
+v := validation.New("4532 0151 1283 0366", "card_number")
+v.CreditCard()
+// Valid: spaces are removed before validation
+// 유효: 검증 전 공백 제거됨
+
+// With hyphens (automatically cleaned)
+v := validation.New("4532-0151-1283-0366", "card_number")
+v.CreditCard()
+// Valid: hyphens are removed before validation
+// 유효: 검증 전 하이픈 제거됨
+```
+
+**Validation Rules / 검증 규칙:**
+- Must be a string / 문자열이어야 함
+- After cleaning, must contain only digits / 정리 후 숫자만 포함해야 함
+- Length must be 13-19 digits / 길이는 13-19자리여야 함
+- Must pass Luhn algorithm check / Luhn 알고리즘 검사를 통과해야 함
+
+### CreditCardType(cardType) - Card Type Validation / 카드 타입 검증
+
+Validates a credit card number against a specific card type pattern. Supports major card networks worldwide.
+
+특정 카드 타입 패턴에 대해 신용카드 번호를 검증합니다. 전 세계 주요 카드 네트워크를 지원합니다.
+
+```go
+// Visa validation
+v := validation.New("4532015112830366", "card_number")
+v.CreditCardType("visa")
+// Valid: starts with 4, 13 or 16 digits, passes Luhn
+// 유효: 4로 시작, 13 또는 16자리, Luhn 통과
+
+// Mastercard validation
+v := validation.New("5425233430109903", "card_number")
+v.CreditCardType("mastercard")
+// Valid: starts with 51-55, 16 digits, passes Luhn
+// 유효: 51-55로 시작, 16자리, Luhn 통과
+
+// American Express validation
+v := validation.New("374245455400126", "card_number")
+v.CreditCardType("amex")
+// Valid: starts with 34 or 37, 15 digits, passes Luhn
+// 유효: 34 또는 37로 시작, 15자리, Luhn 통과
+```
+
+**Supported Card Types / 지원되는 카드 타입:**
+
+| Card Type | Pattern | Length | Example |
+|-----------|---------|--------|---------|
+| `visa` | Starts with 4 / 4로 시작 | 13 or 16 digits | 4532015112830366 |
+| `mastercard` | Starts with 51-55 / 51-55로 시작 | 16 digits | 5425233430109903 |
+| `amex` | Starts with 34 or 37 / 34 또는 37로 시작 | 15 digits | 374245455400126 |
+| `discover` | Starts with 6011 or 65 / 6011 또는 65로 시작 | 16 digits | 6011111111111117 |
+| `jcb` | Starts with 2131, 1800, or 35 / 2131, 1800, 또는 35로 시작 | 16 digits | 3530111333300000 |
+| `dinersclub` | Starts with 300-305, 36, or 38 / 300-305, 36, 또는 38로 시작 | 14 digits | 30569309025904 |
+| `unionpay` | Starts with 62 / 62로 시작 | 16-19 digits | 6200000000000005 |
+
+**Note**: Card type names are case-insensitive. You can use "visa", "Visa", or "VISA".
+
+**참고**: 카드 타입 이름은 대소문자를 구분하지 않습니다. "visa", "Visa", "VISA"를 사용할 수 있습니다.
+
+### Luhn() - Luhn Algorithm Validation / Luhn 알고리즘 검증
+
+Validates any number using the Luhn algorithm (mod 10 checksum). Useful for validating identification numbers, account numbers, or any number that uses Luhn validation.
+
+Luhn 알고리즘(mod 10 체크섬)을 사용하여 숫자를 검증합니다. 식별 번호, 계좌 번호 또는 Luhn 검증을 사용하는 모든 번호를 검증하는 데 유용합니다.
+
+```go
+v := validation.New("79927398713", "identifier")
+v.Luhn()
+// Valid: passes Luhn algorithm
+// 유효: Luhn 알고리즘 통과
+
+// Credit card number
+v := validation.New("4532015112830366", "number")
+v.Luhn()
+// Valid: any valid Luhn number
+// 유효: 유효한 Luhn 번호
+```
+
+**How Luhn Algorithm Works / Luhn 알고리즘 작동 방식:**
+
+1. Starting from the rightmost digit, double every second digit / 오른쪽 끝 자리부터 두 번째 자리마다 두 배로 만듦
+2. If doubling results in a number > 9, subtract 9 / 두 배가 9보다 크면 9를 뺌
+3. Sum all digits / 모든 자리를 더함
+4. If sum % 10 == 0, the number is valid / 합계 % 10 == 0이면 번호가 유효함
+
+**Example / 예시:**
+```
+Number: 79927398713
+Step 1: 7 9 9 2 7 3 9 8 7 1 3
+Step 2: 7 18 9 4 7 6 9 16 7 2 3  (double every 2nd from right)
+Step 3: 7 9 9 4 7 6 9 7 7 2 3    (subtract 9 if > 9)
+Step 4: 7+9+9+4+7+6+9+7+7+2+3 = 70
+Step 5: 70 % 10 = 0 ✓ Valid!
+```
+
+### Comprehensive Example / 종합 예제
+
+```go
+// Payment validation with multiple checks
+mv := validation.NewValidator()
+
+// Validate credit card number
+mv.Field(cardNumber, "card_number").
+	Required().
+	CreditCard().
+	CreditCardType("visa")
+
+// Validate CVV
+mv.Field(cvv, "cvv").
+	Required().
+	Length(3, 4).
+	Numeric()
+
+// Validate expiration date
+mv.Field(expiryDate, "expiry_date").
+	Required().
+	DateFormat("01/06").  // MM/YY format
+	DateAfter(time.Now())
+
+err := mv.Validate()
+if err != nil {
+	// Handle validation errors
+	// 검증 에러 처리
+	fmt.Println("Payment validation failed:", err)
+	return
+}
+
+fmt.Println("Payment information validated successfully")
+```
+
+### Performance / 성능
+
+| Validator | Avg Time | Allocations | Note |
+|-----------|----------|-------------|------|
+| CreditCard | ~550 ns/op | 2 allocs | Includes Luhn check / Luhn 체크 포함 |
+| CreditCardType | ~950 ns/op | 2 allocs | Pattern matching + Luhn / 패턴 매칭 + Luhn |
+| Luhn | ~450 ns/op | 2 allocs | Pure Luhn algorithm / 순수 Luhn 알고리즘 |
+
+**Note**: Credit card validation is very fast (<1 microsecond) and suitable for real-time validation in payment forms.
+
+**참고**: 신용카드 검증은 매우 빠르며(<1 마이크로초) 결제 양식의 실시간 검증에 적합합니다.
+
+### Use Cases / 사용 사례
+
+**E-commerce Payment Validation** / **전자상거래 결제 검증**
+```go
+mv.Field(cardNumber, "card_number").
+	CreditCard().
+	CreditCardType("visa")
+```
+
+**Multi-Card Type Support** / **다중 카드 타입 지원**
+```go
+// Accept Visa, Mastercard, or Amex
+cardType := detectCardType(cardNumber)
+mv.Field(cardNumber, "card_number").
+	CreditCardType(cardType)
+```
+
+**Generic Luhn Validation** / **일반 Luhn 검증**
+```go
+// For any Luhn-validated number (IMEI, etc.)
+mv.Field(imeiNumber, "imei").
+	Luhn()
+```
+
+### Security Considerations / 보안 고려사항
+
+**Important**: These validators only check the format and checksum of credit card numbers. They do NOT verify if the card is active, has sufficient balance, or belongs to a specific person.
+
+**중요**: 이러한 검증기는 신용카드 번호의 형식과 체크섬만 확인합니다. 카드가 활성화되어 있는지, 잔액이 충분한지, 특정 사람에게 속하는지는 확인하지 않습니다.
+
+**For production payment processing / 프로덕션 결제 처리의 경우:**
+- Use a payment gateway like Stripe, PayPal, or Square / Stripe, PayPal, Square 같은 결제 게이트웨이 사용
+- Never store full credit card numbers / 전체 신용카드 번호를 저장하지 말 것
+- Use PCI DSS compliant storage if required / 필요한 경우 PCI DSS 준수 스토리지 사용
+- Log only masked card numbers (e.g., "****1234") / 마스킹된 카드 번호만 로그에 기록 (예: "****1234")
+- Transmit card data only over HTTPS / 카드 데이터는 HTTPS로만 전송
+
+**Test Card Numbers / 테스트 카드 번호:**
+
+The following are standard test card numbers that pass Luhn validation (use these for testing):
+
+다음은 Luhn 검증을 통과하는 표준 테스트 카드 번호입니다(테스트에 사용):
+
+- **Visa**: 4532015112830366, 4532015112830
+- **Mastercard**: 5425233430109903, 5105105105105100
+- **Amex**: 374245455400126, 340000000000009
+- **Discover**: 6011111111111117, 6500000000000002
+- **JCB**: 3530111333300000
+- **Diners Club**: 30569309025904
 
 ---

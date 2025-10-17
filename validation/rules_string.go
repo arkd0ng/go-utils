@@ -194,15 +194,3 @@ func (v *Validator) Phone() *Validator {
 		return phoneRegex.MatchString(s) && len(cleaned) >= 10
 	}, fmt.Sprintf("%s must be a valid phone number / %s은(는) 유효한 전화번호여야 합니다", v.fieldName, v.fieldName))
 }
-
-// CreditCard validates basic credit card format (Luhn algorithm not implemented).
-// CreditCard는 기본 신용카드 형식을 검증합니다 (Luhn 알고리즘 미구현).
-func (v *Validator) CreditCard() *Validator {
-	ccRegex := regexp.MustCompile(`^[0-9]{13,19}$`)
-	return validateString(v, "creditcard", func(s string) bool {
-		// Remove spaces and dashes
-		cleaned := strings.ReplaceAll(s, " ", "")
-		cleaned = strings.ReplaceAll(cleaned, "-", "")
-		return ccRegex.MatchString(cleaned)
-	}, fmt.Sprintf("%s must be a valid credit card number / %s은(는) 유효한 신용카드 번호여야 합니다", v.fieldName, v.fieldName))
-}

@@ -472,32 +472,6 @@ func TestPhone(t *testing.T) {
 	}
 }
 
-func TestCreditCard(t *testing.T) {
-	tests := []struct {
-		name    string
-		value   string
-		wantErr bool
-	}{
-		{"valid", "1234567890123456", false},
-		{"valid with spaces", "1234 5678 9012 3456", false},
-		{"valid with dashes", "1234-5678-9012-3456", false},
-		{"too short", "123456789012", true},
-		{"too long", "12345678901234567890", true},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			v := New(tt.value, "card")
-			v.CreditCard()
-			err := v.Validate()
-
-			if (err != nil) != tt.wantErr {
-				t.Errorf("CreditCard() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
 func TestChaining(t *testing.T) {
 	v := New("test", "username")
 	v.Required().MinLength(3).MaxLength(20).Alphanumeric()
