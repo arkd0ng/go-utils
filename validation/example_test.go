@@ -1563,3 +1563,63 @@ func ExampleValidator_BetweenTime() {
 	}
 	// Output: Date is within 2024
 }
+
+// ExampleValidator_WithCustomMessage demonstrates setting a single custom error message.
+// ExampleValidator_WithCustomMessage는 단일 커스텀 에러 메시지 설정을 보여줍니다.
+func ExampleValidator_WithCustomMessage() {
+	v := validation.New("", "email")
+	v.WithCustomMessage("required", "Please enter your email address")
+	v.Required()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	// Output: Please enter your email address
+}
+
+// ExampleValidator_WithCustomMessages demonstrates setting multiple custom error messages.
+// ExampleValidator_WithCustomMessages는 여러 커스텀 에러 메시지 설정을 보여줍니다.
+func ExampleValidator_WithCustomMessages() {
+	v := validation.New("ab", "password")
+	v.WithCustomMessages(map[string]string{
+		"required":  "비밀번호를 입력해주세요",
+		"minlength": "비밀번호는 8자 이상이어야 합니다",
+		"maxlength": "비밀번호는 20자 이하여야 합니다",
+	})
+	v.Required().MinLength(8).MaxLength(20)
+
+	err := v.Validate()
+	if err != nil {
+		errors := v.GetErrors()
+		fmt.Println(errors[0].Message)
+	}
+	// Output: 비밀번호는 8자 이상이어야 합니다
+}
+
+// ExampleValidator_WithCustomMessages_multiValidator demonstrates custom messages with MultiValidator.
+// ExampleValidator_WithCustomMessages_multiValidator는 MultiValidator에서 커스텀 메시지를 보여줍니다.
+func ExampleValidator_WithCustomMessages_multiValidator() {
+	mv := validation.NewValidator()
+
+	mv.Field("", "email").WithCustomMessages(map[string]string{
+		"required": "Email is required",
+		"email":    "Invalid email format",
+	}).Required()
+
+	mv.Field("short", "password").WithCustomMessages(map[string]string{
+		"required":  "Password is required",
+		"minlength": "Password must be at least 8 characters",
+	}).Required().MinLength(8)
+
+	err := mv.Validate()
+	if err != nil {
+		errors := mv.GetErrors()
+		for _, e := range errors {
+			fmt.Printf("%s: %s\n", e.Field, e.Message)
+		}
+	}
+	// Output:
+	// email: Email is required
+	// password: Password must be at least 8 characters
+}

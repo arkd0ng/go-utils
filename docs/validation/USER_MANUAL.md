@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.027
+**Version / 버전**: v1.13.031
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -1355,9 +1355,13 @@ err := v.Validate()
 
 ### Custom Error Messages / 사용자 정의 에러 메시지
 
-Override default error messages with `WithMessage()`.
+There are three ways to customize error messages: / 에러 메시지를 커스터마이징하는 세 가지 방법이 있습니다:
 
-`WithMessage()`로 기본 에러 메시지를 덮어쓸 수 있습니다.
+#### 1. WithMessage() - Post-Validation Message Override
+
+Override the last validation rule's error message with `WithMessage()`.
+
+`WithMessage()`로 마지막 검증 규칙의 에러 메시지를 덮어쓸 수 있습니다.
 
 ```go
 v := validation.New(user.Age, "age")
@@ -1365,6 +1369,72 @@ v.Min(18).WithMessage("You must be at least 18 years old to register")
 v.Max(120).WithMessage("Please enter a valid age")
 
 err := v.Validate()
+```
+
+#### 2. WithCustomMessage() - Pre-Configure Single Rule Message
+
+Set a custom message for a specific rule before validation. The message will be used when that rule fails.
+
+검증 전에 특정 규칙에 대한 커스텀 메시지를 설정합니다. 해당 규칙이 실패하면 이 메시지가 사용됩니다.
+
+```go
+v := validation.New("", "email")
+v.WithCustomMessage("required", "Please enter your email address")
+v.WithCustomMessage("email", "Invalid email format")
+v.Required().Email()
+
+err := v.Validate()
+// If validation fails, uses custom messages
+// 검증 실패 시 커스텀 메시지 사용
+```
+
+**Rule Names / 규칙 이름**: Use lowercase rule names without underscores:
+- `"required"`, `"email"`, `"minlength"`, `"maxlength"`, `"alpha"`, etc.
+
+#### 3. WithCustomMessages() - Pre-Configure Multiple Rule Messages
+
+Set custom messages for multiple rules at once using a map.
+
+맵을 사용하여 여러 규칙에 대한 커스텀 메시지를 한 번에 설정합니다.
+
+```go
+v := validation.New("", "password")
+v.WithCustomMessages(map[string]string{
+    "required":  "비밀번호를 입력해주세요",
+    "minlength": "비밀번호는 8자 이상이어야 합니다",
+    "maxlength": "비밀번호는 20자 이하여야 합니다",
+})
+v.Required().MinLength(8).MaxLength(20)
+
+err := v.Validate()
+```
+
+**Benefits of WithCustomMessage(s) / WithCustomMessage(s)의 장점**:
+- ✅ Pre-configure all messages before validation chain
+- ✅ Works seamlessly with `StopOnError()`
+- ✅ Cleaner code for multi-rule validations
+- ✅ No need to call `WithMessage()` after each rule
+- ✅ 검증 체인 전에 모든 메시지를 미리 설정
+- ✅ `StopOnError()`와 완벽하게 동작
+- ✅ 다중 규칙 검증 시 더 깔끔한 코드
+- ✅ 각 규칙 후에 `WithMessage()` 호출 불필요
+
+**Example with MultiValidator / MultiValidator 예제**:
+
+```go
+mv := validation.NewValidator()
+
+mv.Field("", "email").WithCustomMessages(map[string]string{
+    "required": "Email is required",
+    "email":    "Invalid email format",
+}).Required().Email()
+
+mv.Field("short", "password").WithCustomMessages(map[string]string{
+    "required":  "Password is required",
+    "minlength": "Password must be at least 8 characters",
+}).Required().MinLength(8)
+
+err := mv.Validate()
 ```
 
 ### Custom Validators / 사용자 정의 검증기

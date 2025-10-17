@@ -856,3 +856,50 @@ func BenchmarkBetweenTime(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkWithCustomMessage benchmarks the WithCustomMessage method
+// BenchmarkWithCustomMessage는 WithCustomMessage 메서드를 벤치마크합니다
+func BenchmarkWithCustomMessage(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("", "email")
+		v.WithCustomMessage("required", "Please enter your email address")
+		v.Required()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkWithCustomMessages benchmarks the WithCustomMessages method
+// BenchmarkWithCustomMessages는 WithCustomMessages 메서드를 벤치마크합니다
+func BenchmarkWithCustomMessages(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("", "password")
+		v.WithCustomMessages(map[string]string{
+			"required":  "비밀번호를 입력해주세요",
+			"minlength": "비밀번호는 8자 이상이어야 합니다",
+			"maxlength": "비밀번호는 20자 이하여야 합니다",
+		})
+		v.StopOnError().Required().MinLength(8).MaxLength(20)
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkCustomMessageVsDefault compares custom message vs default message performance
+// BenchmarkCustomMessageVsDefault는 커스텀 메시지와 기본 메시지의 성능을 비교합니다
+func BenchmarkCustomMessageVsDefault(b *testing.B) {
+	b.Run("Default message", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			v := New("", "field")
+			v.Required()
+			_ = v.Validate()
+		}
+	})
+
+	b.Run("Custom message", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			v := New("", "field")
+			v.WithCustomMessage("required", "Custom required message")
+			v.Required()
+			_ = v.Validate()
+		}
+	})
+}

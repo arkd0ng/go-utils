@@ -3,11 +3,12 @@ package validation
 // Validator represents a validation chain for a single value.
 // Validator는 단일 값에 대한 검증 체인을 나타냅니다.
 type Validator struct {
-	value       interface{}
-	fieldName   string
-	errors      []ValidationError
-	stopOnError bool
-	lastRule    string // Track the last rule for WithMessage
+	value          interface{}
+	fieldName      string
+	errors         []ValidationError
+	stopOnError    bool
+	lastRule       string            // Track the last rule for WithMessage
+	customMessages map[string]string // Custom messages for specific rules
 }
 
 // MultiValidator represents a validator for multiple fields.

@@ -6,10 +6,11 @@ import "fmt"
 // New는 주어진 값과 필드 이름에 대한 새 Validator를 생성합니다.
 func New(value interface{}, fieldName string) *Validator {
 	return &Validator{
-		value:       value,
-		fieldName:   fieldName,
-		errors:      []ValidationError{},
-		stopOnError: false,
+		value:          value,
+		fieldName:      fieldName,
+		errors:         []ValidationError{},
+		stopOnError:    false,
+		customMessages: make(map[string]string),
 	}
 }
 
@@ -53,6 +54,12 @@ func (v *Validator) addError(rule, message string) *Validator {
 		return v
 	}
 
+	// Check if there's a custom message for this rule
+	// 이 규칙에 대한 커스텀 메시지가 있는지 확인
+	if customMsg, ok := v.customMessages[rule]; ok {
+		message = customMsg
+	}
+
 	v.errors = append(v.errors, ValidationError{
 		Field:   v.fieldName,
 		Value:   v.value,
@@ -60,6 +67,42 @@ func (v *Validator) addError(rule, message string) *Validator {
 		Message: message,
 	})
 	v.lastRule = rule
+	return v
+}
+
+// WithCustomMessage sets a custom message for a specific validation rule before it runs.
+// WithCustomMessage는 검증 규칙이 실행되기 전에 특정 규칙에 대한 커스텀 메시지를 설정합니다.
+//
+// This allows you to set custom messages upfront, unlike WithMessage() which modifies the last error.
+// WithMessage()는 마지막 에러를 수정하는 것과 달리, 이 메서드는 미리 커스텀 메시지를 설정할 수 있습니다.
+//
+// Example / 예시:
+//
+//	v := validation.New("", "email")
+//	v.WithCustomMessage("required", "이메일을 입력해주세요")
+//	v.WithCustomMessage("email", "올바른 이메일 형식이 아닙니다")
+//	v.Required().Email()
+func (v *Validator) WithCustomMessage(rule, message string) *Validator {
+	v.customMessages[rule] = message
+	return v
+}
+
+// WithCustomMessages sets multiple custom messages for validation rules.
+// WithCustomMessages는 검증 규칙에 대한 여러 커스텀 메시지를 설정합니다.
+//
+// Example / 예시:
+//
+//	v := validation.New("", "password")
+//	v.WithCustomMessages(map[string]string{
+//	    "required":   "비밀번호를 입력해주세요",
+//	    "min_length": "비밀번호는 8자 이상이어야 합니다",
+//	    "max_length": "비밀번호는 20자 이하여야 합니다",
+//	})
+//	v.Required().MinLength(8).MaxLength(20)
+func (v *Validator) WithCustomMessages(messages map[string]string) *Validator {
+	for rule, message := range messages {
+		v.customMessages[rule] = message
+	}
 	return v
 }
 

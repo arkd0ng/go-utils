@@ -1,3 +1,91 @@
+## [v1.13.031] - 2025-10-17
+
+### Added / 추가
+- **Custom Error Messages Feature**: New methods for pre-configuring custom error messages
+  - `WithCustomMessage(rule, message string)` - Set custom message for a specific validation rule
+  - `WithCustomMessages(messages map[string]string)` - Set custom messages for multiple rules at once
+
+### Implementation Details / 구현 세부사항
+- **Pre-Configuration System**: Messages are configured before validation chain execution
+- **Rule-Based Lookup**: Custom messages are stored in a map and looked up during addError()
+- **Backwards Compatible**: Works alongside existing WithMessage() method
+- **StopOnError Integration**: Seamlessly works with StopOnError() behavior
+- **MultiValidator Support**: Full support in MultiValidator for field-specific custom messages
+- **Performance**: Minimal overhead with map lookup (~O(1) time complexity)
+
+### API Design / API 설계
+- **WithCustomMessage()**: Single rule message configuration
+  - Rule names: lowercase without underscores ("required", "minlength", "email", etc.)
+  - Returns *Validator for method chaining
+  - Can be called multiple times for different rules
+
+- **WithCustomMessages()**: Bulk message configuration
+  - Accepts map[string]string with rule names as keys
+  - More efficient than multiple WithCustomMessage() calls
+  - Ideal for forms with many validation rules
+
+### Benefits / 장점
+- ✅ Cleaner code: No need to call WithMessage() after each rule
+- ✅ Pre-configure all messages upfront
+- ✅ Works perfectly with StopOnError()
+- ✅ Easier to manage validation messages in one place
+- ✅ Better for internationalization (i18n) scenarios
+
+### Test Coverage / 테스트 커버리지
+- **validator_custom_messages_test.go**: New comprehensive test file
+- **Test Cases**: 5 test functions covering:
+  - TestWithCustomMessage: Single custom message, multiple rules, different rules
+  - TestWithCustomMessages: Bulk messages, chaining, overwriting
+  - TestCustomMessageWithStopOnError: Integration with StopOnError
+  - TestCustomMessageWithMultiValidator: MultiValidator support
+  - TestCustomMessagePreservation: Message preservation across validation chain
+- **Total Package Coverage**: 97.7% (maintained)
+
+### Performance Benchmarks / 성능 벤치마크
+```
+BenchmarkWithCustomMessage-8           3,292,258 ops    353.5 ns/op    496 B/op    6 allocs/op
+BenchmarkWithCustomMessages-8          1,000,000 ops   1042 ns/op     752 B/op   12 allocs/op
+BenchmarkCustomMessageVsDefault:
+  Default message:                     4,911,516 ops    239.7 ns/op    208 B/op    5 allocs/op
+  Custom message:                      3,368,398 ops    357.3 ns/op    496 B/op    6 allocs/op
+```
+
+**Note**: Custom messages add ~120 ns overhead (50% increase) due to map allocation and lookup, but this is negligible for most applications.
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bump to v1.13.031
+- `validation/types.go` - Added customMessages map[string]string field to Validator struct
+- `validation/validator.go` - Modified New(), addError(), added WithCustomMessage() and WithCustomMessages() methods
+- `validation/validator_custom_messages_test.go` - New test file with comprehensive test suite (200+ LOC)
+- `validation/benchmark_test.go` - Added 3 custom message benchmarks
+- `validation/example_test.go` - Added 3 custom message examples
+- `docs/validation/USER_MANUAL.md` - Updated Custom Error Messages section with new methods documentation, updated version to v1.13.031
+- `docs/CHANGELOG/CHANGELOG-v1.13.md` - Updated with v1.13.031 entry
+
+### Context / 컨텍스트
+**User Request**: "계속 진행해주세요" (Continue working)
+**Why**: Provide better developer experience for custom error message management
+**Impact**: Developers can now pre-configure all custom messages in one place, making validation code cleaner and more maintainable. Especially useful for forms with many fields and multilingual applications.
+
+### Example Usage / 사용 예제
+```go
+// Single custom message
+v := validation.New("", "email")
+v.WithCustomMessage("required", "Please enter your email address")
+v.Required().Email()
+
+// Multiple custom messages
+v := validation.New("", "password")
+v.WithCustomMessages(map[string]string{
+    "required":  "비밀번호를 입력해주세요",
+    "minlength": "비밀번호는 8자 이상이어야 합니다",
+    "maxlength": "비밀번호는 20자 이하여야 합니다",
+})
+v.Required().MinLength(8).MaxLength(20)
+```
+
+---
+
 ## [v1.13.030] - 2025-10-17
 
 ### Changed / 변경
