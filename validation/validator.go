@@ -8,26 +8,26 @@
 //
 // Key Features / 주요 기능:
 //
-// - Fluent chainable API for readable validation logic
-//   읽기 쉬운 검증 로직을 위한 유창한 체이닝 API
+//   - Fluent chainable API for readable validation logic
+//     읽기 쉬운 검증 로직을 위한 유창한 체이닝 API
 //
-// - 100+ built-in validation rules covering common use cases
-//   일반적인 사용 사례를 다루는 100개 이상의 내장 검증 규칙
+//   - 100+ built-in validation rules covering common use cases
+//     일반적인 사용 사례를 다루는 100개 이상의 내장 검증 규칙
 //
-// - Support for strings, numbers, arrays, maps, dates, files, and more
-//   문자열, 숫자, 배열, 맵, 날짜, 파일 등 지원
+//   - Support for strings, numbers, arrays, maps, dates, files, and more
+//     문자열, 숫자, 배열, 맵, 날짜, 파일 등 지원
 //
-// - Bilingual error messages (English/Korean)
-//   이중 언어 에러 메시지 (영문/한글)
+//   - Bilingual error messages (English/Korean)
+//     이중 언어 에러 메시지 (영문/한글)
 //
-// - Custom validation rules and error messages
-//   사용자 정의 검증 규칙 및 에러 메시지
+//   - Custom validation rules and error messages
+//     사용자 정의 검증 규칙 및 에러 메시지
 //
-// - Field-level and multi-field validation support
-//   필드 레벨 및 다중 필드 검증 지원
+//   - Field-level and multi-field validation support
+//     필드 레벨 및 다중 필드 검증 지원
 //
-// - Stop-on-first-error or collect-all-errors modes
-//   첫 에러에서 중단 또는 모든 에러 수집 모드
+//   - Stop-on-first-error or collect-all-errors modes
+//     첫 에러에서 중단 또는 모든 에러 수집 모드
 //
 // Validation Categories / 검증 카테고리:
 //
@@ -81,17 +81,17 @@
 //
 // Performance / 성능:
 //
-// - Zero memory allocation for simple validations
-//   간단한 검증의 경우 메모리 할당 없음
+//   - Zero memory allocation for simple validations
+//     간단한 검증의 경우 메모리 할당 없음
 //
-// - Lazy evaluation with short-circuit on StopOnError
-//   StopOnError 시 단락 평가를 통한 지연 평가
+//   - Lazy evaluation with short-circuit on StopOnError
+//     StopOnError 시 단락 평가를 통한 지연 평가
 //
-// - Efficient regex compilation and caching
-//   효율적인 정규식 컴파일 및 캐싱
+//   - Efficient regex compilation and caching
+//     효율적인 정규식 컴파일 및 캐싱
 //
-// - Thread-safe: All validators are safe for concurrent use
-//   스레드 안전: 모든 검증기는 동시 사용 안전
+//   - Thread-safe: All validators are safe for concurrent use
+//     스레드 안전: 모든 검증기는 동시 사용 안전
 //
 // Thread Safety / 스레드 안전성:
 //
@@ -220,23 +220,23 @@
 //
 // Best Practices / 모범 사례:
 //
-// 1. Use descriptive field names for better error messages
-//    더 나은 에러 메시지를 위해 설명적인 필드 이름 사용
+//  1. Use descriptive field names for better error messages
+//     더 나은 에러 메시지를 위해 설명적인 필드 이름 사용
 //
-// 2. Chain related rules together for readability
-//    가독성을 위해 관련 규칙을 함께 체이닝
+//  2. Chain related rules together for readability
+//     가독성을 위해 관련 규칙을 함께 체이닝
 //
-// 3. Use StopOnError() for expensive validations
-//    비용이 많이 드는 검증에는 StopOnError() 사용
+//  3. Use StopOnError() for expensive validations
+//     비용이 많이 드는 검증에는 StopOnError() 사용
 //
-// 4. Provide custom messages for business-specific rules
-//    비즈니스별 규칙에 사용자 정의 메시지 제공
+//  4. Provide custom messages for business-specific rules
+//     비즈니스별 규칙에 사용자 정의 메시지 제공
 //
-// 5. Validate early in your request handlers
-//    요청 핸들러에서 조기에 검증
+//  5. Validate early in your request handlers
+//     요청 핸들러에서 조기에 검증
 //
-// 6. Reuse validation logic across similar use cases
-//    유사한 사용 사례에서 검증 로직 재사용
+//  6. Reuse validation logic across similar use cases
+//     유사한 사용 사례에서 검증 로직 재사용
 //
 // See also / 참고:
 //
@@ -286,21 +286,22 @@ import "fmt"
 //     메모리 할당: 검증기 구조체 1개 + 빈 슬라이스 + 빈 맵
 //
 // Example / 예제:
-//   // String validation / 문자열 검증
-//   v := validation.New("john@example.com", "email")
-//   v.Required().Email()
 //
-//   // Numeric validation / 숫자 검증
-//   v := validation.New(25, "age")
-//   v.Required().Min(18).Max(120)
+//	// String validation / 문자열 검증
+//	v := validation.New("john@example.com", "email")
+//	v.Required().Email()
 //
-//   // Nil value validation / Nil 값 검증
-//   v := validation.New(nil, "optional_field")
-//   v.Email()  // Will pass if nil (optional)
+//	// Numeric validation / 숫자 검증
+//	v := validation.New(25, "age")
+//	v.Required().Min(18).Max(120)
 //
-//   // Complex validation chain / 복잡한 검증 체인
-//   v := validation.New(username, "username")
-//   v.Required().MinLength(3).MaxLength(20).AlphaNumeric()
+//	// Nil value validation / Nil 값 검증
+//	v := validation.New(nil, "optional_field")
+//	v.Email()  // Will pass if nil (optional)
+//
+//	// Complex validation chain / 복잡한 검증 체인
+//	v := validation.New(username, "username")
+//	v.Required().MinLength(3).MaxLength(20).AlphaNumeric()
 func New(value interface{}, fieldName string) *Validator {
 	return &Validator{
 		value:          value,
@@ -330,16 +331,17 @@ func New(value interface{}, fieldName string) *Validator {
 //     에러 컬렉션을 지우지 않음 (여러 번 호출 가능)
 //
 // Error Handling / 에러 처리:
-//   The returned error can be type-asserted to ValidationErrors for detailed inspection:
-//   반환된 에러는 상세 검사를 위해 ValidationErrors로 타입 단언 가능:
 //
-//   if err := v.Validate(); err != nil {
-//       if validationErrors, ok := err.(validation.ValidationErrors); ok {
-//           for _, e := range validationErrors {
-//               // Process each error / 각 에러 처리
-//           }
-//       }
-//   }
+//	The returned error can be type-asserted to ValidationErrors for detailed inspection:
+//	반환된 에러는 상세 검사를 위해 ValidationErrors로 타입 단언 가능:
+//
+//	if err := v.Validate(); err != nil {
+//	    if validationErrors, ok := err.(validation.ValidationErrors); ok {
+//	        for _, e := range validationErrors {
+//	            // Process each error / 각 에러 처리
+//	        }
+//	    }
+//	}
 //
 // Thread Safety / 스레드 안전성:
 //   - Thread-safe: Read-only operation on validator state
@@ -352,22 +354,23 @@ func New(value interface{}, fieldName string) *Validator {
 //     추가 메모리 할당 없음
 //
 // Example / 예제:
-//   v := validation.New(email, "email")
-//   v.Required().Email()
 //
-//   if err := v.Validate(); err != nil {
-//       log.Printf("Validation failed: %v", err)
-//       return BadRequestError(err)
-//   }
+//	v := validation.New(email, "email")
+//	v.Required().Email()
 //
-//   // Type-safe error handling / 타입 안전한 에러 처리
-//   if err := v.Validate(); err != nil {
-//       errors := err.(validation.ValidationErrors)
-//       for _, e := range errors {
-//           fmt.Printf("Field '%s' failed rule '%s': %s\n",
-//               e.Field, e.Rule, e.Message)
-//       }
-//   }
+//	if err := v.Validate(); err != nil {
+//	    log.Printf("Validation failed: %v", err)
+//	    return BadRequestError(err)
+//	}
+//
+//	// Type-safe error handling / 타입 안전한 에러 처리
+//	if err := v.Validate(); err != nil {
+//	    errors := err.(validation.ValidationErrors)
+//	    for _, e := range errors {
+//	        fmt.Printf("Field '%s' failed rule '%s': %s\n",
+//	            e.Field, e.Rule, e.Message)
+//	    }
+//	}
 func (v *Validator) Validate() error {
 	if len(v.errors) == 0 {
 		return nil
@@ -412,24 +415,25 @@ func (v *Validator) Validate() error {
 //     메모리 할당 없음 (기존 슬라이스 반환)
 //
 // Example / 예제:
-//   v := validation.New(data, "data")
-//   v.Required().Email().MinLength(5)
 //
-//   errors := v.GetErrors()
-//   if len(errors) > 0 {
-//       for _, err := range errors {
-//           log.Printf("Validation error on %s: %s", err.Field, err.Message)
-//       }
-//   }
+//	v := validation.New(data, "data")
+//	v.Required().Email().MinLength(5)
 //
-//   // Check for specific field errors / 특정 필드 에러 확인
-//   hasEmailError := false
-//   for _, err := range v.GetErrors() {
-//       if err.Field == "email" {
-//           hasEmailError = true
-//           break
-//       }
-//   }
+//	errors := v.GetErrors()
+//	if len(errors) > 0 {
+//	    for _, err := range errors {
+//	        log.Printf("Validation error on %s: %s", err.Field, err.Message)
+//	    }
+//	}
+//
+//	// Check for specific field errors / 특정 필드 에러 확인
+//	hasEmailError := false
+//	for _, err := range v.GetErrors() {
+//	    if err.Field == "email" {
+//	        hasEmailError = true
+//	        break
+//	    }
+//	}
 func (v *Validator) GetErrors() []ValidationError {
 	return v.errors
 }
@@ -475,24 +479,25 @@ func (v *Validator) GetErrors() []ValidationError {
 //     메모리 할당 없음
 //
 // Example / 예제:
-//   // Basic usage / 기본 사용
-//   v := validation.New(email, "email").StopOnError()
-//   v.Required().Email().MaxLength(100)
-//   // Stops at first failed rule / 첫 번째 실패한 규칙에서 중단
 //
-//   // With expensive validation / 비용이 많이 드는 검증과 함께
-//   v := validation.New(username, "username").StopOnError()
-//   v.Required().
-//     MinLength(3).         // Quick check first / 먼저 빠른 확인
-//     MaxLength(20).
-//     Custom(checkUsernameInDB)  // Expensive DB check last
+//	// Basic usage / 기본 사용
+//	v := validation.New(email, "email").StopOnError()
+//	v.Required().Email().MaxLength(100)
+//	// Stops at first failed rule / 첫 번째 실패한 규칙에서 중단
 //
-//   // Compare with collect-all mode / 모든 에러 수집 모드와 비교
-//   v1 := validation.New(data, "data").StopOnError()
-//   // Stops at first error, faster / 첫 에러에서 중단, 더 빠름
+//	// With expensive validation / 비용이 많이 드는 검증과 함께
+//	v := validation.New(username, "username").StopOnError()
+//	v.Required().
+//	  MinLength(3).         // Quick check first / 먼저 빠른 확인
+//	  MaxLength(20).
+//	  Custom(checkUsernameInDB)  // Expensive DB check last
 //
-//   v2 := validation.New(data, "data")
-//   // Collects all errors, more informative / 모든 에러 수집, 더 많은 정보
+//	// Compare with collect-all mode / 모든 에러 수집 모드와 비교
+//	v1 := validation.New(data, "data").StopOnError()
+//	// Stops at first error, faster / 첫 에러에서 중단, 더 빠름
+//
+//	v2 := validation.New(data, "data")
+//	// Collects all errors, more informative / 모든 에러 수집, 더 많은 정보
 func (v *Validator) StopOnError() *Validator {
 	v.stopOnError = true
 	return v

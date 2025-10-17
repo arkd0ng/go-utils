@@ -48,24 +48,25 @@ import (
 //     DeepEqual은 복잡한 타입에서 비용이 클 수 있음
 //
 // Example / 예제:
-//   // String values / 문자열 값
-//   v := validation.New("red", "color")
-//   v.In("red", "green", "blue")  // Passes / 성공
 //
-//   v := validation.New("yellow", "color")
-//   v.In("red", "green", "blue")  // Fails / 실패
+//	// String values / 문자열 값
+//	v := validation.New("red", "color")
+//	v.In("red", "green", "blue")  // Passes / 성공
 //
-//   // Numeric values / 숫자 값
-//   v := validation.New(2, "status")
-//   v.In(1, 2, 3)  // Passes / 성공
+//	v := validation.New("yellow", "color")
+//	v.In("red", "green", "blue")  // Fails / 실패
 //
-//   // Status validation / 상태 검증
-//   v := validation.New(status, "order_status")
-//   v.Required().In("pending", "processing", "completed", "cancelled")
+//	// Numeric values / 숫자 값
+//	v := validation.New(2, "status")
+//	v.In(1, 2, 3)  // Passes / 성공
 //
-//   // Role validation / 역할 검증
-//   v := validation.New(role, "user_role")
-//   v.In("admin", "editor", "viewer")
+//	// Status validation / 상태 검증
+//	v := validation.New(status, "order_status")
+//	v.Required().In("pending", "processing", "completed", "cancelled")
+//
+//	// Role validation / 역할 검증
+//	v := validation.New(role, "user_role")
+//	v.In("admin", "editor", "viewer")
 func (v *Validator) In(values ...interface{}) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -129,24 +130,25 @@ func (v *Validator) In(values ...interface{}) *Validator {
 //     DeepEqual은 복잡한 타입에서 비용이 클 수 있음
 //
 // Example / 예제:
-//   // Reserved usernames / 예약된 사용자명
-//   v := validation.New("user123", "username")
-//   v.NotIn("admin", "root", "system")  // Passes / 성공
 //
-//   v := validation.New("admin", "username")
-//   v.NotIn("admin", "root", "system")  // Fails / 실패
+//	// Reserved usernames / 예약된 사용자명
+//	v := validation.New("user123", "username")
+//	v.NotIn("admin", "root", "system")  // Passes / 성공
 //
-//   // Role restriction / 역할 제한
-//   v := validation.New("editor", "role")
-//   v.NotIn("guest", "anonymous")  // Passes / 성공
+//	v := validation.New("admin", "username")
+//	v.NotIn("admin", "root", "system")  // Fails / 실패
 //
-//   // Forbidden status / 금지된 상태
-//   v := validation.New(newStatus, "status")
-//   v.Required().NotIn("deleted", "archived")
+//	// Role restriction / 역할 제한
+//	v := validation.New("editor", "role")
+//	v.NotIn("guest", "anonymous")  // Passes / 성공
 //
-//   // Reserved words / 예약어
-//   v := validation.New(tableName, "table_name")
-//   v.NotIn("select", "delete", "drop", "insert")
+//	// Forbidden status / 금지된 상태
+//	v := validation.New(newStatus, "status")
+//	v.Required().NotIn("deleted", "archived")
+//
+//	// Reserved words / 예약어
+//	v := validation.New(tableName, "table_name")
+//	v.NotIn("select", "delete", "drop", "insert")
 func (v *Validator) NotIn(values ...interface{}) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -208,24 +210,25 @@ func (v *Validator) NotIn(values ...interface{}) *Validator {
 //     타입 검사를 위한 반사 오버헤드
 //
 // Example / 예제:
-//   // Exact length / 정확한 길이
-//   v := validation.New([]int{1, 2, 3}, "numbers")
-//   v.ArrayLength(3)  // Passes / 성공
 //
-//   v := validation.New([]int{1, 2}, "numbers")
-//   v.ArrayLength(3)  // Fails (too short) / 실패 (너무 짧음)
+//	// Exact length / 정확한 길이
+//	v := validation.New([]int{1, 2, 3}, "numbers")
+//	v.ArrayLength(3)  // Passes / 성공
 //
-//   // RGB color validation / RGB 색상 검증
-//   v := validation.New([3]int{255, 128, 64}, "rgb")
-//   v.ArrayLength(3)  // Passes / 성공
+//	v := validation.New([]int{1, 2}, "numbers")
+//	v.ArrayLength(3)  // Fails (too short) / 실패 (너무 짧음)
 //
-//   // Coordinate validation / 좌표 검증
-//   v := validation.New(coords, "coordinates")
-//   v.ArrayNotEmpty().ArrayLength(3) // Must be [x, y, z]
+//	// RGB color validation / RGB 색상 검증
+//	v := validation.New([3]int{255, 128, 64}, "rgb")
+//	v.ArrayLength(3)  // Passes / 성공
 //
-//   // Invalid type / 유효하지 않은 타입
-//   v := validation.New("string", "value")
-//   v.ArrayLength(3)  // Fails (not array/slice) / 실패 (배열/슬라이스 아님)
+//	// Coordinate validation / 좌표 검증
+//	v := validation.New(coords, "coordinates")
+//	v.ArrayNotEmpty().ArrayLength(3) // Must be [x, y, z]
+//
+//	// Invalid type / 유효하지 않은 타입
+//	v := validation.New("string", "value")
+//	v.ArrayLength(3)  // Fails (not array/slice) / 실패 (배열/슬라이스 아님)
 func (v *Validator) ArrayLength(length int) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -286,23 +289,24 @@ func (v *Validator) ArrayLength(length int) *Validator {
 //     타입 검사를 위한 반사 오버헤드
 //
 // Example / 예제:
-//   // Minimum items / 최소 항목
-//   v := validation.New([]string{"a", "b", "c"}, "items")
-//   v.ArrayMinLength(2)  // Passes / 성공
 //
-//   v := validation.New([]string{"a"}, "items")
-//   v.ArrayMinLength(2)  // Fails / 실패
+//	// Minimum items / 최소 항목
+//	v := validation.New([]string{"a", "b", "c"}, "items")
+//	v.ArrayMinLength(2)  // Passes / 성공
 //
-//   v := validation.New([]int{1, 2}, "numbers")
-//   v.ArrayMinLength(2)  // Passes (boundary) / 성공 (경계값)
+//	v := validation.New([]string{"a"}, "items")
+//	v.ArrayMinLength(2)  // Fails / 실패
 //
-//   // Multiple selections / 다중 선택
-//   v := validation.New(selectedItems, "selections")
-//   v.ArrayNotEmpty().ArrayMinLength(1).ArrayMaxLength(10)
+//	v := validation.New([]int{1, 2}, "numbers")
+//	v.ArrayMinLength(2)  // Passes (boundary) / 성공 (경계값)
 //
-//   // Batch validation / 배치 검증
-//   v := validation.New(batch, "batch")
-//   v.ArrayMinLength(10) // Minimum 10 items per batch
+//	// Multiple selections / 다중 선택
+//	v := validation.New(selectedItems, "selections")
+//	v.ArrayNotEmpty().ArrayMinLength(1).ArrayMaxLength(10)
+//
+//	// Batch validation / 배치 검증
+//	v := validation.New(batch, "batch")
+//	v.ArrayMinLength(10) // Minimum 10 items per batch
 func (v *Validator) ArrayMinLength(min int) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -363,23 +367,24 @@ func (v *Validator) ArrayMinLength(min int) *Validator {
 //     타입 검사를 위한 반사 오버헤드
 //
 // Example / 예제:
-//   // Maximum items / 최대 항목
-//   v := validation.New([]int{1, 2, 3}, "numbers")
-//   v.ArrayMaxLength(5)  // Passes / 성공
 //
-//   v := validation.New([]int{1, 2, 3, 4, 5, 6}, "numbers")
-//   v.ArrayMaxLength(5)  // Fails / 실패
+//	// Maximum items / 최대 항목
+//	v := validation.New([]int{1, 2, 3}, "numbers")
+//	v.ArrayMaxLength(5)  // Passes / 성공
 //
-//   v := validation.New([]string{"a", "b", "c"}, "items")
-//   v.ArrayMaxLength(3)  // Passes (boundary) / 성공 (경계값)
+//	v := validation.New([]int{1, 2, 3, 4, 5, 6}, "numbers")
+//	v.ArrayMaxLength(5)  // Fails / 실패
 //
-//   // Limit selections / 선택 제한
-//   v := validation.New(selectedOptions, "options")
-//   v.ArrayNotEmpty().ArrayMaxLength(3)
+//	v := validation.New([]string{"a", "b", "c"}, "items")
+//	v.ArrayMaxLength(3)  // Passes (boundary) / 성공 (경계값)
 //
-//   // Batch size limit / 배치 크기 제한
-//   v := validation.New(batch, "batch")
-//   v.ArrayMinLength(1).ArrayMaxLength(100)
+//	// Limit selections / 선택 제한
+//	v := validation.New(selectedOptions, "options")
+//	v.ArrayNotEmpty().ArrayMaxLength(3)
+//
+//	// Batch size limit / 배치 크기 제한
+//	v := validation.New(batch, "batch")
+//	v.ArrayMinLength(1).ArrayMaxLength(100)
 func (v *Validator) ArrayMaxLength(max int) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -441,23 +446,24 @@ func (v *Validator) ArrayMaxLength(max int) *Validator {
 //     더 의미론적이고 읽기 쉬움
 //
 // Example / 예제:
-//   // Must have items / 항목 필수
-//   v := validation.New([]string{"item"}, "items")
-//   v.ArrayNotEmpty()  // Passes / 성공
 //
-//   v := validation.New([]string{}, "items")
-//   v.ArrayNotEmpty()  // Fails / 실패
+//	// Must have items / 항목 필수
+//	v := validation.New([]string{"item"}, "items")
+//	v.ArrayNotEmpty()  // Passes / 성공
 //
-//   v := validation.New([]int{0}, "numbers")
-//   v.ArrayNotEmpty()  // Passes (has one element) / 성공 (요소 하나 있음)
+//	v := validation.New([]string{}, "items")
+//	v.ArrayNotEmpty()  // Fails / 실패
 //
-//   // Shopping cart / 장바구니
-//   v := validation.New(cartItems, "cart")
-//   v.ArrayNotEmpty() // Cart must have items
+//	v := validation.New([]int{0}, "numbers")
+//	v.ArrayNotEmpty()  // Passes (has one element) / 성공 (요소 하나 있음)
 //
-//   // File attachments / 파일 첨부
-//   v := validation.New(attachments, "attachments")
-//   v.ArrayNotEmpty().ArrayMaxLength(5)
+//	// Shopping cart / 장바구니
+//	v := validation.New(cartItems, "cart")
+//	v.ArrayNotEmpty() // Cart must have items
+//
+//	// File attachments / 파일 첨부
+//	v := validation.New(attachments, "attachments")
+//	v.ArrayNotEmpty().ArrayMaxLength(5)
 func (v *Validator) ArrayNotEmpty() *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -523,28 +529,29 @@ func (v *Validator) ArrayNotEmpty() *Validator {
 //     복잡한 타입 (슬라이스, 맵)은 예상대로 작동하지 않을 수 있음
 //
 // Example / 예제:
-//   // Unique numbers / 고유 숫자
-//   v := validation.New([]int{1, 2, 3}, "numbers")
-//   v.ArrayUnique()  // Passes / 성공
 //
-//   v := validation.New([]int{1, 2, 2, 3}, "numbers")
-//   v.ArrayUnique()  // Fails (duplicate 2) / 실패 (중복 2)
+//	// Unique numbers / 고유 숫자
+//	v := validation.New([]int{1, 2, 3}, "numbers")
+//	v.ArrayUnique()  // Passes / 성공
 //
-//   // Unique strings / 고유 문자열
-//   v := validation.New([]string{"a", "b", "c"}, "tags")
-//   v.ArrayUnique()  // Passes / 성공
+//	v := validation.New([]int{1, 2, 2, 3}, "numbers")
+//	v.ArrayUnique()  // Fails (duplicate 2) / 실패 (중복 2)
 //
-//   // Empty array / 빈 배열
-//   v := validation.New([]int{}, "numbers")
-//   v.ArrayUnique()  // Passes (no duplicates) / 성공 (중복 없음)
+//	// Unique strings / 고유 문자열
+//	v := validation.New([]string{"a", "b", "c"}, "tags")
+//	v.ArrayUnique()  // Passes / 성공
 //
-//   // Unique IDs / 고유 ID
-//   v := validation.New(userIDs, "user_ids")
-//   v.ArrayNotEmpty().ArrayUnique()
+//	// Empty array / 빈 배열
+//	v := validation.New([]int{}, "numbers")
+//	v.ArrayUnique()  // Passes (no duplicates) / 성공 (중복 없음)
 //
-//   // Unique tags / 고유 태그
-//   v := validation.New(tags, "tags")
-//   v.ArrayUnique().ArrayMaxLength(10)
+//	// Unique IDs / 고유 ID
+//	v := validation.New(userIDs, "user_ids")
+//	v.ArrayNotEmpty().ArrayUnique()
+//
+//	// Unique tags / 고유 태그
+//	v := validation.New(tags, "tags")
+//	v.ArrayUnique().ArrayMaxLength(10)
 func (v *Validator) ArrayUnique() *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -612,24 +619,25 @@ func (v *Validator) ArrayUnique() *Validator {
 //     타입 검사를 위한 반사 오버헤드
 //
 // Example / 예제:
-//   // Single key check / 단일 키 확인
-//   v := validation.New(map[string]int{"age": 25}, "data")
-//   v.MapHasKey("age")  // Passes / 성공
 //
-//   v := validation.New(map[string]int{"name": 1}, "data")
-//   v.MapHasKey("age")  // Fails / 실패
+//	// Single key check / 단일 키 확인
+//	v := validation.New(map[string]int{"age": 25}, "data")
+//	v.MapHasKey("age")  // Passes / 성공
 //
-//   // Configuration validation / 설정 검증
-//   v := validation.New(config, "config")
-//   v.MapHasKey("database_url")
+//	v := validation.New(map[string]int{"name": 1}, "data")
+//	v.MapHasKey("age")  // Fails / 실패
 //
-//   // API request / API 요청
-//   v := validation.New(requestData, "request")
-//   v.MapNotEmpty().MapHasKey("user_id")
+//	// Configuration validation / 설정 검증
+//	v := validation.New(config, "config")
+//	v.MapHasKey("database_url")
 //
-//   // Different key types / 다른 키 타입
-//   v := validation.New(map[int]string{1: "one"}, "data")
-//   v.MapHasKey(1)  // Passes / 성공
+//	// API request / API 요청
+//	v := validation.New(requestData, "request")
+//	v.MapNotEmpty().MapHasKey("user_id")
+//
+//	// Different key types / 다른 키 타입
+//	v := validation.New(map[int]string{1: "one"}, "data")
+//	v.MapHasKey(1)  // Passes / 성공
 func (v *Validator) MapHasKey(key interface{}) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -696,26 +704,27 @@ func (v *Validator) MapHasKey(key interface{}) *Validator {
 //     타입 검사를 위한 반사 오버헤드
 //
 // Example / 예제:
-//   // Multiple keys / 여러 키
-//   v := validation.New(map[string]string{"name": "John", "email": "j@e.com"}, "user")
-//   v.MapHasKeys("name", "email")  // Passes / 성공
 //
-//   v := validation.New(map[string]string{"name": "John"}, "user")
-//   v.MapHasKeys("name", "email")  // Fails (missing email) / 실패 (email 누락)
+//	// Multiple keys / 여러 키
+//	v := validation.New(map[string]string{"name": "John", "email": "j@e.com"}, "user")
+//	v.MapHasKeys("name", "email")  // Passes / 성공
 //
-//   // Configuration validation / 설정 검증
-//   v := validation.New(config, "config")
-//   v.MapNotEmpty().MapHasKeys("host", "port", "database")
+//	v := validation.New(map[string]string{"name": "John"}, "user")
+//	v.MapHasKeys("name", "email")  // Fails (missing email) / 실패 (email 누락)
 //
-//   // API request / API 요청
-//   v := validation.New(requestData, "request")
-//   v.MapHasKeys("user_id", "action", "timestamp")
+//	// Configuration validation / 설정 검증
+//	v := validation.New(config, "config")
+//	v.MapNotEmpty().MapHasKeys("host", "port", "database")
 //
-//   // Error message shows all missing keys
-//   // 오류 메시지는 모든 누락된 키 표시
-//   data := map[string]int{"a": 1}
-//   v := validation.New(data, "data")
-//   v.MapHasKeys("a", "b", "c")  // Error: missing keys: [b c]
+//	// API request / API 요청
+//	v := validation.New(requestData, "request")
+//	v.MapHasKeys("user_id", "action", "timestamp")
+//
+//	// Error message shows all missing keys
+//	// 오류 메시지는 모든 누락된 키 표시
+//	data := map[string]int{"a": 1}
+//	v := validation.New(data, "data")
+//	v.MapHasKeys("a", "b", "c")  // Error: missing keys: [b c]
 func (v *Validator) MapHasKeys(keys ...interface{}) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -787,29 +796,30 @@ func (v *Validator) MapHasKeys(keys ...interface{}) *Validator {
 //     특정 키 검증은 MapHasKeys 사용
 //
 // Example / 예제:
-//   // Non-empty map / 비어있지 않은 맵
-//   v := validation.New(map[string]int{"count": 1}, "data")
-//   v.MapNotEmpty()  // Passes / 성공
 //
-//   v := validation.New(map[string]int{}, "data")
-//   v.MapNotEmpty()  // Fails / 실패
+//	// Non-empty map / 비어있지 않은 맵
+//	v := validation.New(map[string]int{"count": 1}, "data")
+//	v.MapNotEmpty()  // Passes / 성공
 //
-//   // Configuration validation / 설정 검증
-//   v := validation.New(config, "config")
-//   v.MapNotEmpty()
+//	v := validation.New(map[string]int{}, "data")
+//	v.MapNotEmpty()  // Fails / 실패
 //
-//   // API request data / API 요청 데이터
-//   v := validation.New(requestData, "data")
-//   v.MapNotEmpty().MapHasKeys("action")
+//	// Configuration validation / 설정 검증
+//	v := validation.New(config, "config")
+//	v.MapNotEmpty()
 //
-//   // Metadata validation / 메타데이터 검증
-//   v := validation.New(metadata, "metadata")
-//   v.MapNotEmpty()
+//	// API request data / API 요청 데이터
+//	v := validation.New(requestData, "data")
+//	v.MapNotEmpty().MapHasKeys("action")
 //
-//   // Nil map check / nil 맵 확인
-//   var nilMap map[string]int
-//   v := validation.New(nilMap, "data")
-//   v.MapNotEmpty()  // Fails (nil map has length 0) / 실패 (nil 맵은 길이 0)
+//	// Metadata validation / 메타데이터 검증
+//	v := validation.New(metadata, "metadata")
+//	v.MapNotEmpty()
+//
+//	// Nil map check / nil 맵 확인
+//	var nilMap map[string]int
+//	v := validation.New(nilMap, "data")
+//	v.MapNotEmpty()  // Fails (nil map has length 0) / 실패 (nil 맵은 길이 0)
 func (v *Validator) MapNotEmpty() *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v

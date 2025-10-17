@@ -38,17 +38,18 @@ import (
 //     동시 읽기 안전
 //
 // Example / 예제:
-//   err := ValidationError{
-//       Field:   "email",
-//       Value:   "invalid-email",
-//       Rule:    "email",
-//       Message: "Invalid email format",
-//   }
-//   
-//   // Access error details / 에러 상세 정보 액세스
-//   fmt.Printf("Field: %s\n", err.Field)
-//   fmt.Printf("Rule: %s\n", err.Rule)
-//   fmt.Printf("Message: %s\n", err.Error())
+//
+//	err := ValidationError{
+//	    Field:   "email",
+//	    Value:   "invalid-email",
+//	    Rule:    "email",
+//	    Message: "Invalid email format",
+//	}
+//
+//	// Access error details / 에러 상세 정보 액세스
+//	fmt.Printf("Field: %s\n", err.Field)
+//	fmt.Printf("Rule: %s\n", err.Rule)
+//	fmt.Printf("Message: %s\n", err.Error())
 type ValidationError struct {
 	Field   string      // Field name / 필드 이름
 	Value   interface{} // Invalid value / 유효하지 않은 값
@@ -77,20 +78,21 @@ type ValidationError struct {
 //     스레드 안전: 읽기 전용 작업
 //
 // Example / 예제:
-//   err := ValidationError{
-//       Field:   "age",
-//       Value:   -5,
-//       Rule:    "min",
-//       Message: "Age must be at least 0",
-//   }
-//   fmt.Println(err.Error())  // "Age must be at least 0"
-//   
-//   // Without custom message / 사용자 정의 메시지 없이
-//   err2 := ValidationError{
-//       Field: "email",
-//       Rule:  "required",
-//   }
-//   fmt.Println(err2.Error())  // "required validation failed for field 'email'"
+//
+//	err := ValidationError{
+//	    Field:   "age",
+//	    Value:   -5,
+//	    Rule:    "min",
+//	    Message: "Age must be at least 0",
+//	}
+//	fmt.Println(err.Error())  // "Age must be at least 0"
+//
+//	// Without custom message / 사용자 정의 메시지 없이
+//	err2 := ValidationError{
+//	    Field: "email",
+//	    Rule:  "required",
+//	}
+//	fmt.Println(err2.Error())  // "required validation failed for field 'email'"
 func (ve ValidationError) Error() string {
 	if ve.Message != "" {
 		return ve.Message
@@ -129,20 +131,21 @@ func (ve ValidationError) Error() string {
 //     동시 수정 안전하지 않음
 //
 // Example / 예제:
-//   errors := validation.ValidationErrors{
-//       {Field: "email", Rule: "required", Message: "Email is required"},
-//       {Field: "age", Rule: "min", Message: "Age must be at least 18"},
-//   }
-//   
-//   // Use as error / 에러로 사용
-//   if len(errors) > 0 {
-//       return errors  // Implements error interface
-//   }
-//   
-//   // Iterate through errors / 에러 순회
-//   for _, err := range errors {
-//       log.Printf("Field %s failed: %s", err.Field, err.Message)
-//   }
+//
+//	errors := validation.ValidationErrors{
+//	    {Field: "email", Rule: "required", Message: "Email is required"},
+//	    {Field: "age", Rule: "min", Message: "Age must be at least 18"},
+//	}
+//
+//	// Use as error / 에러로 사용
+//	if len(errors) > 0 {
+//	    return errors  // Implements error interface
+//	}
+//
+//	// Iterate through errors / 에러 순회
+//	for _, err := range errors {
+//	    log.Printf("Field %s failed: %s", err.Field, err.Message)
+//	}
 type ValidationErrors []ValidationError
 
 // Error returns a formatted error message for all validation errors.
@@ -174,17 +177,18 @@ type ValidationErrors []ValidationError
 //     메모리 할당: join을 위한 문자열 할당 1회
 //
 // Example / 예제:
-//   errors := validation.ValidationErrors{
-//       {Field: "email", Rule: "required", Message: "Email is required"},
-//       {Field: "age", Rule: "min", Message: "Age too low"},
-//   }
-//   
-//   msg := errors.Error()
-//   // "Email is required; Age too low"
-//   
-//   // Empty errors / 빈 에러
-//   empty := validation.ValidationErrors{}
-//   fmt.Println(empty.Error())  // ""
+//
+//	errors := validation.ValidationErrors{
+//	    {Field: "email", Rule: "required", Message: "Email is required"},
+//	    {Field: "age", Rule: "min", Message: "Age too low"},
+//	}
+//
+//	msg := errors.Error()
+//	// "Email is required; Age too low"
+//
+//	// Empty errors / 빈 에러
+//	empty := validation.ValidationErrors{}
+//	fmt.Println(empty.Error())  // ""
 func (ve ValidationErrors) Error() string {
 	if len(ve) == 0 {
 		return ""

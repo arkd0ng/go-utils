@@ -36,14 +36,15 @@ import (
 //     시간 복잡도: O(n) (n은 문자열 길이)
 //
 // Example / 예제:
-//   v := validation.New("", "name")
-//   v.Required()  // Fails / 실패
 //
-//   v := validation.New("   ", "name")
-//   v.Required()  // Fails (whitespace only) / 실패 (공백만)
+//	v := validation.New("", "name")
+//	v.Required()  // Fails / 실패
 //
-//   v := validation.New("John", "name")
-//   v.Required()  // Passes / 성공
+//	v := validation.New("   ", "name")
+//	v.Required()  // Fails (whitespace only) / 실패 (공백만)
+//
+//	v := validation.New("John", "name")
+//	v.Required()  // Passes / 성공
 func (v *Validator) Required() *Validator {
 	return validateString(v, "required", func(s string) bool {
 		return len(strings.TrimSpace(s)) > 0
@@ -90,18 +91,19 @@ func (v *Validator) Required() *Validator {
 //     rune 슬라이스로 변환 (메모리 할당)
 //
 // Example / 예제:
-//   v := validation.New("Hi", "message")
-//   v.MinLength(5)  // Fails / 실패
 //
-//   v := validation.New("Hello", "message")
-//   v.MinLength(5)  // Passes / 성공
+//	v := validation.New("Hi", "message")
+//	v.MinLength(5)  // Fails / 실패
 //
-//   v := validation.New("안녕하세요", "greeting")
-//   v.MinLength(3)  // Passes (5 runes) / 성공 (5 rune)
+//	v := validation.New("Hello", "message")
+//	v.MinLength(5)  // Passes / 성공
 //
-//   // With multi-byte characters / 다중 바이트 문자
-//   v := validation.New("👋🌍", "emoji")
-//   v.MinLength(2)  // Passes (2 runes) / 성공 (2 rune)
+//	v := validation.New("안녕하세요", "greeting")
+//	v.MinLength(3)  // Passes (5 runes) / 성공 (5 rune)
+//
+//	// With multi-byte characters / 다중 바이트 문자
+//	v := validation.New("👋🌍", "emoji")
+//	v.MinLength(2)  // Passes (2 runes) / 성공 (2 rune)
 func (v *Validator) MinLength(n int) *Validator {
 	return validateString(v, "minlength", func(s string) bool {
 		return len([]rune(s)) >= n
@@ -148,18 +150,19 @@ func (v *Validator) MinLength(n int) *Validator {
 //     rune 슬라이스로 변환 (메모리 할당)
 //
 // Example / 예제:
-//   v := validation.New("TooLongMessage", "message")
-//   v.MaxLength(5)  // Fails / 실패
 //
-//   v := validation.New("Short", "message")
-//   v.MaxLength(10)  // Passes / 성공
+//	v := validation.New("TooLongMessage", "message")
+//	v.MaxLength(5)  // Fails / 실패
 //
-//   v := validation.New("안녕하세요반갑습니다", "greeting")
-//   v.MaxLength(5)  // Fails (10 runes) / 실패 (10 rune)
+//	v := validation.New("Short", "message")
+//	v.MaxLength(10)  // Passes / 성공
 //
-//   // Database VARCHAR(50) constraint / 데이터베이스 VARCHAR(50) 제약
-//   v := validation.New(username, "username")
-//   v.Required().MaxLength(50)
+//	v := validation.New("안녕하세요반갑습니다", "greeting")
+//	v.MaxLength(5)  // Fails (10 runes) / 실패 (10 rune)
+//
+//	// Database VARCHAR(50) constraint / 데이터베이스 VARCHAR(50) 제약
+//	v := validation.New(username, "username")
+//	v.Required().MaxLength(50)
 func (v *Validator) MaxLength(n int) *Validator {
 	return validateString(v, "maxlength", func(s string) bool {
 		return len([]rune(s)) <= n
@@ -207,22 +210,23 @@ func (v *Validator) MaxLength(n int) *Validator {
 //     rune 슬라이스로 변환 (메모리 할당)
 //
 // Example / 예제:
-//   v := validation.New("12345", "zipcode")
-//   v.Length(5)  // Passes / 성공
 //
-//   v := validation.New("1234", "zipcode")
-//   v.Length(5)  // Fails (too short) / 실패 (너무 짧음)
+//	v := validation.New("12345", "zipcode")
+//	v.Length(5)  // Passes / 성공
 //
-//   v := validation.New("123456", "zipcode")
-//   v.Length(5)  // Fails (too long) / 실패 (너무 김)
+//	v := validation.New("1234", "zipcode")
+//	v.Length(5)  // Fails (too short) / 실패 (너무 짧음)
 //
-//   // PIN code validation / PIN 코드 검증
-//   v := validation.New(pin, "pin")
-//   v.Length(4).Numeric()
+//	v := validation.New("123456", "zipcode")
+//	v.Length(5)  // Fails (too long) / 실패 (너무 김)
 //
-//   // Korean phone number (11 digits) / 한국 전화번호 (11자리)
-//   v := validation.New("01012345678", "phone")
-//   v.Length(11).Numeric()
+//	// PIN code validation / PIN 코드 검증
+//	v := validation.New(pin, "pin")
+//	v.Length(4).Numeric()
+//
+//	// Korean phone number (11 digits) / 한국 전화번호 (11자리)
+//	v := validation.New("01012345678", "phone")
+//	v.Length(11).Numeric()
 func (v *Validator) Length(n int) *Validator {
 	return validateString(v, "length", func(s string) bool {
 		return len([]rune(s)) == n
@@ -281,15 +285,16 @@ func (v *Validator) Length(n int) *Validator {
 //     국제 도메인 이름(IDN)은 특별한 처리 필요
 //
 // Example / 예제:
-//   v := validation.New("user@example.com", "email")
-//   v.Email()  // Passes / 성공
 //
-//   v := validation.New("invalid-email", "email")
-//   v.Email()  // Fails / 실패
+//	v := validation.New("user@example.com", "email")
+//	v.Email()  // Passes / 성공
 //
-//   // Chaining with other validations / 다른 검증과 체이닝
-//   v := validation.New(email, "email")
-//   v.Required().Email().MaxLength(100)
+//	v := validation.New("invalid-email", "email")
+//	v.Email()  // Fails / 실패
+//
+//	// Chaining with other validations / 다른 검증과 체이닝
+//	v := validation.New(email, "email")
+//	v.Required().Email().MaxLength(100)
 func (v *Validator) Email() *Validator {
 	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	return validateString(v, "email", func(s string) bool {
@@ -362,15 +367,16 @@ func (v *Validator) Email() *Validator {
 //     간소화된 검증, 모든 엣지 케이스를 잡지 못할 수 있음
 //
 // Example / 예제:
-//   v := validation.New("https://example.com", "website")
-//   v.URL()  // Passes / 성공
 //
-//   v := validation.New("not-a-url", "website")
-//   v.URL()  // Fails / 실패
+//	v := validation.New("https://example.com", "website")
+//	v.URL()  // Passes / 성공
 //
-//   // API endpoint validation / API 엔드포인트 검증
-//   v := validation.New(webhookURL, "webhook")
-//   v.Required().URL().MaxLength(200)
+//	v := validation.New("not-a-url", "website")
+//	v.URL()  // Fails / 실패
+//
+//	// API endpoint validation / API 엔드포인트 검증
+//	v := validation.New(webhookURL, "webhook")
+//	v.Required().URL().MaxLength(200)
 func (v *Validator) URL() *Validator {
 	urlRegex := regexp.MustCompile(`^https?://[^\s/$.?#].[^\s]*$`)
 	return validateString(v, "url", func(s string) bool {
@@ -435,18 +441,19 @@ func (v *Validator) URL() *Validator {
 //     각 rune을 개별적으로 검사
 //
 // Example / 예제:
-//   v := validation.New("John", "firstname")
-//   v.Alpha()  // Passes / 성공
 //
-//   v := validation.New("John123", "firstname")
-//   v.Alpha()  // Fails / 실패
+//	v := validation.New("John", "firstname")
+//	v.Alpha()  // Passes / 성공
 //
-//   v := validation.New("김철수", "name")
-//   v.Alpha()  // Passes / 성공
+//	v := validation.New("John123", "firstname")
+//	v.Alpha()  // Fails / 실패
 //
-//   // Name validation / 이름 검증
-//   v := validation.New(name, "name")
-//   v.Required().Alpha().MinLength(2).MaxLength(50)
+//	v := validation.New("김철수", "name")
+//	v.Alpha()  // Passes / 성공
+//
+//	// Name validation / 이름 검증
+//	v := validation.New(name, "name")
+//	v.Required().Alpha().MinLength(2).MaxLength(50)
 func (v *Validator) Alpha() *Validator {
 	return validateString(v, "alpha", func(s string) bool {
 		for _, r := range s {
@@ -516,18 +523,19 @@ func (v *Validator) Alpha() *Validator {
 //     각 rune을 개별적으로 검사
 //
 // Example / 예제:
-//   v := validation.New("User123", "username")
-//   v.Alphanumeric()  // Passes / 성공
 //
-//   v := validation.New("User_123", "username")
-//   v.Alphanumeric()  // Fails / 실패
+//	v := validation.New("User123", "username")
+//	v.Alphanumeric()  // Passes / 성공
 //
-//   v := validation.New("사용자123", "username")
-//   v.Alphanumeric()  // Passes / 성공
+//	v := validation.New("User_123", "username")
+//	v.Alphanumeric()  // Fails / 실패
 //
-//   // Username validation / 사용자명 검증
-//   v := validation.New(username, "username")
-//   v.Required().Alphanumeric().MinLength(3).MaxLength(20)
+//	v := validation.New("사용자123", "username")
+//	v.Alphanumeric()  // Passes / 성공
+//
+//	// Username validation / 사용자명 검증
+//	v := validation.New(username, "username")
+//	v.Required().Alphanumeric().MinLength(3).MaxLength(20)
 func (v *Validator) Alphanumeric() *Validator {
 	return validateString(v, "alphanumeric", func(s string) bool {
 		for _, r := range s {
@@ -607,22 +615,23 @@ func (v *Validator) Alphanumeric() *Validator {
 //     이것은 숫자 값이 아닌 숫자 전용 문자열용
 //
 // Example / 예제:
-//   v := validation.New("12345", "code")
-//   v.Numeric()  // Passes / 성공
 //
-//   v := validation.New("123abc", "code")
-//   v.Numeric()  // Fails / 실패
+//	v := validation.New("12345", "code")
+//	v.Numeric()  // Passes / 성공
 //
-//   v := validation.New("", "code")
-//   v.Numeric()  // Fails (empty) / 실패 (빈 문자열)
+//	v := validation.New("123abc", "code")
+//	v.Numeric()  // Fails / 실패
 //
-//   // PIN code validation / PIN 코드 검증
-//   v := validation.New(pin, "pin")
-//   v.Numeric().Length(6)
+//	v := validation.New("", "code")
+//	v.Numeric()  // Fails (empty) / 실패 (빈 문자열)
 //
-//   // Product code / 제품 코드
-//   v := validation.New(code, "product_code")
-//   v.Required().Numeric().MinLength(8).MaxLength(12)
+//	// PIN code validation / PIN 코드 검증
+//	v := validation.New(pin, "pin")
+//	v.Numeric().Length(6)
+//
+//	// Product code / 제품 코드
+//	v := validation.New(code, "product_code")
+//	v.Required().Numeric().MinLength(8).MaxLength(12)
 func (v *Validator) Numeric() *Validator {
 	return validateString(v, "numeric", func(s string) bool {
 		for _, r := range s {
@@ -678,22 +687,23 @@ func (v *Validator) Numeric() *Validator {
 //     접두사 검사에 최적의 성능
 //
 // Example / 예제:
-//   v := validation.New("https://example.com", "url")
-//   v.StartsWith("https://")  // Passes / 성공
 //
-//   v := validation.New("http://example.com", "url")
-//   v.StartsWith("https://")  // Fails / 실패
+//	v := validation.New("https://example.com", "url")
+//	v.StartsWith("https://")  // Passes / 성공
 //
-//   v := validation.New("USER_12345", "user_id")
-//   v.StartsWith("USER_")  // Passes / 성공
+//	v := validation.New("http://example.com", "url")
+//	v.StartsWith("https://")  // Fails / 실패
 //
-//   // Command prefix validation / 명령어 접두사 검증
-//   v := validation.New(command, "command")
-//   v.StartsWith("/").MinLength(2)
+//	v := validation.New("USER_12345", "user_id")
+//	v.StartsWith("USER_")  // Passes / 성공
 //
-//   // Case sensitivity / 대소문자 구분
-//   v := validation.New("Hello", "greeting")
-//   v.StartsWith("hello")  // Fails (case mismatch) / 실패 (대소문자 불일치)
+//	// Command prefix validation / 명령어 접두사 검증
+//	v := validation.New(command, "command")
+//	v.StartsWith("/").MinLength(2)
+//
+//	// Case sensitivity / 대소문자 구분
+//	v := validation.New("Hello", "greeting")
+//	v.StartsWith("hello")  // Fails (case mismatch) / 실패 (대소문자 불일치)
 func (v *Validator) StartsWith(prefix string) *Validator {
 	return validateString(v, "startswith", func(s string) bool {
 		return strings.HasPrefix(s, prefix)
@@ -744,28 +754,29 @@ func (v *Validator) StartsWith(prefix string) *Validator {
 //     접미사 검사에 최적의 성능
 //
 // Example / 예제:
-//   v := validation.New("document.pdf", "filename")
-//   v.EndsWith(".pdf")  // Passes / 성공
 //
-//   v := validation.New("document.txt", "filename")
-//   v.EndsWith(".pdf")  // Fails / 실패
+//	v := validation.New("document.pdf", "filename")
+//	v.EndsWith(".pdf")  // Passes / 성공
 //
-//   v := validation.New("user@company.com", "email")
-//   v.EndsWith("@company.com")  // Passes / 성공
+//	v := validation.New("document.txt", "filename")
+//	v.EndsWith(".pdf")  // Fails / 실패
 //
-//   // File extension validation / 파일 확장자 검증
-//   v := validation.New(filename, "upload")
-//   v.Required().EndsWith(".jpg")
+//	v := validation.New("user@company.com", "email")
+//	v.EndsWith("@company.com")  // Passes / 성공
 //
-//   // Multiple allowed extensions / 여러 허용 확장자
-//   filename := "image.png"
-//   if !strings.HasSuffix(filename, ".jpg") && !strings.HasSuffix(filename, ".png") {
-//       // validation fails / 검증 실패
-//   }
+//	// File extension validation / 파일 확장자 검증
+//	v := validation.New(filename, "upload")
+//	v.Required().EndsWith(".jpg")
 //
-//   // Case sensitivity / 대소문자 구분
-//   v := validation.New("FILE.PDF", "filename")
-//   v.EndsWith(".pdf")  // Fails (case mismatch) / 실패 (대소문자 불일치)
+//	// Multiple allowed extensions / 여러 허용 확장자
+//	filename := "image.png"
+//	if !strings.HasSuffix(filename, ".jpg") && !strings.HasSuffix(filename, ".png") {
+//	    // validation fails / 검증 실패
+//	}
+//
+//	// Case sensitivity / 대소문자 구분
+//	v := validation.New("FILE.PDF", "filename")
+//	v.EndsWith(".pdf")  // Fails (case mismatch) / 실패 (대소문자 불일치)
 func (v *Validator) EndsWith(suffix string) *Validator {
 	return validateString(v, "endswith", func(s string) bool {
 		return strings.HasSuffix(s, suffix)
@@ -814,22 +825,23 @@ func (v *Validator) EndsWith(suffix string) *Validator {
 //     내부적으로 Boyer-Moore 유사 알고리즘 사용
 //
 // Example / 예제:
-//   v := validation.New("Hello World", "message")
-//   v.Contains("World")  // Passes / 성공
 //
-//   v := validation.New("Hello World", "message")
-//   v.Contains("world")  // Fails (case mismatch) / 실패 (대소문자 불일치)
+//	v := validation.New("Hello World", "message")
+//	v.Contains("World")  // Passes / 성공
 //
-//   v := validation.New("user@example.com", "email")
-//   v.Contains("@")  // Passes / 성공
+//	v := validation.New("Hello World", "message")
+//	v.Contains("world")  // Fails (case mismatch) / 실패 (대소문자 불일치)
 //
-//   // Keyword validation / 키워드 검증
-//   v := validation.New(description, "description")
-//   v.Required().Contains("important").MinLength(10)
+//	v := validation.New("user@example.com", "email")
+//	v.Contains("@")  // Passes / 성공
 //
-//   // Multiple keywords (need separate validators) / 여러 키워드 (별도 검증기 필요)
-//   v1 := validation.New(text, "content").Contains("keyword1")
-//   v2 := validation.New(text, "content").Contains("keyword2")
+//	// Keyword validation / 키워드 검증
+//	v := validation.New(description, "description")
+//	v.Required().Contains("important").MinLength(10)
+//
+//	// Multiple keywords (need separate validators) / 여러 키워드 (별도 검증기 필요)
+//	v1 := validation.New(text, "content").Contains("keyword1")
+//	v2 := validation.New(text, "content").Contains("keyword2")
 func (v *Validator) Contains(substring string) *Validator {
 	return validateString(v, "contains", func(s string) bool {
 		return strings.Contains(s, substring)
@@ -891,25 +903,26 @@ func (v *Validator) Contains(substring string) *Validator {
 //     문자 클래스: \d, \w, \s
 //
 // Example / 예제:
-//   // Korean phone number / 한국 전화번호
-//   v := validation.New("010-1234-5678", "phone")
-//   v.Regex(`^010-\d{4}-\d{4}$`)  // Passes / 성공
 //
-//   // Alphanumeric with hyphens / 하이픈이 있는 영숫자
-//   v := validation.New("ABC-123", "code")
-//   v.Regex(`^[A-Z]+-\d+$`)  // Passes / 성공
+//	// Korean phone number / 한국 전화번호
+//	v := validation.New("010-1234-5678", "phone")
+//	v.Regex(`^010-\d{4}-\d{4}$`)  // Passes / 성공
 //
-//   // Invalid pattern / 유효하지 않은 패턴
-//   v := validation.New("test", "value")
-//   v.Regex(`[invalid(`)  // Error added / 오류 추가
+//	// Alphanumeric with hyphens / 하이픈이 있는 영숫자
+//	v := validation.New("ABC-123", "code")
+//	v.Regex(`^[A-Z]+-\d+$`)  // Passes / 성공
 //
-//   // Partial match (no anchors) / 부분 매칭 (앵커 없음)
-//   v := validation.New("abc123def", "value")
-//   v.Regex(`\d+`)  // Passes (contains digits) / 성공 (숫자 포함)
+//	// Invalid pattern / 유효하지 않은 패턴
+//	v := validation.New("test", "value")
+//	v.Regex(`[invalid(`)  // Error added / 오류 추가
 //
-//   // Full string match / 전체 문자열 매칭
-//   v := validation.New("abc123", "value")
-//   v.Regex(`^[a-z]+$`)  // Fails (has digits) / 실패 (숫자 있음)
+//	// Partial match (no anchors) / 부분 매칭 (앵커 없음)
+//	v := validation.New("abc123def", "value")
+//	v.Regex(`\d+`)  // Passes (contains digits) / 성공 (숫자 포함)
+//
+//	// Full string match / 전체 문자열 매칭
+//	v := validation.New("abc123", "value")
+//	v.Regex(`^[a-z]+$`)  // Fails (has digits) / 실패 (숫자 있음)
 func (v *Validator) Regex(pattern string) *Validator {
 	re, err := regexp.Compile(pattern)
 	if err != nil {
@@ -988,18 +1001,19 @@ func (v *Validator) Regex(pattern string) *Validator {
 //     형식 검증만, 고유성은 검증하지 않음
 //
 // Example / 예제:
-//   v := validation.New("550e8400-e29b-41d4-a716-446655440000", "id")
-//   v.UUID()  // Passes / 성공
 //
-//   v := validation.New("not-a-uuid", "id")
-//   v.UUID()  // Fails / 실패
+//	v := validation.New("550e8400-e29b-41d4-a716-446655440000", "id")
+//	v.UUID()  // Passes / 성공
 //
-//   v := validation.New("550E8400-E29B-41D4-A716-446655440000", "id")
-//   v.UUID()  // Passes (case insensitive) / 성공 (대소문자 구분 없음)
+//	v := validation.New("not-a-uuid", "id")
+//	v.UUID()  // Fails / 실패
 //
-//   // API resource ID / API 리소스 ID
-//   v := validation.New(resourceID, "resource_id")
-//   v.Required().UUID()
+//	v := validation.New("550E8400-E29B-41D4-A716-446655440000", "id")
+//	v.UUID()  // Passes (case insensitive) / 성공 (대소문자 구분 없음)
+//
+//	// API resource ID / API 리소스 ID
+//	v := validation.New(resourceID, "resource_id")
+//	v.Required().UUID()
 func (v *Validator) UUID() *Validator {
 	uuidRegex := regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
 	return validateString(v, "uuid", func(s string) bool {
@@ -1039,7 +1053,7 @@ func (v *Validator) UUID() *Validator {
 //   - `{invalid json}` (invalid syntax)
 //   - `{'key': 'value'}` (single quotes)
 //   - `{name: "John"}` (unquoted key)
-//   - `` (empty string)
+//   - “ (empty string)
 //
 // Returns / 반환:
 //   - *Validator: Returns self for method chaining
@@ -1081,21 +1095,22 @@ func (v *Validator) UUID() *Validator {
 //     모든 유효한 JSON 타입 허용
 //
 // Example / 예제:
-//   v := validation.New(`{"name": "John"}`, "data")
-//   v.JSON()  // Passes / 성공
 //
-//   v := validation.New(`{invalid}`, "data")
-//   v.JSON()  // Fails / 실패
+//	v := validation.New(`{"name": "John"}`, "data")
+//	v.JSON()  // Passes / 성공
 //
-//   v := validation.New(`[1, 2, 3]`, "array")
-//   v.JSON()  // Passes / 성공
+//	v := validation.New(`{invalid}`, "data")
+//	v.JSON()  // Fails / 실패
 //
-//   v := validation.New(`"simple string"`, "text")
-//   v.JSON()  // Passes (valid JSON string) / 성공 (유효한 JSON 문자열)
+//	v := validation.New(`[1, 2, 3]`, "array")
+//	v.JSON()  // Passes / 성공
 //
-//   // API request body / API 요청 본문
-//   v := validation.New(requestBody, "body")
-//   v.Required().JSON()
+//	v := validation.New(`"simple string"`, "text")
+//	v.JSON()  // Passes (valid JSON string) / 성공 (유효한 JSON 문자열)
+//
+//	// API request body / API 요청 본문
+//	v := validation.New(requestBody, "body")
+//	v.Required().JSON()
 func (v *Validator) JSON() *Validator {
 	return validateString(v, "json", func(s string) bool {
 		var js interface{}
@@ -1174,24 +1189,25 @@ func (v *Validator) JSON() *Validator {
 //     Base64URL은 다른 검증기 필요
 //
 // Example / 예제:
-//   v := validation.New("SGVsbG8gV29ybGQ=", "encoded")
-//   v.Base64()  // Passes / 성공
 //
-//   v := validation.New("Not Base64!", "encoded")
-//   v.Base64()  // Fails / 실패
+//	v := validation.New("SGVsbG8gV29ybGQ=", "encoded")
+//	v.Base64()  // Passes / 성공
 //
-//   v := validation.New("SGVsbG8", "encoded")
-//   v.Base64()  // Fails (missing padding) / 실패 (패딩 누락)
+//	v := validation.New("Not Base64!", "encoded")
+//	v.Base64()  // Fails / 실패
 //
-//   // Image upload validation / 이미지 업로드 검증
-//   v := validation.New(imageData, "image")
-//   v.Required().Base64().MaxLength(1048576) // 1MB limit
+//	v := validation.New("SGVsbG8", "encoded")
+//	v.Base64()  // Fails (missing padding) / 실패 (패딩 누락)
 //
-//   // Decode after validation / 검증 후 디코딩
-//   if v.IsValid() {
-//       decoded, _ := base64.StdEncoding.DecodeString(imageData)
-//       // Process decoded data / 디코딩된 데이터 처리
-//   }
+//	// Image upload validation / 이미지 업로드 검증
+//	v := validation.New(imageData, "image")
+//	v.Required().Base64().MaxLength(1048576) // 1MB limit
+//
+//	// Decode after validation / 검증 후 디코딩
+//	if v.IsValid() {
+//	    decoded, _ := base64.StdEncoding.DecodeString(imageData)
+//	    // Process decoded data / 디코딩된 데이터 처리
+//	}
 func (v *Validator) Base64() *Validator {
 	return validateString(v, "base64", func(s string) bool {
 		_, err := base64.StdEncoding.DecodeString(s)
@@ -1258,21 +1274,22 @@ func (v *Validator) Base64() *Validator {
 //     소문자 변환을 위한 문자열 할당
 //
 // Example / 예제:
-//   v := validation.New("hello", "username")
-//   v.Lowercase()  // Passes / 성공
 //
-//   v := validation.New("Hello", "username")
-//   v.Lowercase()  // Fails / 실패
+//	v := validation.New("hello", "username")
+//	v.Lowercase()  // Passes / 성공
 //
-//   v := validation.New("hello123", "username")
-//   v.Lowercase()  // Passes (numbers ignored) / 성공 (숫자 무시)
+//	v := validation.New("Hello", "username")
+//	v.Lowercase()  // Fails / 실패
 //
-//   v := validation.New("hello-world", "slug")
-//   v.Lowercase()  // Passes (hyphen ignored) / 성공 (하이픈 무시)
+//	v := validation.New("hello123", "username")
+//	v.Lowercase()  // Passes (numbers ignored) / 성공 (숫자 무시)
 //
-//   // Username validation / 사용자명 검증
-//   v := validation.New(username, "username")
-//   v.Required().Lowercase().Alphanumeric().MinLength(3)
+//	v := validation.New("hello-world", "slug")
+//	v.Lowercase()  // Passes (hyphen ignored) / 성공 (하이픈 무시)
+//
+//	// Username validation / 사용자명 검증
+//	v := validation.New(username, "username")
+//	v.Required().Lowercase().Alphanumeric().MinLength(3)
 func (v *Validator) Lowercase() *Validator {
 	return validateString(v, "lowercase", func(s string) bool {
 		return s == strings.ToLower(s)
@@ -1342,25 +1359,26 @@ func (v *Validator) Lowercase() *Validator {
 //     대문자 변환을 위한 문자열 할당
 //
 // Example / 예제:
-//   v := validation.New("HELLO", "code")
-//   v.Uppercase()  // Passes / 성공
 //
-//   v := validation.New("Hello", "code")
-//   v.Uppercase()  // Fails / 실패
+//	v := validation.New("HELLO", "code")
+//	v.Uppercase()  // Passes / 성공
 //
-//   v := validation.New("HELLO123", "code")
-//   v.Uppercase()  // Passes (numbers ignored) / 성공 (숫자 무시)
+//	v := validation.New("Hello", "code")
+//	v.Uppercase()  // Fails / 실패
 //
-//   v := validation.New("USA", "country_code")
-//   v.Uppercase()  // Passes / 성공
+//	v := validation.New("HELLO123", "code")
+//	v.Uppercase()  // Passes (numbers ignored) / 성공 (숫자 무시)
 //
-//   // Country code validation (ISO 3166) / 국가 코드 검증 (ISO 3166)
-//   v := validation.New(countryCode, "country_code")
-//   v.Required().Uppercase().Length(2).Alpha()
+//	v := validation.New("USA", "country_code")
+//	v.Uppercase()  // Passes / 성공
 //
-//   // Currency code (ISO 4217) / 통화 코드 (ISO 4217)
-//   v := validation.New(currencyCode, "currency")
-//   v.Required().Uppercase().Length(3).Alpha()
+//	// Country code validation (ISO 3166) / 국가 코드 검증 (ISO 3166)
+//	v := validation.New(countryCode, "country_code")
+//	v.Required().Uppercase().Length(2).Alpha()
+//
+//	// Currency code (ISO 4217) / 통화 코드 (ISO 4217)
+//	v := validation.New(currencyCode, "currency")
+//	v.Required().Uppercase().Length(3).Alpha()
 func (v *Validator) Uppercase() *Validator {
 	return validateString(v, "uppercase", func(s string) bool {
 		return s == strings.ToUpper(s)
@@ -1440,22 +1458,23 @@ func (v *Validator) Uppercase() *Validator {
 //     번호가 실제로 존재하는지 검증하지 않음
 //
 // Example / 예제:
-//   v := validation.New("010-1234-5678", "phone")
-//   v.Phone()  // Passes / 성공
 //
-//   v := validation.New("+82-10-1234-5678", "phone")
-//   v.Phone()  // Passes / 성공
+//	v := validation.New("010-1234-5678", "phone")
+//	v.Phone()  // Passes / 성공
 //
-//   v := validation.New("12345", "phone")
-//   v.Phone()  // Fails (< 10 digits) / 실패 (10자리 미만)
+//	v := validation.New("+82-10-1234-5678", "phone")
+//	v.Phone()  // Passes / 성공
 //
-//   // Korean mobile / 한국 휴대폰
-//   v := validation.New(phone, "mobile")
-//   v.Required().Phone().StartsWith("010")
+//	v := validation.New("12345", "phone")
+//	v.Phone()  // Fails (< 10 digits) / 실패 (10자리 미만)
 //
-//   // International phone / 국제 전화
-//   v := validation.New(phone, "phone")
-//   v.Required().Phone().StartsWith("+")
+//	// Korean mobile / 한국 휴대폰
+//	v := validation.New(phone, "mobile")
+//	v.Required().Phone().StartsWith("010")
+//
+//	// International phone / 국제 전화
+//	v := validation.New(phone, "phone")
+//	v.Required().Phone().StartsWith("+")
 func (v *Validator) Phone() *Validator {
 	// Simple phone validation - can be extended
 	phoneRegex := regexp.MustCompile(`^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$`)

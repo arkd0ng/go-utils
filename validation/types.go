@@ -7,14 +7,14 @@ package validation
 // 필드에 대한 검증 상태, 에러 컬렉션 및 구성을 유지합니다.
 //
 // Lifecycle / 생명주기:
-//   1. Creation: Use New() to create a new validator instance
-//      생성: New()를 사용하여 새 검증기 인스턴스 생성
-//   2. Rule Chaining: Chain validation rules using fluent API
-//      규칙 체이닝: 유창한 API를 사용하여 검증 규칙 체이닝
-//   3. Execution: Rules execute immediately when called
-//      실행: 호출 시 규칙이 즉시 실행
-//   4. Result: Call Validate() or GetErrors() to retrieve results
-//      결과: Validate() 또는 GetErrors()를 호출하여 결과 검색
+//  1. Creation: Use New() to create a new validator instance
+//     생성: New()를 사용하여 새 검증기 인스턴스 생성
+//  2. Rule Chaining: Chain validation rules using fluent API
+//     규칙 체이닝: 유창한 API를 사용하여 검증 규칙 체이닝
+//  3. Execution: Rules execute immediately when called
+//     실행: 호출 시 규칙이 즉시 실행
+//  4. Result: Call Validate() or GetErrors() to retrieve results
+//     결과: Validate() 또는 GetErrors()를 호출하여 결과 검색
 //
 // State Management / 상태 관리:
 //   - Each validator maintains independent state
@@ -41,17 +41,18 @@ package validation
 //     Validate() 호출 후 재사용 가능
 //
 // Example / 예제:
-//   // Create and use validator / 검증기 생성 및 사용
-//   v := validation.New("test@example.com", "email")
-//   v.Required().Email().MaxLength(100)
-//   
-//   if err := v.Validate(); err != nil {
-//       // Handle validation failure / 검증 실패 처리
-//   }
 //
-//   // With custom configuration / 사용자 정의 구성과 함께
-//   v := validation.New(data, "data").StopOnError()
-//   v.Required().WithMessage("Data is required")
+//	// Create and use validator / 검증기 생성 및 사용
+//	v := validation.New("test@example.com", "email")
+//	v.Required().Email().MaxLength(100)
+//
+//	if err := v.Validate(); err != nil {
+//	    // Handle validation failure / 검증 실패 처리
+//	}
+//
+//	// With custom configuration / 사용자 정의 구성과 함께
+//	v := validation.New(data, "data").StopOnError()
+//	v.Required().WithMessage("Data is required")
 type Validator struct {
 	value          interface{}       // Value being validated / 검증 중인 값
 	fieldName      string            // Field name for error messages / 에러 메시지용 필드 이름
@@ -84,14 +85,15 @@ type Validator struct {
 //     동시 검증을 위해 별도 인스턴스 생성
 //
 // Example / 예제:
-//   mv := validation.NewValidator()
-//   mv.Field(user.Email, "email").Required().Email()
-//   mv.Field(user.Age, "age").Required().Min(18).Max(120)
-//   mv.Field(user.Name, "name").Required().MinLength(2)
-//   
-//   if err := mv.Validate(); err != nil {
-//       // All field errors collected / 모든 필드 에러 수집됨
-//   }
+//
+//	mv := validation.NewValidator()
+//	mv.Field(user.Email, "email").Required().Email()
+//	mv.Field(user.Age, "age").Required().Min(18).Max(120)
+//	mv.Field(user.Name, "name").Required().MinLength(2)
+//
+//	if err := mv.Validate(); err != nil {
+//	    // All field errors collected / 모든 필드 에러 수집됨
+//	}
 type MultiValidator struct {
 	validators []*Validator      // Individual field validators / 개별 필드 검증기
 	errors     []ValidationError // Aggregated errors from all fields / 모든 필드의 집계된 에러
@@ -120,25 +122,26 @@ type MultiValidator struct {
 //     예상치 못한 타입에 대해 false 반환해야 함
 //
 // Example / 예제:
-//   // Simple custom rule / 간단한 사용자 정의 규칙
-//   isPositive := func(val interface{}) bool {
-//       if num, ok := val.(int); ok {
-//           return num > 0
-//       }
-//       return false
-//   }
-//   
-//   v := validation.New(value, "number")
-//   v.Custom(isPositive).WithMessage("Must be positive")
 //
-//   // Complex business rule / 복잡한 비즈니스 규칙
-//   checkAvailability := func(val interface{}) bool {
-//       username := val.(string)
-//       return !db.UserExists(username)
-//   }
-//   
-//   v := validation.New(username, "username")
-//   v.Custom(checkAvailability).WithMessage("Username already taken")
+//	// Simple custom rule / 간단한 사용자 정의 규칙
+//	isPositive := func(val interface{}) bool {
+//	    if num, ok := val.(int); ok {
+//	        return num > 0
+//	    }
+//	    return false
+//	}
+//
+//	v := validation.New(value, "number")
+//	v.Custom(isPositive).WithMessage("Must be positive")
+//
+//	// Complex business rule / 복잡한 비즈니스 규칙
+//	checkAvailability := func(val interface{}) bool {
+//	    username := val.(string)
+//	    return !db.UserExists(username)
+//	}
+//
+//	v := validation.New(username, "username")
+//	v.Custom(checkAvailability).WithMessage("Username already taken")
 type RuleFunc func(interface{}) bool
 
 // MessageFunc is a function type for generating custom error messages.
@@ -166,11 +169,12 @@ type RuleFunc func(interface{}) bool
 //     메시지에 필드 값 포함 가능
 //
 // Example / 예제:
-//   msgFunc := func(field string, value interface{}) string {
-//       return fmt.Sprintf("Field '%s' with value '%v' is invalid", field, value)
-//   }
-//   
-//   // Use with custom validation / 사용자 정의 검증과 함께 사용
-//   v := validation.New(data, "field")
-//   v.Custom(customRule).WithMessage(msgFunc("field", data))
+//
+//	msgFunc := func(field string, value interface{}) string {
+//	    return fmt.Sprintf("Field '%s' with value '%v' is invalid", field, value)
+//	}
+//
+//	// Use with custom validation / 사용자 정의 검증과 함께 사용
+//	v := validation.New(data, "field")
+//	v.Custom(customRule).WithMessage(msgFunc("field", data))
 type MessageFunc func(field string, value interface{}) string

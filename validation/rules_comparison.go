@@ -52,25 +52,26 @@ import (
 //     슬라이스/맵/구조체 비교는 예상대로 작동하지 않을 수 있음
 //
 // Example / 예제:
-//   // Password confirmation / 비밀번호 확인
-//   v := validation.New("password123", "confirm_password")
-//   v.Equals(originalPassword)  // Must match exactly
 //
-//   // Exact string match / 정확한 문자열 일치
-//   v := validation.New("admin", "role")
-//   v.Equals("admin")  // Passes / 성공
+//	// Password confirmation / 비밀번호 확인
+//	v := validation.New("password123", "confirm_password")
+//	v.Equals(originalPassword)  // Must match exactly
 //
-//   // Numeric equality / 숫자 동등성
-//   v := validation.New(42, "answer")
-//   v.Equals(42)  // Passes / 성공
+//	// Exact string match / 정확한 문자열 일치
+//	v := validation.New("admin", "role")
+//	v.Equals("admin")  // Passes / 성공
 //
-//   // Case-sensitive / 대소문자 구분
-//   v := validation.New("Admin", "role")
-//   v.Equals("admin")  // Fails / 실패
+//	// Numeric equality / 숫자 동등성
+//	v := validation.New(42, "answer")
+//	v.Equals(42)  // Passes / 성공
 //
-//   // Type-sensitive / 타입 구분
-//   v := validation.New(5, "number")
-//   v.Equals("5")  // Fails (different types) / 실패 (다른 타입)
+//	// Case-sensitive / 대소문자 구분
+//	v := validation.New("Admin", "role")
+//	v.Equals("admin")  // Fails / 실패
+//
+//	// Type-sensitive / 타입 구분
+//	v := validation.New(5, "number")
+//	v.Equals("5")  // Fails (different types) / 실패 (다른 타입)
 func (v *Validator) Equals(value interface{}) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -124,25 +125,26 @@ func (v *Validator) Equals(value interface{}) *Validator {
 //     직접 비교, 매우 빠름
 //
 // Example / 예제:
-//   // Prevent old password / 이전 비밀번호 방지
-//   v := validation.New("newpassword123", "new_password")
-//   v.NotEquals(oldPassword)  // Must be different
 //
-//   // Ensure value changed / 값 변경 확인
-//   v := validation.New(newEmail, "email")
-//   v.NotEquals(currentEmail)
+//	// Prevent old password / 이전 비밀번호 방지
+//	v := validation.New("newpassword123", "new_password")
+//	v.NotEquals(oldPassword)  // Must be different
 //
-//   // Forbidden value / 금지된 값
-//   v := validation.New("guest", "username")
-//   v.NotEquals("admin")  // Cannot be admin
+//	// Ensure value changed / 값 변경 확인
+//	v := validation.New(newEmail, "email")
+//	v.NotEquals(currentEmail)
 //
-//   // Default value prevention / 기본값 방지
-//   v := validation.New(status, "status")
-//   v.NotEquals("unknown")  // Must set a valid status
+//	// Forbidden value / 금지된 값
+//	v := validation.New("guest", "username")
+//	v.NotEquals("admin")  // Cannot be admin
 //
-//   // Multiple forbidden values / 여러 금지 값
-//   v := validation.New(role, "role")
-//   v.NotEquals("root").NotEquals("system")
+//	// Default value prevention / 기본값 방지
+//	v := validation.New(status, "status")
+//	v.NotEquals("unknown")  // Must set a valid status
+//
+//	// Multiple forbidden values / 여러 금지 값
+//	v := validation.New(role, "role")
+//	v.NotEquals("root").NotEquals("system")
 func (v *Validator) NotEquals(value interface{}) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -202,20 +204,21 @@ func (v *Validator) NotEquals(value interface{}) *Validator {
 //     미포함 경계에는 GreaterThan 사용
 //
 // Example / 예제:
-//   // Exclusive threshold / 미포함 임계값
-//   v := validation.New(10, "score")
-//   v.GreaterThan(5)  // Passes (10 > 5) / 성공
 //
-//   v := validation.New(5, "score")
-//   v.GreaterThan(5)  // Fails (5 = 5, not >) / 실패
+//	// Exclusive threshold / 미포함 임계값
+//	v := validation.New(10, "score")
+//	v.GreaterThan(5)  // Passes (10 > 5) / 성공
 //
-//   // Positive validation / 양수 검증
-//   v := validation.New(amount, "amount")
-//   v.GreaterThan(0)  // Must be positive
+//	v := validation.New(5, "score")
+//	v.GreaterThan(5)  // Fails (5 = 5, not >) / 실패
 //
-//   // Range validation / 범위 검증
-//   v := validation.New(value, "value")
-//   v.GreaterThan(0).LessThan(100)  // 0 < value < 100
+//	// Positive validation / 양수 검증
+//	v := validation.New(amount, "amount")
+//	v.GreaterThan(0)  // Must be positive
+//
+//	// Range validation / 범위 검증
+//	v := validation.New(value, "value")
+//	v.GreaterThan(0).LessThan(100)  // 0 < value < 100
 func (v *Validator) GreaterThan(value float64) *Validator {
 	return validateNumeric(v, "greaterthan", func(n float64) bool {
 		return n > value
@@ -268,20 +271,21 @@ func (v *Validator) GreaterThan(value float64) *Validator {
 //     최소 경계에는 Min()이 더 관용적
 //
 // Example / 예제:
-//   // Inclusive minimum / 포함 최소값
-//   v := validation.New(10, "score")
-//   v.GreaterThanOrEqual(10)  // Passes (10 >= 10) / 성공
 //
-//   v := validation.New(9, "score")
-//   v.GreaterThanOrEqual(10)  // Fails (9 < 10) / 실패
+//	// Inclusive minimum / 포함 최소값
+//	v := validation.New(10, "score")
+//	v.GreaterThanOrEqual(10)  // Passes (10 >= 10) / 성공
 //
-//   // Non-negative validation / 음수가 아닌 값 검증
-//   v := validation.New(count, "count")
-//   v.GreaterThanOrEqual(0)  // Can be 0 or positive
+//	v := validation.New(9, "score")
+//	v.GreaterThanOrEqual(10)  // Fails (9 < 10) / 실패
 //
-//   // Minimum age / 최소 나이
-//   v := validation.New(age, "age")
-//   v.GreaterThanOrEqual(18)  // 18 or older
+//	// Non-negative validation / 음수가 아닌 값 검증
+//	v := validation.New(count, "count")
+//	v.GreaterThanOrEqual(0)  // Can be 0 or positive
+//
+//	// Minimum age / 최소 나이
+//	v := validation.New(age, "age")
+//	v.GreaterThanOrEqual(18)  // 18 or older
 func (v *Validator) GreaterThanOrEqual(value float64) *Validator {
 	return validateNumeric(v, "greaterthanorequal", func(n float64) bool {
 		return n >= value
@@ -335,20 +339,21 @@ func (v *Validator) GreaterThanOrEqual(value float64) *Validator {
 //     미포함 상한에는 LessThan 사용
 //
 // Example / 예제:
-//   // Exclusive upper bound / 미포함 상한
-//   v := validation.New(5, "score")
-//   v.LessThan(10)  // Passes (5 < 10) / 성공
 //
-//   v := validation.New(10, "score")
-//   v.LessThan(10)  // Fails (10 = 10, not <) / 실패
+//	// Exclusive upper bound / 미포함 상한
+//	v := validation.New(5, "score")
+//	v.LessThan(10)  // Passes (5 < 10) / 성공
 //
-//   // Negative validation / 음수 검증
-//   v := validation.New(value, "value")
-//   v.LessThan(0)  // Must be negative
+//	v := validation.New(10, "score")
+//	v.LessThan(10)  // Fails (10 = 10, not <) / 실패
 //
-//   // Open range validation / 열린 범위 검증
-//   v := validation.New(value, "value")
-//   v.GreaterThan(0).LessThan(100)  // 0 < value < 100
+//	// Negative validation / 음수 검증
+//	v := validation.New(value, "value")
+//	v.LessThan(0)  // Must be negative
+//
+//	// Open range validation / 열린 범위 검증
+//	v := validation.New(value, "value")
+//	v.GreaterThan(0).LessThan(100)  // 0 < value < 100
 func (v *Validator) LessThan(value float64) *Validator {
 	return validateNumeric(v, "lessthan", func(n float64) bool {
 		return n < value
@@ -401,20 +406,21 @@ func (v *Validator) LessThan(value float64) *Validator {
 //     최대 경계에는 Max()가 더 관용적
 //
 // Example / 예제:
-//   // Inclusive maximum / 포함 최대값
-//   v := validation.New(10, "score")
-//   v.LessThanOrEqual(10)  // Passes (10 <= 10) / 성공
 //
-//   v := validation.New(11, "score")
-//   v.LessThanOrEqual(10)  // Fails (11 > 10) / 실패
+//	// Inclusive maximum / 포함 최대값
+//	v := validation.New(10, "score")
+//	v.LessThanOrEqual(10)  // Passes (10 <= 10) / 성공
 //
-//   // Maximum age / 최대 나이
-//   v := validation.New(age, "age")
-//   v.LessThanOrEqual(120)  // 120 or younger
+//	v := validation.New(11, "score")
+//	v.LessThanOrEqual(10)  // Fails (11 > 10) / 실패
 //
-//   // Closed range / 닫힌 범위
-//   v := validation.New(value, "value")
-//   v.GreaterThanOrEqual(0).LessThanOrEqual(100)  // 0 <= value <= 100
+//	// Maximum age / 최대 나이
+//	v := validation.New(age, "age")
+//	v.LessThanOrEqual(120)  // 120 or younger
+//
+//	// Closed range / 닫힌 범위
+//	v := validation.New(value, "value")
+//	v.GreaterThanOrEqual(0).LessThanOrEqual(100)  // 0 <= value <= 100
 func (v *Validator) LessThanOrEqual(value float64) *Validator {
 	return validateNumeric(v, "lessthanorequal", func(n float64) bool {
 		return n <= value
@@ -470,24 +476,25 @@ func (v *Validator) LessThanOrEqual(value float64) *Validator {
 //     일관된 비교를 위해 UTC 사용
 //
 // Example / 예제:
-//   // Deadline validation / 마감 검증
-//   deadline := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
-//   v := validation.New(submittedTime, "submitted_at")
-//   v.Before(deadline)  // Must be submitted before deadline
 //
-//   // Past date validation / 과거 날짜 검증
-//   now := time.Now()
-//   v := validation.New(birthDate, "birth_date")
-//   v.Before(now)  // Birth date must be in the past
+//	// Deadline validation / 마감 검증
+//	deadline := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
+//	v := validation.New(submittedTime, "submitted_at")
+//	v.Before(deadline)  // Must be submitted before deadline
 //
-//   // Event scheduling / 이벤트 스케줄링
-//   v := validation.New(startTime, "start_time")
-//   v.Before(endTime)  // Start must be before end
+//	// Past date validation / 과거 날짜 검증
+//	now := time.Now()
+//	v := validation.New(birthDate, "birth_date")
+//	v.Before(now)  // Birth date must be in the past
 //
-//   // Exact time fails / 정확한 시간 실패
-//   now := time.Now()
-//   v := validation.New(now, "time")
-//   v.Before(now)  // Fails (not strictly before)
+//	// Event scheduling / 이벤트 스케줄링
+//	v := validation.New(startTime, "start_time")
+//	v.Before(endTime)  // Start must be before end
+//
+//	// Exact time fails / 정확한 시간 실패
+//	now := time.Now()
+//	v := validation.New(now, "time")
+//	v.Before(now)  // Fails (not strictly before)
 func (v *Validator) Before(t time.Time) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -555,24 +562,25 @@ func (v *Validator) Before(t time.Time) *Validator {
 //     일관된 비교를 위해 UTC 사용
 //
 // Example / 예제:
-//   // Future date validation / 미래 날짜 검증
-//   now := time.Now()
-//   v := validation.New(eventDate, "event_date")
-//   v.After(now)  // Event must be in the future
 //
-//   // Start after reference / 참조 이후 시작
-//   referenceTime := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
-//   v := validation.New(startTime, "start_time")
-//   v.After(referenceTime)
+//	// Future date validation / 미래 날짜 검증
+//	now := time.Now()
+//	v := validation.New(eventDate, "event_date")
+//	v.After(now)  // Event must be in the future
 //
-//   // Event sequence / 이벤트 순서
-//   v := validation.New(endTime, "end_time")
-//   v.After(startTime)  // End must be after start
+//	// Start after reference / 참조 이후 시작
+//	referenceTime := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+//	v := validation.New(startTime, "start_time")
+//	v.After(referenceTime)
 //
-//   // Exact time fails / 정확한 시간 실패
-//   now := time.Now()
-//   v := validation.New(now, "time")
-//   v.After(now)  // Fails (not strictly after)
+//	// Event sequence / 이벤트 순서
+//	v := validation.New(endTime, "end_time")
+//	v.After(startTime)  // End must be after start
+//
+//	// Exact time fails / 정확한 시간 실패
+//	now := time.Now()
+//	v := validation.New(now, "time")
+//	v.After(now)  // Fails (not strictly after)
 func (v *Validator) After(t time.Time) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -633,20 +641,21 @@ func (v *Validator) After(t time.Time) *Validator {
 //     직접 시간 비교
 //
 // Example / 예제:
-//   // Deadline validation (inclusive) / 마감 검증 (포함)
-//   deadline := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
-//   v := validation.New(submittedTime, "submitted_at")
-//   v.BeforeOrEqual(deadline)  // Can submit up to and including deadline
 //
-//   // Current or past date / 현재 또는 과거 날짜
-//   now := time.Now()
-//   v := validation.New(date, "date")
-//   v.BeforeOrEqual(now)  // Can be today or earlier
+//	// Deadline validation (inclusive) / 마감 검증 (포함)
+//	deadline := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
+//	v := validation.New(submittedTime, "submitted_at")
+//	v.BeforeOrEqual(deadline)  // Can submit up to and including deadline
 //
-//   // Exact time passes / 정확한 시간 통과
-//   deadline := time.Now()
-//   v := validation.New(deadline, "time")
-//   v.BeforeOrEqual(deadline)  // Passes (equal allowed)
+//	// Current or past date / 현재 또는 과거 날짜
+//	now := time.Now()
+//	v := validation.New(date, "date")
+//	v.BeforeOrEqual(now)  // Can be today or earlier
+//
+//	// Exact time passes / 정확한 시간 통과
+//	deadline := time.Now()
+//	v := validation.New(deadline, "time")
+//	v.BeforeOrEqual(deadline)  // Passes (equal allowed)
 func (v *Validator) BeforeOrEqual(t time.Time) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -707,20 +716,21 @@ func (v *Validator) BeforeOrEqual(t time.Time) *Validator {
 //     직접 시간 비교
 //
 // Example / 예제:
-//   // Minimum start date / 최소 시작 날짜
-//   minDate := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
-//   v := validation.New(startDate, "start_date")
-//   v.AfterOrEqual(minDate)  // Can start on or after 2024-01-01
 //
-//   // Current or future date / 현재 또는 미래 날짜
-//   now := time.Now()
-//   v := validation.New(eventDate, "event_date")
-//   v.AfterOrEqual(now)  // Can be today or later
+//	// Minimum start date / 최소 시작 날짜
+//	minDate := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+//	v := validation.New(startDate, "start_date")
+//	v.AfterOrEqual(minDate)  // Can start on or after 2024-01-01
 //
-//   // Exact time passes / 정확한 시간 통과
-//   startTime := time.Now()
-//   v := validation.New(startTime, "time")
-//   v.AfterOrEqual(startTime)  // Passes (equal allowed)
+//	// Current or future date / 현재 또는 미래 날짜
+//	now := time.Now()
+//	v := validation.New(eventDate, "event_date")
+//	v.AfterOrEqual(now)  // Can be today or later
+//
+//	// Exact time passes / 정확한 시간 통과
+//	startTime := time.Now()
+//	v := validation.New(startTime, "time")
+//	v.AfterOrEqual(startTime)  // Passes (equal allowed)
 func (v *Validator) AfterOrEqual(t time.Time) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v
@@ -782,26 +792,27 @@ func (v *Validator) AfterOrEqual(t time.Time) *Validator {
 //     두 번의 시간 비교
 //
 // Example / 예제:
-//   // Year 2024 validation / 2024년 검증
-//   start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
-//   end := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
-//   v := validation.New(date, "date")
-//   v.BetweenTime(start, end)  // Must be in 2024
 //
-//   // Business hours (9 AM - 5 PM) / 업무 시간 (오전 9시 - 오후 5시)
-//   start := time.Date(2024, 1, 1, 9, 0, 0, 0, time.Local)
-//   end := time.Date(2024, 1, 1, 17, 0, 0, 0, time.Local)
-//   v := validation.New(appointmentTime, "appointment")
-//   v.BetweenTime(start, end)
+//	// Year 2024 validation / 2024년 검증
+//	start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+//	end := time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC)
+//	v := validation.New(date, "date")
+//	v.BetweenTime(start, end)  // Must be in 2024
 //
-//   // Boundaries included / 경계값 포함
-//   start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
-//   end := time.Date(2024, 1, 31, 0, 0, 0, 0, time.UTC)
-//   v := validation.New(start, "date")
-//   v.BetweenTime(start, end)  // Passes (start included)
+//	// Business hours (9 AM - 5 PM) / 업무 시간 (오전 9시 - 오후 5시)
+//	start := time.Date(2024, 1, 1, 9, 0, 0, 0, time.Local)
+//	end := time.Date(2024, 1, 1, 17, 0, 0, 0, time.Local)
+//	v := validation.New(appointmentTime, "appointment")
+//	v.BetweenTime(start, end)
 //
-//   v := validation.New(end, "date")
-//   v.BetweenTime(start, end)  // Passes (end included)
+//	// Boundaries included / 경계값 포함
+//	start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+//	end := time.Date(2024, 1, 31, 0, 0, 0, 0, time.UTC)
+//	v := validation.New(start, "date")
+//	v.BetweenTime(start, end)  // Passes (start included)
+//
+//	v := validation.New(end, "date")
+//	v.BetweenTime(start, end)  // Passes (end included)
 func (v *Validator) BetweenTime(start, end time.Time) *Validator {
 	if v.stopOnError && len(v.errors) > 0 {
 		return v

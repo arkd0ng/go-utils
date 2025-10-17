@@ -44,22 +44,23 @@ import "fmt"
 //     단순 숫자 비교
 //
 // Example / 예제:
-//   v := validation.New(25, "age")
-//   v.Min(18)  // Passes / 성공
 //
-//   v := validation.New(15, "age")
-//   v.Min(18)  // Fails / 실패
+//	v := validation.New(25, "age")
+//	v.Min(18)  // Passes / 성공
 //
-//   v := validation.New(18, "age")
-//   v.Min(18)  // Passes (inclusive) / 성공 (포함)
+//	v := validation.New(15, "age")
+//	v.Min(18)  // Fails / 실패
 //
-//   // Price validation / 가격 검증
-//   v := validation.New(price, "price")
-//   v.Positive().Min(0.01).Max(99999.99)
+//	v := validation.New(18, "age")
+//	v.Min(18)  // Passes (inclusive) / 성공 (포함)
 //
-//   // Age requirement / 나이 요구사항
-//   v := validation.New(age, "age")
-//   v.Required().Min(18).Max(120)
+//	// Price validation / 가격 검증
+//	v := validation.New(price, "price")
+//	v.Positive().Min(0.01).Max(99999.99)
+//
+//	// Age requirement / 나이 요구사항
+//	v := validation.New(age, "age")
+//	v.Required().Min(18).Max(120)
 func (v *Validator) Min(n float64) *Validator {
 	return validateNumeric(v, "min", func(val float64) bool {
 		return val >= n
@@ -108,22 +109,23 @@ func (v *Validator) Min(n float64) *Validator {
 //     단순 숫자 비교
 //
 // Example / 예제:
-//   v := validation.New(15, "age")
-//   v.Max(18)  // Passes / 성공
 //
-//   v := validation.New(25, "age")
-//   v.Max(18)  // Fails / 실패
+//	v := validation.New(15, "age")
+//	v.Max(18)  // Passes / 성공
 //
-//   v := validation.New(18, "age")
-//   v.Max(18)  // Passes (inclusive) / 성공 (포함)
+//	v := validation.New(25, "age")
+//	v.Max(18)  // Fails / 실패
 //
-//   // Percentage validation / 백분율 검증
-//   v := validation.New(percentage, "discount")
-//   v.Min(0).Max(100)
+//	v := validation.New(18, "age")
+//	v.Max(18)  // Passes (inclusive) / 성공 (포함)
 //
-//   // Rating validation / 평점 검증
-//   v := validation.New(rating, "rating")
-//   v.Positive().Min(1).Max(5)
+//	// Percentage validation / 백분율 검증
+//	v := validation.New(percentage, "discount")
+//	v.Min(0).Max(100)
+//
+//	// Rating validation / 평점 검증
+//	v := validation.New(rating, "rating")
+//	v.Positive().Min(1).Max(5)
 func (v *Validator) Max(n float64) *Validator {
 	return validateNumeric(v, "max", func(val float64) bool {
 		return val <= n
@@ -173,29 +175,30 @@ func (v *Validator) Max(n float64) *Validator {
 //     두 개의 숫자 비교
 //
 // Example / 예제:
-//   v := validation.New(25, "age")
-//   v.Between(18, 65)  // Passes / 성공
 //
-//   v := validation.New(10, "age")
-//   v.Between(18, 65)  // Fails (< min) / 실패 (최소값 미만)
+//	v := validation.New(25, "age")
+//	v.Between(18, 65)  // Passes / 성공
 //
-//   v := validation.New(70, "age")
-//   v.Between(18, 65)  // Fails (> max) / 실패 (최대값 초과)
+//	v := validation.New(10, "age")
+//	v.Between(18, 65)  // Fails (< min) / 실패 (최소값 미만)
 //
-//   v := validation.New(18, "age")
-//   v.Between(18, 65)  // Passes (boundary) / 성공 (경계값)
+//	v := validation.New(70, "age")
+//	v.Between(18, 65)  // Fails (> max) / 실패 (최대값 초과)
 //
-//   // Percentage validation / 백분율 검증
-//   v := validation.New(percentage, "discount")
-//   v.Between(0, 100)
+//	v := validation.New(18, "age")
+//	v.Between(18, 65)  // Passes (boundary) / 성공 (경계값)
 //
-//   // Rating validation / 평점 검증
-//   v := validation.New(rating, "rating")
-//   v.Between(1, 5)
+//	// Percentage validation / 백분율 검증
+//	v := validation.New(percentage, "discount")
+//	v.Between(0, 100)
 //
-//   // Temperature range / 온도 범위
-//   v := validation.New(temp, "temperature")
-//   v.Between(-20, 50)
+//	// Rating validation / 평점 검증
+//	v := validation.New(rating, "rating")
+//	v.Between(1, 5)
+//
+//	// Temperature range / 온도 범위
+//	v := validation.New(temp, "temperature")
+//	v.Between(-20, 50)
 func (v *Validator) Between(min, max float64) *Validator {
 	return validateNumeric(v, "between", func(val float64) bool {
 		return val >= min && val <= max
@@ -240,25 +243,26 @@ func (v *Validator) Between(min, max float64) *Validator {
 //     단일 숫자 비교
 //
 // Example / 예제:
-//   v := validation.New(10, "price")
-//   v.Positive()  // Passes / 성공
 //
-//   v := validation.New(0, "price")
-//   v.Positive()  // Fails (zero not positive) / 실패 (0은 양수 아님)
+//	v := validation.New(10, "price")
+//	v.Positive()  // Passes / 성공
 //
-//   v := validation.New(-5, "price")
-//   v.Positive()  // Fails / 실패
+//	v := validation.New(0, "price")
+//	v.Positive()  // Fails (zero not positive) / 실패 (0은 양수 아님)
 //
-//   v := validation.New(0.01, "amount")
-//   v.Positive()  // Passes / 성공
+//	v := validation.New(-5, "price")
+//	v.Positive()  // Fails / 실패
 //
-//   // Product price / 제품 가격
-//   v := validation.New(price, "price")
-//   v.Required().Positive().Max(999999.99)
+//	v := validation.New(0.01, "amount")
+//	v.Positive()  // Passes / 성공
 //
-//   // Quantity / 수량
-//   v := validation.New(quantity, "quantity")
-//   v.Positive().Min(1).Max(1000)
+//	// Product price / 제품 가격
+//	v := validation.New(price, "price")
+//	v.Required().Positive().Max(999999.99)
+//
+//	// Quantity / 수량
+//	v := validation.New(quantity, "quantity")
+//	v.Positive().Min(1).Max(1000)
 func (v *Validator) Positive() *Validator {
 	return validateNumeric(v, "positive", func(val float64) bool {
 		return val > 0
@@ -303,25 +307,26 @@ func (v *Validator) Positive() *Validator {
 //     단일 숫자 비교
 //
 // Example / 예제:
-//   v := validation.New(-10, "loss")
-//   v.Negative()  // Passes / 성공
 //
-//   v := validation.New(0, "loss")
-//   v.Negative()  // Fails (zero not negative) / 실패 (0은 음수 아님)
+//	v := validation.New(-10, "loss")
+//	v.Negative()  // Passes / 성공
 //
-//   v := validation.New(5, "loss")
-//   v.Negative()  // Fails / 실패
+//	v := validation.New(0, "loss")
+//	v.Negative()  // Fails (zero not negative) / 실패 (0은 음수 아님)
 //
-//   v := validation.New(-0.01, "adjustment")
-//   v.Negative()  // Passes / 성공
+//	v := validation.New(5, "loss")
+//	v.Negative()  // Fails / 실패
 //
-//   // Financial loss / 재무 손실
-//   v := validation.New(loss, "loss")
-//   v.Negative().Max(-0.01)
+//	v := validation.New(-0.01, "adjustment")
+//	v.Negative()  // Passes / 성공
 //
-//   // Temperature below freezing / 빙점 이하 온도
-//   v := validation.New(temp, "temperature")
-//   v.Negative().Between(-50, -0.01)
+//	// Financial loss / 재무 손실
+//	v := validation.New(loss, "loss")
+//	v.Negative().Max(-0.01)
+//
+//	// Temperature below freezing / 빙점 이하 온도
+//	v := validation.New(temp, "temperature")
+//	v.Negative().Between(-50, -0.01)
 func (v *Validator) Negative() *Validator {
 	return validateNumeric(v, "negative", func(val float64) bool {
 		return val < 0
@@ -373,25 +378,26 @@ func (v *Validator) Negative() *Validator {
 //     부동 소수점의 경우 Between(-0.0001, 0.0001) 고려
 //
 // Example / 예제:
-//   v := validation.New(0, "counter")
-//   v.Zero()  // Passes / 성공
 //
-//   v := validation.New(1, "counter")
-//   v.Zero()  // Fails / 실패
+//	v := validation.New(0, "counter")
+//	v.Zero()  // Passes / 성공
 //
-//   v := validation.New(-1, "counter")
-//   v.Zero()  // Fails / 실패
+//	v := validation.New(1, "counter")
+//	v.Zero()  // Fails / 실패
 //
-//   v := validation.New(0.0, "balance")
-//   v.Zero()  // Passes / 성공
+//	v := validation.New(-1, "counter")
+//	v.Zero()  // Fails / 실패
 //
-//   // Balance verification / 잔액 확인
-//   v := validation.New(balance, "balance")
-//   v.Zero() // Must be settled
+//	v := validation.New(0.0, "balance")
+//	v.Zero()  // Passes / 성공
 //
-//   // Counter reset / 카운터 초기화
-//   v := validation.New(counter, "counter")
-//   v.Zero() // Must be reset
+//	// Balance verification / 잔액 확인
+//	v := validation.New(balance, "balance")
+//	v.Zero() // Must be settled
+//
+//	// Counter reset / 카운터 초기화
+//	v := validation.New(counter, "counter")
+//	v.Zero() // Must be reset
 func (v *Validator) Zero() *Validator {
 	return validateNumeric(v, "zero", func(val float64) bool {
 		return val == 0
@@ -435,25 +441,26 @@ func (v *Validator) Zero() *Validator {
 //     단일 숫자 비교
 //
 // Example / 예제:
-//   v := validation.New(10, "divisor")
-//   v.NonZero()  // Passes / 성공
 //
-//   v := validation.New(-5, "divisor")
-//   v.NonZero()  // Passes / 성공
+//	v := validation.New(10, "divisor")
+//	v.NonZero()  // Passes / 성공
 //
-//   v := validation.New(0, "divisor")
-//   v.NonZero()  // Fails / 실패
+//	v := validation.New(-5, "divisor")
+//	v.NonZero()  // Passes / 성공
 //
-//   v := validation.New(0.001, "factor")
-//   v.NonZero()  // Passes / 성공
+//	v := validation.New(0, "divisor")
+//	v.NonZero()  // Fails / 실패
 //
-//   // Division safety / 나누기 안전성
-//   v := validation.New(divisor, "divisor")
-//   v.NonZero() // Prevent division by zero
+//	v := validation.New(0.001, "factor")
+//	v.NonZero()  // Passes / 성공
 //
-//   // Quantity must be set / 수량 설정 필수
-//   v := validation.New(quantity, "quantity")
-//   v.NonZero().Positive()
+//	// Division safety / 나누기 안전성
+//	v := validation.New(divisor, "divisor")
+//	v.NonZero() // Prevent division by zero
+//
+//	// Quantity must be set / 수량 설정 필수
+//	v := validation.New(quantity, "quantity")
+//	v.NonZero().Positive()
 func (v *Validator) NonZero() *Validator {
 	return validateNumeric(v, "nonzero", func(val float64) bool {
 		return val != 0
@@ -508,24 +515,25 @@ func (v *Validator) NonZero() *Validator {
 //     정확한 정수 검사를 위해 정수 타입 사용
 //
 // Example / 예제:
-//   v := validation.New(4, "value")
-//   v.Even()  // Passes / 성공
 //
-//   v := validation.New(3, "value")
-//   v.Even()  // Fails / 실패
+//	v := validation.New(4, "value")
+//	v.Even()  // Passes / 성공
 //
-//   v := validation.New(0, "value")
-//   v.Even()  // Passes (zero is even) / 성공 (0은 짝수)
+//	v := validation.New(3, "value")
+//	v.Even()  // Fails / 실패
 //
-//   v := validation.New(-2, "value")
-//   v.Even()  // Passes / 성공
+//	v := validation.New(0, "value")
+//	v.Even()  // Passes (zero is even) / 성공 (0은 짝수)
 //
-//   v := validation.New(2.9, "value")
-//   v.Even()  // Passes (truncated to 2) / 성공 (2로 버림)
+//	v := validation.New(-2, "value")
+//	v.Even()  // Passes / 성공
 //
-//   // Pair validation / 쌍 검증
-//   v := validation.New(count, "pair_count")
-//   v.Positive().Even()
+//	v := validation.New(2.9, "value")
+//	v.Even()  // Passes (truncated to 2) / 성공 (2로 버림)
+//
+//	// Pair validation / 쌍 검증
+//	v := validation.New(count, "pair_count")
+//	v.Positive().Even()
 func (v *Validator) Even() *Validator {
 	return validateNumeric(v, "even", func(val float64) bool {
 		return int(val)%2 == 0
@@ -581,24 +589,25 @@ func (v *Validator) Even() *Validator {
 //     정확한 정수 검사를 위해 정수 타입 사용
 //
 // Example / 예제:
-//   v := validation.New(3, "value")
-//   v.Odd()  // Passes / 성공
 //
-//   v := validation.New(4, "value")
-//   v.Odd()  // Fails / 실패
+//	v := validation.New(3, "value")
+//	v.Odd()  // Passes / 성공
 //
-//   v := validation.New(0, "value")
-//   v.Odd()  // Fails (zero is even) / 실패 (0은 짝수)
+//	v := validation.New(4, "value")
+//	v.Odd()  // Fails / 실패
 //
-//   v := validation.New(-3, "value")
-//   v.Odd()  // Passes / 성공
+//	v := validation.New(0, "value")
+//	v.Odd()  // Fails (zero is even) / 실패 (0은 짝수)
 //
-//   v := validation.New(3.9, "value")
-//   v.Odd()  // Passes (truncated to 3) / 성공 (3으로 버림)
+//	v := validation.New(-3, "value")
+//	v.Odd()  // Passes / 성공
 //
-//   // Page number validation / 페이지 번호 검증
-//   v := validation.New(page, "page")
-//   v.Positive().Odd()
+//	v := validation.New(3.9, "value")
+//	v.Odd()  // Passes (truncated to 3) / 성공 (3으로 버림)
+//
+//	// Page number validation / 페이지 번호 검증
+//	v := validation.New(page, "page")
+//	v.Positive().Odd()
 func (v *Validator) Odd() *Validator {
 	return validateNumeric(v, "odd", func(val float64) bool {
 		return int(val)%2 != 0
@@ -658,28 +667,29 @@ func (v *Validator) Odd() *Validator {
 //     n = 0은 항상 false 반환 (0으로 나누기 없음)
 //
 // Example / 예제:
-//   v := validation.New(10, "quantity")
-//   v.MultipleOf(5)  // Passes (10 = 5 * 2) / 성공
 //
-//   v := validation.New(12, "quantity")
-//   v.MultipleOf(5)  // Fails / 실패
+//	v := validation.New(10, "quantity")
+//	v.MultipleOf(5)  // Passes (10 = 5 * 2) / 성공
 //
-//   v := validation.New(0, "value")
-//   v.MultipleOf(5)  // Passes (0 = 5 * 0) / 성공
+//	v := validation.New(12, "quantity")
+//	v.MultipleOf(5)  // Fails / 실패
 //
-//   v := validation.New(15, "minutes")
-//   v.MultipleOf(15)  // Passes / 성공
+//	v := validation.New(0, "value")
+//	v.MultipleOf(5)  // Passes (0 = 5 * 0) / 성공
 //
-//   v := validation.New(10, "value")
-//   v.MultipleOf(0)  // Fails (division by zero) / 실패 (0으로 나누기)
+//	v := validation.New(15, "minutes")
+//	v.MultipleOf(15)  // Passes / 성공
 //
-//   // Batch size / 배치 크기
-//   v := validation.New(quantity, "batch_size")
-//   v.Positive().MultipleOf(100)
+//	v := validation.New(10, "value")
+//	v.MultipleOf(0)  // Fails (division by zero) / 실패 (0으로 나누기)
 //
-//   // Time interval in minutes / 분 단위 시간 간격
-//   v := validation.New(minutes, "interval")
-//   v.Between(0, 60).MultipleOf(5)
+//	// Batch size / 배치 크기
+//	v := validation.New(quantity, "batch_size")
+//	v.Positive().MultipleOf(100)
+//
+//	// Time interval in minutes / 분 단위 시간 간격
+//	v := validation.New(minutes, "interval")
+//	v.Between(0, 60).MultipleOf(5)
 func (v *Validator) MultipleOf(n float64) *Validator {
 	return validateNumeric(v, "multipleof", func(val float64) bool {
 		if n == 0 {

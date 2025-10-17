@@ -13,8 +13,9 @@ import "github.com/arkd0ng/go-utils/internal/version"
 //     시맨틱 버저닝: "v1.13.x"
 //
 // Usage / 사용법:
-//   version := validation.Version
-//   fmt.Printf("Validation package version: %s\n", version)
+//
+//	version := validation.Version
+//	fmt.Printf("Validation package version: %s\n", version)
 //
 // Thread Safety / 스레드 안전성:
 //   - Thread-safe: Read-only variable
