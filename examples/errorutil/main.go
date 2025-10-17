@@ -35,44 +35,20 @@ func main() {
 	printBanner(logger)
 
 	// Run all examples / 모든 예제 실행
-	fmt.Println("Example 1: Basic Error Creation / 기본 에러 생성")
 	example1BasicErrorCreation(logger)
-
-	fmt.Println("\nExample 2: Errors with String Codes / 문자열 코드가 있는 에러")
 	example2StringCodedErrors(logger)
-
-	fmt.Println("\nExample 3: Errors with Numeric Codes / 숫자 코드가 있는 에러")
 	example3NumericCodedErrors(logger)
-
-	fmt.Println("\nExample 4: Error Wrapping / 에러 래핑")
 	example4ErrorWrapping(logger)
-
-	fmt.Println("\nExample 5: Error Chain Walking / 에러 체인 탐색")
 	example5ErrorChainWalking(logger)
-
-	fmt.Println("\nExample 6: Error Inspection / 에러 검사")
 	example6ErrorInspection(logger)
-
-	fmt.Println("\nExample 7: HTTP API Error Handling / HTTP API 에러 처리")
 	example7HTTPAPIErrors(logger)
-
-	fmt.Println("\nExample 8: Database Error Patterns / 데이터베이스 에러 패턴")
 	example8DatabaseErrors(logger)
-
-	fmt.Println("\nExample 9: Validation Error Patterns / 검증 에러 패턴")
 	example9ValidationErrors(logger)
-
-	fmt.Println("\nExample 10: Error Classification System / 에러 분류 시스템")
 	example10ErrorClassification(logger)
-
-	fmt.Println("\nExample 11: Multi-Layer Error Wrapping / 다중 레이어 에러 래핑")
 	example11MultiLayerWrapping(logger)
-
-	fmt.Println("\nExample 12: Standard Library Compatibility / 표준 라이브러리 호환성")
 	example12StandardLibraryCompat(logger)
 
 	// Print footer / 푸터 출력
-	fmt.Println("\n=== All Examples Completed / 모든 예제 완료 ===")
 	logger.Info("===========================================")
 	logger.Info("All errorutil examples completed successfully")
 	logger.Info("모든 errorutil 예제가 성공적으로 완료되었습니다")
@@ -141,6 +117,7 @@ func initLogger() *logging.Logger {
 		logging.WithMaxBackups(5),  // Keep 5 backups / 백업 5개 유지
 		logging.WithMaxAge(30),     // 30 days / 30일
 		logging.WithCompress(true), // Compress old logs / 오래된 로그 압축
+		logging.WithStdout(true),   // Enable console output / 콘솔 출력 활성화
 	)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to initialize logger: %v\n", err)
@@ -153,12 +130,18 @@ func initLogger() *logging.Logger {
 // printBanner prints the example banner
 // printBanner는 예제 배너를 출력합니다
 func printBanner(logger *logging.Logger) {
-	banner := `
+	// Load version dynamically from cfg/app.yaml / cfg/app.yaml에서 동적으로 버전 로드
+	version := logging.TryLoadAppVersion()
+	if version == "" {
+		version = "unknown" // Fallback if yaml not found / yaml을 찾지 못한 경우 대체값
+	}
+
+	banner := fmt.Sprintf(`
 ===========================================
    errorutil Package Examples
    errorutil 패키지 예제
 ===========================================
-Version: v1.12.013
+Version: %s
 Package: github.com/arkd0ng/go-utils/errorutil
 
 This example demonstrates:
@@ -168,14 +151,14 @@ This example demonstrates:
 - Error inspection / 에러 검사
 - Real-world patterns / 실제 패턴
 ===========================================
-`
+`, version)
 	fmt.Println(banner)
 
 	logger.Info("===========================================")
 	logger.Info("Starting errorutil Package Examples")
 	logger.Info("errorutil 패키지 예제 시작")
 	logger.Info("===========================================")
-	logger.Info("Version", "version", "v1.12.013")
+	logger.Info("Version", "version", version)
 	logger.Info("Package", "package", "github.com/arkd0ng/go-utils/errorutil")
 }
 
@@ -192,7 +175,6 @@ func example1BasicErrorCreation(logger *logging.Logger) {
 	err1 := errorutil.New("something went wrong")
 	logger.Info("Error created", "error", err1.Error(), "type", fmt.Sprintf("%T", err1))
 	logger.Info("에러 생성됨", "error", err1.Error(), "type", fmt.Sprintf("%T", err1))
-	fmt.Printf("  ✅ New(): %v\n", err1)
 
 	// Newf - Create formatted error / Newf - 포맷된 에러 생성
 	logger.Info("Creating formatted error with Newf()")
@@ -201,7 +183,6 @@ func example1BasicErrorCreation(logger *logging.Logger) {
 	err2 := errorutil.Newf("user %d not found", userID)
 	logger.Info("Formatted error created", "error", err2.Error(), "userID", userID)
 	logger.Info("포맷된 에러 생성됨", "error", err2.Error(), "userID", userID)
-	fmt.Printf("  ✅ Newf(): %v\n", err2)
 
 	logger.Info("Example 1 completed successfully")
 	logger.Info("예제 1 완료")
@@ -220,7 +201,6 @@ func example2StringCodedErrors(logger *logging.Logger) {
 	err1 := errorutil.WithCode("VALIDATION_ERROR", "invalid email format")
 	logger.Info("Coded error created", "code", "VALIDATION_ERROR", "error", err1.Error())
 	logger.Info("코드가 있는 에러 생성됨", "code", "VALIDATION_ERROR", "error", err1.Error())
-	fmt.Printf("  ✅ WithCode(): %v\n", err1)
 
 	// WithCodef - Create formatted error with code / WithCodef - 코드와 포맷된 에러 생성
 	logger.Info("Creating formatted error with code using WithCodef()")
@@ -229,7 +209,6 @@ func example2StringCodedErrors(logger *logging.Logger) {
 	err2 := errorutil.WithCodef("VALIDATION_ERROR", "field %s is required", field)
 	logger.Info("Formatted coded error created", "code", "VALIDATION_ERROR", "field", field, "error", err2.Error())
 	logger.Info("코드와 포맷된 에러 생성됨", "code", "VALIDATION_ERROR", "field", field, "error", err2.Error())
-	fmt.Printf("  ✅ WithCodef(): %v\n", err2)
 
 	// Check if error has code / 에러가 코드를 가지는지 확인
 	logger.Info("Checking if error has code using HasCode()")
@@ -237,7 +216,6 @@ func example2StringCodedErrors(logger *logging.Logger) {
 	hasCode := errorutil.HasCode(err1, "VALIDATION_ERROR")
 	logger.Info("Code check result", "hasCode", hasCode, "code", "VALIDATION_ERROR")
 	logger.Info("코드 확인 결과", "hasCode", hasCode, "code", "VALIDATION_ERROR")
-	fmt.Printf("  ✅ HasCode(err1, 'VALIDATION_ERROR'): %v\n", hasCode)
 
 	logger.Info("Example 2 completed successfully")
 	logger.Info("예제 2 완료")
@@ -256,7 +234,6 @@ func example3NumericCodedErrors(logger *logging.Logger) {
 	err1 := errorutil.WithNumericCode(404, "resource not found")
 	logger.Info("Numeric coded error created", "code", 404, "error", err1.Error())
 	logger.Info("숫자 코드 에러 생성됨", "code", 404, "error", err1.Error())
-	fmt.Printf("  ✅ WithNumericCode(404): %v\n", err1)
 
 	// WithNumericCodef - Create formatted error with numeric code / WithNumericCodef - 숫자 코드와 포맷된 에러 생성
 	logger.Info("Creating formatted error with numeric code using WithNumericCodef()")
@@ -265,7 +242,6 @@ func example3NumericCodedErrors(logger *logging.Logger) {
 	err2 := errorutil.WithNumericCodef(404, "resource %s not found", resourceID)
 	logger.Info("Formatted numeric coded error created", "code", 404, "resourceID", resourceID, "error", err2.Error())
 	logger.Info("숫자 코드와 포맷된 에러 생성됨", "code", 404, "resourceID", resourceID, "error", err2.Error())
-	fmt.Printf("  ✅ WithNumericCodef(404): %v\n", err2)
 
 	// Get numeric code from error / 에러에서 숫자 코드 가져오기
 	logger.Info("Extracting numeric code using GetNumericCode()")
@@ -273,7 +249,6 @@ func example3NumericCodedErrors(logger *logging.Logger) {
 	code, ok := errorutil.GetNumericCode(err1)
 	logger.Info("Code extraction result", "code", code, "found", ok)
 	logger.Info("코드 추출 결과", "code", code, "found", ok)
-	fmt.Printf("  ✅ GetNumericCode(err1): code=%d, found=%v\n", code, ok)
 
 	logger.Info("Example 3 completed successfully")
 	logger.Info("예제 3 완료")
@@ -292,7 +267,6 @@ func example4ErrorWrapping(logger *logging.Logger) {
 	originalErr := errorutil.WithCode("DB_ERROR", "connection timeout")
 	logger.Info("Original error created", "error", originalErr.Error())
 	logger.Info("원본 에러 생성됨", "error", originalErr.Error())
-	fmt.Printf("  Original: %v\n", originalErr)
 
 	// Wrap with additional context / 추가 컨텍스트와 함께 래핑
 	logger.Info("Step 2: Wrap with additional context using Wrap()")
@@ -300,7 +274,6 @@ func example4ErrorWrapping(logger *logging.Logger) {
 	wrappedErr := errorutil.Wrap(originalErr, "failed to save user")
 	logger.Info("Error wrapped", "error", wrappedErr.Error())
 	logger.Info("에러 래핑됨", "error", wrappedErr.Error())
-	fmt.Printf("  Wrapped: %v\n", wrappedErr)
 
 	// Verify original code is preserved / 원본 코드가 보존되었는지 확인
 	logger.Info("Step 3: Verify original code is preserved")
@@ -308,7 +281,6 @@ func example4ErrorWrapping(logger *logging.Logger) {
 	hasCode := errorutil.HasCode(wrappedErr, "DB_ERROR")
 	logger.Info("Code preservation check", "hasCode", hasCode, "code", "DB_ERROR")
 	logger.Info("코드 보존 확인", "hasCode", hasCode, "code", "DB_ERROR")
-	fmt.Printf("  ✅ Original code preserved: %v\n", hasCode)
 
 	// Wrapf with formatted message / 포맷된 메시지로 래핑
 	logger.Info("Step 4: Wrap with formatted message using Wrapf()")
@@ -317,7 +289,6 @@ func example4ErrorWrapping(logger *logging.Logger) {
 	wrappedErr2 := errorutil.Wrapf(originalErr, "failed to save user %d", userID)
 	logger.Info("Error wrapped with formatted message", "userID", userID, "error", wrappedErr2.Error())
 	logger.Info("포맷된 메시지로 에러 래핑됨", "userID", userID, "error", wrappedErr2.Error())
-	fmt.Printf("  Wrapf: %v\n", wrappedErr2)
 
 	logger.Info("Example 4 completed successfully")
 	logger.Info("예제 4 완료")
@@ -352,8 +323,6 @@ func example5ErrorChainWalking(logger *logging.Logger) {
 	logger.Info("Service error", "layer", 3, "error", err3.Error())
 	logger.Info("서비스 에러", "layer", 3, "error", err3.Error())
 
-	fmt.Printf("  Error chain:\n")
-	fmt.Printf("    Layer 3 (Service): %v\n", err3)
 
 	// Walk the chain to find the code / 체인을 탐색하여 코드 찾기
 	logger.Info("Walking chain to find original code")
@@ -361,7 +330,6 @@ func example5ErrorChainWalking(logger *logging.Logger) {
 	hasCode := errorutil.HasCode(err3, "DB_TIMEOUT")
 	logger.Info("Code found in chain", "hasCode", hasCode, "code", "DB_TIMEOUT")
 	logger.Info("체인에서 코드 찾음", "hasCode", hasCode, "code", "DB_TIMEOUT")
-	fmt.Printf("  ✅ Code 'DB_TIMEOUT' found through 3 layers: %v\n", hasCode)
 
 	logger.Info("Example 5 completed successfully")
 	logger.Info("예제 5 완료")
@@ -388,7 +356,6 @@ func example6ErrorInspection(logger *logging.Logger) {
 	has := errorutil.HasCode(err1, "AUTH_FAILED")
 	logger.Info("String code check", "code", "AUTH_FAILED", "found", has)
 	logger.Info("문자열 코드 확인", "code", "AUTH_FAILED", "found", has)
-	fmt.Printf("  HasCode(err1, 'AUTH_FAILED'): %v\n", has)
 
 	// HasNumericCode - Check for numeric code / HasNumericCode - 숫자 코드 확인
 	logger.Info("Checking for numeric code using HasNumericCode()")
@@ -396,7 +363,6 @@ func example6ErrorInspection(logger *logging.Logger) {
 	hasNum := errorutil.HasNumericCode(err2, 403)
 	logger.Info("Numeric code check", "code", 403, "found", hasNum)
 	logger.Info("숫자 코드 확인", "code", 403, "found", hasNum)
-	fmt.Printf("  HasNumericCode(err2, 403): %v\n", hasNum)
 
 	// GetCode - Extract string code / GetCode - 문자열 코드 추출
 	logger.Info("Extracting string code using GetCode()")
@@ -404,7 +370,6 @@ func example6ErrorInspection(logger *logging.Logger) {
 	code, ok := errorutil.GetCode(err1)
 	logger.Info("String code extraction", "code", code, "found", ok)
 	logger.Info("문자열 코드 추출", "code", code, "found", ok)
-	fmt.Printf("  GetCode(err1): code='%s', found=%v\n", code, ok)
 
 	// GetNumericCode - Extract numeric code / GetNumericCode - 숫자 코드 추출
 	logger.Info("Extracting numeric code using GetNumericCode()")
@@ -412,7 +377,6 @@ func example6ErrorInspection(logger *logging.Logger) {
 	numCode, okNum := errorutil.GetNumericCode(err2)
 	logger.Info("Numeric code extraction", "code", numCode, "found", okNum)
 	logger.Info("숫자 코드 추출", "code", numCode, "found", okNum)
-	fmt.Printf("  GetNumericCode(err2): code=%d, found=%v\n", numCode, okNum)
 
 	logger.Info("Example 6 completed successfully")
 	logger.Info("예제 6 완료")
@@ -434,12 +398,10 @@ func example7HTTPAPIErrors(logger *logging.Logger) {
 	err404 := errorutil.WithNumericCode(404, "user not found")
 	logger.Info("404 error created", "code", 404, "error", err404.Error())
 	logger.Info("404 에러 생성됨", "code", 404, "error", err404.Error())
-	fmt.Printf("  404 Not Found: %v\n", err404)
 
 	if errorutil.HasNumericCode(err404, 404) {
 		logger.Info("Would return HTTP 404 response")
 		logger.Info("HTTP 404 응답 반환할 것임")
-		fmt.Printf("    ✅ Would return HTTP 404\n")
 	}
 
 	// 500 Internal Server Error / 500 내부 서버 에러
@@ -449,12 +411,10 @@ func example7HTTPAPIErrors(logger *logging.Logger) {
 	err500 := errorutil.WrapWithNumericCode(dbErr, 500, "internal server error")
 	logger.Info("500 error created", "code", 500, "underlyingCode", "DB_ERROR", "error", err500.Error())
 	logger.Info("500 에러 생성됨", "code", 500, "underlyingCode", "DB_ERROR", "error", err500.Error())
-	fmt.Printf("  500 Internal Server Error: %v\n", err500)
 
 	if errorutil.HasNumericCode(err500, 500) {
 		logger.Info("Would return HTTP 500 response")
 		logger.Info("HTTP 500 응답 반환할 것임")
-		fmt.Printf("    ✅ Would return HTTP 500\n")
 	}
 
 	// 401 Unauthorized / 401 인증 필요
@@ -463,7 +423,6 @@ func example7HTTPAPIErrors(logger *logging.Logger) {
 	err401 := errorutil.WithNumericCode(401, "invalid credentials")
 	logger.Info("401 error created", "code", 401, "error", err401.Error())
 	logger.Info("401 에러 생성됨", "code", 401, "error", err401.Error())
-	fmt.Printf("  401 Unauthorized: %v\n", err401)
 
 	logger.Info("Example 7 completed successfully")
 	logger.Info("예제 7 완료")
@@ -486,7 +445,6 @@ func example8DatabaseErrors(logger *logging.Logger) {
 	wrappedConnErr := errorutil.Wrap(connErr, "failed to connect to database")
 	logger.Info("Connection error", "code", "DB_CONN_TIMEOUT", "error", wrappedConnErr.Error())
 	logger.Info("연결 에러", "code", "DB_CONN_TIMEOUT", "error", wrappedConnErr.Error())
-	fmt.Printf("  Connection Error: %v\n", wrappedConnErr)
 
 	// Query error / 쿼리 에러
 	logger.Info("Scenario 2: SQL query error")
@@ -495,7 +453,6 @@ func example8DatabaseErrors(logger *logging.Logger) {
 	wrappedQueryErr := errorutil.Wrapf(queryErr, "failed to execute query: %s", "SELECT * FORM users")
 	logger.Info("Query error", "code", "DB_QUERY_ERROR", "error", wrappedQueryErr.Error())
 	logger.Info("쿼리 에러", "code", "DB_QUERY_ERROR", "error", wrappedQueryErr.Error())
-	fmt.Printf("  Query Error: %v\n", wrappedQueryErr)
 
 	// Not found error / 찾을 수 없음 에러
 	logger.Info("Scenario 3: Record not found")
@@ -504,7 +461,6 @@ func example8DatabaseErrors(logger *logging.Logger) {
 	wrappedNotFoundErr := errorutil.Wrapf(notFoundErr, "user %d not found", 999)
 	logger.Info("Not found error", "code", 404, "userID", 999, "error", wrappedNotFoundErr.Error())
 	logger.Info("찾을 수 없음 에러", "code", 404, "userID", 999, "error", wrappedNotFoundErr.Error())
-	fmt.Printf("  Not Found: %v\n", wrappedNotFoundErr)
 
 	logger.Info("Example 8 completed successfully")
 	logger.Info("예제 8 완료")
@@ -526,7 +482,6 @@ func example9ValidationErrors(logger *logging.Logger) {
 	err1 := errorutil.WithCode("VALIDATION_ERROR", "email is required")
 	logger.Info("Required field error", "code", "VALIDATION_ERROR", "field", "email", "error", err1.Error())
 	logger.Info("필수 필드 에러", "code", "VALIDATION_ERROR", "field", "email", "error", err1.Error())
-	fmt.Printf("  Required Field: %v\n", err1)
 
 	// Format validation / 형식 검증
 	logger.Info("Scenario 2: Invalid format")
@@ -534,7 +489,6 @@ func example9ValidationErrors(logger *logging.Logger) {
 	err2 := errorutil.WithCodef("VALIDATION_ERROR", "invalid email format: %s", "notanemail")
 	logger.Info("Format validation error", "code", "VALIDATION_ERROR", "input", "notanemail", "error", err2.Error())
 	logger.Info("형식 검증 에러", "code", "VALIDATION_ERROR", "input", "notanemail", "error", err2.Error())
-	fmt.Printf("  Invalid Format: %v\n", err2)
 
 	// Range validation / 범위 검증
 	logger.Info("Scenario 3: Value out of range")
@@ -542,7 +496,6 @@ func example9ValidationErrors(logger *logging.Logger) {
 	err3 := errorutil.WithCodef("VALIDATION_ERROR", "age must be between 18 and 120, got %d", 150)
 	logger.Info("Range validation error", "code", "VALIDATION_ERROR", "value", 150, "error", err3.Error())
 	logger.Info("범위 검증 에러", "code", "VALIDATION_ERROR", "value", 150, "error", err3.Error())
-	fmt.Printf("  Out of Range: %v\n", err3)
 
 	logger.Info("Example 9 completed successfully")
 	logger.Info("예제 9 완료")
@@ -570,7 +523,6 @@ func example10ErrorClassification(logger *logging.Logger) {
 	logger.Info("Classifying errors", "count", len(errors))
 	logger.Info("에러 분류 중", "count", len(errors))
 
-	fmt.Printf("  Error Classification:\n")
 
 	for i, err := range errors {
 		logger.Info("Processing error", "index", i+1, "error", err.Error())
@@ -580,7 +532,6 @@ func example10ErrorClassification(logger *logging.Logger) {
 		if code, ok := errorutil.GetCode(err); ok {
 			logger.Info("String code found", "code", code)
 			logger.Info("문자열 코드 찾음", "code", code)
-			fmt.Printf("    [%d] String Code: %s - %v\n", i+1, code, err)
 
 			switch code {
 			case "VALIDATION_ERROR":
@@ -600,7 +551,6 @@ func example10ErrorClassification(logger *logging.Logger) {
 		if numCode, ok := errorutil.GetNumericCode(err); ok {
 			logger.Info("Numeric code found", "code", numCode)
 			logger.Info("숫자 코드 찾음", "code", numCode)
-			fmt.Printf("    [%d] Numeric Code: %d - %v\n", i+1, numCode, err)
 
 			if numCode >= 400 && numCode < 500 {
 				logger.Info("Classification: Client error (HTTP)")
@@ -654,8 +604,6 @@ func example11MultiLayerWrapping(logger *logging.Logger) {
 	logger.Info("HTTP error", "layer", "http", "code", 503, "error", httpErr.Error())
 	logger.Info("HTTP 에러", "layer", "http", "code", 503, "error", httpErr.Error())
 
-	fmt.Printf("  Final error chain:\n")
-	fmt.Printf("    %v\n", httpErr)
 
 	// Verify all codes are accessible / 모든 코드에 접근 가능한지 확인
 	logger.Info("Verifying code accessibility through chain")
@@ -668,9 +616,6 @@ func example11MultiLayerWrapping(logger *logging.Logger) {
 	logger.Info("Code accessibility", "DB_TIMEOUT", hasDBTimeout, "REPO_ERROR", hasRepoError, "503", has503)
 	logger.Info("코드 접근성", "DB_TIMEOUT", hasDBTimeout, "REPO_ERROR", hasRepoError, "503", has503)
 
-	fmt.Printf("  ✅ DB_TIMEOUT accessible: %v\n", hasDBTimeout)
-	fmt.Printf("  ✅ REPO_ERROR accessible: %v\n", hasRepoError)
-	fmt.Printf("  ✅ HTTP 503 accessible: %v\n", has503)
 
 	logger.Info("Example 11 completed successfully")
 	logger.Info("예제 11 완료")
@@ -704,7 +649,6 @@ func example12StandardLibraryCompat(logger *logging.Logger) {
 	isNotFound := errors.Is(err, ErrNotFound)
 	logger.Info("errors.Is result", "isNotFound", isNotFound)
 	logger.Info("errors.Is 결과", "isNotFound", isNotFound)
-	fmt.Printf("  ✅ errors.Is(err, ErrNotFound): %v\n", isNotFound)
 
 	// Test errors.As / errors.As 테스트
 	logger.Info("Testing errors.As() with Coder interface")
@@ -715,7 +659,6 @@ func example12StandardLibraryCompat(logger *logging.Logger) {
 		code := coder.Code()
 		logger.Info("errors.As succeeded", "code", code)
 		logger.Info("errors.As 성공", "code", code)
-		fmt.Printf("  ✅ errors.As found Coder, code: %s\n", code)
 	}
 
 	// Test with NumericCoder / NumericCoder로 테스트
@@ -730,7 +673,6 @@ func example12StandardLibraryCompat(logger *logging.Logger) {
 		code := numCoder.Code()
 		logger.Info("errors.As with NumericCoder succeeded", "code", code)
 		logger.Info("NumericCoder로 errors.As 성공", "code", code)
-		fmt.Printf("  ✅ errors.As found NumericCoder, code: %d\n", code)
 	}
 
 	logger.Info("Example 12 completed successfully")

@@ -127,6 +127,73 @@ func 합계계산() int          // ❌ 잘못됨
 
 ---
 
+## 🔢 버전 정보 관리 규칙 (Version Information Management Rules)
+
+**⚠️ CRITICAL: 버전 정보는 절대 하드코딩하지 않습니다 / NEVER hardcode version information**
+
+### 규칙 (Rules)
+
+1. **단일 진실의 원천 (Single Source of Truth)**
+   - `cfg/app.yaml` 파일이 유일한 버전 정보 원천입니다
+   - `cfg/app.yaml` is the ONLY source of truth for version information
+
+2. **코드에서의 사용 (Usage in Code)**
+   - 예제 코드: `logging.TryLoadAppVersion()` 함수 사용
+   - Example code: Use `logging.TryLoadAppVersion()` function
+   ```go
+   version := logging.TryLoadAppVersion()
+   if version == "" {
+       version = "unknown"  // Fallback / 대체값
+   }
+   ```
+
+3. **문서에서의 사용 (Usage in Documentation)**
+   - Markdown 문서: 배지(badge) 사용
+   - Markdown documents: Use badges
+   ```markdown
+   [![Version](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/arkd0ng/go-utils/main/cfg/app.yaml&query=$.app.version&label=version)](https://github.com/arkd0ng/go-utils)
+   ```
+   - 또는 텍스트로 참조: "Current version: see cfg/app.yaml"
+   - Or reference in text: "현재 버전: cfg/app.yaml 참조"
+
+4. **절대 금지 (Absolutely Forbidden)**
+   - ❌ 버전 번호를 코드에 하드코딩
+   - ❌ Hardcoding version numbers in code
+   - ❌ 버전 번호를 문서에 직접 작성 (배지 제외)
+   - ❌ Writing version numbers directly in documents (except badges)
+
+5. **예외 사항 (Exceptions)**
+   - ✅ CHANGELOG 파일: 특정 버전 이력이므로 하드코딩 허용
+   - ✅ CHANGELOG files: Hardcoding allowed as it's version history
+   - ✅ 커밋 메시지: 해당 커밋의 버전 명시 필요
+   - ✅ Commit messages: Version must be specified for that commit
+
+### 예제 (Examples)
+
+**✅ CORRECT:**
+```go
+// examples/*/main.go
+func printBanner(logger *logging.Logger) {
+    version := logging.TryLoadAppVersion()
+    if version == "" {
+        version = "unknown"
+    }
+    banner := fmt.Sprintf("Version: %s", version)
+    // ...
+}
+```
+
+**❌ WRONG:**
+```go
+// examples/*/main.go
+func printBanner(logger *logging.Logger) {
+    banner := `Version: v1.12.014`  // ❌ 하드코딩 금지!
+    // ...
+}
+```
+
+---
+
 ## 📦 프로젝트 개요
 
 - **저장소**: `github.com/arkd0ng/go-utils`

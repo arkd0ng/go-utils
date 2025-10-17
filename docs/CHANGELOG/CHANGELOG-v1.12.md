@@ -6,6 +6,63 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.014] - 2025-10-17
+
+### Changed / 변경
+- examples/errorutil/main.go의 버전 정보를 동적 로딩으로 변경
+- fmt.Printf 제거하여 중복 출력 방지 (logging.WithStdout(true) 사용)
+- CLAUDE.md에 버전 정보 관리 규칙 추가
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - 버전을 v1.12.013에서 v1.12.014로 증가
+- `examples/errorutil/main.go` - logging.TryLoadAppVersion() 사용, fmt.Printf 제거 (41개 → 2개)
+- `CLAUDE.md` - 버전 정보 관리 규칙 섹션 추가 (65줄)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.014 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+버전 정보는 반드시 cfg/app.yaml에서 동적으로 읽도록 수정.
+하드코딩 금지 규칙을 CLAUDE.md에 추가하여 지속적으로 따르도록 함.
+
+**Why / 이유**:
+- 버전 정보 하드코딩은 유지보수 문제 발생 (여러 곳에서 업데이트 필요)
+- 단일 진실의 원천(Single Source of Truth) 원칙 위반
+- cfg/app.yaml이 유일한 버전 정보 원천이어야 함
+- 문서에서도 배지를 통해 동적으로 버전 표시
+
+**Implementation Details / 구현 세부사항**:
+
+1. **examples/errorutil/main.go 수정**:
+   - 하드코딩된 버전 "v1.12.013" 제거
+   - `logging.TryLoadAppVersion()` 함수 사용으로 변경
+   - Fallback 값 "unknown" 설정
+   - fmt.Printf 제거 (logging.WithStdout(true)로 콘솔 출력)
+
+2. **CLAUDE.md 규칙 추가** (65줄):
+   - 버전 정보 관리 규칙 섹션 신설
+   - 단일 진실의 원천 원칙 명시
+   - 코드에서 사용법: `logging.TryLoadAppVersion()`
+   - 문서에서 사용법: 배지 또는 참조
+   - 절대 금지 사항: 하드코딩
+   - 예외 사항: CHANGELOG, 커밋 메시지
+   - 올바른 예제와 잘못된 예제 포함
+
+3. **fmt.Printf 제거**:
+   - logging.WithStdout(true) 활성화로 콘솔 출력
+   - 중복 출력 방지 (logger와 fmt.Printf 동시 사용 X)
+   - 로거 초기화 전 메시지만 fmt 유지 (2개)
+   - 나머지 41개 fmt.Printf 제거
+
+**Impact / 영향**:
+- 버전 정보 관리 일관성 확보
+- cfg/app.yaml 한 곳만 수정하면 모든 곳에 반영
+- 미래의 모든 예제 코드가 이 규칙을 따름
+- 문서화 품질 향상 (동적 배지 사용)
+- 콘솔 출력 중복 제거로 가독성 향상
+
+---
+
 ## [v1.12.013] - 2025-10-17
 
 ### Added / 추가
