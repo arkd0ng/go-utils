@@ -1,53 +1,197 @@
 #!/bin/bash
-# Start Docker MySQL for go-utils development
-# go-utils 개발을 위한 Docker MySQL 시작
+#
+# Script Name: docker-mysql-start.sh
+# Description: Starts Docker MySQL container for go-utils development and testing.
+#              This script checks Docker availability, starts the MySQL container
+#              using Docker Compose, and waits for MySQL to be ready for connections.
+#
+#              go-utils 개발 및 테스트를 위한 Docker MySQL 컨테이너를 시작합니다.
+#              이 스크립트는 Docker 사용 가능 여부를 확인하고, Docker Compose를 사용하여
+#              MySQL 컨테이너를 시작한 후, MySQL이 연결 준비될 때까지 대기합니다.
+#
+# Usage: ./docker-mysql-start.sh
+#        사용법: ./docker-mysql-start.sh
+#
+# Prerequisites / 사전 요구사항:
+#   - Docker Desktop installed and running
+#     Docker Desktop 설치 및 실행 중
+#   - docker-compose.yml in project root
+#     프로젝트 루트에 docker-compose.yml 존재
+#
+# Exit Codes / 종료 코드:
+#   0 - Success (MySQL started and ready)
+#       성공 (MySQL 시작 및 준비 완료)
+#   1 - Docker not installed or not running
+#       Docker 미설치 또는 미실행
+#   1 - MySQL failed to become ready within timeout
+#       타임아웃 내 MySQL 준비 실패
+#
+# Examples / 예제:
+#   # Start MySQL container / MySQL 컨테이너 시작
+#   ./docker-mysql-start.sh
+#
+#   # Check if already running / 이미 실행 중인지 확인
+#   docker ps --filter "name=go-utils-mysql"
+#
+# Author: arkd0ng
+# Created: 2024
+# Modified: 2025-10-17
+#
 
+# Exit on error / 에러 시 종료
 set -e
 
-# Colors for output / 출력용 색상
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+# Exit on undefined variable / 미정의 변수 사용 시 종료
+set -u
+
+# Pipe failure causes exit / 파이프 실패 시 종료
+set -o pipefail
+
+# ============================================================================
+# Configuration / 구성
+# ============================================================================
+
+# ANSI color codes for terminal output
+# 터미널 출력을 위한 ANSI 색상 코드
+readonly RED='\033[0;31m'      # Error messages / 에러 메시지
+readonly GREEN='\033[0;32m'    # Success messages / 성공 메시지
+readonly YELLOW='\033[1;33m'   # Warning messages / 경고 메시지
+readonly NC='\033[0m'          # No Color (reset) / 색상 없음 (리셋)
+
+# MySQL container configuration
+# MySQL 컨테이너 구성
+readonly CONTAINER_NAME="go-utils-mysql"
+readonly MAX_WAIT_ATTEMPTS=30  # Maximum seconds to wait for MySQL / MySQL 대기 최대 초
+readonly MYSQL_PASSWORD="rootpassword"
+
+# ============================================================================
+# Functions / 함수
+# ============================================================================
+
+# Function: check_docker_installed
+# Description: Checks if Docker command is available in the system.
+#              시스템에서 Docker 명령을 사용할 수 있는지 확인합니다.
+#
+# Returns / 반환값:
+#   0 - Docker is installed / Docker 설치됨
+#   1 - Docker is not installed / Docker 미설치
+check_docker_installed() {
+    if ! command -v docker &> /dev/null; then
+        echo -e "${RED}Error: Docker is not installed${NC}" >&2
+        echo -e "${RED}오류: Docker가 설치되어 있지 않습니다${NC}" >&2
+        echo
+        echo "Please install Docker Desktop from:"
+        echo "Docker Desktop을 다음에서 설치하세요:"
+        echo "https://www.docker.com/products/docker-desktop"
+        return 1
+    fi
+    return 0
+}
+
+# Function: check_docker_running
+# Description: Checks if Docker daemon is running and accessible.
+#              Docker 데몬이 실행 중이고 접근 가능한지 확인합니다.
+#
+# Returns / 반환값:
+#   0 - Docker is running / Docker 실행 중
+#   1 - Docker is not running / Docker 미실행
+check_docker_running() {
+    if ! docker info &> /dev/null; then
+        echo -e "${RED}Error: Docker is not running${NC}" >&2
+        echo -e "${RED}오류: Docker가 실행 중이지 않습니다${NC}" >&2
+        echo
+        echo "Please start Docker Desktop and try again"
+        echo "Docker Desktop을 시작한 후 다시 시도하세요"
+        return 1
+    fi
+    return 0
+}
+
+# Function: check_container_running
+# Description: Checks if MySQL container is already running.
+#              MySQL 컨테이너가 이미 실행 중인지 확인합니다.
+#
+# Parameters / 매개변수:
+#   $1 - Container name / 컨테이너 이름
+#
+# Returns / 반환값:
+#   0 - Container is running / 컨테이너 실행 중
+#   1 - Container is not running / 컨테이너 미실행
+check_container_running() {
+    local container_name="$1"
+    docker ps --filter "name=${container_name}" --format "{{.Names}}" | grep -q "${container_name}"
+}
+
+# Function: wait_for_mysql
+# Description: Waits for MySQL to be ready to accept connections.
+#              Attempts to ping MySQL server until it responds or timeout.
+#
+#              MySQL이 연결을 수락할 준비가 될 때까지 대기합니다.
+#              응답할 때까지 또는 타임아웃될 때까지 MySQL 서버에 ping을 시도합니다.
+#
+# Parameters / 매개변수:
+#   $1 - Container name / 컨테이너 이름
+#   $2 - Maximum wait attempts in seconds / 최대 대기 시도 (초)
+#   $3 - MySQL root password / MySQL root 패스워드
+#
+# Returns / 반환값:
+#   0 - MySQL is ready / MySQL 준비 완료
+#   1 - Timeout reached / 타임아웃 도달
+wait_for_mysql() {
+    local container_name="$1"
+    local max_attempts="$2"
+    local password="$3"
+    local attempt=0
+    
+    echo -e "${GREEN}Waiting for MySQL to be ready...${NC}"
+    echo -e "${GREEN}MySQL 준비 대기 중...${NC}"
+    
+    while [ $attempt -lt $max_attempts ]; do
+        if docker exec "${container_name}" mysqladmin ping -h localhost -u root -p"${password}" &> /dev/null; then
+            return 0
+        fi
+        attempt=$((attempt + 1))
+        echo -n "."
+        sleep 1
+    done
+    
+    return 1
+}
+
+# ============================================================================
+# Main Script / 메인 스크립트
+# ============================================================================
 
 echo -e "${GREEN}Starting Docker MySQL for go-utils...${NC}"
 echo -e "${GREEN}go-utils를 위한 Docker MySQL 시작 중...${NC}"
 echo
 
-# Check if Docker is installed / Docker 설치 확인
-if ! command -v docker &> /dev/null; then
-    echo -e "${RED}Error: Docker is not installed${NC}"
-    echo -e "${RED}오류: Docker가 설치되어 있지 않습니다${NC}"
-    echo
-    echo "Please install Docker Desktop from:"
-    echo "Docker Desktop을 다음에서 설치하세요:"
-    echo "https://www.docker.com/products/docker-desktop"
-    exit 1
-fi
+# Check prerequisites / 사전 요구사항 확인
+check_docker_installed || exit 1
+check_docker_running || exit 1
 
-# Check if Docker is running / Docker 실행 확인
-if ! docker info &> /dev/null; then
-    echo -e "${RED}Error: Docker is not running${NC}"
-    echo -e "${RED}오류: Docker가 실행 중이지 않습니다${NC}"
-    echo
-    echo "Please start Docker Desktop and try again"
-    echo "Docker Desktop을 시작한 후 다시 시도하세요"
-    exit 1
-fi
-
-# Get script directory / 스크립트 디렉토리 가져오기
+# Get script directory and project root
+# 스크립트 디렉토리와 프로젝트 루트 가져오기
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 # Change to project root / 프로젝트 루트로 이동
 cd "${PROJECT_ROOT}"
 
-# Check if container is already running / 컨테이너가 이미 실행 중인지 확인
-if docker ps --filter "name=go-utils-mysql" --format "{{.Names}}" | grep -q "go-utils-mysql"; then
+# Check if container is already running
+# 컨테이너가 이미 실행 중인지 확인
+if check_container_running "${CONTAINER_NAME}"; then
     echo -e "${YELLOW}Docker MySQL is already running${NC}"
     echo -e "${YELLOW}Docker MySQL이 이미 실행 중입니다${NC}"
     echo
-    docker ps --filter "name=go-utils-mysql"
+    docker ps --filter "name=${CONTAINER_NAME}"
+    echo
+    echo "Connection details / 연결 정보:"
+    echo "  Host: localhost"
+    echo "  Port: 3306"
+    echo "  Database: testdb"
+    echo "  User: root"
+    echo "  Password: ${MYSQL_PASSWORD}"
     exit 0
 fi
 
@@ -57,39 +201,34 @@ echo -e "${GREEN}Docker Compose 시작 중...${NC}"
 docker compose up -d
 
 echo
-echo -e "${GREEN}Waiting for MySQL to be ready...${NC}"
-echo -e "${GREEN}MySQL 준비 대기 중...${NC}"
 
 # Wait for MySQL to be ready / MySQL 준비 대기
-max_attempts=30
-attempt=0
-while [ $attempt -lt $max_attempts ]; do
-    if docker exec go-utils-mysql mysqladmin ping -h localhost -u root -prootpassword &> /dev/null; then
-        echo
-        echo -e "${GREEN}✅ Docker MySQL is ready!${NC}"
-        echo -e "${GREEN}✅ Docker MySQL 준비 완료!${NC}"
-        echo
-        echo "Connection details / 연결 정보:"
-        echo "  Host: localhost"
-        echo "  Port: 3306"
-        echo "  Database: testdb"
-        echo "  User: root"
-        echo "  Password: rootpassword"
-        echo
-        echo "To stop MySQL / MySQL 중지:"
-        echo "  ./scripts/docker-mysql-stop.sh"
-        echo
-        exit 0
-    fi
-    attempt=$((attempt + 1))
-    echo -n "."
-    sleep 1
-done
-
-echo
-echo -e "${RED}Error: MySQL failed to become ready${NC}"
-echo -e "${RED}오류: MySQL이 준비되지 않았습니다${NC}"
-echo
-echo "Check logs with / 로그 확인:"
-echo "  docker compose logs mysql"
-exit 1
+if wait_for_mysql "${CONTAINER_NAME}" "${MAX_WAIT_ATTEMPTS}" "${MYSQL_PASSWORD}"; then
+    echo
+    echo -e "${GREEN}✅ Docker MySQL is ready!${NC}"
+    echo -e "${GREEN}✅ Docker MySQL 준비 완료!${NC}"
+    echo
+    echo "Connection details / 연결 정보:"
+    echo "  Host: localhost"
+    echo "  Port: 3306"
+    echo "  Database: testdb"
+    echo "  User: root"
+    echo "  Password: ${MYSQL_PASSWORD}"
+    echo
+    echo "To stop MySQL / MySQL 중지:"
+    echo "  ./scripts/docker-mysql-stop.sh"
+    echo
+    echo "To view logs / 로그 보기:"
+    echo "  ./scripts/docker-mysql-logs.sh"
+    echo
+    exit 0
+else
+    echo
+    echo -e "${RED}Error: MySQL failed to become ready within ${MAX_WAIT_ATTEMPTS} seconds${NC}"
+    echo -e "${RED}오류: ${MAX_WAIT_ATTEMPTS}초 내에 MySQL이 준비되지 않았습니다${NC}"
+    echo
+    echo "Check logs with / 로그 확인:"
+    echo "  docker compose logs mysql"
+    echo "  ./scripts/docker-mysql-logs.sh"
+    exit 1
+fi
