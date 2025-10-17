@@ -406,7 +406,7 @@ import "time"
 //
 //   years := 0
 //   current := birthdate
-//   for timeutil.AddYears(current, 1).Before(today) || 
+//   for timeutil.AddYears(current, 1).Before(today) ||
 //       timeutil.AddYears(current, 1).Equal(today) {
 //       years++
 //       current = timeutil.AddYears(current, 1)

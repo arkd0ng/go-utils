@@ -225,7 +225,7 @@ package maputil
 //
 //	// Build complex structure
 //	scores := map[string]int{"Alice": 85, "Bob": 92}
-//	summary := maputil.Reduce(scores, map[string]interface{}{}, 
+//	summary := maputil.Reduce(scores, map[string]interface{}{},
 //	    func(acc map[string]interface{}, k string, v int) map[string]interface{} {
 //	        acc[k] = map[string]interface{}{
 //	            "score": v,
@@ -503,7 +503,7 @@ package maputil
 //
 //	// 복잡한 구조 구축
 //	scores := map[string]int{"Alice": 85, "Bob": 92}
-//	summary := maputil.Reduce(scores, map[string]interface{}{}, 
+//	summary := maputil.Reduce(scores, map[string]interface{}{},
 //	    func(acc map[string]interface{}, k string, v int) map[string]interface{} {
 //	        acc[k] = map[string]interface{}{
 //	            "score": v,

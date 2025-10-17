@@ -383,7 +383,7 @@ import (
 //    // Go struct field
 //    // Go 구조체 필드
 //    field := "CreatedAt"
-//    
+//
 //    // Convert to various API formats
 //    // 다양한 API 형식으로 변환
 //    jsonSnake := stringutil.ToSnakeCase(field)      // "created_at" (Python API)

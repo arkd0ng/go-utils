@@ -645,7 +645,7 @@ func WeekOfMonth(t time.Time) int {
 
 	// Calculate week number
 	// Days before first Monday are in "week 0" but we call it week 1
-	week := (day + firstWeekday - 1) / DaysPerWeek + 1
+	week := (day+firstWeekday-1)/DaysPerWeek + 1
 
 	if week < 1 {
 		week = 1

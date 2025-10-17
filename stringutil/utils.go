@@ -460,21 +460,21 @@ import (
 // Chaining (conceptual):
 // 체이닝 (개념):
 //     inputs := []string{"  HELLO  ", "  WORLD  "}
-//     
+//
 //     // Trim whitespace
 //     // 공백 제거
 //     trimmed := stringutil.Map(inputs, strings.TrimSpace)
-//     
+//
 //     // Convert to lowercase
 //     // 소문자로 변환
 //     lowercase := stringutil.Map(trimmed, strings.ToLower)
-//     
+//
 //     // Filter out short words
 //     // 짧은 단어 필터링
 //     filtered := stringutil.Filter(lowercase, func(s string) bool {
 //         return len(s) > 3
 //     })
-//     
+//
 //     // Result: ["hello", "world"]
 //     // 결과: ["hello", "world"]
 //

@@ -413,18 +413,18 @@ func init() {
 // Time constants
 // 시간 상수
 const (
-	SecondsPerMinute  = 60
-	SecondsPerHour    = 3600
-	SecondsPerDay     = 86400
-	MinutesPerHour    = 60
-	HoursPerDay       = 24
-	DaysPerWeek       = 7
-	DaysPerYear       = 365
-	DaysPerLeapYear   = 366
-	MonthsPerYear     = 12
-	MonthsPerQuarter  = 3
-	QuartersPerYear   = 4
-	WeeksPerYear      = 52
+	SecondsPerMinute = 60
+	SecondsPerHour   = 3600
+	SecondsPerDay    = 86400
+	MinutesPerHour   = 60
+	HoursPerDay      = 24
+	DaysPerWeek      = 7
+	DaysPerYear      = 365
+	DaysPerLeapYear  = 366
+	MonthsPerYear    = 12
+	MonthsPerQuarter = 3
+	QuartersPerYear  = 4
+	WeeksPerYear     = 52
 )
 
 // Common format layouts
@@ -458,16 +458,17 @@ const (
 //
 // Supported tokens
 // 지원되는 토큰:
-//   YYYY - 4-digit year (2006)
-//   YY   - 2-digit year (06)
-//   MM   - 2-digit month (01-12)
-//   M    - 1 or 2-digit month (1-12)
-//   DD   - 2-digit day (01-31)
-//   D    - 1 or 2-digit day (1-31)
-//   HH   - 2-digit hour 24h format (00-23)
-//   hh   - 2-digit hour 12h format (01-12)
-//   mm   - 2-digit minute (00-59)
-//   ss   - 2-digit second (00-59)
+//
+//	YYYY - 4-digit year (2006)
+//	YY   - 2-digit year (06)
+//	MM   - 2-digit month (01-12)
+//	M    - 1 or 2-digit month (1-12)
+//	DD   - 2-digit day (01-31)
+//	D    - 1 or 2-digit day (1-31)
+//	HH   - 2-digit hour 24h format (00-23)
+//	hh   - 2-digit hour 12h format (01-12)
+//	mm   - 2-digit minute (00-59)
+//	ss   - 2-digit second (00-59)
 var customFormatTokens = map[string]string{
 	"YYYY": "2006",
 	"YY":   "06",

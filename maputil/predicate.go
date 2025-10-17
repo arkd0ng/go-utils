@@ -184,17 +184,17 @@ package maputil
 //
 //	// Combine predicates
 //	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
-//	
+//
 //	// All positive AND all less than 10
 //	valid := maputil.Every(m, func(k string, v int) bool {
 //	    return v > 0 && v < 10
 //	})
-//	
+//
 //	// Has any even OR any greater than 5
 //	hasSpecial := maputil.Some(m, func(k string, v int) bool {
 //	    return v%2 == 0 || v > 5
 //	})
-//	
+//
 //	// No negatives AND no zeros
 //	noInvalid := maputil.None(m, func(k string, v int) bool {
 //	    return v <= 0
