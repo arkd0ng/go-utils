@@ -33,9 +33,24 @@ Example code serves three main purposes:
 ### Core Principles / 핵심 원칙
 
 1. **Completeness / 완전성**: Cover ALL functions in the package
+   - ✅ **MUST include every public function** / 모든 공개 함수를 반드시 포함
+   - ✅ **MUST demonstrate every function at least once** / 모든 함수를 최소 한 번 시연
+   - ✅ **100% function coverage in examples** / 예제의 100% 함수 커버리지
+   - ⚠️ **Examples are incomplete if ANY function is missing** / 함수가 하나라도 누락되면 예제는 불완전함
+
 2. **Real-World Usage / 실제 사용**: Show practical, production-ready examples
+   - Individual function examples / 개별 함수 예제
+   - Combination examples (multiple functions together) / 복합 예제 (여러 함수 조합)
+   - Real-world scenarios / 실제 사용 시나리오
+   - Edge cases and error handling / 엣지 케이스 및 에러 처리
+
 3. **Detailed Logging / 상세한 로깅**: Log everything so users don't need to read docs
+   - Every function call logged / 모든 함수 호출 로깅
+   - All parameters and results logged / 모든 매개변수 및 결과 로깅
+
 4. **Bilingual / 이중 언어**: All comments and logs in English and Korean
+   - All comments bilingual / 모든 주석 이중 언어
+   - All log messages bilingual / 모든 로그 메시지 이중 언어
 
 ---
 

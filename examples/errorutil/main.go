@@ -282,6 +282,34 @@ func example4ErrorWrapping(logger *logging.Logger) {
 	logger.Info("Error wrapped with formatted message", "userID", userID, "error", wrappedErr2.Error())
 	logger.Info("포맷된 메시지로 에러 래핑됨", "userID", userID, "error", wrappedErr2.Error())
 
+	// WrapWithCodef: Wrap with code and formatted message / 코드와 포맷된 메시지로 래핑
+	logger.Info("Step 5: Wrap with code and formatted message using WrapWithCodef()")
+	logger.Info("단계 5: WrapWithCodef()로 코드와 포맷된 메시지로 래핑")
+	wrappedErr3 := errorutil.WrapWithCodef(originalErr, "API_ERROR", "API call failed for user %d", userID)
+	logger.Info("Error wrapped with code and format", "error", wrappedErr3.Error())
+	logger.Info("코드와 포맷으로 에러 래핑됨", "error", wrappedErr3.Error())
+
+	// Verify both codes are accessible / 두 코드 모두 접근 가능한지 확인
+	logger.Info("Verifying code accessibility")
+	logger.Info("코드 접근 가능성 확인")
+	hasDBCode := errorutil.HasCode(wrappedErr3, "DB_ERROR")
+	hasAPICode := errorutil.HasCode(wrappedErr3, "API_ERROR")
+	logger.Info("Code check", "DB_ERROR", hasDBCode, "API_ERROR", hasAPICode)
+	logger.Info("코드 확인", "DB_ERROR", hasDBCode, "API_ERROR", hasAPICode)
+
+	// WrapWithNumericCodef: Wrap with numeric code and formatted message / 숫자 코드와 포맷된 메시지로 래핑
+	logger.Info("Step 6: Wrap with numeric code and formatted message using WrapWithNumericCodef()")
+	logger.Info("단계 6: WrapWithNumericCodef()로 숫자 코드와 포맷된 메시지로 래핑")
+	wrappedErr4 := errorutil.WrapWithNumericCodef(originalErr, 503, "service unavailable for user %d", userID)
+	logger.Info("Error wrapped with numeric code and format", "error", wrappedErr4.Error())
+	logger.Info("숫자 코드와 포맷으로 에러 래핑됨", "error", wrappedErr4.Error())
+
+	// Extract numeric code / 숫자 코드 추출
+	if code, ok := errorutil.GetNumericCode(wrappedErr4); ok {
+		logger.Info("Numeric code extracted", "code", code)
+		logger.Info("숫자 코드 추출됨", "code", code)
+	}
+
 	logger.Info("Example 4 completed successfully")
 	logger.Info("예제 4 완료")
 }
@@ -370,6 +398,47 @@ func example6ErrorInspection(logger *logging.Logger) {
 	logger.Info("Numeric code extraction", "code", numCode, "found", okNum)
 	logger.Info("숫자 코드 추출", "code", numCode, "found", okNum)
 
+	// GetStackTrace - Demonstrate stack trace inspection / GetStackTrace - 스택 트레이스 검사 시연
+	logger.Info("")
+	logger.Info("Demonstrating GetStackTrace() function")
+	logger.Info("GetStackTrace() 함수 시연")
+	logger.Info("Note: GetStackTrace() is used with errors that implement StackTracer interface")
+	logger.Info("참고: GetStackTrace()는 StackTracer 인터페이스를 구현하는 에러와 함께 사용됩니다")
+
+	// Try to get stack trace from regular error / 일반 에러에서 스택 트레이스 가져오기 시도
+	stack, hasStack := errorutil.GetStackTrace(err1)
+	logger.Info("Stack trace check on regular error", "hasStack", hasStack, "stack", stack)
+	logger.Info("일반 에러의 스택 트레이스 확인", "hasStack", hasStack, "stack", stack)
+
+	if !hasStack {
+		logger.Info("Regular errors do not have stack traces by default")
+		logger.Info("일반 에러는 기본적으로 스택 트레이스를 가지지 않습니다")
+		logger.Info("Stack traces are available for errors implementing StackTracer interface")
+		logger.Info("스택 트레이스는 StackTracer 인터페이스를 구현하는 에러에서 사용 가능합니다")
+	}
+
+	// GetContext - Demonstrate context data inspection / GetContext - 컨텍스트 데이터 검사 시연
+	logger.Info("")
+	logger.Info("Demonstrating GetContext() function")
+	logger.Info("GetContext() 함수 시연")
+	logger.Info("Note: GetContext() is used with errors that implement Contexter interface")
+	logger.Info("참고: GetContext()는 Contexter 인터페이스를 구현하는 에러와 함께 사용됩니다")
+
+	// Try to get context from regular error / 일반 에러에서 컨텍스트 가져오기 시도
+	ctx, hasCtx := errorutil.GetContext(err1)
+	logger.Info("Context check on regular error", "hasContext", hasCtx, "context", ctx)
+	logger.Info("일반 에러의 컨텍스트 확인", "hasContext", hasCtx, "context", ctx)
+
+	if !hasCtx {
+		logger.Info("Regular errors do not have context data by default")
+		logger.Info("일반 에러는 기본적으로 컨텍스트 데이터를 가지지 않습니다")
+		logger.Info("Context data is available for errors implementing Contexter interface")
+		logger.Info("컨텍스트 데이터는 Contexter 인터페이스를 구현하는 에러에서 사용 가능합니다")
+		logger.Info("Context can include user IDs, request IDs, timestamps, etc.")
+		logger.Info("컨텍스트는 사용자 ID, 요청 ID, 타임스탬프 등을 포함할 수 있습니다")
+	}
+
+	logger.Info("")
 	logger.Info("Example 6 completed successfully")
 	logger.Info("예제 6 완료")
 }
