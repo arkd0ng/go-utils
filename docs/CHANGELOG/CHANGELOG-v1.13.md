@@ -6,6 +6,68 @@ Go 애플리케이션을 위한 검증 유틸리티 패키지입니다.
 
 ---
 
+## [v1.13.010] - 2025-10-17
+
+### Added / 추가
+- Collection validators 구현 (10개)
+  - `In(...values)` - 값이 목록에 존재하는지 검증
+  - `NotIn(...values)` - 값이 목록에 없는지 검증
+  - `ArrayLength(n)` - 배열 정확한 길이 검증
+  - `ArrayMinLength(n)` - 배열 최소 길이 검증
+  - `ArrayMaxLength(n)` - 배열 최대 길이 검증
+  - `ArrayNotEmpty()` - 배열이 비어있지 않은지 검증
+  - `ArrayUnique()` - 배열의 모든 요소가 고유한지 검증
+  - `MapHasKey(key)` - 맵이 특정 키를 포함하는지 검증
+  - `MapHasKeys(...keys)` - 맵이 모든 키를 포함하는지 검증
+  - `MapNotEmpty()` - 맵이 비어있지 않은지 검증
+
+### Implementation Details / 구현 세부사항
+- **Reflection-based**: reflect 패키지로 배열/슬라이스/맵 타입 검사
+- **DeepEqual**: 값 비교에 reflect.DeepEqual 사용
+- **Type Safety**: 타입 불일치 시 명확한 에러 메시지
+- **Bilingual Messages**: 영어/한글 에러 메시지
+
+### Files Changed / 변경된 파일
+- `validation/rules_collection.go` - 10개 collection validators (~276줄)
+- `validation/rules_collection_test.go` - 포괄적 테스트 (~284줄)
+
+### Test Results / 테스트 결과
+```bash
+go test ./validation -cover
+# All 60+ tests passed ✅
+# Coverage: 93.2%
+```
+
+### Context / 컨텍스트
+
+**Why / 이유**:
+- 배열/슬라이스/맵 검증은 웹 API에서 매우 흔함
+- 입력 데이터 구조 검증 필요
+- 중복 검사, 길이 제한, 필수 키 검증 등 자주 사용
+
+**Impact / 영향**:
+- ✅ 40개 이상의 validators 구현 완료 (string 20개 + numeric 10개 + collection 10개)
+- ✅ 93.2% coverage 유지
+- ✅ 모든 테스트 통과
+
+**Example / 예제**:
+```go
+// Array validation
+v := validation.New([]int{1, 2, 3}, "numbers")
+v.ArrayNotEmpty().ArrayMinLength(2).ArrayUnique()
+
+// Map validation
+data := map[string]int{"name": 1, "age": 25}
+v := validation.New(data, "user")
+v.MapNotEmpty().MapHasKeys("name", "age")
+
+// In/NotIn validation
+v := validation.New("admin", "role")
+v.In("admin", "moderator", "user")
+```
+
+---
+
 ## [v1.13.009] - 2025-10-17
 
 ### Added / 추가
