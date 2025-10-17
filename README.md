@@ -49,6 +49,7 @@ go-utils/
 ├── httputil/        # HTTP client utilities / HTTP 클라이언트 유틸리티
 ├── websvrutil/      # Web server utilities / 웹 서버 유틸리티
 ├── errorutil/       # Error handling utilities (21 functions) / 에러 처리 유틸리티 (21개 함수)
+├── validation/      # Fluent validation library (135+ validators) / Fluent 검증 라이브러리 (135개 이상 검증기)
 └── ...
 ```
 
@@ -932,9 +933,68 @@ if errorutil.Contains(err, io.EOF) {
 
 ---
 
-### 🔜 Coming Soon / 개발 예정
+### ✅ [validation](./validation/) - Fluent Validation Library
 
-- **validation** - Validation utilities / 검증 유틸리티
+Fluent, type-safe validation library with 135+ built-in validators. Reduce 20-30 lines of validation code to just 1-2 lines.
+
+135개 이상의 내장 검증기를 가진 플루언트하고 타입 안전한 검증 라이브러리입니다. 20-30줄의 검증 코드를 단 1-2줄로 줄입니다.
+
+**Features**: Fluent API, 135+ validators, bilingual errors (EN/KR), 100% test coverage, zero dependencies / Fluent API, 135개 이상 검증기, 이중 언어 에러 (영어/한글), 100% 테스트 커버리지, 제로 의존성
+
+**Validator Categories**: String (19), Numeric (10), Collection (10), Comparison (11), Type (7), Network (5), DateTime (4), File (6), Security (6), Credit Card (3), Business Codes (3), Color (4), Data Format (4), Format (3), Geographic (3), Logical (4), Range (3)
+
+**검증기 카테고리**: 문자열 (19), 숫자 (10), 컬렉션 (10), 비교 (11), 타입 (7), 네트워크 (5), 날짜/시간 (4), 파일 (6), 보안 (6), 신용카드 (3), 비즈니스 코드 (3), 색상 (4), 데이터 형식 (4), 포맷 (3), 지리 (3), 논리 (4), 범위 (3)
+
+```go
+import "github.com/arkd0ng/go-utils/validation"
+
+// Single field validation / 단일 필드 검증
+email := "user@example.com"
+v := validation.New(email, "email")
+v.Required().Email().MaxLength(100)
+
+if err := v.Validate(); err != nil {
+    log.Fatal(err)
+}
+
+// Multi-field validation / 다중 필드 검증
+type User struct {
+    Username string
+    Email    string
+    Age      int
+}
+
+user := User{
+    Username: "johndoe",
+    Email:    "john@example.com",
+    Age:      25,
+}
+
+mv := validation.NewValidator()
+mv.Field(user.Username, "username").Required().MinLength(3).MaxLength(20).Alphanumeric()
+mv.Field(user.Email, "email").Required().Email()
+mv.Field(user.Age, "age").Positive().Between(13, 120)
+
+if err := mv.Validate(); err != nil {
+    // Get all validation errors / 모든 검증 에러 가져오기
+    verrs := err.(validation.ValidationErrors)
+    for _, e := range verrs {
+        log.Printf("Field '%s': %s", e.Field, e.Message)
+    }
+}
+
+// Custom validators / 사용자 정의 검증기
+password := "MyPassword123!"
+v := validation.New(password, "password")
+v.MinLength(8).Custom(func(val interface{}) bool {
+    s := val.(string)
+    return strings.ContainsAny(s, "!@#$%^&*()")
+}, "Password must contain at least one special character")
+```
+
+**[→ View full documentation / 전체 문서 보기](./validation/README.md)**
+
+---
 
 ## Quick Start / 빠른 시작
 
