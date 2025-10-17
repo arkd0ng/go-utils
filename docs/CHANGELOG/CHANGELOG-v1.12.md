@@ -6,6 +6,114 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.008] - 2025-10-17
+
+### Added / 추가
+- errorutil 패키지 Phase 4 (Error Inspection) 완료
+- 6개의 에러 검사 함수 구현:
+  - HasCode(err, code): 문자열 코드 존재 여부 확인
+  - HasNumericCode(err, code): 숫자 코드 존재 여부 확인
+  - GetCode(err): 문자열 코드 추출
+  - GetNumericCode(err): 숫자 코드 추출
+  - GetStackTrace(err): 스택 트레이스 추출
+  - GetContext(err): 컨텍스트 데이터 추출
+- 에러 체인 탐색 기능 (errors.As 사용)
+- 모든 검사 함수에 대한 포괄적인 테스트 추가
+- GetContext 불변성 테스트 추가
+
+### Changed / 변경
+- N/A
+
+### Fixed / 수정
+- N/A
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - 버전을 v1.12.007에서 v1.12.008로 증가
+- `errorutil/inspect.go` - 새 파일 생성 (270+ 줄, 6개 검사 함수)
+- `errorutil/inspect_test.go` - 새 파일 생성 (420+ 줄, 포괄적인 테스트)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.008 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+Phase 3 완료 후 자동으로 Phase 4로 진행
+
+**Why / 이유**:
+- Phase 4는 에러 정보를 추출하고 검사하는 핵심 기능
+- 에러 체인을 탐색하여 원하는 정보를 찾는 유틸리티 함수 제공
+- Go 표준 라이브러리의 errors.As, errors.Is와 유사하지만 더 구체적
+- 에러 처리 로직에서 조건부 분기를 쉽게 구현 가능
+
+**Implementation Details / 구현 세부사항**:
+
+1. **코드 확인 함수**:
+   - HasCode(): 에러 체인에 특정 문자열 코드 존재 여부 확인
+   - HasNumericCode(): 에러 체인에 특정 숫자 코드 존재 여부 확인
+   - 현재 에러를 먼저 확인한 후 errors.As로 체인 탐색
+
+2. **코드 추출 함수**:
+   - GetCode(): 에러 체인에서 첫 번째 문자열 코드 추출
+   - GetNumericCode(): 에러 체인에서 첫 번째 숫자 코드 추출
+   - 코드를 찾지 못하면 (빈 문자열/0, false) 반환
+
+3. **메타데이터 추출 함수**:
+   - GetStackTrace(): 에러 체인에서 스택 트레이스 추출
+   - GetContext(): 에러 체인에서 컨텍스트 데이터 추출
+   - 불변성 보장 (컨텍스트는 복사본 반환)
+
+4. **에러 체인 탐색**:
+   - 모든 함수는 현재 에러를 먼저 확인
+   - errors.As를 사용하여 에러 체인의 모든 에러 검사
+   - 깊게 래핑된 에러도 정확히 탐색
+
+**Impact / 영향**:
+- 에러 코드 기반 조건부 처리 가능
+- HTTP 상태 코드 추출 및 응답 생성 용이
+- 스택 트레이스를 통한 디버깅 지원
+- 컨텍스트 데이터를 통한 구조화된 로깅 가능
+- 다음 단계(Phase 5 이후)의 기초 제공
+- 전체 커버리지 99.2%로 목표 80% 초과
+
+### Test Results / 테스트 결과
+
+```
+PASS
+ok  	github.com/arkd0ng/go-utils/errorutil	0.696s
+coverage: 99.2% of statements
+```
+
+All 26 test functions passed with 99 subtests:
+- TestNew (3 cases)
+- TestNewf (4 cases)
+- TestWithCode (4 cases)
+- TestWithCodef (3 cases)
+- TestWithNumericCode (4 cases)
+- TestWithNumericCodef (3 cases)
+- TestWrap (3 cases)
+- TestWrapf (3 cases)
+- TestWrapWithCode (3 cases)
+- TestWrapWithCodef (3 cases)
+- TestWrapWithNumericCode (3 cases)
+- TestWrapWithNumericCodef (3 cases)
+- TestHasCode (7 cases)
+- TestHasNumericCode (7 cases)
+- TestGetCode (6 cases)
+- TestGetNumericCode (7 cases)
+- TestGetStackTrace (5 cases)
+- TestGetContext (6 cases)
+- TestGetContextImmutability (1 case)
+- + Phase 1 tests (7 functions, 14 subtests)
+
+### Next Steps / 다음 단계
+
+나머지 Phase들은 기본 기능 위에 추가되는 선택적 기능들입니다:
+- Phase 5-9: 고급 기능 (Classification, Formatting, Stack Traces, Context, Assertions)
+- Phase 10-12: 문서화 및 예제 (Documentation, Examples, Testing & Polish)
+
+현재 Phase 1-4 완료로 errorutil의 핵심 기능은 모두 구현되었습니다.
+
+---
+
 ## [v1.12.007] - 2025-10-17
 
 ### Added / 추가
