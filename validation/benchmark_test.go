@@ -374,3 +374,34 @@ func BenchmarkDateRange(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkUUIDv4 benchmarks the UUIDv4 validator
+// BenchmarkUUIDv4는 UUIDv4 검증기를 벤치마크합니다
+func BenchmarkUUIDv4(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("550e8400-e29b-41d4-a716-446655440000", "uuid")
+		v.UUIDv4()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkXML benchmarks the XML validator
+// BenchmarkXML는 XML 검증기를 벤치마크합니다
+func BenchmarkXML(b *testing.B) {
+	xmlData := `<?xml version="1.0"?><root><child>content</child></root>`
+	for i := 0; i < b.N; i++ {
+		v := New(xmlData, "xml")
+		v.XML()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkHex benchmarks the Hex validator
+// BenchmarkHex는 Hex 검증기를 벤치마크합니다
+func BenchmarkHex(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("0xdeadbeef", "hex")
+		v.Hex()
+		_ = v.Validate()
+	}
+}

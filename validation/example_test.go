@@ -685,3 +685,76 @@ func Example_rangeValidationComprehensive() {
 	}
 	// Output: Valid event data
 }
+
+// Example_uuidv4Validation demonstrates UUIDv4 validation
+// Example_uuidv4Validation은 UUIDv4 검증을 보여줍니다
+func Example_uuidv4Validation() {
+	v := validation.New("550e8400-e29b-41d4-a716-446655440000", "request_id")
+	v.UUIDv4()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid UUID v4")
+	} else {
+		fmt.Println("Valid UUID v4")
+	}
+	// Output: Valid UUID v4
+}
+
+// Example_xmlValidation demonstrates XML validation
+// Example_xmlValidation은 XML 검증을 보여줍니다
+func Example_xmlValidation() {
+	xmlData := `<?xml version="1.0"?>
+	<person>
+		<name>John Doe</name>
+		<age>30</age>
+	</person>`
+
+	v := validation.New(xmlData, "user_data")
+	v.XML()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid XML")
+	} else {
+		fmt.Println("Valid XML")
+	}
+	// Output: Valid XML
+}
+
+// Example_hexValidation demonstrates hexadecimal validation
+// Example_hexValidation은 16진수 검증을 보여줍니다
+func Example_hexValidation() {
+	v := validation.New("0xdeadbeef", "color_code")
+	v.Hex()
+
+	err := v.Validate()
+	if err != nil {
+		fmt.Println("Invalid hex")
+	} else {
+		fmt.Println("Valid hex")
+	}
+	// Output: Valid hex
+}
+
+// Example_formatValidationComprehensive demonstrates comprehensive format validation
+// Example_formatValidationComprehensive는 포괄적인 형식 검증을 보여줍니다
+func Example_formatValidationComprehensive() {
+	// API Request validation with multiple format checks
+	requestID := "550e8400-e29b-41d4-a716-446655440000"
+	configData := `{"timeout": 30, "retries": 3}`
+	hexToken := "0xabcd1234"
+
+	mv := validation.NewValidator()
+	mv.Field(requestID, "request_id").UUIDv4()
+	mv.Field(configData, "config").JSON()
+	mv.Field(hexToken, "token").Hex()
+
+	err := mv.Validate()
+	if err != nil {
+		fmt.Println("Invalid request format")
+	} else {
+		fmt.Println("Valid request format")
+	}
+	// Output: Valid request format
+}

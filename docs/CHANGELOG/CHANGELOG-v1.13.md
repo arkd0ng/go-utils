@@ -1,3 +1,89 @@
+## [v1.13.019] - 2025-10-17
+
+### Added / 추가
+- **Format Validators (Phase 2 Start)**: 3 new format validation functions
+  - `UUIDv4()` - Validates UUID version 4 format (strict version checking)
+  - `XML()` - Validates XML format (well-formed XML documents)
+  - `Hex()` - Validates hexadecimal format (supports 0x prefix, case-insensitive)
+
+### Implementation Details / 구현 세부사항
+- **UUIDv4 Validation**: Strict regex pattern for UUIDv4 (version 4 in version field, variant 8/9/a/b)
+- **XML Validation**: Uses Go's encoding/xml package for validation
+- **Hex Validation**: Supports optional 0x/0X prefix, case-insensitive, validates even-length hex strings
+- **Type Safety**: All validators check for string type first
+- **Bilingual Messages**: English/Korean error messages for all validators
+
+### Test Coverage / 테스트 커버리지
+- **rules_format.go**: 100% coverage
+- **Total Package Coverage**: 100.0% (maintained)
+- **Test Cases**: 70+ test cases covering all format validators with edge cases
+- **StopOnError Tests**: Verified StopOnError behavior for all validators
+
+### Performance Benchmarks / 성능 벤치마크
+```
+BenchmarkUUIDv4-8        119,114 ns/op      9,355 ns/op    16,166 B/op    156 allocs/op
+BenchmarkXML-8           548,456 ns/op      2,167 ns/op     1,296 B/op     27 allocs/op
+BenchmarkHex-8        49,845,442 ns/op       26.60 ns/op        4 B/op      1 allocs/op
+```
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - Version bump to v1.13.019
+- `validation/rules_format.go` - NEW: 3 format validators (~90 LOC)
+- `validation/rules_format_test.go` - NEW: Comprehensive tests (~180 LOC)
+- `validation/benchmark_test.go` - Added 3 format validator benchmarks
+- `validation/example_test.go` - Added 4 format validator examples
+- `docs/validation/USER_MANUAL.md` - Added UUIDv4, XML, Hex to Format Validators section
+- `docs/CHANGELOG/CHANGELOG-v1.13.md` - Updated with v1.13.019 entry
+
+### Context / 컨텍스트
+**User Request**: "계속 작업해주세요" (Continue Phase 2 implementation)
+
+**Why**: Format validation is essential for:
+- API request ID validation (UUIDv4 for distributed systems)
+- Configuration file validation (XML/JSON config files)
+- Token/hash validation (hexadecimal strings for security tokens)
+- Data serialization format checking
+- Protocol compliance validation
+
+**Impact**:
+- ✅ **64+ validators** now available (String 20 + Numeric 10 + Collection 10 + Comparison 10 + Network 5 + DateTime 4 + Range 3 + Format 3)
+- ✅ 100% test coverage maintained
+- ✅ All tests passing (unit + benchmark + example tests)
+- ✅ Excellent performance (Hex ~27ns/op, XML ~2,167ns/op, UUIDv4 ~9,355ns/op)
+- ✅ Documentation updated with new validators
+
+### Common Use Cases / 일반적인 사용 사례
+```go
+// API Request ID validation
+requestID := "550e8400-e29b-41d4-a716-446655440000"
+v := validation.New(requestID, "request_id")
+v.UUIDv4()
+
+// XML configuration validation
+xmlConfig := `<?xml version="1.0"?><config><timeout>30</timeout></config>`
+v := validation.New(xmlConfig, "config")
+v.XML()
+
+// Hex token validation
+token := "0xabcd1234"
+v := validation.New(token, "token")
+v.Hex()
+
+// Multi-field format validation
+mv := validation.NewValidator()
+mv.Field("550e8400-e29b-41d4-a716-446655440000", "request_id").UUIDv4()
+mv.Field(`{"timeout": 30}`, "config").JSON()
+mv.Field("0xabcd1234", "token").Hex()
+```
+
+### Note / 참고
+- UUID() validator already existed (validates any UUID version)
+- UUIDv4() is new and validates specifically UUID v4
+- JSON() and Base64() validators already existed in rules_string.go
+- This release adds UUIDv4, XML, and Hex validators
+
+---
+
 ## [v1.13.018] - 2025-10-17
 
 ### Added / 추가

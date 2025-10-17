@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.018
+**Version / 버전**: v1.13.019
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -34,7 +34,7 @@ The `validation` package provides a **fluent, type-safe validation library** for
 
 ### Key Features / 주요 기능
 
-- ✅ **61+ Built-in Validators** / **61개 이상의 내장 검증기**
+- ✅ **64+ Built-in Validators** / **64개 이상의 내장 검증기**
 - ✅ **Fluent API with Method Chaining** / **메서드 체이닝을 통한 플루언트 API**
 - ✅ **Type-Safe with Go Generics** / **Go 제네릭을 활용한 타입 안전성**
 - ✅ **Bilingual Error Messages (EN/KR)** / **양방향 에러 메시지 (영어/한글)**
@@ -45,7 +45,8 @@ The `validation` package provides a **fluent, type-safe validation library** for
 - ✅ **Stop-on-First-Error Support** / **첫 에러에서 멈춤 지원**
 - ✅ **Network Validators (IPv4, IPv6, CIDR, MAC)** / **네트워크 검증기**
 - ✅ **DateTime Validators (DateFormat, TimeFormat, DateBefore, DateAfter)** / **날짜/시간 검증기**
-- ✅ **Range Validators (IntRange, FloatRange, DateRange)** 🆕 / **범위 검증기** 🆕
+- ✅ **Range Validators (IntRange, FloatRange, DateRange)** / **범위 검증기**
+- ✅ **Format Validators (UUIDv4, XML, Hex)** 🆕 / **포맷 검증기** 🆕
 
 ---
 
@@ -268,6 +269,48 @@ Valid Base64 encoding / 유효한 Base64 인코딩
 v := validation.New("SGVsbG8gV29ybGQ=", "encoded")
 v.Base64()
 // Pass! / 통과!
+```
+
+#### `UUIDv4()` 🆕
+Valid UUID version 4 format / 유효한 UUID 버전 4 형식
+
+```go
+v := validation.New("550e8400-e29b-41d4-a716-446655440000", "request_id")
+v.UUIDv4()
+// Pass! / 통과!
+
+v2 := validation.New("6ba7b810-9dad-11d1-80b4-00c04fd430c8", "id")
+v2.UUIDv4()
+// Error: id must be a valid UUID v4 (this is UUID v1)
+//        id은(는) 유효한 UUID v4여야 합니다 (이것은 UUID v1입니다)
+```
+
+#### `XML()` 🆕
+Valid XML format / 유효한 XML 형식
+
+```go
+xmlData := `<?xml version="1.0"?>
+<person>
+    <name>John Doe</name>
+    <age>30</age>
+</person>`
+
+v := validation.New(xmlData, "user_data")
+v.XML()
+// Pass! / 통과!
+```
+
+#### `Hex()` 🆕
+Valid hexadecimal format / 유효한 16진수 형식
+
+```go
+v := validation.New("0xdeadbeef", "color_code")
+v.Hex()
+// Pass! / 통과!
+
+v2 := validation.New("ABCD1234", "hash")
+v2.Hex()
+// Pass! (0x prefix is optional / 0x 접두사는 선택사항)
 ```
 
 ### Character Type Validators / 문자 타입 검증기
