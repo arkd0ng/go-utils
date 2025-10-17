@@ -19,3 +19,9 @@
 ### Follow-up 2025-10-17 (database/mysql/batch.go)
 
 - Rewrote batch operation comments to describe intent, retry behaviour, and placeholder handling in both languages / 배치 연산 주석을 의도, 재시도 동작, 플레이스홀더 처리 방식까지 설명하도록 영문·한글로 보강했습니다
+
+## 2025-10-17 - docs/BILINGUAL_AUDIT.md
+
+- Compiled repository-wide bilingual compliance findings with priority ranking / 우선순위가 반영된 저장소 전역 이중 언어 점검 결과를 정리했습니다
+- Highlighted high-risk files (영문 전용 주석 ≥ 100줄) and provided remediation steps / 영문 전용 주석이 많은 고위험 파일과 개선 권장 사항을 제시했습니다
+- Refreshed metrics to include Korean-only hotspots, medium-priority groups, and actionable recommendations / 한글 전용 주석 다발 구간과 중간 우선순위 그룹, 권장 조치를 최신화했습니다

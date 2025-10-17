@@ -136,30 +136,24 @@ func printBanner(logger *logging.Logger) {
 		version = "unknown" // Fallback if yaml not found / yaml을 찾지 못한 경우 대체값
 	}
 
-	banner := fmt.Sprintf(`
-===========================================
-   errorutil Package Examples
-   errorutil 패키지 예제
-===========================================
-Version: %s
-Package: github.com/arkd0ng/go-utils/errorutil
-
-This example demonstrates:
-이 예제는 다음을 시연합니다:
-- Error creation / 에러 생성
-- Error wrapping / 에러 래핑
-- Error inspection / 에러 검사
-- Real-world patterns / 실제 패턴
-===========================================
-`, version)
-	fmt.Println(banner)
-
 	logger.Info("===========================================")
+	logger.Info("   errorutil Package Examples")
+	logger.Info("   errorutil 패키지 예제")
+	logger.Info("===========================================")
+	logger.Info("Version: " + version)
+	logger.Info("Package: github.com/arkd0ng/go-utils/errorutil")
+	logger.Info("")
+	logger.Info("This example demonstrates:")
+	logger.Info("이 예제는 다음을 시연합니다:")
+	logger.Info("- Error creation / 에러 생성")
+	logger.Info("- Error wrapping / 에러 래핑")
+	logger.Info("- Error inspection / 에러 검사")
+	logger.Info("- Real-world patterns / 실제 패턴")
+	logger.Info("===========================================")
+	logger.Info("")
 	logger.Info("Starting errorutil Package Examples")
 	logger.Info("errorutil 패키지 예제 시작")
-	logger.Info("===========================================")
-	logger.Info("Version", "version", version)
-	logger.Info("Package", "package", "github.com/arkd0ng/go-utils/errorutil")
+	logger.Info("")
 }
 
 // example1BasicErrorCreation demonstrates basic error creation

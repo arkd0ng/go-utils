@@ -6,6 +6,54 @@ Go 애플리케이션을 위한 에러 처리 유틸리티 패키지입니다.
 
 ---
 
+## [v1.12.015] - 2025-10-17
+
+### Changed / 변경
+- examples/errorutil/main.go의 printBanner 함수를 logger로 출력하도록 개선
+- fmt.Println(banner) 제거하여 모든 출력을 logger로 일관성 있게 처리
+
+### Files Changed / 변경된 파일
+- `cfg/app.yaml` - 버전을 v1.12.014에서 v1.12.015로 증가
+- `examples/errorutil/main.go` - printBanner 함수 리팩토링 (fmt.Println → logger.Info)
+- `docs/CHANGELOG/CHANGELOG-v1.12.md` - v1.12.015 항목 추가
+
+### Context / 컨텍스트
+
+**User Request / 사용자 요청**:
+"배너(printBanner)로 로그로 남기면 안되나요?"
+
+**Why / 이유**:
+- fmt.Println과 logger.Info를 혼용하면 일관성이 떨어짐
+- logging.WithStdout(true) 사용 시 모든 출력이 logger를 통해 이루어져야 함
+- 로그 파일과 콘솔 출력이 동일한 형식으로 일관성 있게 기록됨
+- 배너도 로그로 남겨야 추후 로그 분석 시 유용함
+
+**Implementation Details / 구현 세부사항**:
+
+1. **printBanner 함수 리팩토링**:
+   - fmt.Sprintf로 만든 배너 문자열 제거
+   - fmt.Println(banner) 제거
+   - 각 라인을 logger.Info()로 개별 출력
+   - 빈 라인도 logger.Info("")로 처리
+
+2. **출력 일관성 확보**:
+   - 모든 출력이 logger를 통해 이루어짐
+   - 콘솔과 파일에 동일한 형식으로 기록
+   - 타임스탬프와 로그 레벨이 모든 라인에 포함
+
+3. **결과**:
+   - fmt.Println 완전 제거 (로거 초기화 전 2개만 유지)
+   - 배너 출력도 구조화된 로그로 남음
+   - 로그 파일 분석 시 배너 정보도 포함
+
+**Impact / 영향**:
+- 출력 일관성 향상 (모든 출력이 logger 통해 처리)
+- 로그 파일에 배너 정보 포함으로 분석 용이
+- logging.WithStdout(true)의 장점 완전 활용
+- 미래의 모든 예제 코드가 이 패턴을 따라야 함
+
+---
+
 ## [v1.12.014] - 2025-10-17
 
 ### Changed / 변경
