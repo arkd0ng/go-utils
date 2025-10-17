@@ -408,6 +408,7 @@ func Reduce[T any, R any](slice []T, initial R, reducer func(R, T) R) R {
 //
 // // Useful for operations where order matters
 // 순서가 중요한 작업에 유용
+//
 //	nested := [][]int{{1, 2}, {3, 4}, {5}}
 //	flattened := sliceutil.ReduceRight(nested, []int{}, func(acc, slice []int) []int {
 //	    return append(slice, acc...)

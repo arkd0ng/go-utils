@@ -52,6 +52,7 @@ type MiddlewareFunc func(http.Handler) http.Handler
 // New는 새로운 App을 생성하고 함수형 옵션을 적용하며 라우터를 준비하고 필요 시 템플릿을 로드합니다.
 //
 // Example:
+//
 //	app := websvrutil.New()
 //	app := websvrutil.New(
 //	    websvrutil.WithReadTimeout(30 * time.Second),
@@ -59,6 +60,7 @@ type MiddlewareFunc func(http.Handler) http.Handler
 //	)
 //
 // 예제:
+//
 //	app := websvrutil.New()
 //	app := websvrutil.New(
 //	    websvrutil.WithReadTimeout(30 * time.Second),
@@ -274,12 +276,16 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 // caching, and reduced application server load.
 //
 // Parameters:
+//
 //   - prefix: URL path prefix where static files will be served (must start with "/").
 //     This prefix is stripped before looking up files in the directory.
 //     Common patterns:
-//     • "/static" - serves all files under /static/* URLs
-//     • "/assets" - serves all files under /assets/* URLs
-//     • "/public" - serves all files under /public/* URLs
+//
+//   - "/static" - serves all files under /static/* URLs
+//
+//   - "/assets" - serves all files under /assets/* URLs
+//
+//   - "/public" - serves all files under /public/* URLs
 //     The prefix should NOT include a trailing slash (use "/static", not "/static/").
 //
 //   - dir: Filesystem directory path containing static files to serve.
@@ -293,6 +299,7 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 //     app.Static("/static", "./public").Static("/assets", "./assets")
 //
 // Behavior:
+//
 //   - Registration Timing: Must be called before Run() or RunWithGracefulShutdown().
 //     Attempting to register static routes after server start causes panic.
 //
@@ -324,6 +331,7 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 //   - Panics if called after server is running.
 //
 // Security Considerations:
+//
 //   - Path Traversal: Go's http.FileServer automatically sanitizes paths to prevent "../" attacks.
 //     Requests for "/static/../../etc/passwd" are safely blocked.
 //
@@ -337,6 +345,7 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 //     or sensitive data. Use dedicated directories for public assets only.
 //
 // Performance Considerations:
+//
 //   - No Built-in Caching: Files are read from disk on each request. For high-traffic sites,
 //     use CDN, nginx, or implement caching middleware.
 //
@@ -380,7 +389,7 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 //
 //	//go:embed static/*
 //	var staticFiles embed.FS
-//	
+//
 //	// Serve embedded files (better performance, single binary)
 //	app.GET("/static/*", func(w http.ResponseWriter, r *http.Request) {
 //	    fs := http.FileServer(http.FS(staticFiles))
@@ -392,7 +401,7 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 //	app.GET("/static/*", func(w http.ResponseWriter, r *http.Request) {
 //	    // Add aggressive caching for production
 //	    w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
-//	    
+//
 //	    // Serve file
 //	    fs := http.StripPrefix("/static/", http.FileServer(http.Dir("./public")))
 //	    fs.ServeHTTP(w, r)
@@ -424,12 +433,16 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 // CDN 또는 전용 정적 파일 서버(nginx, CloudFront) 사용을 고려하세요.
 //
 // 매개변수:
+//
 //   - prefix: 정적 파일이 제공될 URL 경로 접두사("/"로 시작해야 함).
 //     이 접두사는 디렉토리에서 파일을 찾기 전에 제거됩니다.
 //     일반적인 패턴:
-//     • "/static" - /static/* URL 하위의 모든 파일 제공
-//     • "/assets" - /assets/* URL 하위의 모든 파일 제공
-//     • "/public" - /public/* URL 하위의 모든 파일 제공
+//
+//   - "/static" - /static/* URL 하위의 모든 파일 제공
+//
+//   - "/assets" - /assets/* URL 하위의 모든 파일 제공
+//
+//   - "/public" - /public/* URL 하위의 모든 파일 제공
 //     접두사는 후행 슬래시를 포함하지 않아야 합니다("/static/" 대신 "/static" 사용).
 //
 //   - dir: 제공할 정적 파일이 포함된 파일시스템 디렉토리 경로.
@@ -443,6 +456,7 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 //     app.Static("/static", "./public").Static("/assets", "./assets")
 //
 // 동작 방식:
+//
 //   - 등록 타이밍: Run() 또는 RunWithGracefulShutdown() 전에 호출되어야 합니다.
 //     서버 시작 후 정적 라우트를 등록하려고 하면 패닉이 발생합니다.
 //
@@ -475,6 +489,7 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 //   - 서버 실행 후 호출되면 패닉이 발생합니다.
 //
 // 보안 고려사항:
+//
 //   - 경로 순회: Go의 http.FileServer는 "../" 공격을 방지하기 위해 경로를 자동으로 정리합니다.
 //     "/static/../../etc/passwd" 요청은 안전하게 차단됩니다.
 //
@@ -488,6 +503,7 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 //     공개 자산만을 위한 전용 디렉토리를 사용하세요.
 //
 // 성능 고려사항:
+//
 //   - 내장 캐싱 없음: 파일은 각 요청마다 디스크에서 읽습니다. 트래픽이 많은 사이트의 경우
 //     CDN, nginx 또는 캐싱 미들웨어를 사용하세요.
 //
@@ -531,7 +547,7 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 //
 //	//go:embed static/*
 //	var staticFiles embed.FS
-//	
+//
 //	// 임베디드 파일 제공(더 나은 성능, 단일 바이너리)
 //	app.GET("/static/*", func(w http.ResponseWriter, r *http.Request) {
 //	    fs := http.FileServer(http.FS(staticFiles))
@@ -543,7 +559,7 @@ func (a *App) NotFound(handler http.HandlerFunc) *App {
 //	app.GET("/static/*", func(w http.ResponseWriter, r *http.Request) {
 //	    // 프로덕션을 위한 공격적인 캐싱 추가
 //	    w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
-//	    
+//
 //	    // 파일 제공
 //	    fs := http.StripPrefix("/static/", http.FileServer(http.Dir("./public")))
 //	    fs.ServeHTTP(w, r)
@@ -601,24 +617,25 @@ func (a *App) Static(prefix, dir string) *App {
 // Parameters:
 //   - addr: Network address to listen on, in "host:port" format.
 //     Common patterns:
-//     • ":8080" - Listen on all interfaces (0.0.0.0), port 8080 (most common)
-//     • "localhost:8080" - Listen only on localhost (127.0.0.1), port 8080 (development)
-//     • "0.0.0.0:8080" - Explicitly listen on all interfaces
-//     • "192.168.1.10:8080" - Listen on specific IP address
-//     • ":80" or ":443" - Standard HTTP/HTTPS ports (requires elevated privileges)
+//   - ":8080" - Listen on all interfaces (0.0.0.0), port 8080 (most common)
+//   - "localhost:8080" - Listen only on localhost (127.0.0.1), port 8080 (development)
+//   - "0.0.0.0:8080" - Explicitly listen on all interfaces
+//   - "192.168.1.10:8080" - Listen on specific IP address
+//   - ":80" or ":443" - Standard HTTP/HTTPS ports (requires elevated privileges)
 //     Empty host ("") defaults to all interfaces (same as "0.0.0.0").
 //     Port must be provided; addr like "localhost" without port will cause error.
 //
 // Returns:
 //   - error: Returns error if server fails to start or encounters fatal error during operation.
 //     Common errors:
-//     • "address already in use" - Port is occupied by another process
-//     • "permission denied" - Insufficient privileges for port (e.g., port 80 without sudo)
-//     • "server is already running" - Run() called twice on same App instance
-//     • Network-related errors during operation
+//   - "address already in use" - Port is occupied by another process
+//   - "permission denied" - Insufficient privileges for port (e.g., port 80 without sudo)
+//   - "server is already running" - Run() called twice on same App instance
+//   - Network-related errors during operation
 //     Returns nil when server shuts down gracefully via Shutdown().
 //
 // Behavior:
+//
 //   - Blocking Call: Run() blocks until server stops. Execute in main goroutine or use
 //     goroutine if you need concurrent operations:
 //     go app.Run(":8080")  // Non-blocking in separate goroutine
@@ -636,20 +653,30 @@ func (a *App) Static(prefix, dir string) *App {
 //     Example: app.Use(A).Use(B).Use(C) results in execution order: C → B → A → handler
 //
 //   - Server Configuration: Uses options provided to New():
-//     • ReadTimeout: Maximum duration for reading entire request
-//     • WriteTimeout: Maximum duration for writing response
-//     • IdleTimeout: Keep-alive idle connection timeout
-//     • MaxHeaderBytes: Maximum size of request headers
+//
+//   - ReadTimeout: Maximum duration for reading entire request
+//
+//   - WriteTimeout: Maximum duration for writing response
+//
+//   - IdleTimeout: Keep-alive idle connection timeout
+//
+//   - MaxHeaderBytes: Maximum size of request headers
 //
 //   - Running State: Sets a.running = true during operation. This prevents:
-//     • Adding new routes after server starts (would cause panic)
-//     • Adding new middleware after server starts (would cause panic)
-//     • Starting server twice on same App instance
+//
+//   - Adding new routes after server starts (would cause panic)
+//
+//   - Adding new middleware after server starts (would cause panic)
+//
+//   - Starting server twice on same App instance
 //
 //   - Graceful Shutdown: When Shutdown() is called from another goroutine:
-//     • ListenAndServe() returns http.ErrServerClosed
-//     • Run() returns nil (normal shutdown, not an error)
-//     • Active connections drain according to shutdown context timeout
+//
+//   - ListenAndServe() returns http.ErrServerClosed
+//
+//   - Run() returns nil (normal shutdown, not an error)
+//
+//   - Active connections drain according to shutdown context timeout
 //
 // Thread-Safety:
 //   - Safe to call from single goroutine (typical usage in main()).
@@ -658,6 +685,7 @@ func (a *App) Static(prefix, dir string) *App {
 //   - Can call Shutdown() from different goroutine while Run() is blocking.
 //
 // Port Requirements:
+//
 //   - Privileged Ports (1-1023): Require root/administrator privileges on Unix systems.
 //     Ports 80 (HTTP) and 443 (HTTPS) need sudo or setcap capabilities.
 //
@@ -668,6 +696,7 @@ func (a *App) Static(prefix, dir string) *App {
 //     Use different port or stop conflicting process.
 //
 // Performance Considerations:
+//
 //   - Timeout Configuration: Set appropriate ReadTimeout and WriteTimeout to prevent
 //     slowloris attacks and resource exhaustion from slow clients.
 //
@@ -692,7 +721,7 @@ func (a *App) Static(prefix, dir string) *App {
 //	app := websvrutil.New()
 //	app.GET("/", homeHandler)
 //	app.GET("/api/users", usersHandler)
-//	
+//
 //	fmt.Println("Starting server on :8080")
 //	if err := app.Run(":8080"); err != nil {
 //	    log.Fatalf("Server failed: %v", err)
@@ -703,7 +732,7 @@ func (a *App) Static(prefix, dir string) *App {
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./templates"))
 //	app.Static("/static", "./static")
 //	app.GET("/", indexHandler)
-//	
+//
 //	log.Println("Dev server running on http://localhost:3000")
 //	if err := app.Run("localhost:3000"); err != nil {
 //	    log.Fatal(err)
@@ -715,13 +744,13 @@ func (a *App) Static(prefix, dir string) *App {
 //	if port == "" {
 //	    port = "8080"  // Default port
 //	}
-//	
+//
 //	app := websvrutil.New(
 //	    websvrutil.WithReadTimeout(10 * time.Second),
 //	    websvrutil.WithWriteTimeout(10 * time.Second),
 //	)
 //	// ... configure routes ...
-//	
+//
 //	log.Printf("Server starting on port %s", port)
 //	if err := app.Run(":" + port); err != nil {
 //	    log.Fatalf("Server error: %v", err)
@@ -731,18 +760,18 @@ func (a *App) Static(prefix, dir string) *App {
 //
 //	app := websvrutil.New()
 //	// ... configure routes ...
-//	
+//
 //	// Start server in background goroutine
 //	go func() {
 //	    if err := app.Run(":8080"); err != nil {
 //	        log.Printf("Server stopped: %v", err)
 //	    }
 //	}()
-//	
+//
 //	// Main goroutine can do other work
 //	time.Sleep(1 * time.Second)
 //	fmt.Println("Server is running in background")
-//	
+//
 //	// Keep main goroutine alive
 //	select {}
 //
@@ -752,12 +781,12 @@ func (a *App) Static(prefix, dir string) *App {
 //	apiApp := websvrutil.New()
 //	apiApp.GET("/api/health", healthHandler)
 //	go apiApp.Run(":8080")
-//	
+//
 //	// Admin server
 //	adminApp := websvrutil.New()
 //	adminApp.GET("/admin/dashboard", dashboardHandler)
 //	go adminApp.Run(":9090")
-//	
+//
 //	// Block main goroutine
 //	select {}
 //
@@ -800,24 +829,25 @@ func (a *App) Static(prefix, dir string) *App {
 // 매개변수:
 //   - addr: "host:port" 형식으로 수신할 네트워크 주소.
 //     일반적인 패턴:
-//     • ":8080" - 모든 인터페이스(0.0.0.0), 포트 8080에서 수신(가장 일반적)
-//     • "localhost:8080" - localhost(127.0.0.1)에서만 수신, 포트 8080(개발)
-//     • "0.0.0.0:8080" - 모든 인터페이스에서 명시적으로 수신
-//     • "192.168.1.10:8080" - 특정 IP 주소에서 수신
-//     • ":80" 또는 ":443" - 표준 HTTP/HTTPS 포트(높은 권한 필요)
+//   - ":8080" - 모든 인터페이스(0.0.0.0), 포트 8080에서 수신(가장 일반적)
+//   - "localhost:8080" - localhost(127.0.0.1)에서만 수신, 포트 8080(개발)
+//   - "0.0.0.0:8080" - 모든 인터페이스에서 명시적으로 수신
+//   - "192.168.1.10:8080" - 특정 IP 주소에서 수신
+//   - ":80" 또는 ":443" - 표준 HTTP/HTTPS 포트(높은 권한 필요)
 //     빈 호스트("")는 모든 인터페이스로 기본 설정("0.0.0.0"과 동일).
 //     포트를 제공해야 합니다. 포트 없이 "localhost"와 같은 addr은 오류를 발생시킵니다.
 //
 // 반환값:
 //   - error: 서버가 시작에 실패하거나 작동 중 치명적인 오류가 발생하면 오류를 반환합니다.
 //     일반적인 오류:
-//     • "address already in use" - 다른 프로세스가 포트를 점유 중
-//     • "permission denied" - 포트에 대한 권한 부족(예: sudo 없이 포트 80)
-//     • "server is already running" - 동일한 App 인스턴스에서 Run()을 두 번 호출
-//     • 작동 중 네트워크 관련 오류
+//   - "address already in use" - 다른 프로세스가 포트를 점유 중
+//   - "permission denied" - 포트에 대한 권한 부족(예: sudo 없이 포트 80)
+//   - "server is already running" - 동일한 App 인스턴스에서 Run()을 두 번 호출
+//   - 작동 중 네트워크 관련 오류
 //     Shutdown()을 통해 서버가 우아하게 종료되면 nil을 반환합니다.
 //
 // 동작 방식:
+//
 //   - 차단 호출: Run()은 서버가 중지될 때까지 차단됩니다. main 고루틴에서 실행하거나
 //     동시 작업이 필요한 경우 고루틴을 사용하세요:
 //     go app.Run(":8080")  // 별도의 고루틴에서 비차단
@@ -835,20 +865,30 @@ func (a *App) Static(prefix, dir string) *App {
 //     예: app.Use(A).Use(B).Use(C)는 실행 순서 C → B → A → handler가 됩니다.
 //
 //   - 서버 구성: New()에 제공된 옵션 사용:
-//     • ReadTimeout: 전체 요청을 읽는 최대 시간
-//     • WriteTimeout: 응답을 작성하는 최대 시간
-//     • IdleTimeout: Keep-alive 유휴 연결 타임아웃
-//     • MaxHeaderBytes: 요청 헤더의 최대 크기
+//
+//   - ReadTimeout: 전체 요청을 읽는 최대 시간
+//
+//   - WriteTimeout: 응답을 작성하는 최대 시간
+//
+//   - IdleTimeout: Keep-alive 유휴 연결 타임아웃
+//
+//   - MaxHeaderBytes: 요청 헤더의 최대 크기
 //
 //   - 실행 상태: 작동 중 a.running = true를 설정합니다. 이는 다음을 방지합니다:
-//     • 서버 시작 후 새 라우트 추가(패닉 발생)
-//     • 서버 시작 후 새 미들웨어 추가(패닉 발생)
-//     • 동일한 App 인스턴스에서 서버를 두 번 시작
+//
+//   - 서버 시작 후 새 라우트 추가(패닉 발생)
+//
+//   - 서버 시작 후 새 미들웨어 추가(패닉 발생)
+//
+//   - 동일한 App 인스턴스에서 서버를 두 번 시작
 //
 //   - 우아한 종료: 다른 고루틴에서 Shutdown()이 호출되면:
-//     • ListenAndServe()가 http.ErrServerClosed를 반환
-//     • Run()은 nil을 반환(정상 종료, 오류 아님)
-//     • 활성 연결은 종료 컨텍스트 타임아웃에 따라 드레인됨
+//
+//   - ListenAndServe()가 http.ErrServerClosed를 반환
+//
+//   - Run()은 nil을 반환(정상 종료, 오류 아님)
+//
+//   - 활성 연결은 종료 컨텍스트 타임아웃에 따라 드레인됨
 //
 // 스레드 안전성:
 //   - 단일 고루틴에서 호출하기에 안전합니다(main()의 일반적인 사용).
@@ -857,6 +897,7 @@ func (a *App) Static(prefix, dir string) *App {
 //   - Run()이 차단되는 동안 다른 고루틴에서 Shutdown()을 호출할 수 있습니다.
 //
 // 포트 요구사항:
+//
 //   - 특권 포트(1-1023): Unix 시스템에서 root/관리자 권한이 필요합니다.
 //     포트 80(HTTP)과 443(HTTPS)은 sudo 또는 setcap 기능이 필요합니다.
 //
@@ -867,6 +908,7 @@ func (a *App) Static(prefix, dir string) *App {
 //     다른 포트를 사용하거나 충돌하는 프로세스를 중지하세요.
 //
 // 성능 고려사항:
+//
 //   - 타임아웃 구성: 느린 클라이언트로 인한 slowloris 공격 및 리소스 고갈을 방지하기 위해
 //     적절한 ReadTimeout 및 WriteTimeout을 설정하세요.
 //
@@ -891,7 +933,7 @@ func (a *App) Static(prefix, dir string) *App {
 //	app := websvrutil.New()
 //	app.GET("/", homeHandler)
 //	app.GET("/api/users", usersHandler)
-//	
+//
 //	fmt.Println("Starting server on :8080")
 //	if err := app.Run(":8080"); err != nil {
 //	    log.Fatalf("Server failed: %v", err)
@@ -902,7 +944,7 @@ func (a *App) Static(prefix, dir string) *App {
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./templates"))
 //	app.Static("/static", "./static")
 //	app.GET("/", indexHandler)
-//	
+//
 //	log.Println("Dev server running on http://localhost:3000")
 //	if err := app.Run("localhost:3000"); err != nil {
 //	    log.Fatal(err)
@@ -914,13 +956,13 @@ func (a *App) Static(prefix, dir string) *App {
 //	if port == "" {
 //	    port = "8080"  // 기본 포트
 //	}
-//	
+//
 //	app := websvrutil.New(
 //	    websvrutil.WithReadTimeout(10 * time.Second),
 //	    websvrutil.WithWriteTimeout(10 * time.Second),
 //	)
 //	// ... 라우트 구성 ...
-//	
+//
 //	log.Printf("Server starting on port %s", port)
 //	if err := app.Run(":" + port); err != nil {
 //	    log.Fatalf("Server error: %v", err)
@@ -930,18 +972,18 @@ func (a *App) Static(prefix, dir string) *App {
 //
 //	app := websvrutil.New()
 //	// ... 라우트 구성 ...
-//	
+//
 //	// 백그라운드 고루틴에서 서버 시작
 //	go func() {
 //	    if err := app.Run(":8080"); err != nil {
 //	        log.Printf("Server stopped: %v", err)
 //	    }
 //	}()
-//	
+//
 //	// main 고루틴은 다른 작업을 수행할 수 있음
 //	time.Sleep(1 * time.Second)
 //	fmt.Println("Server is running in background")
-//	
+//
 //	// main 고루틴을 살아있게 유지
 //	select {}
 //
@@ -951,12 +993,12 @@ func (a *App) Static(prefix, dir string) *App {
 //	apiApp := websvrutil.New()
 //	apiApp.GET("/api/health", healthHandler)
 //	go apiApp.Run(":8080")
-//	
+//
 //	// 관리 서버
 //	adminApp := websvrutil.New()
 //	adminApp.GET("/admin/dashboard", dashboardHandler)
 //	go adminApp.Run(":9090")
-//	
+//
 //	// main 고루틴 차단
 //	select {}
 //
@@ -1049,23 +1091,24 @@ func (a *App) Run(addr string) error {
 //   - ctx: Context controlling shutdown timeout and cancellation.
 //     Typically created with context.WithTimeout() or context.WithDeadline().
 //     Common timeout values:
-//     • 5 seconds: Fast shutdown, risk of terminating slow requests
-//     • 30 seconds: Balanced approach for most applications (recommended)
-//     • 60 seconds: Patient shutdown for long-running requests
-//     • No timeout (context.Background()): Wait indefinitely (not recommended)
+//   - 5 seconds: Fast shutdown, risk of terminating slow requests
+//   - 30 seconds: Balanced approach for most applications (recommended)
+//   - 60 seconds: Patient shutdown for long-running requests
+//   - No timeout (context.Background()): Wait indefinitely (not recommended)
 //     If context expires before all connections close, Shutdown returns context.DeadlineExceeded.
 //     Connections remaining after timeout are forcibly closed.
 //
 // Returns:
 //   - error: Returns error if shutdown fails or server isn't running.
 //     Common errors:
-//     • "server is not running" - Shutdown() called when server isn't started
-//     • "server is not initialized" - Internal state inconsistency
-//     • context.DeadlineExceeded - Timeout reached before all connections closed
-//     • Network errors during connection cleanup
+//   - "server is not running" - Shutdown() called when server isn't started
+//   - "server is not initialized" - Internal state inconsistency
+//   - context.DeadlineExceeded - Timeout reached before all connections closed
+//   - Network errors during connection cleanup
 //     Returns nil on successful graceful shutdown (all connections drained within timeout).
 //
 // Behavior:
+//
 //   - Immediate Effect: Stops accepting new connections instantly.
 //     New client connection attempts receive "connection refused" errors.
 //
@@ -1079,9 +1122,12 @@ func (a *App) Run(addr string) error {
 //     Application should monitor context and cleanly close streams.
 //
 //   - Timeout Behavior: If context deadline expires:
-//     • Remaining connections are forcibly terminated
-//     • Shutdown returns context.DeadlineExceeded error
-//     • Clients may see "connection reset" or incomplete responses
+//
+//   - Remaining connections are forcibly terminated
+//
+//   - Shutdown returns context.DeadlineExceeded error
+//
+//   - Clients may see "connection reset" or incomplete responses
 //
 //   - Run() Completion: After Shutdown() completes, Run() unblocks and returns nil.
 //     This allows main goroutine or deployment scripts to proceed.
@@ -1089,6 +1135,7 @@ func (a *App) Run(addr string) error {
 //   - State Cleanup: Running flag is set to false, allowing app reuse (though not recommended).
 //
 // Concurrency:
+//
 //   - Thread-Safe: Safe to call from different goroutine while Run() is blocking.
 //     Common pattern: Run() in main goroutine, Shutdown() in signal handler goroutine.
 //
@@ -1126,7 +1173,7 @@ func (a *App) Run(addr string) error {
 //	// In separate goroutine or signal handler
 //	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 //	defer cancel()
-//	
+//
 //	if err := app.Shutdown(ctx); err != nil {
 //	    if errors.Is(err, context.DeadlineExceeded) {
 //	        log.Println("Shutdown timeout: some connections were forcibly closed")
@@ -1144,16 +1191,16 @@ func (a *App) Run(addr string) error {
 //	        log.Fatalf("Server error: %v", err)
 //	    }
 //	}()
-//	
+//
 //	// Wait for interrupt signal
 //	quit := make(chan os.Signal, 1)
 //	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 //	<-quit
-//	
+//
 //	log.Println("Shutting down server...")
 //	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 //	defer cancel()
-//	
+//
 //	if err := app.Shutdown(ctx); err != nil {
 //	    log.Fatalf("Shutdown failed: %v", err)
 //	}
@@ -1163,7 +1210,7 @@ func (a *App) Run(addr string) error {
 //
 //	var healthy atomic.Bool
 //	healthy.Store(true)
-//	
+//
 //	app.GET("/health", func(w http.ResponseWriter, r *http.Request) {
 //	    if healthy.Load() {
 //	        w.WriteHeader(http.StatusOK)
@@ -1171,7 +1218,7 @@ func (a *App) Run(addr string) error {
 //	        w.WriteHeader(http.StatusServiceUnavailable)
 //	    }
 //	})
-//	
+//
 //	// On shutdown signal
 //	healthy.Store(false)           // Mark unhealthy
 //	time.Sleep(10 * time.Second)   // Wait for load balancer to notice
@@ -1191,11 +1238,11 @@ func (a *App) Run(addr string) error {
 //	            return
 //	        default:
 //	        }
-//	        
+//
 //	        // Do work
 //	        time.Sleep(100 * time.Millisecond)
 //	    }
-//	    
+//
 //	    w.Write([]byte("Completed"))
 //	})
 //
@@ -1206,7 +1253,7 @@ func (a *App) Run(addr string) error {
 //	  preStop:
 //	    exec:
 //	      command: ["/bin/sh", "-c", "sleep 15 && kill -SIGTERM 1"]
-//	
+//
 //	# Application handles SIGTERM
 //	signal.Notify(quit, syscall.SIGTERM)
 //	<-quit
@@ -1236,23 +1283,24 @@ func (a *App) Run(addr string) error {
 //   - ctx: 종료 타임아웃 및 취소를 제어하는 컨텍스트.
 //     일반적으로 context.WithTimeout() 또는 context.WithDeadline()로 생성됩니다.
 //     일반적인 타임아웃 값:
-//     • 5초: 빠른 종료, 느린 요청 종료 위험
-//     • 30초: 대부분의 애플리케이션에 균형 잡힌 접근 방식(권장)
-//     • 60초: 장기 실행 요청에 대한 참을성 있는 종료
-//     • 타임아웃 없음(context.Background()): 무기한 대기(권장하지 않음)
+//   - 5초: 빠른 종료, 느린 요청 종료 위험
+//   - 30초: 대부분의 애플리케이션에 균형 잡힌 접근 방식(권장)
+//   - 60초: 장기 실행 요청에 대한 참을성 있는 종료
+//   - 타임아웃 없음(context.Background()): 무기한 대기(권장하지 않음)
 //     모든 연결이 닫히기 전에 컨텍스트가 만료되면 Shutdown은 context.DeadlineExceeded를 반환합니다.
 //     타임아웃 후 남은 연결은 강제로 닫힙니다.
 //
 // 반환값:
 //   - error: 종료가 실패하거나 서버가 실행 중이지 않으면 오류를 반환합니다.
 //     일반적인 오류:
-//     • "server is not running" - 서버가 시작되지 않았을 때 Shutdown() 호출
-//     • "server is not initialized" - 내부 상태 불일치
-//     • context.DeadlineExceeded - 모든 연결이 닫히기 전에 타임아웃 도달
-//     • 연결 정리 중 네트워크 오류
+//   - "server is not running" - 서버가 시작되지 않았을 때 Shutdown() 호출
+//   - "server is not initialized" - 내부 상태 불일치
+//   - context.DeadlineExceeded - 모든 연결이 닫히기 전에 타임아웃 도달
+//   - 연결 정리 중 네트워크 오류
 //     성공적인 우아한 종료(타임아웃 내 모든 연결 드레인) 시 nil 반환.
 //
 // 동작 방식:
+//
 //   - 즉각적인 효과: 새 연결 수락을 즉시 중지합니다.
 //     새 클라이언트 연결 시도는 "connection refused" 오류를 받습니다.
 //
@@ -1266,9 +1314,12 @@ func (a *App) Run(addr string) error {
 //     애플리케이션은 컨텍스트를 모니터링하고 스트림을 깔끔하게 닫아야 합니다.
 //
 //   - 타임아웃 동작: 컨텍스트 데드라인이 만료되면:
-//     • 남은 연결이 강제로 종료됨
-//     • Shutdown이 context.DeadlineExceeded 오류를 반환
-//     • 클라이언트는 "connection reset" 또는 불완전한 응답을 볼 수 있음
+//
+//   - 남은 연결이 강제로 종료됨
+//
+//   - Shutdown이 context.DeadlineExceeded 오류를 반환
+//
+//   - 클라이언트는 "connection reset" 또는 불완전한 응답을 볼 수 있음
 //
 //   - Run() 완료: Shutdown()이 완료된 후 Run()이 차단 해제되고 nil을 반환합니다.
 //     이를 통해 main 고루틴 또는 배포 스크립트가 진행할 수 있습니다.
@@ -1276,6 +1327,7 @@ func (a *App) Run(addr string) error {
 //   - 상태 정리: running 플래그가 false로 설정되어 앱 재사용이 가능합니다(권장하지 않음).
 //
 // 동시성:
+//
 //   - 스레드 안전: Run()이 차단되는 동안 다른 고루틴에서 호출하기에 안전합니다.
 //     일반적인 패턴: main 고루틴에서 Run(), 신호 핸들러 고루틴에서 Shutdown().
 //
@@ -1313,7 +1365,7 @@ func (a *App) Run(addr string) error {
 //	// 별도의 고루틴 또는 신호 핸들러에서
 //	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 //	defer cancel()
-//	
+//
 //	if err := app.Shutdown(ctx); err != nil {
 //	    if errors.Is(err, context.DeadlineExceeded) {
 //	        log.Println("Shutdown timeout: some connections were forcibly closed")
@@ -1331,16 +1383,16 @@ func (a *App) Run(addr string) error {
 //	        log.Fatalf("Server error: %v", err)
 //	    }
 //	}()
-//	
+//
 //	// 인터럽트 신호 대기
 //	quit := make(chan os.Signal, 1)
 //	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 //	<-quit
-//	
+//
 //	log.Println("Shutting down server...")
 //	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 //	defer cancel()
-//	
+//
 //	if err := app.Shutdown(ctx); err != nil {
 //	    log.Fatalf("Shutdown failed: %v", err)
 //	}
@@ -1350,7 +1402,7 @@ func (a *App) Run(addr string) error {
 //
 //	var healthy atomic.Bool
 //	healthy.Store(true)
-//	
+//
 //	app.GET("/health", func(w http.ResponseWriter, r *http.Request) {
 //	    if healthy.Load() {
 //	        w.WriteHeader(http.StatusOK)
@@ -1358,7 +1410,7 @@ func (a *App) Run(addr string) error {
 //	        w.WriteHeader(http.StatusServiceUnavailable)
 //	    }
 //	})
-//	
+//
 //	// 종료 신호 시
 //	healthy.Store(false)           // 비정상 표시
 //	time.Sleep(10 * time.Second)   // 로드 밸런서가 감지할 때까지 대기
@@ -1378,11 +1430,11 @@ func (a *App) Run(addr string) error {
 //	            return
 //	        default:
 //	        }
-//	        
+//
 //	        // 작업 수행
 //	        time.Sleep(100 * time.Millisecond)
 //	    }
-//	    
+//
 //	    w.Write([]byte("Completed"))
 //	})
 //
@@ -1393,7 +1445,7 @@ func (a *App) Run(addr string) error {
 //	  preStop:
 //	    exec:
 //	      command: ["/bin/sh", "-c", "sleep 15 && kill -SIGTERM 1"]
-//	
+//
 //	# 애플리케이션이 SIGTERM 처리
 //	signal.Notify(quit, syscall.SIGTERM)
 //	<-quit
@@ -1442,41 +1494,54 @@ func (a *App) Shutdown(ctx context.Context) error {
 // - Any deployment requiring zero-downtime updates
 //
 // Parameters:
+//
 //   - addr: Network address to listen on, in "host:port" format.
 //     Same format as Run() method:
-//     • ":8080" - Listen on all interfaces, port 8080 (most common)
-//     • "localhost:8080" - Listen only on localhost (development)
-//     • "0.0.0.0:8080" - Explicitly listen on all interfaces
-//     • ":80" or ":443" - Standard HTTP/HTTPS ports (requires elevated privileges)
+//
+//   - ":8080" - Listen on all interfaces, port 8080 (most common)
+//
+//   - "localhost:8080" - Listen only on localhost (development)
+//
+//   - "0.0.0.0:8080" - Explicitly listen on all interfaces
+//
+//   - ":80" or ":443" - Standard HTTP/HTTPS ports (requires elevated privileges)
 //
 //   - timeout: Maximum duration to wait for active connections to close during shutdown.
 //     This timeout applies from signal reception to forceful connection termination.
 //     Common timeout values:
-//     • 5 seconds: Fast shutdown, suitable for APIs with quick responses
-//     • 15 seconds: Balanced for typical web applications
-//     • 30 seconds: Recommended for most production applications (default recommendation)
-//     • 60 seconds: Patient shutdown for applications with long-running requests
-//     • 120+ seconds: Very patient, for file uploads, video processing, batch operations
+//
+//   - 5 seconds: Fast shutdown, suitable for APIs with quick responses
+//
+//   - 15 seconds: Balanced for typical web applications
+//
+//   - 30 seconds: Recommended for most production applications (default recommendation)
+//
+//   - 60 seconds: Patient shutdown for applications with long-running requests
+//
+//   - 120+ seconds: Very patient, for file uploads, video processing, batch operations
 //     If timeout expires, remaining connections are forcibly closed.
 //
 // Returns:
 //   - error: Returns error if server fails to start or shutdown encounters errors.
 //     Possible error scenarios:
-//     • Server startup failure (port in use, permission denied, invalid address)
-//     • Shutdown timeout exceeded (context.DeadlineExceeded wrapped in error)
-//     • Network errors during connection cleanup
+//   - Server startup failure (port in use, permission denied, invalid address)
+//   - Shutdown timeout exceeded (context.DeadlineExceeded wrapped in error)
+//   - Network errors during connection cleanup
 //     Returns nil when server shuts down cleanly after receiving signal.
 //
 // Behavior:
+//
 //   - Startup Phase:
 //     1. Starts server in background goroutine using Run()
 //     2. Registers signal handlers for SIGINT and SIGTERM
 //     3. Blocks waiting for either server error or OS signal
 //
 //   - Signal Handling: Automatically responds to:
-//     • SIGINT: Sent by Ctrl+C, shell interrupts, keyboard interrupt
-//     • SIGTERM: Sent by kill command, Docker stop, Kubernetes pod termination,
-//       systemd service stop, process managers, deployment scripts
+//
+//   - SIGINT: Sent by Ctrl+C, shell interrupts, keyboard interrupt
+//
+//   - SIGTERM: Sent by kill command, Docker stop, Kubernetes pod termination,
+//     systemd service stop, process managers, deployment scripts
 //
 //   - Shutdown Sequence:
 //     1. Receives SIGINT or SIGTERM signal
@@ -1487,23 +1552,33 @@ func (a *App) Shutdown(ctx context.Context) error {
 //     6. Returns nil on success or error on failure
 //
 //   - Two Exit Paths:
-//     • Server startup error: Returns immediately with error (port conflict, etc.)
-//     • Signal received: Initiates graceful shutdown, returns after completion
+//
+//   - Server startup error: Returns immediately with error (port conflict, etc.)
+//
+//   - Signal received: Initiates graceful shutdown, returns after completion
 //
 //   - Blocking Call: This method blocks until server stops (via signal or error).
 //     Must be called from main goroutine or dedicated server goroutine.
 //
 // Signal Details:
+//
 //   - SIGINT (Signal Interrupt):
-//     • Triggered by: Ctrl+C in terminal, kill -INT <pid>
-//     • Use case: Development, manual interruption, user-initiated shutdown
-//     • Exit code: Typically 130 (128 + 2)
+//
+//   - Triggered by: Ctrl+C in terminal, kill -INT <pid>
+//
+//   - Use case: Development, manual interruption, user-initiated shutdown
+//
+//   - Exit code: Typically 130 (128 + 2)
 //
 //   - SIGTERM (Signal Terminate):
-//     • Triggered by: kill <pid>, Docker stop, Kubernetes pod deletion, systemd stop
-//     • Use case: Automated deployments, orchestrator-managed lifecycle
-//     • Exit code: Typically 143 (128 + 15)
-//     • Most common in production environments
+//
+//   - Triggered by: kill <pid>, Docker stop, Kubernetes pod deletion, systemd stop
+//
+//   - Use case: Automated deployments, orchestrator-managed lifecycle
+//
+//   - Exit code: Typically 143 (128 + 15)
+//
+//   - Most common in production environments
 //
 // Thread-Safety:
 //   - Call from single goroutine (typically main()).
@@ -1546,7 +1621,7 @@ func (a *App) Shutdown(ctx context.Context) error {
 //	    app := websvrutil.New()
 //	    app.GET("/", homeHandler)
 //	    app.GET("/api/users", usersHandler)
-//	    
+//
 //	    log.Println("Starting server on :8080")
 //	    if err := app.RunWithGracefulShutdown(":8080", 30*time.Second); err != nil {
 //	        log.Fatalf("Server error: %v", err)
@@ -1563,23 +1638,23 @@ func (a *App) Shutdown(ctx context.Context) error {
 //	        log.Fatal(err)
 //	    }
 //	    defer db.Close()  // Cleanup after server stops
-//	    
+//
 //	    cache := redis.NewClient(&redis.Options{Addr: "localhost:6379"})
 //	    defer cache.Close()
-//	    
+//
 //	    // Configure application
 //	    app := websvrutil.New()
 //	    app.GET("/api/data", func(w http.ResponseWriter, r *http.Request) {
 //	        // Use db and cache
 //	    })
-//	    
+//
 //	    // Start with graceful shutdown
 //	    log.Println("Server starting...")
 //	    if err := app.RunWithGracefulShutdown(":8080", 30*time.Second); err != nil {
 //	        log.Printf("Server error: %v", err)
 //	        os.Exit(1)
 //	    }
-//	    
+//
 //	    log.Println("Cleanup complete, exiting")
 //	}
 //
@@ -1590,17 +1665,17 @@ func (a *App) Shutdown(ctx context.Context) error {
 //	    if port == "" {
 //	        port = "8080"
 //	    }
-//	    
+//
 //	    shutdownTimeout := 30 * time.Second
 //	    if timeoutStr := os.Getenv("SHUTDOWN_TIMEOUT"); timeoutStr != "" {
 //	        if d, err := time.ParseDuration(timeoutStr); err == nil {
 //	            shutdownTimeout = d
 //	        }
 //	    }
-//	    
+//
 //	    app := websvrutil.New()
 //	    // ... configure routes ...
-//	    
+//
 //	    log.Printf("Starting server on port %s with %v shutdown timeout", port, shutdownTimeout)
 //	    if err := app.RunWithGracefulShutdown(":"+port, shutdownTimeout); err != nil {
 //	        log.Fatalf("Server failed: %v", err)
@@ -1616,12 +1691,12 @@ func (a *App) Shutdown(ctx context.Context) error {
 //	RUN go build -o server .
 //	EXPOSE 8080
 //	CMD ["./server"]
-//	
+//
 //	# Go application
 //	func main() {
 //	    app := websvrutil.New()
 //	    // ... configure routes ...
-//	    
+//
 //	    // Docker sends SIGTERM on `docker stop`
 //	    // Default Docker stop timeout is 10 seconds before SIGKILL
 //	    // Use shorter timeout to ensure graceful completion
@@ -1648,12 +1723,12 @@ func (a *App) Shutdown(ctx context.Context) error {
 //	          preStop:
 //	            exec:
 //	              command: ["/bin/sh", "-c", "sleep 5"]  # Small delay for load balancer
-//	
+//
 //	# Go application
 //	func main() {
 //	    app := websvrutil.New()
 //	    // ... configure routes ...
-//	    
+//
 //	    // Kubernetes sends SIGTERM on pod deletion
 //	    // Use timeout less than terminationGracePeriodSeconds
 //	    if err := app.RunWithGracefulShutdown(":8080", 30*time.Second); err != nil {
@@ -1664,10 +1739,10 @@ func (a *App) Shutdown(ctx context.Context) error {
 // Example - With Health Check:
 //
 //	var shutdownRequested atomic.Bool
-//	
+//
 //	func main() {
 //	    app := websvrutil.New()
-//	    
+//
 //	    // Health check endpoint (used by load balancer)
 //	    app.GET("/health", func(w http.ResponseWriter, r *http.Request) {
 //	        if shutdownRequested.Load() {
@@ -1676,9 +1751,9 @@ func (a *App) Shutdown(ctx context.Context) error {
 //	        }
 //	        w.WriteHeader(http.StatusOK)
 //	    })
-//	    
+//
 //	    app.GET("/api/data", dataHandler)
-//	    
+//
 //	    // Run with graceful shutdown
 //	    // Could enhance to mark unhealthy before actual shutdown
 //	    if err := app.RunWithGracefulShutdown(":8080", 30*time.Second); err != nil {
@@ -1724,41 +1799,54 @@ func (a *App) Shutdown(ctx context.Context) error {
 // - 무중단 업데이트가 필요한 모든 배포
 //
 // 매개변수:
+//
 //   - addr: "host:port" 형식으로 수신할 네트워크 주소.
 //     Run() 메서드와 동일한 형식:
-//     • ":8080" - 모든 인터페이스에서 수신, 포트 8080(가장 일반적)
-//     • "localhost:8080" - localhost에서만 수신(개발)
-//     • "0.0.0.0:8080" - 모든 인터페이스에서 명시적으로 수신
-//     • ":80" 또는 ":443" - 표준 HTTP/HTTPS 포트(높은 권한 필요)
+//
+//   - ":8080" - 모든 인터페이스에서 수신, 포트 8080(가장 일반적)
+//
+//   - "localhost:8080" - localhost에서만 수신(개발)
+//
+//   - "0.0.0.0:8080" - 모든 인터페이스에서 명시적으로 수신
+//
+//   - ":80" 또는 ":443" - 표준 HTTP/HTTPS 포트(높은 권한 필요)
 //
 //   - timeout: 종료 중 활성 연결이 닫힐 때까지 기다릴 최대 시간.
 //     이 타임아웃은 신호 수신부터 강제 연결 종료까지 적용됩니다.
 //     일반적인 타임아웃 값:
-//     • 5초: 빠른 종료, 빠른 응답을 가진 API에 적합
-//     • 15초: 일반적인 웹 애플리케이션에 균형 잡힌 값
-//     • 30초: 대부분의 프로덕션 애플리케이션에 권장(기본 권장사항)
-//     • 60초: 장기 실행 요청이 있는 애플리케이션을 위한 참을성 있는 종료
-//     • 120초 이상: 파일 업로드, 비디오 처리, 배치 작업을 위한 매우 참을성 있는 종료
+//
+//   - 5초: 빠른 종료, 빠른 응답을 가진 API에 적합
+//
+//   - 15초: 일반적인 웹 애플리케이션에 균형 잡힌 값
+//
+//   - 30초: 대부분의 프로덕션 애플리케이션에 권장(기본 권장사항)
+//
+//   - 60초: 장기 실행 요청이 있는 애플리케이션을 위한 참을성 있는 종료
+//
+//   - 120초 이상: 파일 업로드, 비디오 처리, 배치 작업을 위한 매우 참을성 있는 종료
 //     타임아웃이 만료되면 남은 연결이 강제로 닫힙니다.
 //
 // 반환값:
 //   - error: 서버가 시작에 실패하거나 종료 중 오류가 발생하면 오류를 반환합니다.
 //     가능한 오류 시나리오:
-//     • 서버 시작 실패(포트 사용 중, 권한 거부, 잘못된 주소)
-//     • 종료 타임아웃 초과(오류로 래핑된 context.DeadlineExceeded)
-//     • 연결 정리 중 네트워크 오류
+//   - 서버 시작 실패(포트 사용 중, 권한 거부, 잘못된 주소)
+//   - 종료 타임아웃 초과(오류로 래핑된 context.DeadlineExceeded)
+//   - 연결 정리 중 네트워크 오류
 //     신호를 받은 후 서버가 깨끗하게 종료되면 nil을 반환합니다.
 //
 // 동작 방식:
+//
 //   - 시작 단계:
 //     1. Run()을 사용하여 백그라운드 고루틴에서 서버 시작
 //     2. SIGINT 및 SIGTERM에 대한 신호 핸들러 등록
 //     3. 서버 오류 또는 OS 신호를 기다리며 차단
 //
 //   - 신호 처리: 다음에 자동으로 응답:
-//     • SIGINT: Ctrl+C, 쉘 인터럽트, 키보드 인터럽트에 의해 전송
-//     • SIGTERM: kill 명령, Docker stop, Kubernetes 포드 종료,
-//       systemd 서비스 중지, 프로세스 관리자, 배포 스크립트에 의해 전송
+//
+//   - SIGINT: Ctrl+C, 쉘 인터럽트, 키보드 인터럽트에 의해 전송
+//
+//   - SIGTERM: kill 명령, Docker stop, Kubernetes 포드 종료,
+//     systemd 서비스 중지, 프로세스 관리자, 배포 스크립트에 의해 전송
 //
 //   - 종료 순서:
 //     1. SIGINT 또는 SIGTERM 신호 수신
@@ -1769,23 +1857,33 @@ func (a *App) Shutdown(ctx context.Context) error {
 //     6. 성공 시 nil 또는 실패 시 오류 반환
 //
 //   - 두 가지 종료 경로:
-//     • 서버 시작 오류: 오류와 함께 즉시 반환(포트 충돌 등)
-//     • 신호 수신: 우아한 종료 시작, 완료 후 반환
+//
+//   - 서버 시작 오류: 오류와 함께 즉시 반환(포트 충돌 등)
+//
+//   - 신호 수신: 우아한 종료 시작, 완료 후 반환
 //
 //   - 차단 호출: 이 메서드는 서버가 중지될 때까지(신호 또는 오류를 통해) 차단됩니다.
 //     main 고루틴 또는 전용 서버 고루틴에서 호출되어야 합니다.
 //
 // 신호 상세:
+//
 //   - SIGINT(신호 인터럽트):
-//     • 트리거: 터미널에서 Ctrl+C, kill -INT <pid>
-//     • 사용 사례: 개발, 수동 중단, 사용자 시작 종료
-//     • 종료 코드: 일반적으로 130(128 + 2)
+//
+//   - 트리거: 터미널에서 Ctrl+C, kill -INT <pid>
+//
+//   - 사용 사례: 개발, 수동 중단, 사용자 시작 종료
+//
+//   - 종료 코드: 일반적으로 130(128 + 2)
 //
 //   - SIGTERM(신호 종료):
-//     • 트리거: kill <pid>, Docker stop, Kubernetes 포드 삭제, systemd stop
-//     • 사용 사례: 자동화된 배포, 오케스트레이터 관리 생명주기
-//     • 종료 코드: 일반적으로 143(128 + 15)
-//     • 프로덕션 환경에서 가장 일반적
+//
+//   - 트리거: kill <pid>, Docker stop, Kubernetes 포드 삭제, systemd stop
+//
+//   - 사용 사례: 자동화된 배포, 오케스트레이터 관리 생명주기
+//
+//   - 종료 코드: 일반적으로 143(128 + 15)
+//
+//   - 프로덕션 환경에서 가장 일반적
 //
 // 스레드 안전성:
 //   - 단일 고루틴에서 호출(일반적으로 main()).
@@ -1828,7 +1926,7 @@ func (a *App) Shutdown(ctx context.Context) error {
 //	    app := websvrutil.New()
 //	    app.GET("/", homeHandler)
 //	    app.GET("/api/users", usersHandler)
-//	    
+//
 //	    log.Println("Starting server on :8080")
 //	    if err := app.RunWithGracefulShutdown(":8080", 30*time.Second); err != nil {
 //	        log.Fatalf("Server error: %v", err)
@@ -1845,23 +1943,23 @@ func (a *App) Shutdown(ctx context.Context) error {
 //	        log.Fatal(err)
 //	    }
 //	    defer db.Close()  // 서버 중지 후 정리
-//	    
+//
 //	    cache := redis.NewClient(&redis.Options{Addr: "localhost:6379"})
 //	    defer cache.Close()
-//	    
+//
 //	    // 애플리케이션 구성
 //	    app := websvrutil.New()
 //	    app.GET("/api/data", func(w http.ResponseWriter, r *http.Request) {
 //	        // db 및 cache 사용
 //	    })
-//	    
+//
 //	    // 우아한 종료와 함께 시작
 //	    log.Println("Server starting...")
 //	    if err := app.RunWithGracefulShutdown(":8080", 30*time.Second); err != nil {
 //	        log.Printf("Server error: %v", err)
 //	        os.Exit(1)
 //	    }
-//	    
+//
 //	    log.Println("Cleanup complete, exiting")
 //	}
 //
@@ -1942,25 +2040,28 @@ func (a *App) RunWithGracefulShutdown(addr string, timeout time.Duration) error 
 //     the router, with outermost middleware added last via Use().
 //
 // Middleware Application Order:
+//
 //   - Middleware is stored in registration order (first Use() call = index 0)
+//
 //   - Applied in reverse order (last Use() call wraps everything)
+//
 //   - This creates intuitive "outer to inner" execution during requests
 //
-//   Example registration:
+//     Example registration:
 //     app.Use(LoggingMiddleware)    // Added first, index 0
 //     app.Use(AuthMiddleware)       // Added second, index 1
 //     app.Use(CompressionMiddleware) // Added third, index 2
 //
-//   Resulting handler chain (buildHandler applies in reverse):
+//     Resulting handler chain (buildHandler applies in reverse):
 //     CompressionMiddleware(        // Applied last, wraps everything
-//       AuthMiddleware(              // Applied second
-//         LoggingMiddleware(         // Applied first
-//           router                   // Core router at center
-//         )
-//       )
+//     AuthMiddleware(              // Applied second
+//     LoggingMiddleware(         // Applied first
+//     router                   // Core router at center
+//     )
+//     )
 //     )
 //
-//   Request execution flow (outer to inner):
+//     Request execution flow (outer to inner):
 //     1. Request arrives → CompressionMiddleware executes first
 //     2. Calls next → AuthMiddleware executes second
 //     3. Calls next → LoggingMiddleware executes third
@@ -2006,7 +2107,7 @@ func (a *App) RunWithGracefulShutdown(addr string, timeout time.Duration) error 
 // Example - Middleware Execution Order:
 //
 //	app := websvrutil.New()
-//	
+//
 //	// Register middleware (order matters!)
 //	app.Use(func(next http.Handler) http.Handler {
 //	    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -2015,7 +2116,7 @@ func (a *App) RunWithGracefulShutdown(addr string, timeout time.Duration) error 
 //	        fmt.Println("1. First middleware - after")
 //	    })
 //	})
-//	
+//
 //	app.Use(func(next http.Handler) http.Handler {
 //	    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 //	        fmt.Println("  2. Second middleware - before")
@@ -2023,12 +2124,12 @@ func (a *App) RunWithGracefulShutdown(addr string, timeout time.Duration) error 
 //	        fmt.Println("  2. Second middleware - after")
 //	    })
 //	})
-//	
+//
 //	app.GET("/test", func(w http.ResponseWriter, r *http.Request) {
 //	    fmt.Println("    3. Handler executed")
 //	    w.Write([]byte("OK"))
 //	})
-//	
+//
 //	// Request to /test outputs:
 //	// 1. First middleware - before
 //	//   2. Second middleware - before
@@ -2041,7 +2142,7 @@ func (a *App) RunWithGracefulShutdown(addr string, timeout time.Duration) error 
 //	app := websvrutil.New()
 //	app.Use(LoggingMiddleware)  // Middleware registered
 //	// No routes configured yet!
-//	
+//
 //	handler := app.buildHandler()
 //	// Returns: LoggingMiddleware wrapping http.NotFound
 //	// All requests → logging → 404 Not Found
@@ -2052,10 +2153,10 @@ func (a *App) RunWithGracefulShutdown(addr string, timeout time.Duration) error 
 //	app.Use(A)  // Middleware A
 //	app.Use(B)  // Middleware B
 //	app.Use(C)  // Middleware C
-//	
+//
 //	// buildHandler creates:
 //	// C(B(A(router)))
-//	
+//
 //	// Execution flow:
 //	// Request → C.before → B.before → A.before → router → A.after → B.after → C.after → Response
 //
@@ -2110,25 +2211,28 @@ func (a *App) RunWithGracefulShutdown(addr string, timeout time.Duration) error 
 //     가장 바깥쪽 미들웨어는 Use()를 통해 마지막에 추가됩니다.
 //
 // 미들웨어 적용 순서:
+//
 //   - 미들웨어는 등록 순서대로 저장됩니다(첫 번째 Use() 호출 = 인덱스 0)
+//
 //   - 역순으로 적용됩니다(마지막 Use() 호출이 모든 것을 래핑)
+//
 //   - 이는 요청 시 직관적인 "외부에서 내부로" 실행을 만듭니다
 //
-//   등록 예제:
+//     등록 예제:
 //     app.Use(LoggingMiddleware)    // 첫 번째 추가, 인덱스 0
 //     app.Use(AuthMiddleware)       // 두 번째 추가, 인덱스 1
 //     app.Use(CompressionMiddleware) // 세 번째 추가, 인덱스 2
 //
-//   결과 핸들러 체인(buildHandler가 역순으로 적용):
+//     결과 핸들러 체인(buildHandler가 역순으로 적용):
 //     CompressionMiddleware(        // 마지막 적용, 모든 것을 래핑
-//       AuthMiddleware(              // 두 번째 적용
-//         LoggingMiddleware(         // 첫 번째 적용
-//           router                   // 중심의 핵심 라우터
-//         )
-//       )
+//     AuthMiddleware(              // 두 번째 적용
+//     LoggingMiddleware(         // 첫 번째 적용
+//     router                   // 중심의 핵심 라우터
+//     )
+//     )
 //     )
 //
-//   요청 실행 흐름(외부에서 내부로):
+//     요청 실행 흐름(외부에서 내부로):
 //     1. 요청 도착 → CompressionMiddleware가 먼저 실행
 //     2. next 호출 → AuthMiddleware가 두 번째 실행
 //     3. next 호출 → LoggingMiddleware가 세 번째 실행
@@ -2223,13 +2327,14 @@ func (a *App) buildHandler() http.Handler {
 // Interface Compliance:
 //   - Satisfies http.Handler interface: ServeHTTP(ResponseWriter, *Request)
 //   - Enables App to be used anywhere http.Handler is accepted:
-//     • http.Server.Handler field
-//     • http.ListenAndServe(addr, app)
-//     • Middleware wrapping: middleware(app)
-//     • Testing: httptest.NewServer(app)
-//     • Reverse proxies, API gateways, etc.
+//   - http.Server.Handler field
+//   - http.ListenAndServe(addr, app)
+//   - Middleware wrapping: middleware(app)
+//   - Testing: httptest.NewServer(app)
+//   - Reverse proxies, API gateways, etc.
 //
 // Parameters:
+//
 //   - w http.ResponseWriter: Response writer for sending HTTP response to client.
 //     Used by handlers to write status codes, headers, and body content.
 //     Passed through middleware chain to final route handler.
@@ -2244,12 +2349,12 @@ func (a *App) buildHandler() http.Handler {
 //     Errors should be handled by writing appropriate HTTP error responses.
 //
 // Behavior:
-//   1. **Acquire Read Lock**: Locks app.mu.RLock() for thread-safe handler building
-//   2. **Build Handler Chain**: Calls buildHandler() to construct middleware + router chain
-//   3. **Release Read Lock**: Unlocks app.mu.RUnlock() after handler construction
-//   4. **Store App Context**: Adds App instance to request context with key "app"
-//   5. **Update Request**: Creates new request with enhanced context
-//   6. **Delegate Handling**: Calls handler.ServeHTTP(w, r) to process request
+//  1. **Acquire Read Lock**: Locks app.mu.RLock() for thread-safe handler building
+//  2. **Build Handler Chain**: Calls buildHandler() to construct middleware + router chain
+//  3. **Release Read Lock**: Unlocks app.mu.RUnlock() after handler construction
+//  4. **Store App Context**: Adds App instance to request context with key "app"
+//  5. **Update Request**: Creates new request with enhanced context
+//  6. **Delegate Handling**: Calls handler.ServeHTTP(w, r) to process request
 //
 // Context Storage:
 //   - Stores App instance in request context: context.WithValue(r.Context(), "app", a)
@@ -2291,12 +2396,12 @@ func (a *App) buildHandler() http.Handler {
 //	    app.GET("/test", func(w http.ResponseWriter, r *http.Request) {
 //	        w.Write([]byte("OK"))
 //	    })
-//	    
+//
 //	    // ServeHTTP called automatically by test infrastructure
 //	    req := httptest.NewRequest("GET", "/test", nil)
 //	    rec := httptest.NewRecorder()
 //	    app.ServeHTTP(rec, req)  // Direct invocation in tests
-//	    
+//
 //	    assert.Equal(t, 200, rec.Code)
 //	    assert.Equal(t, "OK", rec.Body.String())
 //	}
@@ -2307,7 +2412,7 @@ func (a *App) buildHandler() http.Handler {
 //	app.Use(LoggingMiddleware)
 //	app.Use(AuthMiddleware)
 //	app.GET("/api/data", dataHandler)
-//	
+//
 //	// Request arrives → ServeHTTP called
 //	// 1. Acquire read lock
 //	// 2. Build: AuthMiddleware(LoggingMiddleware(router))
@@ -2321,10 +2426,10 @@ func (a *App) buildHandler() http.Handler {
 //	func myHandler(w http.ResponseWriter, r *http.Request) {
 //	    // Retrieve app from context (stored by ServeHTTP)
 //	    app := r.Context().Value("app").(*websvrutil.App)
-//	    
+//
 //	    // Access template engine
 //	    templates := app.TemplateEngine()
-//	    
+//
 //	    // Use for rendering
 //	    // ...
 //	}
@@ -2342,7 +2447,7 @@ func (a *App) buildHandler() http.Handler {
 //	app := websvrutil.New()
 //	app.GET("/", homeHandler)
 //	http.ListenAndServe(":8080", app)  // ServeHTTP called per request
-//	
+//
 //	// Example 2: Custom Server
 //	server := &http.Server{
 //	    Addr:         ":8080",
@@ -2351,19 +2456,19 @@ func (a *App) buildHandler() http.Handler {
 //	    WriteTimeout: 10 * time.Second,
 //	}
 //	server.ListenAndServe()
-//	
+//
 //	// Example 3: Wrapped with External Middleware
 //	app := websvrutil.New()
 //	wrapped := http.TimeoutHandler(app, 30*time.Second, "Timeout")
 //	http.ListenAndServe(":8080", wrapped)
-//	
+//
 //	// Example 4: Multiple Apps (different ports)
 //	publicApp := websvrutil.New()
 //	publicApp.GET("/", publicHandler)
-//	
+//
 //	adminApp := websvrutil.New()
 //	adminApp.GET("/admin", adminHandler)
-//	
+//
 //	go http.ListenAndServe(":8080", publicApp)   // Public on 8080
 //	http.ListenAndServe(":9090", adminApp)       // Admin on 9090
 //
@@ -2415,13 +2520,14 @@ func (a *App) buildHandler() http.Handler {
 // 인터페이스 준수:
 //   - http.Handler 인터페이스를 만족: ServeHTTP(ResponseWriter, *Request)
 //   - http.Handler가 허용되는 모든 곳에서 App을 사용할 수 있게 합니다:
-//     • http.Server.Handler 필드
-//     • http.ListenAndServe(addr, app)
-//     • 미들웨어 래핑: middleware(app)
-//     • 테스팅: httptest.NewServer(app)
-//     • 리버스 프록시, API 게이트웨이 등
+//   - http.Server.Handler 필드
+//   - http.ListenAndServe(addr, app)
+//   - 미들웨어 래핑: middleware(app)
+//   - 테스팅: httptest.NewServer(app)
+//   - 리버스 프록시, API 게이트웨이 등
 //
 // 매개변수:
+//
 //   - w http.ResponseWriter: 클라이언트에 HTTP 응답을 보내기 위한 응답 작성기.
 //     핸들러가 상태 코드, 헤더 및 본문 내용을 작성하는 데 사용됩니다.
 //     미들웨어 체인을 통해 최종 경로 핸들러로 전달됩니다.
@@ -2436,12 +2542,12 @@ func (a *App) buildHandler() http.Handler {
 //     오류는 적절한 HTTP 오류 응답을 작성하여 처리해야 합니다.
 //
 // 동작 방식:
-//   1. **읽기 잠금 획득**: 스레드 안전 핸들러 구축을 위해 app.mu.RLock() 잠금
-//   2. **핸들러 체인 구축**: buildHandler()를 호출하여 미들웨어 + 라우터 체인 구성
-//   3. **읽기 잠금 해제**: 핸들러 구성 후 app.mu.RUnlock() 잠금 해제
-//   4. **앱 컨텍스트 저장**: "app" 키로 요청 컨텍스트에 App 인스턴스 추가
-//   5. **요청 업데이트**: 향상된 컨텍스트로 새 요청 생성
-//   6. **처리 위임**: handler.ServeHTTP(w, r)를 호출하여 요청 처리
+//  1. **읽기 잠금 획득**: 스레드 안전 핸들러 구축을 위해 app.mu.RLock() 잠금
+//  2. **핸들러 체인 구축**: buildHandler()를 호출하여 미들웨어 + 라우터 체인 구성
+//  3. **읽기 잠금 해제**: 핸들러 구성 후 app.mu.RUnlock() 잠금 해제
+//  4. **앱 컨텍스트 저장**: "app" 키로 요청 컨텍스트에 App 인스턴스 추가
+//  5. **요청 업데이트**: 향상된 컨텍스트로 새 요청 생성
+//  6. **처리 위임**: handler.ServeHTTP(w, r)를 호출하여 요청 처리
 //
 // 컨텍스트 저장:
 //   - 요청 컨텍스트에 App 인스턴스 저장: context.WithValue(r.Context(), "app", a)
@@ -2540,7 +2646,7 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // Example - Access for Custom Configuration:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Get engine for advanced operations
 //	engine := app.TemplateEngine()
 //	if engine != nil {
@@ -2655,11 +2761,11 @@ func (a *App) TemplateEngine() *TemplateEngine {
 // Returns:
 //   - error: Returns error if template loading fails.
 //     Error scenarios:
-//     • Template engine not initialized (no TemplateDir option set)
-//     • Template file not found in template directory
-//     • Template syntax errors (invalid Go template syntax)
-//     • File read permission denied
-//     • Invalid template name (path traversal attempts, etc.)
+//   - Template engine not initialized (no TemplateDir option set)
+//   - Template file not found in template directory
+//   - Template syntax errors (invalid Go template syntax)
+//   - File read permission denied
+//   - Invalid template name (path traversal attempts, etc.)
 //     Returns nil on successful template load.
 //
 // Template Engine Requirement:
@@ -2698,12 +2804,12 @@ func (a *App) TemplateEngine() *TemplateEngine {
 // Example - Basic Template Loading:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Load single template
 //	if err := app.LoadTemplate("index.html"); err != nil {
 //	    log.Fatalf("Failed to load template: %v", err)
 //	}
-//	
+//
 //	// Template is now available for rendering
 //	app.GET("/", func(w http.ResponseWriter, r *http.Request) {
 //	    // Render the loaded template
@@ -2713,7 +2819,7 @@ func (a *App) TemplateEngine() *TemplateEngine {
 // Example - Lazy Loading Strategy:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Don't load all templates at startup
 //	app.GET("/dashboard", func(w http.ResponseWriter, r *http.Request) {
 //	    // Load dashboard template on first access
@@ -2727,10 +2833,10 @@ func (a *App) TemplateEngine() *TemplateEngine {
 // Example - Development Hot Reload:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// In development mode, reload template on each request
 //	isDev := os.Getenv("ENV") == "development"
-//	
+//
 //	app.GET("/", func(w http.ResponseWriter, r *http.Request) {
 //	    if isDev {
 //	        // Reload template to pick up changes
@@ -2756,12 +2862,12 @@ func (a *App) TemplateEngine() *TemplateEngine {
 // Example - Load with Subdirectories:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Load template from subdirectory
 //	if err := app.LoadTemplate("partials/header.html"); err != nil {
 //	    log.Fatal(err)
 //	}
-//	
+//
 //	if err := app.LoadTemplate("layouts/main.html"); err != nil {
 //	    log.Fatal(err)
 //	}
@@ -2824,11 +2930,11 @@ func (a *App) TemplateEngine() *TemplateEngine {
 // 반환값:
 //   - error: 템플릿 로딩이 실패하면 오류를 반환합니다.
 //     오류 시나리오:
-//     • 템플릿 엔진이 초기화되지 않음(TemplateDir 옵션이 설정되지 않음)
-//     • 템플릿 디렉토리에서 템플릿 파일을 찾을 수 없음
-//     • 템플릿 구문 오류(잘못된 Go 템플릿 구문)
-//     • 파일 읽기 권한 거부
-//     • 잘못된 템플릿 이름(경로 순회 시도 등)
+//   - 템플릿 엔진이 초기화되지 않음(TemplateDir 옵션이 설정되지 않음)
+//   - 템플릿 디렉토리에서 템플릿 파일을 찾을 수 없음
+//   - 템플릿 구문 오류(잘못된 Go 템플릿 구문)
+//   - 파일 읽기 권한 거부
+//   - 잘못된 템플릿 이름(경로 순회 시도 등)
 //     템플릿 로드에 성공하면 nil을 반환합니다.
 //
 // 템플릿 엔진 요구사항:
@@ -2899,30 +3005,41 @@ func (a *App) LoadTemplate(name string) error {
 //   - Reduces startup time compared to individual file loading
 //
 // Parameters:
+//
 //   - pattern: Glob pattern for matching template files within the template directory.
 //     Glob patterns support standard wildcards:
-//     • "*" - Matches any sequence of characters (except directory separator)
-//     • "?" - Matches any single character
-//     • "**" - Matches directories recursively (implementation-dependent)
-//     • "[abc]" - Matches any character in the bracket set
-//     • "{a,b}" - Matches either alternative (brace expansion)
-//     
+//
+//   - "*" - Matches any sequence of characters (except directory separator)
+//
+//   - "?" - Matches any single character
+//
+//   - "**" - Matches directories recursively (implementation-dependent)
+//
+//   - "[abc]" - Matches any character in the bracket set
+//
+//   - "{a,b}" - Matches either alternative (brace expansion)
+//
 //     Common patterns:
-//     • "*.html" - All .html files in template directory root
-//     • "**/*.html" - All .html files in any subdirectory (recursive)
-//     • "layouts/*.tmpl" - All .tmpl files in layouts subdirectory
-//     • "partial*.html" - Files starting with "partial" and ending with .html
-//     • "*.{html,tmpl}" - Files with .html or .tmpl extension
+//
+//   - "*.html" - All .html files in template directory root
+//
+//   - "**/*.html" - All .html files in any subdirectory (recursive)
+//
+//   - "layouts/*.tmpl" - All .tmpl files in layouts subdirectory
+//
+//   - "partial*.html" - Files starting with "partial" and ending with .html
+//
+//   - "*.{html,tmpl}" - Files with .html or .tmpl extension
 //
 // Returns:
 //   - error: Returns error if template loading fails.
 //     Error scenarios:
-//     • Template engine not initialized (no TemplateDir option set)
-//     • Invalid glob pattern syntax
-//     • No files match the pattern (may or may not be an error depending on implementation)
-//     • Template syntax errors in any matched file
-//     • File read permission denied
-//     • Disk I/O errors
+//   - Template engine not initialized (no TemplateDir option set)
+//   - Invalid glob pattern syntax
+//   - No files match the pattern (may or may not be an error depending on implementation)
+//   - Template syntax errors in any matched file
+//   - File read permission denied
+//   - Disk I/O errors
 //     Returns nil when all matching templates load successfully.
 //
 // Template Engine Requirement:
@@ -2960,19 +3077,19 @@ func (a *App) LoadTemplate(name string) error {
 // Example - Load All HTML Templates:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Load all .html files at startup
 //	if err := app.LoadTemplates("*.html"); err != nil {
 //	    log.Fatalf("Failed to load templates: %v", err)
 //	}
-//	
+//
 //	// All templates now available for rendering
 //	app.Run(":8080")
 //
 // Example - Load Templates Recursively:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Load all .html files from all subdirectories
 //	if err := app.LoadTemplates("**/*.html"); err != nil {
 //	    log.Fatalf("Failed to load templates: %v", err)
@@ -2981,12 +3098,12 @@ func (a *App) LoadTemplate(name string) error {
 // Example - Load Specific Subdirectory:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Load only layout templates
 //	if err := app.LoadTemplates("layouts/*.html"); err != nil {
 //	    log.Fatalf("Failed to load layouts: %v", err)
 //	}
-//	
+//
 //	// Load only partial templates
 //	if err := app.LoadTemplates("partials/*.html"); err != nil {
 //	    log.Fatalf("Failed to load partials: %v", err)
@@ -2995,7 +3112,7 @@ func (a *App) LoadTemplate(name string) error {
 // Example - Multiple Extensions:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Load both .html and .tmpl files
 //	patterns := []string{"*.html", "*.tmpl"}
 //	for _, pattern := range patterns {
@@ -3007,17 +3124,17 @@ func (a *App) LoadTemplate(name string) error {
 // Example - Staged Loading:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Load critical templates first
 //	if err := app.LoadTemplates("layouts/*.html"); err != nil {
 //	    log.Fatal("Critical layouts missing:", err)
 //	}
-//	
+//
 //	// Load optional templates (errors non-fatal)
 //	if err := app.LoadTemplates("optional/*.html"); err != nil {
 //	    log.Println("Optional templates not loaded:", err)
 //	}
-//	
+//
 //	// Load remaining templates
 //	if err := app.LoadTemplates("*.html"); err != nil {
 //	    log.Fatal("Template loading failed:", err)
@@ -3026,10 +3143,10 @@ func (a *App) LoadTemplate(name string) error {
 // Example - Development Hot Reload:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Initial load
 //	app.LoadTemplates("*.html")
-//	
+//
 //	// In development mode, watch for changes and reload
 //	if isDevelopment {
 //	    // (Pseudo-code - actual file watching implementation needed)
@@ -3095,30 +3212,41 @@ func (a *App) LoadTemplate(name string) error {
 //   - 개별 파일 로딩에 비해 시작 시간 단축
 //
 // 매개변수:
+//
 //   - pattern: 템플릿 디렉토리 내에서 템플릿 파일을 매칭하기 위한 글로브 패턴.
 //     글로브 패턴은 표준 와일드카드를 지원합니다:
-//     • "*" - 모든 문자 시퀀스와 일치(디렉토리 구분자 제외)
-//     • "?" - 모든 단일 문자와 일치
-//     • "**" - 디렉토리를 재귀적으로 일치(구현에 따라 다름)
-//     • "[abc]" - 브래킷 세트의 모든 문자와 일치
-//     • "{a,b}" - 대안 중 하나와 일치(브레이스 확장)
-//     
+//
+//   - "*" - 모든 문자 시퀀스와 일치(디렉토리 구분자 제외)
+//
+//   - "?" - 모든 단일 문자와 일치
+//
+//   - "**" - 디렉토리를 재귀적으로 일치(구현에 따라 다름)
+//
+//   - "[abc]" - 브래킷 세트의 모든 문자와 일치
+//
+//   - "{a,b}" - 대안 중 하나와 일치(브레이스 확장)
+//
 //     일반적인 패턴:
-//     • "*.html" - 템플릿 디렉토리 루트의 모든 .html 파일
-//     • "**/*.html" - 모든 하위 디렉토리의 모든 .html 파일(재귀)
-//     • "layouts/*.tmpl" - layouts 하위 디렉토리의 모든 .tmpl 파일
-//     • "partial*.html" - "partial"로 시작하고 .html로 끝나는 파일
-//     • "*.{html,tmpl}" - .html 또는 .tmpl 확장자를 가진 파일
+//
+//   - "*.html" - 템플릿 디렉토리 루트의 모든 .html 파일
+//
+//   - "**/*.html" - 모든 하위 디렉토리의 모든 .html 파일(재귀)
+//
+//   - "layouts/*.tmpl" - layouts 하위 디렉토리의 모든 .tmpl 파일
+//
+//   - "partial*.html" - "partial"로 시작하고 .html로 끝나는 파일
+//
+//   - "*.{html,tmpl}" - .html 또는 .tmpl 확장자를 가진 파일
 //
 // 반환값:
 //   - error: 템플릿 로딩이 실패하면 오류를 반환합니다.
 //     오류 시나리오:
-//     • 템플릿 엔진이 초기화되지 않음(TemplateDir 옵션이 설정되지 않음)
-//     • 잘못된 글로브 패턴 구문
-//     • 패턴과 일치하는 파일이 없음(구현에 따라 오류일 수도 아닐 수도 있음)
-//     • 일치하는 파일의 템플릿 구문 오류
-//     • 파일 읽기 권한 거부
-//     • 디스크 I/O 오류
+//   - 템플릿 엔진이 초기화되지 않음(TemplateDir 옵션이 설정되지 않음)
+//   - 잘못된 글로브 패턴 구문
+//   - 패턴과 일치하는 파일이 없음(구현에 따라 오류일 수도 아닐 수도 있음)
+//   - 일치하는 파일의 템플릿 구문 오류
+//   - 파일 읽기 권한 거부
+//   - 디스크 I/O 오류
 //     모든 일치하는 템플릿이 성공적으로 로드되면 nil을 반환합니다.
 //
 // 스레드 안전성:
@@ -3172,11 +3300,11 @@ func (a *App) LoadTemplates(pattern string) error {
 // Returns:
 //   - error: Returns error if template reloading fails.
 //     Error scenarios:
-//     • Template engine not initialized (no TemplateDir option set)
-//     • Template directory not accessible (permissions, missing directory)
-//     • Template syntax errors in any template file
-//     • Disk I/O errors during file reading
-//     • Partial reload failure (some templates cleared, reload incomplete)
+//   - Template engine not initialized (no TemplateDir option set)
+//   - Template directory not accessible (permissions, missing directory)
+//   - Template syntax errors in any template file
+//   - Disk I/O errors during file reading
+//   - Partial reload failure (some templates cleared, reload incomplete)
 //     Returns nil when all templates successfully reloaded.
 //
 // Template Engine Requirement:
@@ -3188,23 +3316,26 @@ func (a *App) LoadTemplates(pattern string) error {
 //   - Thread-safe with read lock protection (app.mu.RLock).
 //   - Safe for concurrent calls from multiple goroutines.
 //   - **WARNING**: Race condition possible during reload:
-//     • Templates are cleared first (all templates temporarily unavailable)
-//     • Templates are then reloaded (new templates become available)
-//     • Requests during this window may fail if templates are missing
-//     • Duration: Typically 10-100ms depending on template count and complexity
+//   - Templates are cleared first (all templates temporarily unavailable)
+//   - Templates are then reloaded (new templates become available)
+//   - Requests during this window may fail if templates are missing
+//   - Duration: Typically 10-100ms depending on template count and complexity
 //   - Not recommended for production due to race condition risk.
 //
 // Reload Behavior:
-//   1. **Clear Phase**: All currently loaded templates are removed from memory
-//   2. **Load Phase**: Template engine reloads all templates from directory
-//   3. **Result**: Fresh template state matching current filesystem contents
 //
-//   Template discovery:
-//   - Reloads all template files in TemplateDir and subdirectories
-//   - Uses same loading logic as initial startup
-//   - Discovers new files added since startup
-//   - Removes deleted files from template cache
-//   - Updates modified files with latest content
+//  1. **Clear Phase**: All currently loaded templates are removed from memory
+//
+//  2. **Load Phase**: Template engine reloads all templates from directory
+//
+//  3. **Result**: Fresh template state matching current filesystem contents
+//
+//     Template discovery:
+//     - Reloads all template files in TemplateDir and subdirectories
+//     - Uses same loading logic as initial startup
+//     - Discovers new files added since startup
+//     - Removes deleted files from template cache
+//     - Updates modified files with latest content
 //
 // Performance Impact:
 //   - Template clearing: Very fast (memory deallocation)
@@ -3224,7 +3355,7 @@ func (a *App) LoadTemplates(pattern string) error {
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
 //	app.LoadTemplates("*.html")
-//	
+//
 //	// Add reload endpoint for development
 //	if os.Getenv("ENV") == "development" {
 //	    app.GET("/admin/reload-templates", func(w http.ResponseWriter, r *http.Request) {
@@ -3240,7 +3371,7 @@ func (a *App) LoadTemplates(pattern string) error {
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
 //	app.LoadTemplates("*.html")
-//	
+//
 //	// Watch template directory for changes (pseudo-code)
 //	if os.Getenv("ENV") == "development" {
 //	    go func() {
@@ -3255,13 +3386,13 @@ func (a *App) LoadTemplates(pattern string) error {
 //	        }
 //	    }()
 //	}
-//	
+//
 //	app.Run(":8080")
 //
 // Example - Reload on HTTP Request (Dev Mode):
 //
 //	isDev := os.Getenv("ENV") == "development"
-//	
+//
 //	app.GET("/", func(w http.ResponseWriter, r *http.Request) {
 //	    // Reload templates on each request in development
 //	    if isDev {
@@ -3269,7 +3400,7 @@ func (a *App) LoadTemplates(pattern string) error {
 //	            log.Printf("Template reload error: %v", err)
 //	        }
 //	    }
-//	    
+//
 //	    // Render template (now using latest version)
 //	    // ...
 //	})
@@ -3284,32 +3415,32 @@ func (a *App) LoadTemplates(pattern string) error {
 //	            log.Printf("Reload failed: %v", err)
 //	        }
 //	    }
-//	    
+//
 //	    // Render page
 //	    // ...
 //	})
-//	
+//
 //	// Usage: http://localhost:8080/page?reload=1
 //
 // Example - Testing with Template Reload:
 //
 //	func TestTemplateRendering(t *testing.T) {
 //	    app := websvrutil.New(websvrutil.WithTemplateDir("./test-templates"))
-//	    
+//
 //	    // Load initial templates
 //	    app.LoadTemplates("*.html")
-//	    
+//
 //	    // Test with original templates
 //	    // ... run tests ...
-//	    
+//
 //	    // Modify template files
 //	    // ... write new template content ...
-//	    
+//
 //	    // Reload to pick up changes
 //	    if err := app.ReloadTemplates(); err != nil {
 //	        t.Fatalf("Reload failed: %v", err)
 //	    }
-//	    
+//
 //	    // Test with modified templates
 //	    // ... run more tests ...
 //	}
@@ -3317,13 +3448,13 @@ func (a *App) LoadTemplates(pattern string) error {
 // File Watching Integration Example (using fsnotify):
 //
 //	import "github.com/fsnotify/fsnotify"
-//	
+//
 //	func setupTemplateWatcher(app *websvrutil.App, dir string) error {
 //	    watcher, err := fsnotify.NewWatcher()
 //	    if err != nil {
 //	        return err
 //	    }
-//	    
+//
 //	    go func() {
 //	        defer watcher.Close()
 //	        for {
@@ -3343,7 +3474,7 @@ func (a *App) LoadTemplates(pattern string) error {
 //	            }
 //	        }
 //	    }()
-//	    
+//
 //	    return watcher.Add(dir)
 //	}
 //
@@ -3410,21 +3541,21 @@ func (a *App) LoadTemplates(pattern string) error {
 // 반환값:
 //   - error: 템플릿 리로딩이 실패하면 오류를 반환합니다.
 //     오류 시나리오:
-//     • 템플릿 엔진이 초기화되지 않음(TemplateDir 옵션이 설정되지 않음)
-//     • 템플릿 디렉토리에 액세스할 수 없음(권한, 누락된 디렉토리)
-//     • 템플릿 파일의 템플릿 구문 오류
-//     • 파일 읽기 중 디스크 I/O 오류
-//     • 부분 리로드 실패(일부 템플릿 지워짐, 리로드 불완전)
+//   - 템플릿 엔진이 초기화되지 않음(TemplateDir 옵션이 설정되지 않음)
+//   - 템플릿 디렉토리에 액세스할 수 없음(권한, 누락된 디렉토리)
+//   - 템플릿 파일의 템플릿 구문 오류
+//   - 파일 읽기 중 디스크 I/O 오류
+//   - 부분 리로드 실패(일부 템플릿 지워짐, 리로드 불완전)
 //     모든 템플릿이 성공적으로 리로드되면 nil을 반환합니다.
 //
 // 스레드 안전성:
 //   - 읽기 잠금 보호(app.mu.RLock)로 스레드 안전합니다.
 //   - 여러 고루틴에서 동시 호출에 안전합니다.
 //   - **경고**: 리로드 중 경쟁 조건 가능:
-//     • 템플릿이 먼저 지워짐(모든 템플릿이 일시적으로 사용 불가)
-//     • 그런 다음 템플릿이 리로드됨(새 템플릿 사용 가능)
-//     • 이 기간 동안의 요청은 템플릿이 누락되면 실패할 수 있음
-//     • 기간: 템플릿 수와 복잡성에 따라 일반적으로 10-100ms
+//   - 템플릿이 먼저 지워짐(모든 템플릿이 일시적으로 사용 불가)
+//   - 그런 다음 템플릿이 리로드됨(새 템플릿 사용 가능)
+//   - 이 기간 동안의 요청은 템플릿이 누락되면 실패할 수 있음
+//   - 기간: 템플릿 수와 복잡성에 따라 일반적으로 10-100ms
 //   - 경쟁 조건 위험으로 인해 프로덕션에는 권장되지 않습니다.
 //
 // 모범 사례:
@@ -3473,34 +3604,47 @@ func (a *App) ReloadTemplates() error {
 //   - Allows templates to access application context and helpers
 //
 // Parameters:
+//
 //   - name: Function name as it will be called in templates.
 //     Must be a valid Go identifier (alphanumeric + underscore, start with letter/underscore).
 //     Case-sensitive: "formatDate" and "FormatDate" are different functions.
 //     Cannot override built-in template functions (and, or, not, etc.) without special handling.
-//     
+//
 //   - fn: Function to execute when called from template.
 //     Must be a Go function with specific signature requirements:
-//     • Returns 1 or 2 values
-//     • If 2 values: second must be error (for error handling in templates)
-//     • Parameters: Can accept any number of parameters of any type
-//     • Parameter types: Template engine will attempt type conversion
-//     • Return types: Must be types that can be rendered in templates
-//     
+//
+//   - Returns 1 or 2 values
+//
+//   - If 2 values: second must be error (for error handling in templates)
+//
+//   - Parameters: Can accept any number of parameters of any type
+//
+//   - Parameter types: Template engine will attempt type conversion
+//
+//   - Return types: Must be types that can be rendered in templates
+//
 //     Valid function signatures:
-//     • func() string
-//     • func(string) string
-//     • func(int, int) int
-//     • func(string) (string, error)
-//     • func(interface{}) string
-//     • func(...interface{}) string (variadic)
+//
+//   - func() string
+//
+//   - func(string) string
+//
+//   - func(int, int) int
+//
+//   - func(string) (string, error)
+//
+//   - func(interface{}) string
+//
+//   - func(...interface{}) string (variadic)
 //
 // Function Signature Requirements:
-//   The function must follow Go template function rules:
-//   - Can have any number of parameters (0+)
-//   - Can return 1 value: the result
-//   - Can return 2 values: (result, error)
-//   - If error is returned and non-nil, template execution fails
-//   - Parameter and return types should be serializable/printable
+//
+//	The function must follow Go template function rules:
+//	- Can have any number of parameters (0+)
+//	- Can return 1 value: the result
+//	- Can return 2 values: (result, error)
+//	- If error is returned and non-nil, template execution fails
+//	- Parameter and return types should be serializable/printable
 //
 // Thread-Safety:
 //   - Thread-safe with read lock protection (app.mu.RLock).
@@ -3532,16 +3676,16 @@ func (a *App) ReloadTemplates() error {
 // Example - Basic String Formatting:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Register uppercase function
 //	app.AddTemplateFunc("upper", strings.ToUpper)
-//	
+//
 //	// Register lowercase function
 //	app.AddTemplateFunc("lower", strings.ToLower)
-//	
+//
 //	// Load templates (functions now available)
 //	app.LoadTemplates("*.html")
-//	
+//
 //	// In template:
 //	// {{ .Name | upper }}  → "JOHN"
 //	// {{ .Name | lower }}  → "john"
@@ -3549,12 +3693,12 @@ func (a *App) ReloadTemplates() error {
 // Example - Date Formatting:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Register date formatter
 //	app.AddTemplateFunc("formatDate", func(t time.Time) string {
 //	    return t.Format("2006-01-02")
 //	})
-//	
+//
 //	// Register relative time formatter
 //	app.AddTemplateFunc("timeAgo", func(t time.Time) string {
 //	    d := time.Since(t)
@@ -3563,9 +3707,9 @@ func (a *App) ReloadTemplates() error {
 //	    }
 //	    return fmt.Sprintf("%d hours ago", int(d.Hours()))
 //	})
-//	
+//
 //	app.LoadTemplates("*.html")
-//	
+//
 //	// In template:
 //	// {{ .CreatedAt | formatDate }}  → "2024-01-15"
 //	// {{ .UpdatedAt | timeAgo }}     → "5 minutes ago"
@@ -3573,19 +3717,19 @@ func (a *App) ReloadTemplates() error {
 // Example - Number Formatting:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Register currency formatter
 //	app.AddTemplateFunc("currency", func(amount float64) string {
 //	    return fmt.Sprintf("$%.2f", amount)
 //	})
-//	
+//
 //	// Register percentage formatter
 //	app.AddTemplateFunc("percent", func(value float64) string {
 //	    return fmt.Sprintf("%.1f%%", value*100)
 //	})
-//	
+//
 //	app.LoadTemplates("*.html")
-//	
+//
 //	// In template:
 //	// {{ .Price | currency }}      → "$19.99"
 //	// {{ .Discount | percent }}    → "15.0%"
@@ -3593,7 +3737,7 @@ func (a *App) ReloadTemplates() error {
 // Example - With Error Handling:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Register function that can fail
 //	app.AddTemplateFunc("divide", func(a, b int) (int, error) {
 //	    if b == 0 {
@@ -3601,9 +3745,9 @@ func (a *App) ReloadTemplates() error {
 //	    }
 //	    return a / b, nil
 //	})
-//	
+//
 //	app.LoadTemplates("*.html")
-//	
+//
 //	// In template:
 //	// {{ divide 10 2 }}   → 5
 //	// {{ divide 10 0 }}   → ERROR: template execution fails
@@ -3611,20 +3755,20 @@ func (a *App) ReloadTemplates() error {
 // Example - URL Building:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Register URL builder
 //	app.AddTemplateFunc("url", func(path string) string {
 //	    return "/app" + path
 //	})
-//	
+//
 //	// Register asset URL builder with version
 //	app.AddTemplateFunc("asset", func(path string) string {
 //	    version := "v1.2.3" // Or read from config
 //	    return fmt.Sprintf("/static/%s?v=%s", path, version)
 //	})
-//	
+//
 //	app.LoadTemplates("*.html")
-//	
+//
 //	// In template:
 //	// <a href="{{ url "/users" }}">Users</a>
 //	// <script src="{{ asset "app.js" }}"></script>
@@ -3632,7 +3776,7 @@ func (a *App) ReloadTemplates() error {
 // Example - Authorization Helper:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Register permission checker
 //	app.AddTemplateFunc("can", func(user interface{}, permission string) bool {
 //	    // Type assert and check permission
@@ -3641,9 +3785,9 @@ func (a *App) ReloadTemplates() error {
 //	    }
 //	    return false
 //	})
-//	
+//
 //	app.LoadTemplates("*.html")
-//	
+//
 //	// In template:
 //	// {{ if can .User "edit:posts" }}
 //	//   <button>Edit</button>
@@ -3717,18 +3861,24 @@ func (a *App) ReloadTemplates() error {
 //   - 템플릿이 애플리케이션 컨텍스트 및 헬퍼에 액세스할 수 있도록 허용
 //
 // 매개변수:
+//
 //   - name: 템플릿에서 호출될 함수 이름.
 //     유효한 Go 식별자여야 합니다(영숫자 + 밑줄, 문자/밑줄로 시작).
 //     대소문자 구분: "formatDate"와 "FormatDate"는 다른 함수입니다.
 //     특별한 처리 없이는 내장 템플릿 함수(and, or, not 등)를 재정의할 수 없습니다.
-//     
+//
 //   - fn: 템플릿에서 호출될 때 실행할 함수.
 //     특정 시그니처 요구사항이 있는 Go 함수여야 합니다:
-//     • 1개 또는 2개의 값 반환
-//     • 2개의 값인 경우: 두 번째는 error여야 함(템플릿에서 오류 처리를 위해)
-//     • 매개변수: 모든 타입의 매개변수를 모든 수만큼 받을 수 있음
-//     • 매개변수 타입: 템플릿 엔진이 타입 변환을 시도
-//     • 반환 타입: 템플릿에서 렌더링할 수 있는 타입이어야 함
+//
+//   - 1개 또는 2개의 값 반환
+//
+//   - 2개의 값인 경우: 두 번째는 error여야 함(템플릿에서 오류 처리를 위해)
+//
+//   - 매개변수: 모든 타입의 매개변수를 모든 수만큼 받을 수 있음
+//
+//   - 매개변수 타입: 템플릿 엔진이 타입 변환을 시도
+//
+//   - 반환 타입: 템플릿에서 렌더링할 수 있는 타입이어야 함
 //
 // 등록 타이밍:
 //   - **중요**: 템플릿을 로드하기 전에 호출되어야 합니다.
@@ -3786,20 +3936,24 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 //   - Simplifies template function initialization
 //
 // Parameters:
+//
 //   - funcs: Map of function names to function implementations.
 //     Key: Function name as it will be called in templates (string)
 //     Value: Function implementation (interface{}, must be valid template function)
-//     
+//
 //     Map structure: map[string]interface{}{
-//         "functionName": functionImplementation,
-//         "otherFunc": otherImplementation,
-//         ...
+//     "functionName": functionImplementation,
+//     "otherFunc": otherImplementation,
+//     ...
 //     }
-//     
+//
 //     Each function must follow template function signature requirements:
-//     • Returns 1 or 2 values
-//     • If 2 values: second must be error
-//     • Can accept any number of parameters
+//
+//   - Returns 1 or 2 values
+//
+//   - If 2 values: second must be error
+//
+//   - Can accept any number of parameters
 //
 // Thread-Safety:
 //   - Thread-safe with read lock protection (app.mu.RLock).
@@ -3837,7 +3991,7 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 // Example - String Utilities:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Register multiple string functions at once
 //	app.AddTemplateFuncs(map[string]interface{}{
 //	    "upper":     strings.ToUpper,
@@ -3846,9 +4000,9 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 //	    "trim":      strings.TrimSpace,
 //	    "replace":   strings.ReplaceAll,
 //	})
-//	
+//
 //	app.LoadTemplates("*.html")
-//	
+//
 //	// In template:
 //	// {{ .Name | upper }}
 //	// {{ .Title | title }}
@@ -3857,7 +4011,7 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 // Example - Date/Time Formatters:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	app.AddTemplateFuncs(map[string]interface{}{
 //	    "formatDate": func(t time.Time) string {
 //	        return t.Format("2006-01-02")
@@ -3882,13 +4036,13 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 //	        }
 //	    },
 //	})
-//	
+//
 //	app.LoadTemplates("*.html")
 //
 // Example - Number Formatters:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	app.AddTemplateFuncs(map[string]interface{}{
 //	    "currency": func(amount float64) string {
 //	        return fmt.Sprintf("$%.2f", amount)
@@ -3904,16 +4058,16 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 //	        return humanize.Comma(int64(n))
 //	    },
 //	})
-//	
+//
 //	app.LoadTemplates("*.html")
 //
 // Example - URL and Asset Helpers:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	baseURL := "/app"
 //	version := "v1.2.3"
-//	
+//
 //	app.AddTemplateFuncs(map[string]interface{}{
 //	    "url": func(path string) string {
 //	        return baseURL + path
@@ -3928,9 +4082,9 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 //	        return fmt.Sprintf("%s?size=%s", imageURL, size)
 //	    },
 //	})
-//	
+//
 //	app.LoadTemplates("*.html")
-//	
+//
 //	// In template:
 //	// <a href="{{ url "/users" }}">Users</a>
 //	// <script src="{{ asset "app.js" }}"></script>
@@ -3939,7 +4093,7 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 // Example - Comprehensive Helper Suite:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// Register complete helper suite
 //	app.AddTemplateFuncs(map[string]interface{}{
 //	    // String helpers
@@ -3951,17 +4105,17 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 //	        }
 //	        return s[:n] + "..."
 //	    },
-//	    
+//
 //	    // Date helpers
 //	    "formatDate": func(t time.Time) string {
 //	        return t.Format("2006-01-02")
 //	    },
-//	    
+//
 //	    // Number helpers
 //	    "currency": func(amount float64) string {
 //	        return fmt.Sprintf("$%.2f", amount)
 //	    },
-//	    
+//
 //	    // Logic helpers
 //	    "default": func(value, defaultValue interface{}) interface{} {
 //	        if value == nil || value == "" {
@@ -3969,7 +4123,7 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 //	        }
 //	        return value
 //	    },
-//	    
+//
 //	    // Collection helpers
 //	    "first": func(slice interface{}) interface{} {
 //	        v := reflect.ValueOf(slice)
@@ -3979,14 +4133,14 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 //	        return nil
 //	    },
 //	})
-//	
+//
 //	app.LoadTemplates("*.html")
 //
 // Example - Reusable Function Library:
 //
 //	// helpers/template_funcs.go
 //	package helpers
-//	
+//
 //	func StandardTemplateFuncs() map[string]interface{} {
 //	    return map[string]interface{}{
 //	        "upper":      strings.ToUpper,
@@ -3997,7 +4151,7 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 //	        // ... more functions ...
 //	    }
 //	}
-//	
+//
 //	// main.go
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
 //	app.AddTemplateFuncs(helpers.StandardTemplateFuncs())
@@ -4006,7 +4160,7 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 // Example - Domain-Specific Functions:
 //
 //	app := websvrutil.New(websvrutil.WithTemplateDir("./views"))
-//	
+//
 //	// E-commerce specific functions
 //	app.AddTemplateFuncs(map[string]interface{}{
 //	    "productURL": func(productID string) string {
@@ -4027,7 +4181,7 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 //	        return price * (1 - discount)
 //	    },
 //	})
-//	
+//
 //	app.LoadTemplates("*.html")
 //
 // Organizing Template Functions:
@@ -4093,20 +4247,24 @@ func (a *App) AddTemplateFunc(name string, fn interface{}) {
 //   - 템플릿 함수 초기화 단순화
 //
 // 매개변수:
+//
 //   - funcs: 함수 이름에서 함수 구현으로의 맵.
 //     키: 템플릿에서 호출될 함수 이름(string)
 //     값: 함수 구현(interface{}, 유효한 템플릿 함수여야 함)
-//     
+//
 //     맵 구조: map[string]interface{}{
-//         "functionName": functionImplementation,
-//         "otherFunc": otherImplementation,
-//         ...
+//     "functionName": functionImplementation,
+//     "otherFunc": otherImplementation,
+//     ...
 //     }
-//     
+//
 //     각 함수는 템플릿 함수 시그니처 요구사항을 따라야 합니다:
-//     • 1개 또는 2개의 값 반환
-//     • 2개의 값인 경우: 두 번째는 error여야 함
-//     • 모든 수의 매개변수를 받을 수 있음
+//
+//   - 1개 또는 2개의 값 반환
+//
+//   - 2개의 값인 경우: 두 번째는 error여야 함
+//
+//   - 모든 수의 매개변수를 받을 수 있음
 //
 // 등록 타이밍:
 //   - **중요**: 템플릿을 로드하기 전에 호출되어야 합니다.

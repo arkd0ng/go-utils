@@ -17,16 +17,18 @@ import (
 // - Request size limits (uploads, body)
 //
 // Usage:
-//   Use With* functions to configure:
-//     app := websvrutil.New(
-//         websvrutil.WithReadTimeout(10*time.Second),
-//         websvrutil.WithTemplateDir("./views"),
-//         websvrutil.WithLogger(true),
-//     )
+//
+//	Use With* functions to configure:
+//	  app := websvrutil.New(
+//	      websvrutil.WithReadTimeout(10*time.Second),
+//	      websvrutil.WithTemplateDir("./views"),
+//	      websvrutil.WithLogger(true),
+//	  )
 //
 // Default Values:
-//   See defaultOptions() for complete default configuration.
-//   All options have sensible production-ready defaults.
+//
+//	See defaultOptions() for complete default configuration.
+//	All options have sensible production-ready defaults.
 //
 // Options는 App 인스턴스에 대한 모든 구성 설정을 보유합니다.
 // 이 구조는 새 옵션을 추가할 때 API 호환성을 깨지 않고
@@ -99,10 +101,11 @@ type Options struct {
 // - Chainable configuration
 //
 // Usage:
-//   app := websvrutil.New(
-//       WithReadTimeout(5*time.Second),
-//       WithLogger(false),
-//   )
+//
+//	app := websvrutil.New(
+//	    WithReadTimeout(5*time.Second),
+//	    WithLogger(false),
+//	)
 //
 // Option은 App 인스턴스 구성을 위한 함수형 옵션 타입입니다.
 // 깔끔하고 확장 가능한 API 디자인을 위한 함수형 옵션 패턴을 따릅니다.

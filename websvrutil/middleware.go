@@ -209,6 +209,7 @@ import (
 // - 내부 정보가 노출되지 않도록 클라이언트에는 일반적인 500 응답만 전달합니다.
 //
 // Example:
+//
 //	app := websvrutil.New()
 //	app.Use(websvrutil.Recovery())
 //	app.GET("/panic", func(w http.ResponseWriter, r *http.Request) {
@@ -217,6 +218,7 @@ import (
 //	})
 //
 // 예제:
+//
 //	app := websvrutil.New()
 //	app.Use(websvrutil.Recovery())
 //	app.GET("/panic", func(w http.ResponseWriter, r *http.Request) {
@@ -302,6 +304,7 @@ type RecoveryConfig struct {
 // Logger는 각 HTTP 요청의 메서드, 경로, 상태 코드, 지연 시간을 기록하는 미들웨어를 제공합니다.
 //
 // Example / 예제:
+//
 //	app := websvrutil.New()
 //	app.Use(websvrutil.Logger())
 func Logger() MiddlewareFunc {
@@ -329,6 +332,7 @@ func Logger() MiddlewareFunc {
 // LoggerWithConfig는 요청마다 사용자 정의 로깅 함수를 실행하는 미들웨어를 제공합니다.
 //
 // Example / 예제:
+//
 //	app.Use(websvrutil.LoggerWithConfig(websvrutil.LoggerConfig{
 //	    LogFunc: func(method, path string, status int, duration time.Duration) {
 //	        log.Printf("[ACCESS] %s %s %d %v", method, path, status, duration)
@@ -349,7 +353,7 @@ func LoggerWithConfig(config LoggerConfig) MiddlewareFunc {
 
 			next.ServeHTTP(wrapper, r) // 실제 핸들러 실행
 
-			duration := time.Since(start) // 요청 처리에 걸린 시간
+			duration := time.Since(start)                                      // 요청 처리에 걸린 시간
 			config.LogFunc(r.Method, r.URL.Path, wrapper.statusCode, duration) // 사용자 정의 로거 호출
 		})
 	}

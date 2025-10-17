@@ -174,12 +174,12 @@ import (
 //
 // Process
 // 프로세스:
-//   1. Validate obj is a pointer to struct (returns error if not)
-//   2. Iterate through struct fields
-//   3. Extract "form" tag for field name mapping (uses field name if tag absent)
-//   4. Retrieve corresponding value from URL values
-//   5. Convert string value to appropriate type using strconv
-//   6. Set field value using reflection
+//  1. Validate obj is a pointer to struct (returns error if not)
+//  2. Iterate through struct fields
+//  3. Extract "form" tag for field name mapping (uses field name if tag absent)
+//  4. Retrieve corresponding value from URL values
+//  5. Convert string value to appropriate type using strconv
+//  6. Set field value using reflection
 //
 // Supported types
 // 지원되는 타입:
@@ -191,31 +191,33 @@ import (
 //
 // Struct tag format
 // 구조체 태그 형식:
-//   type User struct {
-//       Name  string `form:"name"`      // Maps to "name" form field
-//       Email string `form:"email"`     // Maps to "email" form field
-//       Age   int    `form:"age"`       // Maps to "age" form field
-//       Admin bool   // Maps to "Admin" (no tag, uses field name)
-//   }
+//
+//	type User struct {
+//	    Name  string `form:"name"`      // Maps to "name" form field
+//	    Email string `form:"email"`     // Maps to "email" form field
+//	    Age   int    `form:"age"`       // Maps to "age" form field
+//	    Admin bool   // Maps to "Admin" (no tag, uses field name)
+//	}
 //
 // Error handling
 // 에러 처리:
 //   - Returns error if obj is not a pointer to struct
 //   - Returns error if type conversion fails (e.g., "abc" -> int)
 //   - Skips fields that:
-//     - Are unexported (cannot be set)
-//     - Have no corresponding form value (empty string)
+//   - Are unexported (cannot be set)
+//   - Have no corresponding form value (empty string)
 //
 // Example usage
 // 사용 예제:
-//   values := url.Values{
-//       "name":  []string{"John"},
-//       "age":   []string{"30"},
-//       "admin": []string{"true"},
-//   }
-//   var user User
-//   err := bindFormData(&user, values)
-//   // user.Name = "John", user.Age = 30, user.Admin = true
+//
+//	values := url.Values{
+//	    "name":  []string{"John"},
+//	    "age":   []string{"30"},
+//	    "admin": []string{"true"},
+//	}
+//	var user User
+//	err := bindFormData(&user, values)
+//	// user.Name = "John", user.Age = 30, user.Admin = true
 //
 // Performance
 // 성능:

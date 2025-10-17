@@ -140,6 +140,7 @@ import "net/http"
 //
 // // Create API v1 group
 // API v1 그룹 생성
+//
 //	v1 := app.Group("/api/v1")
 //	v1.Use(AuthMiddleware())
 //	v1.GET("/users", listUsers)
@@ -147,6 +148,7 @@ import "net/http"
 //
 // // Create nested admin group
 // 중첩된 admin 그룹 생성
+//
 //	admin := v1.Group("/admin")
 //	admin.Use(AdminMiddleware())
 //	admin.GET("/stats", getStats)
@@ -305,13 +307,18 @@ func (g *Group) HEAD(pattern string, handler http.HandlerFunc) *Group {
 //
 // Process
 // 프로세스:
-//   1. Combine group prefix with route pattern
-//   2. Wrap handler with group middleware
-//   3. Register route with parent app
 //
-//   1. 그룹 접두사와 라우트 패턴 결합
-//   2. 그룹 미들웨어로 핸들러 래핑
-//   3. 부모 앱에 라우트 등록
+//  1. Combine group prefix with route pattern
+//
+//  2. Wrap handler with group middleware
+//
+//  3. Register route with parent app
+//
+//  1. 그룹 접두사와 라우트 패턴 결합
+//
+//  2. 그룹 미들웨어로 핸들러 래핑
+//
+//  3. 부모 앱에 라우트 등록
 func (g *Group) registerRoute(method, pattern string, handler http.HandlerFunc) {
 	// Combine group prefix with pattern
 	// 그룹 접두사와 패턴 결합

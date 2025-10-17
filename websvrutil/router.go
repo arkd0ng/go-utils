@@ -178,25 +178,25 @@ type Route struct {
 //
 // Segment Types:
 // 1. Literal Segment (default):
-//    - value: "users", "api", "v1"
-//    - isParam: false, isWildcard: false
-//    - Matches only exact string value
-//    - Example: pattern "/users/list" → segments: [{value:"users"}, {value:"list"}]
+//   - value: "users", "api", "v1"
+//   - isParam: false, isWildcard: false
+//   - Matches only exact string value
+//   - Example: pattern "/users/list" → segments: [{value:"users"}, {value:"list"}]
 //
 // 2. Parameter Segment (starts with : in pattern):
-//    - value: parameter name without colon (e.g., "id", "name")
-//    - isParam: true, isWildcard: false
-//    - Matches any single path segment
-//    - Captured value stored in params map with parameter name as key
-//    - Example: pattern "/users/:id" → segments: [{value:"users"}, {value:"id", isParam:true}]
+//   - value: parameter name without colon (e.g., "id", "name")
+//   - isParam: true, isWildcard: false
+//   - Matches any single path segment
+//   - Captured value stored in params map with parameter name as key
+//   - Example: pattern "/users/:id" → segments: [{value:"users"}, {value:"id", isParam:true}]
 //
 // 3. Wildcard Segment (* in pattern):
-//    - value: empty or unused
-//    - isParam: false, isWildcard: true
-//    - Matches all remaining path segments
-//    - Captured value stored in params map with key "*"
-//    - Must be last segment in pattern (anything after is ignored)
-//    - Example: pattern "/files/*" → segments: [{value:"files"}, {isWildcard:true}]
+//   - value: empty or unused
+//   - isParam: false, isWildcard: true
+//   - Matches all remaining path segments
+//   - Captured value stored in params map with key "*"
+//   - Must be last segment in pattern (anything after is ignored)
+//   - Example: pattern "/files/*" → segments: [{value:"files"}, {isWildcard:true}]
 //
 // Parsing Rules:
 // - Segments are created by parsePattern() function
@@ -204,9 +204,9 @@ type Route struct {
 // - Empty segments (from consecutive slashes) are filtered out
 // - Leading/trailing slashes are removed before splitting
 // - Segment type determined by first character:
-//   • "*" → wildcard segment
-//   • ":" → parameter segment (colon stripped, name stored)
-//   • other → literal segment
+//   - "*" → wildcard segment
+//   - ":" → parameter segment (colon stripped, name stored)
+//   - other → literal segment
 //
 // Matching Behavior:
 // - Literal: Compared with == operator (case-sensitive)
@@ -225,21 +225,22 @@ type Route struct {
 // - No allocations during matching (params map allocated once)
 //
 // Examples:
-//   Pattern: "/api/v1/users/:id/posts/:postId"
-//   Segments: [
-//     {value:"api"},
-//     {value:"v1"},
-//     {value:"users"},
-//     {value:"id", isParam:true},
-//     {value:"posts"},
-//     {value:"postId", isParam:true}
-//   ]
 //
-//   Pattern: "/static/*"
-//   Segments: [
-//     {value:"static"},
-//     {isWildcard:true}
-//   ]
+//	Pattern: "/api/v1/users/:id/posts/:postId"
+//	Segments: [
+//	  {value:"api"},
+//	  {value:"v1"},
+//	  {value:"users"},
+//	  {value:"id", isParam:true},
+//	  {value:"posts"},
+//	  {value:"postId", isParam:true}
+//	]
+//
+//	Pattern: "/static/*"
+//	Segments: [
+//	  {value:"static"},
+//	  {isWildcard:true}
+//	]
 //
 // segment는 효율적인 라우트 매칭을 위한 URL 패턴의 단일 파싱된 구성 요소를 나타냅니다.
 // 각 세그먼트는 리터럴 문자열, 명명된 매개변수 또는 와일드카드인지를 식별하여
@@ -247,25 +248,25 @@ type Route struct {
 //
 // 세그먼트 유형:
 // 1. 리터럴 세그먼트(기본값):
-//    - value: "users", "api", "v1"
-//    - isParam: false, isWildcard: false
-//    - 정확한 문자열 값만 일치
-//    - 예: 패턴 "/users/list" → 세그먼트: [{value:"users"}, {value:"list"}]
+//   - value: "users", "api", "v1"
+//   - isParam: false, isWildcard: false
+//   - 정확한 문자열 값만 일치
+//   - 예: 패턴 "/users/list" → 세그먼트: [{value:"users"}, {value:"list"}]
 //
 // 2. 매개변수 세그먼트(패턴에서 :로 시작):
-//    - value: 콜론 없는 매개변수 이름(예: "id", "name")
-//    - isParam: true, isWildcard: false
-//    - 모든 단일 경로 세그먼트와 일치
-//    - 캡처된 값은 매개변수 이름을 키로 params 맵에 저장됨
-//    - 예: 패턴 "/users/:id" → 세그먼트: [{value:"users"}, {value:"id", isParam:true}]
+//   - value: 콜론 없는 매개변수 이름(예: "id", "name")
+//   - isParam: true, isWildcard: false
+//   - 모든 단일 경로 세그먼트와 일치
+//   - 캡처된 값은 매개변수 이름을 키로 params 맵에 저장됨
+//   - 예: 패턴 "/users/:id" → 세그먼트: [{value:"users"}, {value:"id", isParam:true}]
 //
 // 3. 와일드카드 세그먼트(패턴의 *):
-//    - value: 비어있거나 사용되지 않음
-//    - isParam: false, isWildcard: true
-//    - 나머지 모든 경로 세그먼트와 일치
-//    - 캡처된 값은 키 "*"로 params 맵에 저장됨
-//    - 패턴의 마지막 세그먼트여야 함(이후의 모든 것은 무시됨)
-//    - 예: 패턴 "/files/*" → 세그먼트: [{value:"files"}, {isWildcard:true}]
+//   - value: 비어있거나 사용되지 않음
+//   - isParam: false, isWildcard: true
+//   - 나머지 모든 경로 세그먼트와 일치
+//   - 캡처된 값은 키 "*"로 params 맵에 저장됨
+//   - 패턴의 마지막 세그먼트여야 함(이후의 모든 것은 무시됨)
+//   - 예: 패턴 "/files/*" → 세그먼트: [{value:"files"}, {isWildcard:true}]
 //
 // 파싱 규칙:
 // - 세그먼트는 parsePattern() 함수에 의해 생성됨
@@ -273,9 +274,9 @@ type Route struct {
 // - 빈 세그먼트(연속된 슬래시에서)는 필터링됨
 // - 분할 전 앞뒤 슬래시가 제거됨
 // - 세그먼트 유형은 첫 번째 문자로 결정:
-//   • "*" → 와일드카드 세그먼트
-//   • ":" → 매개변수 세그먼트(콜론 제거, 이름 저장)
-//   • 기타 → 리터럴 세그먼트
+//   - "*" → 와일드카드 세그먼트
+//   - ":" → 매개변수 세그먼트(콜론 제거, 이름 저장)
+//   - 기타 → 리터럴 세그먼트
 //
 // 매칭 동작:
 // - 리터럴: == 연산자로 비교(대소문자 구분)
@@ -318,11 +319,12 @@ type segment struct {
 // - Can be customized via Router.NotFound() method
 //
 // Routes Map Structure:
-//   map[string][]*Route where:
-//   - Key: HTTP method string (uppercase: "GET", "POST", etc.)
-//   - Value: Slice of Route pointers for that method
-//   - Routes within slice are checked in registration order
-//   - First matching route wins
+//
+//	map[string][]*Route where:
+//	- Key: HTTP method string (uppercase: "GET", "POST", etc.)
+//	- Value: Slice of Route pointers for that method
+//	- Routes within slice are checked in registration order
+//	- First matching route wins
 //
 // Memory:
 // - Minimal allocation (empty map + one closure for 404 handler)
@@ -335,12 +337,13 @@ type segment struct {
 // - Safe to register routes and serve requests concurrently
 //
 // Usage:
-//   Internal use only:
-//     router := newRouter()
-//   
-//   Application use:
-//     app := websvrutil.New()  // Creates router internally
-//     app.GET("/path", handler)
+//
+//	Internal use only:
+//	  router := newRouter()
+//
+//	Application use:
+//	  app := websvrutil.New()  // Creates router internally
+//	  app.GET("/path", handler)
 //
 // newRouter는 HTTP 요청 라우팅을 위한 새 Router 인스턴스를 생성하고 초기화합니다.
 // 이것은 App이 라우팅 엔진을 생성하기 위해 사용하는 내부 생성자입니다.
@@ -360,11 +363,12 @@ type segment struct {
 // - Router.NotFound() 메서드를 통해 커스터마이즈 가능
 //
 // 라우트 맵 구조:
-//   map[string][]*Route, 여기서:
-//   - 키: HTTP 메서드 문자열(대문자: "GET", "POST" 등)
-//   - 값: 해당 메서드에 대한 Route 포인터 슬라이스
-//   - 슬라이스 내의 라우트는 등록 순서대로 확인됨
-//   - 처음 일치하는 라우트가 승리
+//
+//	map[string][]*Route, 여기서:
+//	- 키: HTTP 메서드 문자열(대문자: "GET", "POST" 등)
+//	- 값: 해당 메서드에 대한 Route 포인터 슬라이스
+//	- 슬라이스 내의 라우트는 등록 순서대로 확인됨
+//	- 처음 일치하는 라우트가 승리
 //
 // 메모리:
 // - 최소 할당(빈 맵 + 404 핸들러를 위한 하나의 클로저)
@@ -401,6 +405,7 @@ func newRouter() *Router {
 //   - Enables RESTful API design with method-based routing
 //
 // Parameters:
+//
 //   - method: HTTP method string (case-insensitive, converted to uppercase).
 //     Standard methods: "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"
 //     Custom methods: Any string is accepted (e.g., "PROPFIND", "LOCK", "UNLOCK")
@@ -408,33 +413,52 @@ func newRouter() *Router {
 //
 //   - pattern: URL pattern string with optional parameters and wildcards.
 //     Pattern Syntax:
-//     • Literal paths: "/users", "/api/v1/status"
-//       - Must match exactly (case-sensitive)
-//       - Leading/trailing slashes are trimmed during parsing
-//     
-//     • Named parameters: "/users/:id", "/posts/:postId/comments/:commentId"
-//       - Starts with colon (:)
-//       - Matches any single path segment
-//       - Captured value accessible via Context.Param(name)
-//       - Parameter name follows colon (alphanumeric + underscore recommended)
-//     
-//     • Wildcards: "/files/*", "/static/*"
-//       - Single asterisk (*)
-//       - Matches all remaining path segments
-//       - Must be last segment (anything after is ignored)
-//       - Captured value accessible via Context.Param("*")
-//     
-//     • Mixed patterns: "/api/:version/users/:id", "/docs/:lang/*"
-//       - Combine literals, parameters, and wildcards
-//       - Parameters can appear multiple times
-//       - Wildcard (if present) must be last
+//
+//   - Literal paths: "/users", "/api/v1/status"
+//
+//   - Must match exactly (case-sensitive)
+//
+//   - Leading/trailing slashes are trimmed during parsing
+//
+//   - Named parameters: "/users/:id", "/posts/:postId/comments/:commentId"
+//
+//   - Starts with colon (:)
+//
+//   - Matches any single path segment
+//
+//   - Captured value accessible via Context.Param(name)
+//
+//   - Parameter name follows colon (alphanumeric + underscore recommended)
+//
+//   - Wildcards: "/files/*", "/static/*"
+//
+//   - Single asterisk (*)
+//
+//   - Matches all remaining path segments
+//
+//   - Must be last segment (anything after is ignored)
+//
+//   - Captured value accessible via Context.Param("*")
+//
+//   - Mixed patterns: "/api/:version/users/:id", "/docs/:lang/*"
+//
+//   - Combine literals, parameters, and wildcards
+//
+//   - Parameters can appear multiple times
+//
+//   - Wildcard (if present) must be last
 //
 //     Pattern Examples:
-//     - "/users" → matches: "/users" only
-//     - "/users/:id" → matches: "/users/123", "/users/abc"
-//     - "/users/:id/posts" → matches: "/users/123/posts"
-//     - "/files/*" → matches: "/files/a", "/files/a/b", "/files/a/b/c"
-//     - "/:lang/docs/*" → matches: "/en/docs/guide", "/fr/docs/api/v1"
+//
+//   - "/users" → matches: "/users" only
+//
+//   - "/users/:id" → matches: "/users/123", "/users/abc"
+//
+//   - "/users/:id/posts" → matches: "/users/123/posts"
+//
+//   - "/files/*" → matches: "/files/a", "/files/a/b", "/files/a/b/c"
+//
+//   - "/:lang/docs/*" → matches: "/en/docs/guide", "/fr/docs/api/v1"
 //
 //   - handler: http.HandlerFunc to execute when route matches.
 //     Handler receives http.ResponseWriter and *http.Request
@@ -513,14 +537,15 @@ func newRouter() *Router {
 //	})
 //
 // Method Shortcuts:
-//   Instead of calling Handle directly, use method shortcuts:
-//   - router.GET(pattern, handler) → Handle("GET", pattern, handler)
-//   - router.POST(pattern, handler) → Handle("POST", pattern, handler)
-//   - router.PUT(pattern, handler) → Handle("PUT", pattern, handler)
-//   - router.PATCH(pattern, handler) → Handle("PATCH", pattern, handler)
-//   - router.DELETE(pattern, handler) → Handle("DELETE", pattern, handler)
-//   - router.OPTIONS(pattern, handler) → Handle("OPTIONS", pattern, handler)
-//   - router.HEAD(pattern, handler) → Handle("HEAD", pattern, handler)
+//
+//	Instead of calling Handle directly, use method shortcuts:
+//	- router.GET(pattern, handler) → Handle("GET", pattern, handler)
+//	- router.POST(pattern, handler) → Handle("POST", pattern, handler)
+//	- router.PUT(pattern, handler) → Handle("PUT", pattern, handler)
+//	- router.PATCH(pattern, handler) → Handle("PATCH", pattern, handler)
+//	- router.DELETE(pattern, handler) → Handle("DELETE", pattern, handler)
+//	- router.OPTIONS(pattern, handler) → Handle("OPTIONS", pattern, handler)
+//	- router.HEAD(pattern, handler) → Handle("HEAD", pattern, handler)
 //
 // Best Practices:
 //   - Register routes during application initialization, not per-request
@@ -556,6 +581,7 @@ func newRouter() *Router {
 //   - 메서드 기반 라우팅으로 RESTful API 디자인 활성화
 //
 // 매개변수:
+//
 //   - method: HTTP 메서드 문자열(대소문자 구분 없음, 대문자로 변환됨).
 //     표준 메서드: "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"
 //     커스텀 메서드: 모든 문자열 허용(예: "PROPFIND", "LOCK", "UNLOCK")
@@ -563,26 +589,40 @@ func newRouter() *Router {
 //
 //   - pattern: 선택적 매개변수 및 와일드카드가 있는 URL 패턴 문자열.
 //     패턴 구문:
-//     • 리터럴 경로: "/users", "/api/v1/status"
-//       - 정확히 일치해야 함(대소문자 구분)
-//       - 파싱 중 앞뒤 슬래시 제거
-//     
-//     • 명명된 매개변수: "/users/:id", "/posts/:postId/comments/:commentId"
-//       - 콜론(:)으로 시작
-//       - 모든 단일 경로 세그먼트와 일치
-//       - 캡처된 값은 Context.Param(name)으로 액세스 가능
-//       - 매개변수 이름은 콜론 다음에 위치(영숫자 + 밑줄 권장)
-//     
-//     • 와일드카드: "/files/*", "/static/*"
-//       - 단일 별표(*)
-//       - 나머지 모든 경로 세그먼트와 일치
-//       - 마지막 세그먼트여야 함(이후의 모든 것은 무시됨)
-//       - 캡처된 값은 Context.Param("*")로 액세스 가능
-//     
-//     • 혼합 패턴: "/api/:version/users/:id", "/docs/:lang/*"
-//       - 리터럴, 매개변수, 와일드카드 결합
-//       - 매개변수는 여러 번 나타날 수 있음
-//       - 와일드카드(있는 경우)는 마지막이어야 함
+//
+//   - 리터럴 경로: "/users", "/api/v1/status"
+//
+//   - 정확히 일치해야 함(대소문자 구분)
+//
+//   - 파싱 중 앞뒤 슬래시 제거
+//
+//   - 명명된 매개변수: "/users/:id", "/posts/:postId/comments/:commentId"
+//
+//   - 콜론(:)으로 시작
+//
+//   - 모든 단일 경로 세그먼트와 일치
+//
+//   - 캡처된 값은 Context.Param(name)으로 액세스 가능
+//
+//   - 매개변수 이름은 콜론 다음에 위치(영숫자 + 밑줄 권장)
+//
+//   - 와일드카드: "/files/*", "/static/*"
+//
+//   - 단일 별표(*)
+//
+//   - 나머지 모든 경로 세그먼트와 일치
+//
+//   - 마지막 세그먼트여야 함(이후의 모든 것은 무시됨)
+//
+//   - 캡처된 값은 Context.Param("*")로 액세스 가능
+//
+//   - 혼합 패턴: "/api/:version/users/:id", "/docs/:lang/*"
+//
+//   - 리터럴, 매개변수, 와일드카드 결합
+//
+//   - 매개변수는 여러 번 나타날 수 있음
+//
+//   - 와일드카드(있는 경우)는 마지막이어야 함
 //
 //   - handler: 라우트가 일치할 때 실행할 http.HandlerFunc.
 //     핸들러는 http.ResponseWriter 및 *http.Request를 받음
@@ -774,14 +814,14 @@ func (ro *Router) NotFound(handler http.HandlerFunc) {
 //   - Invokes matched route handler or 404 handler
 //
 // Process Flow:
-//   1. Acquire read lock (ro.mu.RLock) for thread-safe route lookup
-//   2. Get list of routes registered for request's HTTP method
-//   3. Iterate through routes in registration order
-//   4. For each route, attempt to match request path:
-//      - If match succeeds: Extract parameters, create Context, call handler, return
-//      - If match fails: Continue to next route
-//   5. If no routes match: Call notFoundHandler (404)
-//   6. Release read lock (ro.mu.RUnlock)
+//  1. Acquire read lock (ro.mu.RLock) for thread-safe route lookup
+//  2. Get list of routes registered for request's HTTP method
+//  3. Iterate through routes in registration order
+//  4. For each route, attempt to match request path:
+//     - If match succeeds: Extract parameters, create Context, call handler, return
+//     - If match fails: Continue to next route
+//  5. If no routes match: Call notFoundHandler (404)
+//  6. Release read lock (ro.mu.RUnlock)
 //
 // Route Matching:
 //   - Routes are checked in registration order (first match wins)
@@ -817,7 +857,7 @@ func (ro *Router) NotFound(handler http.HandlerFunc) {
 //	router.GET("/hello", func(w http.ResponseWriter, r *http.Request) {
 //	    w.Write([]byte("Hello, World!"))
 //	})
-//	
+//
 //	http.ListenAndServe(":8080", router)  // Router implements http.Handler
 //
 // ServeHTTP는 Router에 대한 http.Handler 인터페이스를 구현합니다.
@@ -834,14 +874,14 @@ func (ro *Router) NotFound(handler http.HandlerFunc) {
 //   - 매칭된 라우트 핸들러 또는 404 핸들러 호출
 //
 // 프로세스 흐름:
-//   1. 스레드 안전 라우트 조회를 위해 읽기 잠금(ro.mu.RLock) 획득
-//   2. 요청의 HTTP 메서드에 등록된 라우트 목록 가져오기
-//   3. 등록 순서대로 라우트 반복
-//   4. 각 라우트에 대해 요청 경로와 매칭 시도:
-//      - 매칭 성공: 매개변수 추출, Context 생성, 핸들러 호출, 반환
-//      - 매칭 실패: 다음 라우트로 계속
-//   5. 라우트가 일치하지 않으면: notFoundHandler 호출(404)
-//   6. 읽기 잠금(ro.mu.RUnlock) 해제
+//  1. 스레드 안전 라우트 조회를 위해 읽기 잠금(ro.mu.RLock) 획득
+//  2. 요청의 HTTP 메서드에 등록된 라우트 목록 가져오기
+//  3. 등록 순서대로 라우트 반복
+//  4. 각 라우트에 대해 요청 경로와 매칭 시도:
+//     - 매칭 성공: 매개변수 추출, Context 생성, 핸들러 호출, 반환
+//     - 매칭 실패: 다음 라우트로 계속
+//  5. 라우트가 일치하지 않으면: notFoundHandler 호출(404)
+//  6. 읽기 잠금(ro.mu.RUnlock) 해제
 //
 // 라우트 매칭:
 //   - 라우트는 등록 순서대로 확인됨(첫 번째 일치가 승리)
@@ -911,10 +951,11 @@ func (ro *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 //   - Original context remains unchanged
 //
 // Usage:
-//   Internal only - called by ServeHTTP:
-//     ctx := NewContext(w, r)
-//     ctx.setParams(params)
-//     r = r.WithContext(contextWithValue(r.Context(), ctx))
+//
+//	Internal only - called by ServeHTTP:
+//	  ctx := NewContext(w, r)
+//	  ctx.setParams(params)
+//	  r = r.WithContext(contextWithValue(r.Context(), ctx))
 //
 // contextWithValue는 요청의 context.Context에 websvrutil Context를 저장합니다.
 // 이것은 ServeHTTP가 Context를 핸들러에서 액세스 가능하게 만드는 데 사용하는 내부 헬퍼 함수입니다.

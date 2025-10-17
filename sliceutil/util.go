@@ -5,6 +5,522 @@ import (
 	"strings"
 )
 
+// util.go provides utility operations for slices.
+//
+// This file implements miscellaneous utility functions for iteration,
+// manipulation, transformation, and debugging of slices:
+//
+// Iteration Operations:
+//
+// ForEach (Side Effect Iteration):
+//   - ForEach(slice, fn): Execute function for each element
+//     Time: O(n), Space: O(1)
+//     No return value (side effects only)
+//     Function called once per element in order
+//     Cannot break early (processes all elements)
+//     Example: ForEach([1,2,3], print) prints each element
+//     Use cases: Printing, logging, mutation outside slice
+//
+// ForEachIndexed (Indexed Iteration):
+//   - ForEachIndexed(slice, fn): Execute function with index
+//     Time: O(n), Space: O(1)
+//     Function receives (index, element) pairs
+//     Useful when position matters
+//     Example: ForEachIndexed(items, func(i, item) { fmt.Printf("%d: %v\n", i, item) })
+//     Use cases: Enumeration, index-aware operations, numbered output
+//
+// String Operations:
+//
+// Join (Concatenate to String):
+//   - Join(slice, separator): Convert elements to strings and join
+//     Time: O(n), Space: O(n)
+//     Uses fmt.Sprint to convert each element
+//     Works with any type (not just strings)
+//     Similar to strings.Join but type-generic
+//     Example: Join([1,2,3], ", ") = "1, 2, 3"
+//     Use cases: String representation, CSV output, display formatting
+//
+// Slice Manipulation:
+//
+// Clone (Shallow Copy):
+//   - Clone(slice): Create independent copy
+//     Time: O(n), Space: O(n)
+//     Shallow copy: New slice, same elements
+//     Nil input returns nil (preserves nil semantics)
+//     Safe to modify result without affecting original
+//     Example: Clone([1,2,3]) = [1,2,3] (different backing array)
+//     Use cases: Immutable operations, defensive copying, fork data
+//
+// Fill (Uniform Value):
+//   - Fill(slice, value): Replace all elements with value
+//     Time: O(n), Space: O(n)
+//     Returns new slice (immutable)
+//     All positions set to same value
+//     Empty input returns empty slice
+//     Example: Fill([1,2,3,4,5], 0) = [0,0,0,0,0]
+//     Use cases: Initialization, reset, placeholder creation
+//
+// Insert (Add Elements):
+//   - Insert(slice, index, items...): Insert items at position
+//     Time: O(n), Space: O(n+m) where m = len(items)
+//     Returns new slice with items inserted
+//     Index clamped to [0, len(slice)]
+//     Negative index treated as 0
+//     Index > len treated as append
+//     Example: Insert([1,2,5,6], 2, 3, 4) = [1,2,3,4,5,6]
+//     Use cases: Adding elements mid-slice, building sequences
+//
+// Remove (Delete by Index):
+//   - Remove(slice, index): Remove element at position
+//     Time: O(n), Space: O(n)
+//     Returns new slice without element
+//     Out-of-bounds index returns clone (no error)
+//     Example: Remove([1,2,3,4,5], 2) = [1,2,4,5]
+//     Use cases: Deleting specific position, index-based removal
+//
+// RemoveAll (Delete by Value):
+//   - RemoveAll(slice, item): Remove all occurrences
+//     Time: O(n), Space: O(n)
+//     Removes every matching element
+//     Returns new slice (immutable)
+//     Example: RemoveAll([1,2,3,2,4,2], 2) = [1,3,4]
+//     Use cases: Filtering specific value, cleanup
+//
+// Randomization:
+//
+// Shuffle (Random Order):
+//   - Shuffle(slice): Randomize element order
+//     Time: O(n), Space: O(n)
+//     Uses Fisher-Yates shuffle algorithm
+//     Cryptographically weak randomness
+//     Thread-safe (uses global RNG with lock)
+//     Returns new slice (immutable)
+//     Example: Shuffle([1,2,3,4,5]) = [3,1,5,2,4] (random)
+//     Use cases: Card games, random sampling, lottery selection
+//
+// Pairing Operations:
+//
+// Zip (Combine Two Slices):
+//   - Zip(a, b): Create pairs from two slices
+//     Time: O(min(n,m)), Space: O(min(n,m))
+//     Result length = min(len(a), len(b))
+//     Longer slice truncated
+//     Returns [][2]any (type erasure for flexibility)
+//     Example: Zip([1,2,3], ["a","b","c"]) = [[1,"a"], [2,"b"], [3,"c"]]
+//     Use cases: Parallel iteration, dictionary construction, coordinate pairs
+//
+// Unzip (Separate Pairs):
+//   - Unzip(slice): Split pairs into two slices
+//     Time: O(n), Space: O(n)
+//     Inverse of Zip
+//     Type assertions may panic if types wrong
+//     Must specify types explicitly: Unzip[int, string](pairs)
+//     Example: Unzip([[1,"a"], [2,"b"]]) = ([1,2], ["a","b"])
+//     Use cases: Unpacking paired data, separating coordinates
+//
+// Window Operations:
+//
+// Window (Sliding Windows):
+//   - Window(slice, size): Generate overlapping subsequences
+//     Time: O(n*size), Space: O(n*size)
+//     Each window is independent copy
+//     Number of windows = len(slice) - size + 1
+//     Invalid size returns empty slice
+//     Example: Window([1,2,3,4,5], 3) = [[1,2,3], [2,3,4], [3,4,5]]
+//     Use cases: Moving averages, pattern detection, n-gram analysis
+//
+// Debugging:
+//
+// Tap (Debug Inspection):
+//   - Tap(slice, fn): Execute function and return slice unchanged
+//     Time: O(1) + fn execution, Space: O(1)
+//     Passthrough operation for side effects
+//     Function receives whole slice
+//     Original slice returned (not copy)
+//     Useful in method chains for debugging
+//     Example: Tap(data, func(s) { fmt.Println(s) }) returns data
+//     Use cases: Debugging chains, logging, inspection, breakpoints
+//
+// Design Principles:
+//   - Immutability: Most operations return new slices
+//   - Consistency: Predictable behavior for edge cases
+//   - Flexibility: Generic implementations for any type
+//   - Safety: Bounds checking, nil handling
+//   - Utility: Commonly needed but not category-specific
+//
+// Comparison: ForEach vs Map/Filter:
+//   - ForEach: Side effects only, no return value
+//   - Map/Filter: Transform data, return new slice
+//   - ForEach: Use when result doesn't matter (logging, printing)
+//   - Map/Filter: Use when building new data structure
+//
+// Comparison: Remove vs RemoveAll:
+//   - Remove: Single element by index (position-based)
+//   - RemoveAll: All occurrences by value (value-based)
+//   - Remove: O(n), removes exactly one
+//   - RemoveAll: O(n), removes zero or more
+//
+// Comparison: Clone vs Copy:
+//   - Clone: Allocates new slice, copies data
+//   - copy(): Requires pre-allocated destination
+//   - Clone: More convenient, returns new slice
+//   - copy(): More efficient if destination exists
+//
+// Performance Characteristics:
+//
+// Time Complexity:
+//   - ForEach/ForEachIndexed: O(n)
+//   - Join: O(n) string conversions + concatenation
+//   - Clone/Fill: O(n)
+//   - Insert/Remove/RemoveAll: O(n)
+//   - Shuffle: O(n)
+//   - Zip/Unzip: O(n)
+//   - Window: O(n * size)
+//   - Tap: O(1) + function cost
+//
+// Space Complexity:
+//   - ForEach/ForEachIndexed: O(1)
+//   - Join: O(n) for result string
+//   - Clone/Fill/Remove/RemoveAll: O(n)
+//   - Insert: O(n+m)
+//   - Shuffle: O(n)
+//   - Zip/Unzip: O(n)
+//   - Window: O(n * size)
+//   - Tap: O(1)
+//
+// Common Usage Patterns:
+//
+//	// Print all elements
+//	sliceutil.ForEach(items, func(item Item) {
+//	    fmt.Printf("Item: %v\n", item)
+//	})
+//
+//	// Create display string
+//	display := sliceutil.Join(tags, ", ")
+//	fmt.Printf("Tags: %s\n", display)
+//
+//	// Safe modification
+//	modified := sliceutil.Clone(original)
+//	// Modify 'modified' without affecting 'original'
+//
+//	// Initialize array
+//	zeros := sliceutil.Fill(template, 0)
+//
+//	// Build sequence
+//	data := []int{1, 2, 5, 6}
+//	complete := sliceutil.Insert(data, 2, 3, 4)
+//
+//	// Shuffle deck
+//	shuffled := sliceutil.Shuffle(cards)
+//
+//	// Combine data
+//	keys := []string{"name", "age", "city"}
+//	values := []any{"Alice", 30, "NYC"}
+//	pairs := sliceutil.Zip(keys, values)
+//
+//	// Sliding analysis
+//	temps := []float64{20, 21, 22, 23, 24, 25}
+//	windows := sliceutil.Window(temps, 3)
+//	for _, w := range windows {
+//	    avg := sliceutil.Average(w)
+//	    fmt.Printf("Window avg: %.1f\n", avg)
+//	}
+//
+//	// Debug chain
+//	result := sliceutil.Map(
+//	    sliceutil.Tap(
+//	        sliceutil.Filter(data, isValid),
+//	        func(s []int) { log.Printf("After filter: %v", s) },
+//	    ),
+//	    transform,
+//	)
+//
+// Method Chaining Patterns:
+//
+//	// Use Tap for debugging chains
+//	result := sliceutil.Map(
+//	    sliceutil.Tap(sliceutil.Filter(data, pred), log),
+//	    mapper,
+//	)
+//
+//	// Clone before mutation
+//	safe := sliceutil.Clone(original)
+//	// Mutate 'safe' freely
+//
+// Edge Cases:
+//   - ForEach on empty: No-op (function never called)
+//   - Join on empty: Returns "" (empty string)
+//   - Clone of nil: Returns nil (preserves nil semantics)
+//   - Fill of empty: Returns []T{} (empty slice)
+//   - Insert with invalid index: Clamped to valid range
+//   - Remove with invalid index: Returns clone
+//   - Shuffle of <=1: Returns clone (nothing to shuffle)
+//   - Zip with different lengths: Uses minimum length
+//   - Window with invalid size: Returns [][]T{} (empty)
+//
+// Thread Safety:
+//   - Shuffle: Thread-safe (uses locked global RNG)
+//   - Other operations: Not thread-safe if slice modified concurrently
+//   - Clone creates independent copy (safe from original's mutations)
+//
+// util.go는 슬라이스에 대한 유틸리티 작업을 제공합니다.
+//
+// 이 파일은 슬라이스의 반복, 조작, 변환 및 디버깅을 위한
+// 기타 유틸리티 함수를 구현합니다:
+//
+// 반복 작업:
+//
+// ForEach (부수 효과 반복):
+//   - ForEach(slice, fn): 각 요소에 대해 함수 실행
+//     시간: O(n), 공간: O(1)
+//     반환 값 없음 (부수 효과만)
+//     순서대로 요소당 한 번 함수 호출
+//     조기 중단 불가 (모든 요소 처리)
+//     예: ForEach([1,2,3], print) 각 요소 출력
+//     사용 사례: 출력, 로깅, 슬라이스 외부 변경
+//
+// ForEachIndexed (인덱스 반복):
+//   - ForEachIndexed(slice, fn): 인덱스와 함께 함수 실행
+//     시간: O(n), 공간: O(1)
+//     함수가 (인덱스, 요소) 쌍 수신
+//     위치가 중요할 때 유용
+//     예: ForEachIndexed(items, func(i, item) { fmt.Printf("%d: %v\n", i, item) })
+//     사용 사례: 열거, 인덱스 인식 작업, 번호 출력
+//
+// 문자열 작업:
+//
+// Join (문자열로 연결):
+//   - Join(slice, separator): 요소를 문자열로 변환하고 결합
+//     시간: O(n), 공간: O(n)
+//     각 요소를 변환하기 위해 fmt.Sprint 사용
+//     모든 타입 작동 (문자열만이 아님)
+//     strings.Join과 유사하지만 타입 제네릭
+//     예: Join([1,2,3], ", ") = "1, 2, 3"
+//     사용 사례: 문자열 표현, CSV 출력, 디스플레이 포맷
+//
+// 슬라이스 조작:
+//
+// Clone (얕은 복사):
+//   - Clone(slice): 독립 복사본 생성
+//     시간: O(n), 공간: O(n)
+//     얕은 복사: 새 슬라이스, 같은 요소
+//     Nil 입력은 nil 반환 (nil 의미론 유지)
+//     원본에 영향 없이 결과 수정 안전
+//     예: Clone([1,2,3]) = [1,2,3] (다른 백킹 배열)
+//     사용 사례: 불변 작업, 방어적 복사, 데이터 포크
+//
+// Fill (균일 값):
+//   - Fill(slice, value): 모든 요소를 값으로 교체
+//     시간: O(n), 공간: O(n)
+//     새 슬라이스 반환 (불변)
+//     모든 위치를 같은 값으로 설정
+//     빈 입력은 빈 슬라이스 반환
+//     예: Fill([1,2,3,4,5], 0) = [0,0,0,0,0]
+//     사용 사례: 초기화, 재설정, 플레이스홀더 생성
+//
+// Insert (요소 추가):
+//   - Insert(slice, index, items...): 위치에 항목 삽입
+//     시간: O(n), 공간: O(n+m) (m = len(items))
+//     항목이 삽입된 새 슬라이스 반환
+//     인덱스 [0, len(slice)]로 제한
+//     음수 인덱스는 0으로 처리
+//     len보다 큰 인덱스는 append로 처리
+//     예: Insert([1,2,5,6], 2, 3, 4) = [1,2,3,4,5,6]
+//     사용 사례: 슬라이스 중간에 요소 추가, 시퀀스 구축
+//
+// Remove (인덱스로 삭제):
+//   - Remove(slice, index): 위치의 요소 제거
+//     시간: O(n), 공간: O(n)
+//     요소 없이 새 슬라이스 반환
+//     범위 벗어난 인덱스는 복제 반환 (에러 없음)
+//     예: Remove([1,2,3,4,5], 2) = [1,2,4,5]
+//     사용 사례: 특정 위치 삭제, 인덱스 기반 제거
+//
+// RemoveAll (값으로 삭제):
+//   - RemoveAll(slice, item): 모든 발생 제거
+//     시간: O(n), 공간: O(n)
+//     일치하는 모든 요소 제거
+//     새 슬라이스 반환 (불변)
+//     예: RemoveAll([1,2,3,2,4,2], 2) = [1,3,4]
+//     사용 사례: 특정 값 필터링, 정리
+//
+// 무작위화:
+//
+// Shuffle (무작위 순서):
+//   - Shuffle(slice): 요소 순서 무작위화
+//     시간: O(n), 공간: O(n)
+//     Fisher-Yates 셔플 알고리즘 사용
+//     암호학적으로 약한 무작위성
+//     스레드 안전 (잠금이 있는 전역 RNG 사용)
+//     새 슬라이스 반환 (불변)
+//     예: Shuffle([1,2,3,4,5]) = [3,1,5,2,4] (무작위)
+//     사용 사례: 카드 게임, 무작위 샘플링, 복권 선택
+//
+// 쌍 작업:
+//
+// Zip (두 슬라이스 결합):
+//   - Zip(a, b): 두 슬라이스에서 쌍 생성
+//     시간: O(min(n,m)), 공간: O(min(n,m))
+//     결과 길이 = min(len(a), len(b))
+//     긴 슬라이스 잘림
+//     [][2]any 반환 (유연성을 위한 타입 소거)
+//     예: Zip([1,2,3], ["a","b","c"]) = [[1,"a"], [2,"b"], [3,"c"]]
+//     사용 사례: 병렬 반복, 사전 구성, 좌표 쌍
+//
+// Unzip (쌍 분리):
+//   - Unzip(slice): 쌍을 두 슬라이스로 분할
+//     시간: O(n), 공간: O(n)
+//     Zip의 역
+//     타입 잘못되면 타입 단언이 패닉 가능
+//     타입 명시적으로 지정 필요: Unzip[int, string](pairs)
+//     예: Unzip([[1,"a"], [2,"b"]]) = ([1,2], ["a","b"])
+//     사용 사례: 쌍 데이터 언팩, 좌표 분리
+//
+// 윈도우 작업:
+//
+// Window (슬라이딩 윈도우):
+//   - Window(slice, size): 겹치는 부분 시퀀스 생성
+//     시간: O(n*size), 공간: O(n*size)
+//     각 윈도우는 독립 복사본
+//     윈도우 수 = len(slice) - size + 1
+//     잘못된 크기는 빈 슬라이스 반환
+//     예: Window([1,2,3,4,5], 3) = [[1,2,3], [2,3,4], [3,4,5]]
+//     사용 사례: 이동 평균, 패턴 감지, n-그램 분석
+//
+// 디버깅:
+//
+// Tap (디버그 검사):
+//   - Tap(slice, fn): 함수 실행하고 슬라이스 변경 없이 반환
+//     시간: O(1) + fn 실행, 공간: O(1)
+//     부수 효과를 위한 패스스루 작업
+//     함수가 전체 슬라이스 수신
+//     원본 슬라이스 반환 (복사본 아님)
+//     메서드 체인에서 디버깅에 유용
+//     예: Tap(data, func(s) { fmt.Println(s) }) data 반환
+//     사용 사례: 체인 디버깅, 로깅, 검사, 중단점
+//
+// 설계 원칙:
+//   - 불변성: 대부분 작업이 새 슬라이스 반환
+//   - 일관성: 엣지 케이스에 예측 가능한 동작
+//   - 유연성: 모든 타입에 대한 제네릭 구현
+//   - 안전성: 범위 확인, nil 처리
+//   - 유틸리티: 일반적으로 필요하지만 카테고리별이 아님
+//
+// 비교: ForEach vs Map/Filter:
+//   - ForEach: 부수 효과만, 반환 값 없음
+//   - Map/Filter: 데이터 변환, 새 슬라이스 반환
+//   - ForEach: 결과가 중요하지 않을 때 사용 (로깅, 출력)
+//   - Map/Filter: 새 데이터 구조 구축 시 사용
+//
+// 비교: Remove vs RemoveAll:
+//   - Remove: 인덱스로 단일 요소 (위치 기반)
+//   - RemoveAll: 값으로 모든 발생 (값 기반)
+//   - Remove: O(n), 정확히 하나 제거
+//   - RemoveAll: O(n), 0개 이상 제거
+//
+// 비교: Clone vs Copy:
+//   - Clone: 새 슬라이스 할당, 데이터 복사
+//   - copy(): 사전 할당된 대상 필요
+//   - Clone: 더 편리, 새 슬라이스 반환
+//   - copy(): 대상 존재 시 더 효율적
+//
+// 성능 특성:
+//
+// 시간 복잡도:
+//   - ForEach/ForEachIndexed: O(n)
+//   - Join: O(n) 문자열 변환 + 연결
+//   - Clone/Fill: O(n)
+//   - Insert/Remove/RemoveAll: O(n)
+//   - Shuffle: O(n)
+//   - Zip/Unzip: O(n)
+//   - Window: O(n * size)
+//   - Tap: O(1) + 함수 비용
+//
+// 공간 복잡도:
+//   - ForEach/ForEachIndexed: O(1)
+//   - Join: 결과 문자열을 위한 O(n)
+//   - Clone/Fill/Remove/RemoveAll: O(n)
+//   - Insert: O(n+m)
+//   - Shuffle: O(n)
+//   - Zip/Unzip: O(n)
+//   - Window: O(n * size)
+//   - Tap: O(1)
+//
+// 일반적인 사용 패턴:
+//
+//	// 모든 요소 출력
+//	sliceutil.ForEach(items, func(item Item) {
+//	    fmt.Printf("항목: %v\n", item)
+//	})
+//
+//	// 디스플레이 문자열 생성
+//	display := sliceutil.Join(tags, ", ")
+//	fmt.Printf("태그: %s\n", display)
+//
+//	// 안전한 수정
+//	modified := sliceutil.Clone(original)
+//	// 'original'에 영향 없이 'modified' 수정
+//
+//	// 배열 초기화
+//	zeros := sliceutil.Fill(template, 0)
+//
+//	// 시퀀스 구축
+//	data := []int{1, 2, 5, 6}
+//	complete := sliceutil.Insert(data, 2, 3, 4)
+//
+//	// 덱 셔플
+//	shuffled := sliceutil.Shuffle(cards)
+//
+//	// 데이터 결합
+//	keys := []string{"name", "age", "city"}
+//	values := []any{"Alice", 30, "NYC"}
+//	pairs := sliceutil.Zip(keys, values)
+//
+//	// 슬라이딩 분석
+//	temps := []float64{20, 21, 22, 23, 24, 25}
+//	windows := sliceutil.Window(temps, 3)
+//	for _, w := range windows {
+//	    avg := sliceutil.Average(w)
+//	    fmt.Printf("윈도우 평균: %.1f\n", avg)
+//	}
+//
+//	// 디버그 체인
+//	result := sliceutil.Map(
+//	    sliceutil.Tap(
+//	        sliceutil.Filter(data, isValid),
+//	        func(s []int) { log.Printf("필터 후: %v", s) },
+//	    ),
+//	    transform,
+//	)
+//
+// 메서드 체인 패턴:
+//
+//	// 디버깅 체인을 위한 Tap 사용
+//	result := sliceutil.Map(
+//	    sliceutil.Tap(sliceutil.Filter(data, pred), log),
+//	    mapper,
+//	)
+//
+//	// 변경 전 복제
+//	safe := sliceutil.Clone(original)
+//	// 'safe' 자유롭게 변경
+//
+// 엣지 케이스:
+//   - 빈 것에 ForEach: 작업 없음 (함수 절대 호출 안 됨)
+//   - 빈 것에 Join: "" 반환 (빈 문자열)
+//   - nil 복제: nil 반환 (nil 의미론 유지)
+//   - 빈 것 Fill: []T{} 반환 (빈 슬라이스)
+//   - 잘못된 인덱스로 Insert: 유효 범위로 제한
+//   - 잘못된 인덱스로 Remove: 복제 반환
+//   - <=1 Shuffle: 복제 반환 (셔플할 것 없음)
+//   - 다른 길이로 Zip: 최소 길이 사용
+//   - 잘못된 크기로 Window: [][]T{} 반환 (빈 것)
+//
+// 스레드 안전성:
+//   - Shuffle: 스레드 안전 (잠긴 전역 RNG 사용)
+//   - 다른 작업: 슬라이스가 동시에 수정되면 스레드 안전하지 않음
+//   - Clone은 독립 복사본 생성 (원본 변경으로부터 안전)
+
 // ForEach executes a function for each element in the slice.
 // ForEach는 슬라이스의 각 요소에 대해 함수를 실행합니다.
 //
