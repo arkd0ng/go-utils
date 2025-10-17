@@ -506,3 +506,33 @@ func BenchmarkLuhn(b *testing.B) {
 		_ = v.Validate()
 	}
 }
+
+// BenchmarkISBN benchmarks the ISBN validator
+// BenchmarkISBN는 ISBN 검증기를 벤치마크합니다
+func BenchmarkISBN(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("978-0-596-52068-7", "isbn")
+		v.ISBN()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkISSN benchmarks the ISSN validator
+// BenchmarkISSN는 ISSN 검증기를 벤치마크합니다
+func BenchmarkISSN(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("2049-3630", "issn")
+		v.ISSN()
+		_ = v.Validate()
+	}
+}
+
+// BenchmarkEAN benchmarks the EAN validator
+// BenchmarkEAN는 EAN 검증기를 벤치마크합니다
+func BenchmarkEAN(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		v := New("4006381333931", "ean")
+		v.EAN()
+		_ = v.Validate()
+	}
+}

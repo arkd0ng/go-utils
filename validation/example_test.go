@@ -935,3 +935,68 @@ func Example_creditCardTypeValidation() {
 	}
 	// Output: All cards valid
 }
+
+// ExampleValidator_ISBN demonstrates ISBN validation
+// ExampleValidator_ISBN는 ISBN 검증을 보여줍니다
+func ExampleValidator_ISBN() {
+	v := validation.New("978-0-596-52068-7", "isbn")
+	v.ISBN()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid ISBN")
+	} else {
+		fmt.Println("Valid ISBN")
+	}
+	// Output: Valid ISBN
+}
+
+// ExampleValidator_ISSN demonstrates ISSN validation
+// ExampleValidator_ISSN는 ISSN 검증을 보여줍니다
+func ExampleValidator_ISSN() {
+	v := validation.New("2049-3630", "issn")
+	v.ISSN()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid ISSN")
+	} else {
+		fmt.Println("Valid ISSN")
+	}
+	// Output: Valid ISSN
+}
+
+// ExampleValidator_EAN demonstrates EAN validation
+// ExampleValidator_EAN는 EAN 검증을 보여줍니다
+func ExampleValidator_EAN() {
+	v := validation.New("4006381333931", "ean")
+	v.EAN()
+
+	if len(v.GetErrors()) > 0 {
+		fmt.Println("Invalid EAN")
+	} else {
+		fmt.Println("Valid EAN")
+	}
+	// Output: Valid EAN
+}
+
+// Example_businessIDValidation demonstrates business ID validation
+// Example_businessIDValidation는 비즈니스 ID 검증을 보여줍니다
+func Example_businessIDValidation() {
+	mv := validation.NewValidator()
+
+	// Validate book ISBN
+	mv.Field("978-0-596-52068-7", "book_isbn").ISBN()
+
+	// Validate journal ISSN
+	mv.Field("2049-3630", "journal_issn").ISSN()
+
+	// Validate product EAN
+	mv.Field("4006381333931", "product_ean").EAN()
+
+	err := mv.Validate()
+	if err != nil {
+		fmt.Println("Invalid IDs")
+	} else {
+		fmt.Println("All IDs valid")
+	}
+	// Output: All IDs valid
+}

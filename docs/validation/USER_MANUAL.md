@@ -1,6 +1,6 @@
 # Validation Package - User Manual / Validation 패키지 - 사용자 매뉴얼
 
-**Version / 버전**: v1.13.021
+**Version / 버전**: v1.13.022
 **Last Updated / 최종 업데이트**: 2025-10-17
 
 ---
@@ -19,12 +19,13 @@
 10. [DateTime Validators / 날짜/시간 검증기](#datetime-validators--날짜시간-검증기)
 11. [Range Validators / 범위 검증기](#range-validators--범위-검증기)
 12. [File Validators / 파일 검증기](#file-validators--파일-검증기)
-13. [Credit Card Validators / 신용카드 검증기](#credit-card-validators--신용카드-검증기) 🆕
-14. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
-15. [Error Handling / 에러 처리](#error-handling--에러-처리)
-16. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
-17. [Best Practices / 모범 사례](#best-practices--모범-사례)
-18. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
+13. [Credit Card Validators / 신용카드 검증기](#credit-card-validators--신용카드-검증기)
+14. [Business/ID Validators / 비즈니스/ID 검증기](#businessid-validators--비즈니스id-검증기) 🆕
+15. [Advanced Features / 고급 기능](#advanced-features--고급-기능)
+16. [Error Handling / 에러 처리](#error-handling--에러-처리)
+17. [Real-World Examples / 실제 사용 예제](#real-world-examples--실제-사용-예제)
+18. [Best Practices / 모범 사례](#best-practices--모범-사례)
+19. [Troubleshooting / 문제 해결](#troubleshooting--문제-해결)
 
 ---
 
@@ -36,7 +37,7 @@ The `validation` package provides a **fluent, type-safe validation library** for
 
 ### Key Features / 주요 기능
 
-- ✅ **73+ Built-in Validators** / **73개 이상의 내장 검증기**
+- ✅ **76+ Built-in Validators** / **76개 이상의 내장 검증기**
 - ✅ **Fluent API with Method Chaining** / **메서드 체이닝을 통한 플루언트 API**
 - ✅ **Type-Safe with Go Generics** / **Go 제네릭을 활용한 타입 안전성**
 - ✅ **Bilingual Error Messages (EN/KR)** / **양방향 에러 메시지 (영어/한글)**
@@ -50,7 +51,8 @@ The `validation` package provides a **fluent, type-safe validation library** for
 - ✅ **Range Validators (IntRange, FloatRange, DateRange)** / **범위 검증기**
 - ✅ **Format Validators (UUIDv4, XML, Hex)** / **포맷 검증기**
 - ✅ **File Validators (FilePath, FileExists, FileReadable, FileWritable, FileSize, FileExtension)** / **파일 검증기**
-- ✅ **Credit Card Validators (CreditCard, CreditCardType, Luhn)** 🆕 / **신용카드 검증기** 🆕
+- ✅ **Credit Card Validators (CreditCard, CreditCardType, Luhn)** / **신용카드 검증기**
+- ✅ **Business/ID Validators (ISBN, ISSN, EAN)** 🆕 / **비즈니스/ID 검증기** 🆕
 
 ---
 
@@ -2281,5 +2283,269 @@ The following are standard test card numbers that pass Luhn validation (use thes
 - **Discover**: 6011111111111117, 6500000000000002
 - **JCB**: 3530111333300000
 - **Diners Club**: 30569309025904
+
+---
+
+## Business/ID Validators / 비즈니스/ID 검증기
+
+Business/ID validators validate international standard identifiers used in commerce, publishing, and inventory systems. Perfect for e-commerce platforms, library systems, inventory management, and publishing applications.
+
+비즈니스/ID 검증기는 상거래, 출판 및 재고 시스템에서 사용되는 국제 표준 식별자를 검증합니다. 전자상거래 플랫폼, 도서관 시스템, 재고 관리 및 출판 애플리케이션에 완벽합니다.
+
+### Available Validators / 사용 가능한 검증기
+
+| Validator | Description | 설명 |
+|-----------|-------------|------|
+| `ISBN()` | Validates International Standard Book Number (ISBN-10 or ISBN-13) | 국제 표준 도서 번호 검증 (ISBN-10 또는 ISBN-13) |
+| `ISSN()` | Validates International Standard Serial Number (ISSN-8) | 국제 표준 연속 간행물 번호 검증 (ISSN-8) |
+| `EAN()` | Validates European Article Number (EAN-8 or EAN-13) | 유럽 상품 코드 검증 (EAN-8 또는 EAN-13) |
+
+### ISBN() - Book Number Validation / 도서 번호 검증
+
+Validates International Standard Book Number with checksum algorithm. Supports both ISBN-10 and ISBN-13 formats with or without hyphens.
+
+체크섬 알고리즘을 사용하여 국제 표준 도서 번호를 검증합니다. 하이픈 포함/미포함 ISBN-10 및 ISBN-13 형식을 모두 지원합니다.
+
+```go
+// ISBN-13 validation
+v := validation.New("978-0-596-52068-7", "book_isbn")
+v.ISBN()
+// Valid: proper ISBN-13 format with correct checksum
+// 유효: 올바른 체크섬이 있는 적절한 ISBN-13 형식
+
+// ISBN-10 validation
+v := validation.New("0-596-52068-9", "book_isbn")
+v.ISBN()
+// Valid: proper ISBN-10 format with correct checksum
+// 유효: 올바른 체크섬이 있는 적절한 ISBN-10 형식
+
+// Without hyphens
+v := validation.New("9780596520687", "book_isbn")
+v.ISBN()
+// Valid: hyphens are optional
+// 유효: 하이픈은 선택 사항
+```
+
+**ISBN-10 Format / ISBN-10 형식:**
+- 10 characters: 9 digits + checksum (0-9 or X)
+- 10자: 9자리 숫자 + 체크섬 (0-9 또는 X)
+- Checksum algorithm: weighted sum mod 11
+- 체크섬 알고리즘: 가중 합계 mod 11
+
+**ISBN-13 Format / ISBN-13 형식:**
+- 13 digits with alternating weights (1 and 3)
+- 교대 가중치(1과 3)가 있는 13자리
+- Checksum: (10 - (sum mod 10)) mod 10
+- 체크섬: (10 - (합계 mod 10)) mod 10
+
+### ISSN() - Serial Number Validation / 연속 간행물 번호 검증
+
+Validates International Standard Serial Number for periodicals, journals, and magazines.
+
+정기간행물, 저널 및 잡지에 대한 국제 표준 연속 간행물 번호를 검증합니다.
+
+```go
+v := validation.New("2049-3630", "journal_issn")
+v.ISSN()
+// Valid: proper ISSN format (XXXX-XXXX)
+// 유효: 적절한 ISSN 형식 (XXXX-XXXX)
+
+// Without hyphen
+v := validation.New("20493630", "journal_issn")
+v.ISSN()
+// Valid: hyphen is optional
+// 유효: 하이픈은 선택 사항
+
+// ISSN ending with X (checksum digit)
+v := validation.New("0317-847X", "journal_issn")
+v.ISSN()
+// Valid: X is valid checksum digit
+// 유효: X는 유효한 체크섬 자리
+```
+
+**ISSN Format / ISSN 형식:**
+- 8 characters: 7 digits + checksum (0-9 or X)
+- 8자: 7자리 숫자 + 체크섬 (0-9 또는 X)
+- Format: XXXX-XXXX (hyphen after 4th digit is optional)
+- 형식: XXXX-XXXX (4번째 자리 뒤의 하이픈은 선택 사항)
+- Checksum algorithm: weighted sum mod 11
+- 체크섬 알고리즘: 가중 합계 mod 11
+
+### EAN() - Product Barcode Validation / 제품 바코드 검증
+
+Validates European Article Number used in retail product barcodes. Supports both EAN-8 and EAN-13 formats.
+
+소매 제품 바코드에 사용되는 유럽 상품 코드를 검증합니다. EAN-8 및 EAN-13 형식을 모두 지원합니다.
+
+```go
+// EAN-13 (most common)
+v := validation.New("4006381333931", "product_ean")
+v.EAN()
+// Valid: 13-digit product barcode
+// 유효: 13자리 제품 바코드
+
+// EAN-8 (compact format)
+v := validation.New("96385074", "product_ean")
+v.EAN()
+// Valid: 8-digit compact barcode
+// 유효: 8자리 컴팩트 바코드
+
+// With spaces or hyphens (auto-cleaned)
+v := validation.New("400-6381-333-931", "product_ean")
+v.EAN()
+// Valid: spaces and hyphens are removed
+// 유효: 공백과 하이픈 제거됨
+```
+
+**EAN-8 Format / EAN-8 형식:**
+- 8 digits with alternating weights (3 and 1)
+- 교대 가중치(3과 1)가 있는 8자리
+- Used for small products / 소형 제품에 사용
+
+**EAN-13 Format / EAN-13 형식:**
+- 13 digits with alternating weights (1 and 3)
+- 교대 가중치(1과 3)가 있는 13자리
+- Standard product barcode / 표준 제품 바코드
+- Compatible with UPC / UPC와 호환
+
+### Comprehensive Example / 종합 예제
+
+```go
+// E-commerce product validation
+mv := validation.NewValidator()
+
+// Validate book ISBN
+mv.Field(bookISBN, "book_isbn").
+	Required().
+	ISBN()
+
+// Validate magazine ISSN
+mv.Field(magazineISSN, "magazine_issn").
+	Required().
+	ISSN()
+
+// Validate product barcode
+mv.Field(productEAN, "product_ean").
+	Required().
+	EAN()
+
+err := mv.Validate()
+if err != nil {
+	// Handle validation errors
+	// 검증 에러 처리
+	fmt.Println("Invalid identifiers:", err)
+	return
+}
+
+fmt.Println("All identifiers validated successfully")
+```
+
+### Performance / 성능
+
+| Validator | Avg Time | Allocations | Note |
+|-----------|----------|-------------|------|
+| ISBN | ~650 ns/op | 2 allocs | Includes checksum validation / 체크섬 검증 포함 |
+| ISSN | ~550 ns/op | 2 allocs | Mod 11 checksum / Mod 11 체크섬 |
+| EAN | ~600 ns/op | 2 allocs | Alternating weight checksum / 교대 가중치 체크섬 |
+
+**Note**: All validators are very fast (<1 microsecond) and suitable for real-time validation in e-commerce and inventory systems.
+
+**참고**: 모든 검증기는 매우 빠르며(<1 마이크로초) 전자상거래 및 재고 시스템의 실시간 검증에 적합합니다.
+
+### Use Cases / 사용 사례
+
+**Online Bookstore** / **온라인 서점**
+```go
+mv.Field(bookISBN, "isbn").
+	ISBN()
+```
+
+**Library Management System** / **도서관 관리 시스템**
+```go
+// Book
+mv.Field(isbn, "book_identifier").ISBN()
+
+// Journal/Magazine
+mv.Field(issn, "journal_identifier").ISSN()
+```
+
+**E-commerce Product Catalog** / **전자상거래 제품 카탈로그**
+```go
+mv.Field(productBarcode, "barcode").
+	EAN()
+```
+
+**Inventory Management** / **재고 관리**
+```go
+// Validate all product identifiers
+products := []struct {
+	ISBN string
+	EAN  string
+}{
+	{"978-0-596-52068-7", "4006381333931"},
+	// ... more products
+}
+
+for _, p := range products {
+	mv.Field(p.ISBN, "isbn").ISBN()
+	mv.Field(p.EAN, "ean").EAN()
+}
+```
+
+### Validation Rules / 검증 규칙
+
+**ISBN:**
+- Must be 10 or 13 digits (after removing hyphens/spaces)
+- 10 또는 13자리여야 함 (하이픈/공백 제거 후)
+- ISBN-10: Last digit can be 0-9 or X
+- ISBN-10: 마지막 자리는 0-9 또는 X 가능
+- Must pass checksum validation
+- 체크섬 검증을 통과해야 함
+
+**ISSN:**
+- Must be 8 characters (after removing hyphens/spaces)
+- 8자여야 함 (하이픈/공백 제거 후)
+- Last digit can be 0-9 or X
+- 마지막 자리는 0-9 또는 X 가능
+- Format: XXXX-XXXX (hyphen optional)
+- 형식: XXXX-XXXX (하이픈 선택 사항)
+
+**EAN:**
+- Must be 8 or 13 digits (after removing hyphens/spaces)
+- 8 또는 13자리여야 함 (하이픈/공백 제거 후)
+- All digits only (no letters)
+- 숫자만 가능 (문자 불가)
+- Must pass checksum validation
+- 체크섬 검증을 통과해야 함
+
+### Common Validation Scenarios / 일반적인 검증 시나리오
+
+**Book Publishing** / **도서 출판**
+```go
+// Validate both ISBN-10 and ISBN-13
+mv.Field(isbn10, "isbn_10").ISBN()  // 0-596-52068-9
+mv.Field(isbn13, "isbn_13").ISBN()  // 978-0-596-52068-7
+```
+
+**Magazine Subscription** / **잡지 구독**
+```go
+mv.Field(issn, "magazine_issn").
+	Required().
+	ISSN()
+```
+
+**Retail POS System** / **소매 POS 시스템**
+```go
+// Scan product barcode
+mv.Field(scannedBarcode, "barcode").
+	EAN()
+```
+
+**Import/Export** / **수입/수출**
+```go
+// Validate international product codes
+mv.Field(ean13, "product_code").
+	EAN()  // EAN-13 for international products
+```
 
 ---
